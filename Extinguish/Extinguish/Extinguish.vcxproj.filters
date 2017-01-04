@@ -78,6 +78,15 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="CapsuleCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedRenderNode.h">
@@ -131,6 +140,15 @@
     <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="CapsuleCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -163,6 +181,9 @@
     </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{64aa26ad-6bc2-463e-ad16-882ae7af435e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Colliders">
+      <UniqueIdentifier>{746b4f18-15e1-4ad0-b149-849ec1587090}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
