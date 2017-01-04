@@ -75,6 +75,9 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedRenderNode.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
