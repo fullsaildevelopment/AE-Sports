@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Content">
+      <UniqueIdentifier>{318b8900-aa92-4c77-b1a6-b4905a30af73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Shaders">
+      <UniqueIdentifier>{47475d7c-25d5-4068-95e7-90fe11b04e14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Shaders\Vertex">
+      <UniqueIdentifier>{6d5071fd-f651-4894-96b9-3d7c2da68b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Shaders\Pixel">
+      <UniqueIdentifier>{1f3195ec-780e-4c60-8c5b-dbc77ca2e1ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\DDSLoader">
+      <UniqueIdentifier>{3ec57287-b4f1-451e-9b55-deb0382faeab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Lights">
+      <UniqueIdentifier>{a9daff9c-1674-4d8b-9d85-2af871c03544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Shaders\Compute">
+      <UniqueIdentifier>{8ff53c33-97b9-4d50-851a-10845e84c0e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Components">
+      <UniqueIdentifier>{359d2bbe-69fd-41ce-a6d3-84f656548da5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Content\DDSLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Content\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Content\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Content\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedRenderNode.cpp">
+      <Filter>Content\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Content\Components</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Content\DDSLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Content\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Content\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Content\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Content\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedRenderNode.h">
+      <Filter>Content\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Content\Components</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VS_Bind.hlsl">
+      <Filter>Content\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_NormalMapped.hlsl">
+      <Filter>Content\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_DepthPreShadow.hlsl">
+      <Filter>Content\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_DepthPreShadow.hlsl">
+      <Filter>Content\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_Shadow.hlsl">
+      <Filter>Content\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Shadow.hlsl">
+      <Filter>Content\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Static.hlsl">
+      <Filter>Content\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_Static.hlsl">
+      <Filter>Content\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="CS_ForwardPlus.hlsl">
+      <Filter>Content\Shaders\Compute</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
+    <Media Include="..\Resources\FloorTexture.dds" />
+    <Media Include="..\Assets\Textures\DDS\Mage.dds" />
+    <Media Include="..\Assets\Textures\DDS\Mage_NM.dds" />
+    <Media Include="..\Assets\Textures\DDS\Mage_Spec.dds" />
+  </ItemGroup>
+</Project>
