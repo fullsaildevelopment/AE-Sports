@@ -5,10 +5,11 @@
 class Component
 {
 private:
-
+	GameObject* Object;
 public:
 	//none of these necessarily need to be used, they're just there in case and for some unity
 	virtual void Init() {};
 	virtual void Update() {};
 	virtual void Shutdown() {};
+	GameObject* GetGameObject(void) {};
 };

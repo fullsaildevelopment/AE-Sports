@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "Component.h"
+#include "GameObject.h"
 
 class Collider : Component
 {
@@ -15,16 +16,10 @@ public:
 		mesh
 	};
 private:
-	//Sphere and Capsule
-	float radious;
-	//AABB
-	DirectX::XMFLOAT3 min;
-	DirectX::XMFLOAT3 max;
-	//Capsule
-	float length;
-	//Mesh
-		//triangle indexs to mesh
-		//mesh points
+	float isTrigger;
+	std::vector<Collider*> colliding;
 public:
-	bool Update(float dt);
+	virtual bool Update(float dt);
+	bool isTrigger(void);
+	void SetisTrigger(bool trigger);
 };
