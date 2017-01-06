@@ -13,7 +13,6 @@ private:
 	Window window;
 	DeviceResources devResources;
 	Game game;
-	ResourceManager resourceManager;
 	InputManager input;
 
 public:
