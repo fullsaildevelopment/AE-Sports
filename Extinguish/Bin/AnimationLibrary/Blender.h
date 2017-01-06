@@ -43,7 +43,7 @@ public:
 	//setters
 	void SetCurAnimationIndex(unsigned int curIndex);
 	void SetNextAnimationIndex(unsigned int nextIndex);
-	void SetAnimationSet(std::string key) { animationSet = resourceManager->GetAnimationSet(key); }
+	void SetAnimationSet(AnimationSet* set) { animationSet = set; }
 	void SetBlendInfo(BlendInfo info) { blendInfo = info; }
 	Skeleton GetSkeleton() { return animationSet->GetSkeleton(); }
 };

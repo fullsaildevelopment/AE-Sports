@@ -7,7 +7,7 @@
 #include <fstream>
 #include "Animation.h"
 #include "KeyFrame.h"
-#include "Transform.h"
+#include "FriendlyIOTransformNode.h"
 #include <map>
 
 //DEFINES

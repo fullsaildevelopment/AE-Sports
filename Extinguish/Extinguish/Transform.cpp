@@ -2,17 +2,6 @@
 
 using namespace DirectX;
 
-FriendlyIOTransformNode::FriendlyIOTransformNode()
-{
-	//nameOffset = 0;
-	world = DirectX::XMFLOAT4X4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-	local = DirectX::XMFLOAT4X4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-	parentIndex = -1;
-	childIndex = -1;
-	siblingIndex = -1;
-	bDirty = false;
-}
-
 void Transform::Translate(DirectX::XMFLOAT3 vector)
 {
 	position.x += vector.x;

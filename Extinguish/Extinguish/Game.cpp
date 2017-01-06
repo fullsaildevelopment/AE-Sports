@@ -55,8 +55,10 @@ void Game::CreateScenes(DeviceResources const * devResources)
 	GameObject bear;
 
 	Renderer* bearRenderer = new Renderer();
-	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", &resourceManager);
+	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
 	bear.AddComponent(bearRenderer);
+
+	basic.AddGameObject(bear);
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
