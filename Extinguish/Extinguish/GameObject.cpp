@@ -23,3 +23,14 @@ void GameObject::AddComponent(Component* component)
 {
 	components.push_back(component);
 }
+
+vector<GameObject*>* const GameObject::GetGameObjects() 
+{ 
+	return scene->GetGameObjects(); 
+}
+
+Component* GameObject::GetComponent(Component::CompType type)
+{
+	Component* bob = nullptr;
+	return bob;
+}

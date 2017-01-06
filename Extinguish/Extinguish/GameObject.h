@@ -6,6 +6,8 @@
 #include "Renderer.h"
 
 class Component;
+class Scene;
+
 class GameObject
 {
 private:
@@ -32,8 +34,8 @@ public:
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
-	vector<GameObject*>* const GetGameObjects() { return scene->GetGameObjects(); };
-	Component* GetComponent(Component::CompType type) {};
+	vector<GameObject*>* const GetGameObjects();
+	Component* GetComponent(Component::CompType type);
 	//void SetCurFrame(unsigned int num) { curFrame = num; }
 	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }
 	//void SetCurAnimation(unsigned int curAnimationIndex) { blender.SetCurAnimationIndex(curAnimationIndex); }
