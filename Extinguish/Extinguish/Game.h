@@ -8,9 +8,11 @@ class Game
 {
 private:
 	std::vector<Scene> scenes;
+	unsigned int currentScene;
 	HashString scenesNamesTable;
 
 	InputManager input;
+	ResourceManager resourceManager;
 
 	//private helper functions
 	void CreateScenes(DeviceResources const * devResources);

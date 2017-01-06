@@ -2,7 +2,7 @@
 #include <vector>
 #include <DirectXMath.h>
 #include "Blender.h"
-#include "AnimatedRenderNode.h"
+#include "Renderer.h"
 
 class GameObject
 {
@@ -16,7 +16,7 @@ private:
 
 	//or I could have a pointer to each component. Not as polymorphic necessarily, and it doesn't allow me to have duplicates
 	//but maybe only one of each component will be fine for a game of our small scale
-	AnimatedRenderNode* renderer;
+	Renderer* renderer;
 
 public:
 	//basic
@@ -29,7 +29,7 @@ public:
 	//setters
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
-	void SetRenderNode(AnimatedRenderNode* node) { renderer = node; }
+	void SetRenderer(Renderer* node) { renderer = node; }
 
 	//void SetCurFrame(unsigned int num) { curFrame = num; }
 	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }

@@ -30,11 +30,16 @@ void ResourceManager::Init(DeviceResources const * devResources)
 	device = devResources->GetDevice();
 	devContext = devResources->GetDeviceContext();
 
+	DoFBXExporting();
+
 	//load in shaders
 	LoadAndCreateShaders();
 	
 	//load in animation sets
 	LoadInAnimationSetsAndMeshes();
+
+	//load in textures
+	LoadInTextures();
 }
 
 void ResourceManager::LoadInAnimationSetsAndMeshes()
@@ -94,6 +99,9 @@ void ResourceManager::LoadInAnimationSetsAndMeshes()
 					filePath += fileData.cFileName;
 					
 					LoadInMesh(filePath);
+
+					vertexBuffersTable.Insert(folderData.cFileName);
+					indexBuffersTable.Insert(folderData.cFileName);
 				}
 
 				//load in every animation
@@ -147,9 +155,10 @@ void ResourceManager::LoadInMesh(std::string path)
 {
 	std::ifstream bin;
 	std::vector<Vertex> verts;
-	std::vector<unsigned int> indices;
+	std::vector<unsigned int> tempIndices;
 	unsigned int numVerts;
 	unsigned int numIndices;
+	unsigned int sizeOfVertex;
 
 	bin.open(path, std::ios::binary);
 
@@ -158,43 +167,145 @@ void ResourceManager::LoadInMesh(std::string path)
 		//Read Header
 		bin.read((char*)&numVerts, sizeof(unsigned int));
 		bin.read((char*)&numIndices, sizeof(unsigned int));
+		bin.read((char*)&sizeOfVertex, sizeof(unsigned int));
 
 		//resize based off of header
 		verts.resize(numVerts);
-		indices.resize(numIndices);
+		tempIndices.resize(numIndices);
 
 		//read in verts
-		bin.read((char*)verts.data(), sizeof(Vertex) * numVerts);
+		bin.read((char*)verts.data(), sizeOfVertex * numVerts);
 
 		//read in names
-		bin.read((char*)indices.data(), sizeof(unsigned int) * numIndices);
+		bin.read((char*)tempIndices.data(), sizeof(unsigned int) * numIndices);
 
 		bin.close();
 	}
 
-	vertices.push_back(verts.data());
+	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+
+	//create index buffer
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	indexBufferData.pSysMem = tempIndices.data();
+	indexBufferData.SysMemPitch = 0;
+	indexBufferData.SysMemSlicePitch = 0;
+
+	CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * (unsigned int)tempIndices.size(), D3D11_BIND_INDEX_BUFFER);
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, indexBuffer.GetAddressOf());
+
+	indexBuffers.push_back(indexBuffer);
+
+	//create vertex buffer
+	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	vertexBufferData.SysMemPitch = 0;
+	vertexBufferData.SysMemSlicePitch = 0;
+	vertexBufferData.pSysMem = verts.data();
+
+	CD3D11_BUFFER_DESC vertexBufferDesc(sizeOfVertex * (unsigned int)verts.size(), D3D11_BIND_VERTEX_BUFFER);
+	device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, vertexBuffer.GetAddressOf());
+
+	vertexBuffers.push_back(vertexBuffer);
 }
 
 //getters//
 
+ID3D11Buffer* ResourceManager::GetVertexBuffer(std::string name)
+{
+	ID3D11Buffer* result = nullptr;
+	
+	int index = vertexBuffersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = vertexBuffers[index].Get();
+	}
+
+	return result;
+}
+
+ID3D11Buffer* ResourceManager::GetIndexBuffer(std::string name)
+{
+	ID3D11Buffer* result = nullptr;
+
+	int index = indexBuffersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = indexBuffers[index].Get();
+	}
+
+	return result;
+}
+
+ID3D11InputLayout* ResourceManager::GetInputLayout(std::string name)
+{
+	ID3D11InputLayout* result = nullptr;
+
+	int index = inputLayoutsTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = inputLayouts[index].Get();
+	}
+
+	return result;
+}
+
 AnimationSet* ResourceManager::GetAnimationSet(std::string animation)
 {
-	return &animationSets[animationSetsTable.GetKey(animation)];
+	AnimationSet* result = nullptr;
+
+	int index = animationSetsTable.GetKey(animation);
+
+	if (index != -1)
+	{
+		result = &animationSets[index];
+	}
+
+	return result;
 }
 
-ID3D11PixelShader* ResourceManager::GetPixelShader(unsigned int index)
+ID3D11PixelShader* ResourceManager::GetPixelShader(std::string name)
 {
-	return pixelShaders[index].Get();
+	ID3D11PixelShader* result = nullptr;
+
+	int index = pixelShadersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = pixelShaders[index].Get();
+	}
+
+	return result;
 }
 
-ID3D11VertexShader* ResourceManager::GetVertexShader(unsigned int index)
+ID3D11VertexShader* ResourceManager::GetVertexShader(std::string name)
 {
-	return vertexShaders[index].Get();
+	ID3D11VertexShader* result = nullptr;
+
+	int index = vertexShadersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = vertexShaders[index].Get();
+	}
+
+	return result;
 }
 
-ID3D11ComputeShader* ResourceManager::GetComputeShader(unsigned int index)
+ID3D11ComputeShader* ResourceManager::GetComputeShader(std::string name)
 {
-	return computeShaders[index].Get();
+	ID3D11ComputeShader* result = nullptr;
+
+	int index = computeShadersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = computeShaders[index].Get();
+	}
+
+	return result;
 }
 
 //setters//
@@ -265,6 +376,28 @@ void ResourceManager::LoadAndCreateShaders()
 					//remove prefix and then insert
 					curFileName.erase(0, 3);
 					vertexShadersTable.Insert(curFileName);
+
+					//create input layout for this vertex
+					if (inputLayoutsTable.GetKey("Bind") == -1)
+					{
+						Microsoft::WRL::ComPtr<ID3D11InputLayout> bindInput;
+
+						D3D11_INPUT_ELEMENT_DESC bindInputElementDescs[] =
+						{
+							{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+						};
+
+						HRESULT bindInputResult = device->CreateInputLayout(bindInputElementDescs, ARRAYSIZE(bindInputElementDescs), &shaderData[0], shaderData.size(), bindInput.GetAddressOf());
+
+						inputLayouts.push_back(bindInput);
+						inputLayoutsTable.Insert(curFileName);
+					}
 				}
 				else if (curFileName.find("PS") != -1)
 				{
@@ -383,4 +516,83 @@ Animation ResourceManager::LoadInAnimation(std::string path)
 	}
 
 	return animation;
+}
+
+void ResourceManager::DoFBXExporting()
+{
+#if 0
+	// load in box animations and rig
+	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Box\\Box_Idle.fbx", "Box", "Box_Idle");
+	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Box\\Box_Attack.fbx", "Box", "Box_Attack");
+
+	////load in teddy animation and rig
+	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Teddy\\Teddy_Idle.fbx", "Teddy", "Teddy_Idle");
+	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack1.fbx", "Teddy", "Teddy_Attack1");
+	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack2.fbx", "Teddy", "Teddy_Attack2");
+	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Run.fbx", "Teddy", "Teddy_Run");
+
+	////load in sphere
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Sphere.fbx", "Sphere");
+
+	////load in mage with rig and animation
+	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
+#endif
+}
+
+void ResourceManager::CreateInputLayouts()
+{
+	//Microsoft::WRL::ComPtr<ID3D11InputLayout> basicInput;
+
+	//D3D11_INPUT_ELEMENT_DESC basicInputElementDescs[] =
+	//{
+	//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//};
+
+	//HRESULT inputResult = device->CreateInputLayout(basicInputElementDescs, ARRAYSIZE(basicInputElementDescs), basicVSBuffer->GetBufferPointer(), basicVSBuffer->GetBufferSize(), basicInput.GetAddressOf());
+
+
+	//inputLayouts.push_back(basicInput);
+}
+
+void ResourceManager::LoadInTextures()
+{
+	WIN32_FIND_DATA fileData;
+	HANDLE hFileFind;
+
+	std::string filePath = ddsPath;
+	filePath += "*.dds";
+
+	//find the first shader
+	hFileFind = ::FindFirstFile(filePath.c_str(), &fileData);
+
+	//if file location isn't valid, do  
+	if (hFileFind != INVALID_HANDLE_VALUE)
+	{
+		do //for every other .cso
+		{
+			std::string fileName = ddsPath;
+			fileName += fileData.cFileName;
+
+			//if (fileName.find("NM") == std::string::npos || fileName.find("Spec") == std::string::npos)
+			//{
+
+			//}
+
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+
+			wstring wideNormalPath = wstring(fileName.begin(), fileName.end());
+			HRESULT baseNormalResult = CreateDDSTextureFromFile(device, wideNormalPath.c_str(), nullptr, srv.GetAddressOf());
+
+			fileName = fileData.cFileName;
+			fileName.erase(fileName.find(".dds"), 4);
+
+			shaderResourceViews.push_back(srv);
+			shaderResourceViewsTable.Insert(fileName);
+
+		} while (::FindNextFile(hFileFind, &fileData));
+
+		FindClose(hFileFind);
+	}
 }

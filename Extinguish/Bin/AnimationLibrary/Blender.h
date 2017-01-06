@@ -45,4 +45,5 @@ public:
 	void SetNextAnimationIndex(unsigned int nextIndex);
 	void SetAnimationSet(std::string key) { animationSet = resourceManager->GetAnimationSet(key); }
 	void SetBlendInfo(BlendInfo info) { blendInfo = info; }
+	Skeleton GetSkeleton() { return animationSet->GetSkeleton(); }
 };
