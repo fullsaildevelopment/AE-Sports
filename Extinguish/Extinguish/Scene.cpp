@@ -439,6 +439,10 @@ void Scene::Update(InputManager input)
 		models[i].SetView(tempCamera);
 	}
 
+	for (int i = 0; i < gameObjects.size(); ++i)
+	{
+		gameObjects[i]->Update(dt);
+	}
 
 	//this is for models where I want to click to move them
 	//gameObjects[0]->SetCurFrame(curFrame);
@@ -590,13 +594,13 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 void Scene::Render()
 {
 	//render all models
-	for (size_t i = 0; i < models.size(); ++i)
-	{
-		//if (i == 0) //to not render the idle test box
-		{
-			models[i].Render();
-		}
-	}
+	//for (size_t i = 0; i < models.size(); ++i)
+	//{
+	//	//if (i == 0) //to not render the idle test box
+	//	{
+	//		models[i].Render();
+	//	}
+	//}
 }
 
 void Scene::Shutdown()
@@ -619,4 +623,9 @@ void Scene::Shutdown()
 void Scene::CreateGameObject()
 {
 
+}
+
+void Scene::AddGameObject(GameObject* gameObject)
+{
+	gameObjects.push_back(gameObject);
 }

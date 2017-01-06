@@ -48,6 +48,9 @@
     <ClInclude Include="HashString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FriendlyIOTransformNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">

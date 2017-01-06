@@ -11,7 +11,6 @@ class Scene;
 class GameObject
 {
 private:
-	Blender blender;
 	//AnimatedRenderNode* renderNode;
 	//unsigned int curFrame;
 	
