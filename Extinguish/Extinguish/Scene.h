@@ -6,7 +6,7 @@
 #include "SpotLight.h"
 #include "DeviceResources.h"
 #include "ResourceManager.h"
-#include "AnimatedRenderNode.h"
+#include "Renderer.h"
 #include "GameObject.h"
 #include "InputManager.h"
 

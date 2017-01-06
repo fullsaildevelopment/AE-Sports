@@ -7,7 +7,7 @@
 #include <fstream>
 #include "Animation.h"
 #include "KeyFrame.h"
-#include "TransformNode.h"
+#include "Transform.h"
 #include <map>
 
 //DEFINES
@@ -828,7 +828,7 @@ namespace FBXLoader
 	{
 		std::ofstream bout;
 		std::string path;
-		unsigned int numVerts = 0, numIndices = 0;
+		unsigned int numVerts = 0, numIndices = 0, sizeOfVertex;
 
 		path = "../Resources/";
 		path += name;
@@ -844,9 +844,13 @@ namespace FBXLoader
 			numVerts = (unsigned int)mBasicVerts.size();
 			numIndices = (unsigned int)mIndices.size();
 
+			//get length of single vertex
+			sizeOfVertex = sizeof(VS_BasicInput);
+
 			//write header
 			bout.write((const char*)&numVerts, sizeof(unsigned int));
 			bout.write((const char*)&numIndices, sizeof(unsigned int));
+			bout.write((const char*)&sizeOfVertex, sizeof(unsigned int));
 
 			//write out Vert data
 			bout.write((const char*)mBasicVerts.data(), sizeof(VS_BasicInput) * numVerts);
@@ -912,7 +916,7 @@ namespace FBXLoader
 	{
 		std::ofstream bout;
 		std::string path;
-		unsigned int numVerts = 0, numIndices = 0;
+		unsigned int numVerts = 0, numIndices = 0, sizeOfVertex;
 
 		path = "../Resources/";
 		path += name;
@@ -927,10 +931,12 @@ namespace FBXLoader
 			//get length of bones
 			numVerts = (unsigned int)mVerts.size();
 			numIndices = (unsigned int)mIndices.size();
+			sizeOfVertex = sizeof(Vertex);
 
 			//write header
 			bout.write((const char*)&numVerts, sizeof(unsigned int));
 			bout.write((const char*)&numIndices, sizeof(unsigned int));
+			bout.write((const char*)&sizeOfVertex, sizeof(unsigned int));
 
 
 			//write out Vert data

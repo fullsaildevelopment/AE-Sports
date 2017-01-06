@@ -42,13 +42,13 @@
     <ClInclude Include="Skeleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ForFBX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HashString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,10 +74,10 @@
     <ClCompile Include="Skeleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransformNode.cpp">
+    <ClCompile Include="HashString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HashString.cpp">
+    <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
