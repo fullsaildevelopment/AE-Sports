@@ -36,10 +36,10 @@ private:
 	//constant buffer data
 	ModelViewProjectionConstantBuffer mvpData;
 	ModelViewProjectionConstantBuffer lightMVPData;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mvpConstantBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> lightMvpConstantBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> mvpConstantBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> lightMvpConstantBuffer;
 	BoneOffsetConstantBuffer boneOffsetData;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> boneOffsetConstantBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> boneOffsetConstantBuffer;
 
 	//Private helper functions
 	void DepthPrePass();

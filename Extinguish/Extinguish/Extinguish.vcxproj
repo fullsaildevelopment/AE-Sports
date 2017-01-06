@@ -134,7 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedRenderNode.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
@@ -156,7 +156,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedRenderNode.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CapsuleCollider.h" />

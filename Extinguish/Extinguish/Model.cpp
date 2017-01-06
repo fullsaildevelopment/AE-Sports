@@ -156,18 +156,18 @@ void Model::CreateDevResources(DeviceResources const * deviceResources)
 	}
 
 	//create constant buffers
-	CD3D11_BUFFER_DESC mvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	HRESULT hrtemp = device->CreateBuffer(&mvpBufferDesc, NULL, mvpConstantBuffer.GetAddressOf());
+	//CD3D11_BUFFER_DESC mvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	//HRESULT hrtemp = device->CreateBuffer(&mvpBufferDesc, NULL, mvpConstantBuffer.GetAddressOf());
 
-	CD3D11_BUFFER_DESC lightMvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	HRESULT lightHrtemp = device->CreateBuffer(&lightMvpBufferDesc, NULL, lightMvpConstantBuffer.GetAddressOf());
+	//CD3D11_BUFFER_DESC lightMvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	//HRESULT lightHrtemp = device->CreateBuffer(&lightMvpBufferDesc, NULL, lightMvpConstantBuffer.GetAddressOf());
 
 	//bone offsets
-	if (vertexType == VertexShaderTypes::vsBIND)
-	{
-		CD3D11_BUFFER_DESC boneOffsetDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-		device->CreateBuffer(&boneOffsetDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
-	}
+	//if (vertexType == VertexShaderTypes::vsBIND)
+	//{
+	//	CD3D11_BUFFER_DESC boneOffsetDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	//	device->CreateBuffer(&boneOffsetDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
+	//}
 
 	//create shader resource view with texture path
 	wstring wideTexturePath = wstring(texturePath.begin(), texturePath.end());
@@ -189,87 +189,87 @@ void Model::CreateDevResources(DeviceResources const * deviceResources)
 
 void Model::Render()
 {
-	//do shadow depth press pass
-	if (preShadowVertexShader)
-	{
-		DepthPrePassShadow();
-	}
+	////do shadow depth press pass
+	//if (preShadowVertexShader)
+	//{
+	//	DepthPrePassShadow();
+	//}
 
-	//do light depth pre pass
+	////do light depth pre pass
 
-	//use computer shader to find what lights
+	////use computer shader to find what lights
 
-	//reset stuff I turned off in depth pre pass
-	devContext->OMSetRenderTargets(1, devResources->GetRenderTargetViewAddress(), devResources->GetDepthStencilView());
+	////reset stuff I turned off in depth pre pass
+	//devContext->OMSetRenderTargets(1, devResources->GetRenderTargetViewAddress(), devResources->GetDepthStencilView());
 
-	////set shaders
-	devContext->VSSetShader(vertexShader.Get(), NULL, NULL);
-	devContext->PSSetShader(pixelShader.Get(), NULL, NULL);
+	//////set shaders
+	//devContext->VSSetShader(vertexShader.Get(), NULL, NULL);
+	//devContext->PSSetShader(pixelShader.Get(), NULL, NULL);
 
-	//set input layout
-	devContext->IASetInputLayout(inputLayout.Get());
+	////set input layout
+	//devContext->IASetInputLayout(inputLayout.Get());
 
-	//update constant buffers
-	devContext->UpdateSubresource(mvpConstantBuffer.Get(), NULL, NULL, &mvpData, NULL, NULL);
+	////update constant buffers
+	//devContext->UpdateSubresource(mvpConstantBuffer.Get(), NULL, NULL, &mvpData, NULL, NULL);
 
-	if (vertexType == VertexShaderTypes::vsBIND)
-	{
-		devContext->UpdateSubresource(boneOffsetConstantBuffer.Get(), NULL, NULL, &boneOffsetData, NULL, NULL);
-	}
+	//if (vertexType == VertexShaderTypes::vsBIND)
+	//{
+	//	devContext->UpdateSubresource(boneOffsetConstantBuffer.Get(), NULL, NULL, &boneOffsetData, NULL, NULL);
+	//}
 
-	devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
+	//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
 
-	//set constant buffers
-	devContext->VSSetConstantBuffers(0, 1, mvpConstantBuffer.GetAddressOf());
+	////set constant buffers
+	//devContext->VSSetConstantBuffers(0, 1, mvpConstantBuffer.GetAddressOf());
 
-	if (vertexType == VertexShaderTypes::vsBIND)
-	{
-		devContext->VSSetConstantBuffers(1, 1, boneOffsetConstantBuffer.GetAddressOf());
-	}
+	//if (vertexType == VertexShaderTypes::vsBIND)
+	//{
+	//	devContext->VSSetConstantBuffers(1, 1, boneOffsetConstantBuffer.GetAddressOf());
+	//}
 
-	devContext->VSSetConstantBuffers(2, 1, lightMvpConstantBuffer.GetAddressOf());
+	//devContext->VSSetConstantBuffers(2, 1, lightMvpConstantBuffer.GetAddressOf());
 
-	//set vertex buffer
-	if (vertexType == VertexShaderTypes::vsBIND)
-	{
-		UINT stride = sizeof(Vertex);
-		UINT offset = 0;
+	////set vertex buffer
+	//if (vertexType == VertexShaderTypes::vsBIND)
+	//{
+	//	UINT stride = sizeof(Vertex);
+	//	UINT offset = 0;
 
-		devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	}
-	else
-	{
-		UINT stride = sizeof(VS_BasicInput);
-		UINT offset = 0;
+	//	devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	//}
+	//else
+	//{
+	//	UINT stride = sizeof(VS_BasicInput);
+	//	UINT offset = 0;
 
-		devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	}
+	//	devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	//}
 
-	//set shader resource view
-	devContext->PSSetShaderResources(0, 1, textureSRV.GetAddressOf());
-	devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
-	devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
-	devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
+	////set shader resource view
+	//devContext->PSSetShaderResources(0, 1, textureSRV.GetAddressOf());
+	//devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
+	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
+	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 
-	//set index buffer
-	if (mIndices.data())
-	{
-		devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	////set index buffer
+	//if (mIndices.data())
+	//{
+	//	devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-		//and finally... draw model
-		devContext->DrawIndexed((unsigned int)mIndices.size(), 0, 0);
-	}
-	else
-	{
-		if (vertexType == VertexShaderTypes::vsBIND)
-		{
-			devContext->Draw((unsigned int)mVertices.size(), 0);
-		}
-		else
-		{
-			devContext->Draw((unsigned int)mBasicVertices.size(), 0);
-		}
-	}
+	//	//and finally... draw model
+	//	devContext->DrawIndexed((unsigned int)mIndices.size(), 0, 0);
+	//}
+	//else
+	//{
+	//	if (vertexType == VertexShaderTypes::vsBIND)
+	//	{
+	//		devContext->Draw((unsigned int)mVertices.size(), 0);
+	//	}
+	//	else
+	//	{
+	//		devContext->Draw((unsigned int)mBasicVertices.size(), 0);
+	//	}
+	//}
 }
 
 //setters
@@ -307,50 +307,50 @@ void Model::SetShadowData(ID3D11VertexShader* vShaderPreShadow, ID3D11PixelShade
 
 void Model::DepthPrePass()
 {
-	UINT stride = sizeof(VS_BasicInput);
-	UINT offset = 0;
+	//UINT stride = sizeof(VS_BasicInput);
+	//UINT offset = 0;
 
-	//set RTV and STV
-	ID3D11RenderTargetView* nullRTV = NULL;
+	////set RTV and STV
+	//ID3D11RenderTargetView* nullRTV = NULL;
 
-	devContext->OMSetRenderTargets(1, &nullRTV, devResources->GetDepthStencilView());
+	//devContext->OMSetRenderTargets(1, &nullRTV, devResources->GetDepthStencilView());
 
-	//set shaders
-	devContext->VSSetShader(preDepthPassVertexShader.Get(), NULL, NULL);
-	devContext->PSSetShader(NULL, NULL, 0);
+	////set shaders
+	//devContext->VSSetShader(preDepthPassVertexShader.Get(), NULL, NULL);
+	//devContext->PSSetShader(NULL, NULL, 0);
 
-	//set input layout
-	devContext->IASetInputLayout(inputLayout.Get());
+	////set input layout
+	//devContext->IASetInputLayout(inputLayout.Get());
 
-	//update and set MVP cbuffer
-	devContext->UpdateSubresource(mvpConstantBuffer.Get(), NULL, NULL, &mvpData, NULL, NULL);
-	devContext->VSSetConstantBuffers(0, 1, mvpConstantBuffer.GetAddressOf());
+	////update and set MVP cbuffer
+	//devContext->UpdateSubresource(mvpConstantBuffer.Get(), NULL, NULL, &mvpData, NULL, NULL);
+	//devContext->VSSetConstantBuffers(0, 1, mvpConstantBuffer.GetAddressOf());
 
-	//set vertex buffer
-	devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	////set vertex buffer
+	//devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
-	//set textureSRV
-	devContext->PSSetShaderResources(0, 1, textureSRV.GetAddressOf());
+	////set textureSRV
+	//devContext->PSSetShaderResources(0, 1, textureSRV.GetAddressOf());
 
-	//set index buffer then draw
-	if (mIndices.data())
-	{
-		devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	////set index buffer then draw
+	//if (mIndices.data())
+	//{
+	//	devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-		//and finally... draw model
-		devContext->DrawIndexed((unsigned int)mIndices.size(), 0, 0);
-	}
-	else
-	{
-		if (vertexType == VertexShaderTypes::vsBIND)
-		{
-			devContext->Draw((unsigned int)mVertices.size(), 0);
-		}
-		else
-		{
-			devContext->Draw((unsigned int)mBasicVertices.size(), 0);
-		}
-	}
+	//	//and finally... draw model
+	//	devContext->DrawIndexed((unsigned int)mIndices.size(), 0, 0);
+	//}
+	//else
+	//{
+	//	if (vertexType == VertexShaderTypes::vsBIND)
+	//	{
+	//		devContext->Draw((unsigned int)mVertices.size(), 0);
+	//	}
+	//	else
+	//	{
+	//		devContext->Draw((unsigned int)mBasicVertices.size(), 0);
+	//	}
+	//}
 }
 
 void Model::LightCulling()
@@ -375,49 +375,49 @@ void Model::LightCulling()
 
 void Model::DepthPrePassShadow()
 {
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
+	//UINT stride = sizeof(Vertex);
+	//UINT offset = 0;
 
-	//set RTV and STV
-	//ID3D11RenderTargetView* nullRTV = NULL;
+	////set RTV and STV
+	////ID3D11RenderTargetView* nullRTV = NULL;
 
-	devContext->OMSetRenderTargets(1, devResources->GetShadowMapRTVAddress(), devResources->GetShadowMapDSV());
+	//devContext->OMSetRenderTargets(1, devResources->GetShadowMapRTVAddress(), devResources->GetShadowMapDSV());
 
-	//set shaders
-	devContext->VSSetShader(preShadowVertexShader.Get(), NULL, NULL);
-	devContext->PSSetShader(preShadowPixelShader.Get(), NULL, NULL);
+	////set shaders
+	//devContext->VSSetShader(preShadowVertexShader.Get(), NULL, NULL);
+	//devContext->PSSetShader(preShadowPixelShader.Get(), NULL, NULL);
 
-	//set input layout
-	devContext->IASetInputLayout(inputLayout.Get());
+	////set input layout
+	//devContext->IASetInputLayout(inputLayout.Get());
 
-	//update and set MVP cbuffer
-	devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
-	devContext->VSSetConstantBuffers(0, 1, lightMvpConstantBuffer.GetAddressOf());
+	////update and set MVP cbuffer
+	//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
+	//devContext->VSSetConstantBuffers(0, 1, lightMvpConstantBuffer.GetAddressOf());
 
-	//update set bone offset cbuffer
-	devContext->UpdateSubresource(boneOffsetConstantBuffer.Get(), NULL, NULL, &boneOffsetData, NULL, NULL);
-	devContext->VSSetConstantBuffers(1, 1, boneOffsetConstantBuffer.GetAddressOf());
+	////update set bone offset cbuffer
+	//devContext->UpdateSubresource(boneOffsetConstantBuffer.Get(), NULL, NULL, &boneOffsetData, NULL, NULL);
+	//devContext->VSSetConstantBuffers(1, 1, boneOffsetConstantBuffer.GetAddressOf());
 
-	//set vertex buffer
-	devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	////set vertex buffer
+	//devContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
-	//set index buffer then draw
-	if (mIndices.data())
-	{
-		devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	////set index buffer then draw
+	//if (mIndices.data())
+	//{
+	//	devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-		//and finally... draw model
-		devContext->DrawIndexed((unsigned int)mIndices.size(), 0, 0);
-	}
-	else
-	{
-		if (vertexType == VertexShaderTypes::vsBIND)
-		{
-			devContext->Draw((unsigned int)mVertices.size(), 0);
-		}
-		else
-		{
-			devContext->Draw((unsigned int)mBasicVertices.size(), 0);
-		}
-	}
+	//	//and finally... draw model
+	//	devContext->DrawIndexed((unsigned int)mIndices.size(), 0, 0);
+	//}
+	//else
+	//{
+	//	if (vertexType == VertexShaderTypes::vsBIND)
+	//	{
+	//		devContext->Draw((unsigned int)mVertices.size(), 0);
+	//	}
+	//	else
+	//	{
+	//		devContext->Draw((unsigned int)mBasicVertices.size(), 0);
+	//	}
+	//}
 }

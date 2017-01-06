@@ -30,9 +30,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedRenderNode.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -75,8 +72,12 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
+    <ClCompile Include="Renderer.cpp">
+
       <Filter>Components</Filter>
+    </ClCompile>
+	<ClCompile Include="Collider.cpp">
+     <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
       <Filter>Components\Colliders</Filter>
@@ -92,9 +93,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedRenderNode.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -140,6 +138,7 @@
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
+<<<<<<< .mine
     <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -161,6 +160,29 @@
     <ClInclude Include="vec3.h">
       <Filter>CollisionLibrary\Structs</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="Renderer.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> .theirs
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />

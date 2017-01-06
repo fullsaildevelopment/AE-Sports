@@ -8,9 +8,6 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	//initialize device resources
 	devResources.Init(window.GetHWND());
 
-	//initialize resource manager
-	resourceManager.Init(&devResources);
-
 	//initalize game
 	game.Init(&devResources);
 

@@ -18,3 +18,8 @@ void GameObject::Update(float deltaTime)
 	//renderNode->SetInverseBindPoses(blender.GetBoneOffsets());
 	//renderNode->SetBonesWorlds(blender.GetBonesWorlds());
 }
+
+void GameObject::AddComponent(Component* component)
+{
+	components.push_back(component);
+}
