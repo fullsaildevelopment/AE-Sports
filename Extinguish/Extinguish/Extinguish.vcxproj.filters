@@ -167,6 +167,9 @@
     <ClInclude Include="vec4.h">
       <Filter>CollisionLibrary\Structs</Filter>
     </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />

@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include "../Bin/FBXLoader/FBXLoader.h"
+#include "FriendlyIOTransformNode.h"
 
 //class Animation;
 //class BindPose;
@@ -40,6 +41,9 @@ private:
 	std::vector<Microsoft::WRL::ComPtr<ID3D11VertexShader>> vertexShaders;
 	std::vector<Microsoft::WRL::ComPtr<ID3D11ComputeShader>> computeShaders;
 	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> shaderResourceViews;
+	std::vector<unsigned int> vertexStrides;
+	std::vector<unsigned int> numVertices;
+	std::vector<unsigned int> numIndices;
 
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
@@ -64,6 +68,11 @@ public:
 	ID3D11PixelShader* GetPixelShader(std::string name);
 	ID3D11VertexShader* GetVertexShader(std::string name);
 	ID3D11ComputeShader* GetComputeShader(std::string name);
+	ID3D11ShaderResourceView* GetShaderResourceView(std::string name);
+	int GetVertexStride(std::string name);
+	int GetNumIndices(std::string name);
+	int GetNumVertices(std::string name);
+
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);
