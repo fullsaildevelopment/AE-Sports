@@ -4,8 +4,6 @@
 class GameObject;
 class Component
 {
-private:
-	GameObject* Object;
 public:
 	enum CompType
 	{
@@ -16,9 +14,16 @@ public:
 		CTPhysics,
 		CTAI,
 	};
+private:
+	GameObject* Object;
+	CompType type;
+public:
 	//none of these necessarily need to be used, they're just there in case and for some unity
 	virtual void Init() {};
 	virtual void Update() {};
 	virtual void Shutdown() {};
 	GameObject* const GetGameObject(void) { return Object; };
+	CompType GetCompType() { return type; };
+protected:
+	void SetCompType(CompType t) { type = t; };
 };
