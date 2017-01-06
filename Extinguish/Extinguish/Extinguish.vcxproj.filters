@@ -73,7 +73,6 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-
       <Filter>Components</Filter>
     </ClCompile>
 	<ClCompile Include="Collider.cpp">
@@ -138,7 +137,6 @@
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
-<<<<<<< .mine
     <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -160,29 +158,9 @@
     <ClInclude Include="vec3.h">
       <Filter>CollisionLibrary\Structs</Filter>
     </ClInclude>
-=======
     <ClInclude Include="Renderer.h">
       <Filter>Components</Filter>
     </ClInclude>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
