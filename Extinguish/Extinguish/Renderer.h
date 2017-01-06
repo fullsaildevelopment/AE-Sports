@@ -6,7 +6,7 @@
 #include "Blender.h"
 #include "ResourceManager.h"
 
-class Renderer : Component
+class Renderer : public Component
 {
 private:
 	Blender blender;

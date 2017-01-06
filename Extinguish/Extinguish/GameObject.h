@@ -12,11 +12,11 @@ private:
 	//unsigned int curFrame;
 	
 	//I could have a vector of components... 
-	//std::vector<Component*> components;
+	std::vector<Component*> components;
 
 	//or I could have a pointer to each component. Not as polymorphic necessarily, and it doesn't allow me to have duplicates
 	//but maybe only one of each component will be fine for a game of our small scale
-	Renderer* renderer;
+	//Renderer* renderer;
 
 public:
 	//basic
@@ -24,12 +24,12 @@ public:
 	void Update(float deltaTime);
 
 	//misc
-	//void AddComponent(Component* component);
+	void AddComponent(Component* component);
 
 	//setters
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
-	void SetRenderer(Renderer* node) { renderer = node; }
+	//void SetRenderer(Renderer* node) { renderer = node; }
 
 	//void SetCurFrame(unsigned int num) { curFrame = num; }
 	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }
