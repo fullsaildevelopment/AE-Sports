@@ -139,6 +139,7 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionLibrary.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionLibrary.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DeviceResources.h" />
@@ -168,12 +170,14 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Includes.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="matrix4.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="vec3.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

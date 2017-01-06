@@ -1,9 +1,11 @@
 #pragma once
 #include <vector>
 #include <DirectXMath.h>
+#include "Scene.h"
 #include "Blender.h"
 #include "AnimatedRenderNode.h"
 
+class Component;
 class GameObject
 {
 private:
@@ -17,7 +19,7 @@ private:
 	//or I could have a pointer to each component. Not as polymorphic necessarily, and it doesn't allow me to have duplicates
 	//but maybe only one of each component will be fine for a game of our small scale
 	AnimatedRenderNode* renderer;
-
+	Scene* scene;
 public:
 	//basic
 	//void Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased);
@@ -30,7 +32,8 @@ public:
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	void SetRenderNode(AnimatedRenderNode* node) { renderer = node; }
-
+	vector<GameObject*>* const GetGameObjects() { return scene->GetGameObjects(); };
+	Component* GetComponent(Component::CompType type) {};
 	//void SetCurFrame(unsigned int num) { curFrame = num; }
 	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }
 	//void SetCurAnimation(unsigned int curAnimationIndex) { blender.SetCurAnimationIndex(curAnimationIndex); }

@@ -4,7 +4,7 @@
 #include <string>
 #include "Collider.h"
 
-class BoxCollider : Collider
+class BoxCollider : public Collider
 {
 private:
 	DirectX::XMFLOAT3 min;
