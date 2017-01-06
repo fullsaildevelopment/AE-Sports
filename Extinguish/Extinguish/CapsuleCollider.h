@@ -7,8 +7,10 @@
 class CapsuleCollider : Collider
 {
 private:
-	float radious;
+	float radius;
 	float length;
 public:
 	bool Update(float dt) override;
+	void setRadius(float r);
+	float GetRadius();
 };
