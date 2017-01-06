@@ -39,7 +39,7 @@ private:
 
 	//ResourceManager* resourceManager;
 	//vector<AnimatedRenderNode*> renderNodes;
-	vector<GameObject*> gameObjects;
+	vector<GameObject> gameObjects;
 	unsigned int curFrame;
 
 	float radiusChange[2] = { 1.0f / 60.0f, 1.0f / 60.0f };
@@ -79,6 +79,7 @@ public:
 
 	//misc
 	void CreateGameObject();
+	void AddGameObject(GameObject gameObject);
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }

@@ -157,7 +157,7 @@ void ResourceManager::LoadInMesh(std::string path)
 	std::vector<Vertex> verts;
 	std::vector<unsigned int> tempIndices;
 	unsigned int numVerts;
-	unsigned int numIndices;
+	unsigned int tempNumIndices;
 	unsigned int sizeOfVertex;
 
 	bin.open(path, std::ios::binary);
@@ -166,18 +166,18 @@ void ResourceManager::LoadInMesh(std::string path)
 	{
 		//Read Header
 		bin.read((char*)&numVerts, sizeof(unsigned int));
-		bin.read((char*)&numIndices, sizeof(unsigned int));
+		bin.read((char*)&tempNumIndices, sizeof(unsigned int));
 		bin.read((char*)&sizeOfVertex, sizeof(unsigned int));
 
 		//resize based off of header
 		verts.resize(numVerts);
-		tempIndices.resize(numIndices);
+		tempIndices.resize(tempNumIndices);
 
 		//read in verts
 		bin.read((char*)verts.data(), sizeOfVertex * numVerts);
 
 		//read in names
-		bin.read((char*)tempIndices.data(), sizeof(unsigned int) * numIndices);
+		bin.read((char*)tempIndices.data(), sizeof(unsigned int) * tempNumIndices);
 
 		bin.close();
 	}
@@ -206,6 +206,15 @@ void ResourceManager::LoadInMesh(std::string path)
 	device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, vertexBuffer.GetAddressOf());
 
 	vertexBuffers.push_back(vertexBuffer);
+
+	//push back vertex stride
+	vertexStrides.push_back(sizeof(Vertex));
+
+	//push back num of vertices
+	numVertices.push_back(numVerts);
+
+	//push back num of indices
+	numIndices.push_back(tempNumIndices);
 }
 
 //getters//
@@ -308,6 +317,61 @@ ID3D11ComputeShader* ResourceManager::GetComputeShader(std::string name)
 	return result;
 }
 
+ID3D11ShaderResourceView* ResourceManager::GetShaderResourceView(std::string name)
+{
+	ID3D11ShaderResourceView* result = nullptr;
+
+	int index = shaderResourceViewsTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = shaderResourceViews[index].Get();
+	}
+
+	return result;
+}
+
+int ResourceManager::GetVertexStride(std::string name)
+{
+	int result = -1;
+
+	int index = vertexBuffersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = vertexStrides[index];
+	}
+
+	return result;
+}
+
+int ResourceManager::GetNumIndices(std::string name)
+{
+	int result = -1;
+
+	int index = vertexBuffersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = numIndices[index];
+	}
+
+	return result;
+}
+
+int ResourceManager::GetNumVertices(std::string name)
+{
+	int result = -1;
+
+	int index = vertexBuffersTable.GetKey(name);
+
+	if (index != -1)
+	{
+		result = numVertices[index];
+	}
+
+	return result;
+}
 //setters//
 
 
