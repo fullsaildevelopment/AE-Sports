@@ -16,10 +16,14 @@ public:
 		mesh
 	};
 private:
-	float isTrigger;
+	bool IsTrigger;
 	std::vector<Collider*> colliding;
+	ColliderType Type;
+protected:
+	void SetType(ColliderType type) { Type = type; };
 public:
-	virtual bool Update(float dt);
-	bool isTrigger(void);
-	void SetisTrigger(bool trigger);
+	virtual bool Update(float dt) {};
+	bool isTrigger(void) { return IsTrigger; };
+	void SetTrigger(bool trigger) { IsTrigger = trigger; };
+	ColliderType GetType() { return Type; };
 };

@@ -7,7 +7,7 @@
 class SphereCollider : Collider
 {
 private:
-	float radious;
+	float radius;
 public:
 	bool Update(float dt) override;
 };
