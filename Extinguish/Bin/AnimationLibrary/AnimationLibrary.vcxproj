@@ -145,7 +145,6 @@
     <ClInclude Include="Interpolator.h" />
     <ClInclude Include="KeyFrame.h" />
     <ClInclude Include="Skeleton.h" />
-    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
@@ -156,7 +155,6 @@
     <ClCompile Include="Interpolator.cpp" />
     <ClCompile Include="KeyFrame.cpp" />
     <ClCompile Include="Skeleton.cpp" />
-    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
