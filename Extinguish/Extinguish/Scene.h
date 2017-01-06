@@ -79,7 +79,7 @@ public:
 
 	//misc
 	void CreateGameObject();
-
+	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }
 	//void SetLeftClick(bool clicked) { leftClick = clicked; }

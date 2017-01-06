@@ -5,7 +5,7 @@
 #include "Component.h"
 #include "GameObject.h"
 
-class Collider : Component
+class Collider : public Component
 {
 public:
 	enum ColliderType
