@@ -60,6 +60,8 @@ void Game::CreateScenes(DeviceResources const * devResources)
 
 	basic.AddGameObject(bear);
 
+	Renderer* snak = bear->GetComponent<Renderer>();
+
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
 }
