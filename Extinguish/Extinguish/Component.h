@@ -20,7 +20,7 @@ private:
 public:
 	//none of these necessarily need to be used, they're just there in case and for some unity
 	virtual void Init() {};
-	virtual void Update() {};
+	virtual void Update(float dt) {};
 	virtual void Shutdown() {};
 	GameObject* const GetGameObject(void) { return Object; };
 	CompType GetCompType() { return type; };

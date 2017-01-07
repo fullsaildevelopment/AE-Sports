@@ -20,7 +20,7 @@ void GameObject::Update(float deltaTime)
 
 	for (int i = 0; i < components.size(); ++i)
 	{
-		components[i]->Update();
+		components[i]->Update(deltaTime);
 	}
 }
 
@@ -34,8 +34,3 @@ vector<GameObject*>* const GameObject::GetGameObjects()
 	return scene->GetGameObjects(); 
 }
 
-Component* GameObject::GetComponent(Component::CompType type)
-{
-	Component* bob = nullptr;
-	return bob;
-}

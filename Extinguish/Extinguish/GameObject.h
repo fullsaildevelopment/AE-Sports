@@ -29,12 +29,13 @@ public:
 	//misc
 	void AddComponent(Component* component);
 
+	template <class T>
+	T* GetComponent();
 	//setters
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
-	Component* GetComponent(Component::CompType type);
 	//void SetCurFrame(unsigned int num) { curFrame = num; }
 	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }
 	//void SetCurAnimation(unsigned int curAnimationIndex) { blender.SetCurAnimationIndex(curAnimationIndex); }
@@ -42,3 +43,14 @@ public:
 	//void CreateCurAnimation(bool timeBased) { blender.MakeCurAnimation(timeBased); }
 	//void CreateNextAnimation(bool timeBased) { blender.MakeNextAnimation(timeBased); }
 };
+
+template <class T>
+T*	GameObject::GetComponent()
+{
+	for (size_t i = 0; i < components.size(); ++i)
+	{
+		T* Comp = dynamic_cast<T*>(components[i]);
+		if (Comp != nullptr) return Comp;
+	}
+	return nullptr;
+}

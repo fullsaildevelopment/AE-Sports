@@ -33,7 +33,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	blender.SetCurAnimationIndex(curAnimationIndex);
 }
 
-void Renderer::Update()
+void Renderer::Update(float dt)
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 

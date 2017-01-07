@@ -2,7 +2,7 @@
 #include "CollisionLibrary.h"
 #include <ppltasks.h>
 
-bool BoxCollider::Update(float dt)
+void BoxCollider::Update(float dt)
 {
 	vector<GameObject*> Others = *(GetGameObject()->GetGameObjects());
 
@@ -21,5 +21,4 @@ bool BoxCollider::Update(float dt)
 
 	});
 
-	return false;
 }
