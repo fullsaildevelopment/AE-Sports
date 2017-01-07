@@ -11,11 +11,11 @@ void Game::Init(DeviceResources const * devResources)
 	CreateScenes(devResources);
 }
 
-void Game::Update(InputManager& inputManager)
+void Game::Update(InputManager& inputManager, float dt)
 {
 	input = inputManager;
 
-	scenes[currentScene].Update(input);
+	scenes[currentScene].Update(input, dt);
 }
 
 void Game::Render()

@@ -73,7 +73,7 @@ private:
 public:
 	//basics
 	void Init(DeviceResources const * devResources);
-	void Update(InputManager input);
+	void Update(InputManager input, float dt);
 	void Render();
 	void Shutdown();
 
