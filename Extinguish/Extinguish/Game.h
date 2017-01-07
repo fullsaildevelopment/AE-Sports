@@ -18,7 +18,7 @@ private:
 	void CreateScenes(DeviceResources const * devResources);
 public:
 	void Init(DeviceResources const * devResources);
-	void Update(InputManager& inputManager);
+	void Update(InputManager& inputManager, float dt);
 	void Render();
 	void Shutdown();
 	void LoadScene(unsigned int index);

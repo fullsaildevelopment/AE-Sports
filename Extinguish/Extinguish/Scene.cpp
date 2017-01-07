@@ -398,11 +398,11 @@ void Scene::LoadModelsFromBinary()
 	//gameObjects.push_back(mageGameObject);
 }
 
-void Scene::Update(InputManager input)
+void Scene::Update(InputManager input, float dt)
 {
 	//delta time
-	float dt;
-	dt = 1.0f / 60.0f;
+	//float dt;
+	//dt = 1.0f / 60.0f;
 
 	//handle input
 	this->input = input;

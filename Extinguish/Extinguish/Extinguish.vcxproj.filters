@@ -90,6 +90,10 @@
     <ClCompile Include="CollisionLibrary.cpp">
       <Filter>CollisionLibrary</Filter>
     </ClCompile>
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="XTime.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -169,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="XTime.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	input.ClearKeyboard();
 }
 
-bool Application::Update()
+bool Application::Update(float dt)
 {
 	bool result = true;
 	int windowResult;
@@ -35,7 +35,7 @@ bool Application::Update()
 	}
 	else //handle game code
 	{
-		game.Update(input);
+		game.Update(input,dt);
 		game.Render();
 	}
 
