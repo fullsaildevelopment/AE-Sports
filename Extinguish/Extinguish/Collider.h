@@ -22,7 +22,7 @@ private:
 protected:
 	void SetType(ColliderType type) { Type = type; };
 public:
-	virtual bool Update(float dt) {};
+	virtual void Update(float dt) {};
 	bool isTrigger(void) { return IsTrigger; };
 	void SetTrigger(bool trigger) { IsTrigger = trigger; };
 	ColliderType GetType() { return Type; };

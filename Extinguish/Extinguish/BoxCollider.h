@@ -10,5 +10,5 @@ private:
 	DirectX::XMFLOAT3 min;
 	DirectX::XMFLOAT3 max;
 public:
-	bool Update(float dt) override;
+	void Update(float dt) override;
 };
