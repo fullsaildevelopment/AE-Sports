@@ -23,9 +23,6 @@ bool Application::Update()
 	//clear views
 	devResources.Clear();
 
-	//present backbuffer
-	devResources.Present();
-
 	//check window for messages and get input
 	windowResult = window.Update(input);
 
@@ -38,6 +35,9 @@ bool Application::Update()
 		game.Update(input);
 		game.Render();
 	}
+
+	//present backbuffer
+	devResources.Present();
 
 	return result;
 }

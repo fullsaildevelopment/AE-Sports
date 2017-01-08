@@ -38,8 +38,8 @@ public:
 	ID3D11RenderTargetView* const * GetRenderTargetViewAddress() const { return renderTargetView.GetAddressOf(); }
 	ID3D11ShaderResourceView* GetShadowMapSRV() const { return shadowMapSRV.Get(); }
 	ID3D11ShaderResourceView* const * GetShadowMapSRVAddress() const { return shadowMapSRV.GetAddressOf(); }
-	ID3D11Buffer* GetMVPConstantBuffer() const { return mvpConstantBuffer.Get(); }
-	ID3D11Buffer* GetBoneOffsetConstantBuffer() const { return boneOffsetConstantBuffer.Get(); }
+	ID3D11Buffer* GetMVPConstantBuffer() { return mvpConstantBuffer.Get(); }
+	ID3D11Buffer* GetBoneOffsetConstantBuffer() { return boneOffsetConstantBuffer.Get(); }
 	D3D11_VIEWPORT GetViewport() const { return viewPort; }
 
 };

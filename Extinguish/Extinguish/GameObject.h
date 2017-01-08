@@ -27,6 +27,9 @@ public:
 
 	//setters
 
+	//getters
+	Component* GetComponent(unsigned int index) { return components[index]; }
+
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 

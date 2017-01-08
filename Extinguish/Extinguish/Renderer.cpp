@@ -15,7 +15,7 @@ Renderer::Renderer()
 }
 
 //basic
-void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, ResourceManager* resources, DeviceResources const * deviceResources)
+void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, ResourceManager* resources, DeviceResources* deviceResources)
 {
 	indexBuffer = resources->GetIndexBuffer(mesh);
 	vertexBuffer = resources->GetVertexBuffer(mesh);
@@ -30,11 +30,15 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	devResources = deviceResources;
 
 	blender.SetAnimationSet(resources->GetAnimationSet(mesh));
-	blender.SetCurAnimationIndex(curAnimationIndex);
+	blender.Init(true, curAnimationIndex, -1);
+	//blender.SetCurAnimationIndex(curAnimationIndex);
 }
 
 void Renderer::Update()
 {
+	//update blender
+	blender.Update(1.0f / 60.0f / 2, 0);
+
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	////set shaders
@@ -49,11 +53,11 @@ void Renderer::Update()
 	devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
 	devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
 
-	std::vector<DirectX::XMFLOAT4X4>* boneOffsets = &blender.GetBoneOffsets();
-	if (!boneOffsets->empty())
+	std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender.GetBoneOffsets();
+	if (!boneOffsets.empty())
 	{
 		ID3D11Buffer* boneOffsetConstantBuffer = devResources->GetBoneOffsetConstantBuffer();
-		devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, boneOffsets, NULL, NULL);
+		devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, boneOffsets.data(), NULL, NULL);
 		devContext->VSSetConstantBuffers(1, 1, &boneOffsetConstantBuffer);
 	}
 
@@ -96,4 +100,21 @@ std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBoneOffsets()
 std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBonesWorlds()
 { 
 	return blender.GetBonesWorlds();
+}
+
+//setters
+void Renderer::SetModel(XMMATRIX& model)
+{
+	XMFLOAT4X4 tempModel;
+	XMStoreFloat4x4(&tempModel, model);
+	mvpData.model = tempModel;
+}
+
+void Renderer::SetView(XMFLOAT4X4 view)
+{ 
+	mvpData.view = view;
+}
+void Renderer::SetProjection(XMFLOAT4X4 projection)
+{ 
+	mvpData.projection = projection;
 }

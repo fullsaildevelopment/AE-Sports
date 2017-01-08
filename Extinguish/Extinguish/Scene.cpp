@@ -434,41 +434,20 @@ void Scene::Update(InputManager input)
 
 	XMStoreFloat4x4(&tempCamera, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
 
-	for (int i = 0; i < models.size(); ++i)
-	{
-		models[i].SetView(tempCamera);
-	}
+	//for (int i = 0; i < models.size(); ++i)
+	//{
+	//	models[i].SetView(tempCamera);
+	//}
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		gameObjects[i].Update(dt);
 	}
+	OutputDebugString("taco bell\n");
 
-	//this is for models where I want to click to move them
-	//gameObjects[0]->SetCurFrame(curFrame);
-	//gameObjects[3]->SetCurFrame(curFrame);
-
-	////update inverse bind poses in game objects
-	//gameObjects[0]->Update(0); // box will move from key pres
-	//gameObjects[1]->Update(dt / 2); // bear will move based on time
-	//gameObjects[2]->Update(dt / 2); //box attack will move time based
-	//gameObjects[3]->Update(0);
-
-	////update model to take in bone offset data from render node
-	//for (int i = 1; i < renderNodes.size() + 1; ++i) // plus one because plane is first
-	//{
-	//	vector<XMFLOAT4X4> boneOffsets = renderNodes[i - 1]->GetBoneOffsets();
-
-	//	models[i].SetBoneOffsetData(renderNodes[i - 1]->GetBoneOffsets());
-	//}
-
-	////update spheres to new bone positions
-	//vector<XMFLOAT4X4> bonesWorlds = renderNodes[0]->GetBonesWorlds();
-
-	//for (int i = 0; i < bonesWorlds.size(); ++i)
-	//{
-	//	models[i + models.size() - 4].SetModel(XMMatrixTranspose(XMMatrixTranslation(bonesWorlds[i]._41, bonesWorlds[i]._42, bonesWorlds[i]._43)));
-	//}
+	Renderer* renderer = dynamic_cast<Renderer*>( gameObjects[0].GetComponent(0));
+	renderer->SetView(tempCamera);
+	renderer->SetProjection(projection);
 }
 
 void Scene::HandleInput()
