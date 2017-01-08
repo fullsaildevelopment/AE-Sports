@@ -1,5 +1,18 @@
 #include "GameObject.h"
 
+GameObject::GameObject()
+{
+
+}
+
+GameObject::~GameObject()
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		delete components[i];
+	}
+}
+
 //void GameObject::Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased)
 //{
 //	//set blender's anim state
@@ -20,7 +33,7 @@ void GameObject::Update(float deltaTime)
 
 	for (int i = 0; i < components.size(); ++i)
 	{
-		components[i]->Update();
+		components[i]->Update(deltaTime);
 	}
 }
 
@@ -28,3 +41,9 @@ void GameObject::AddComponent(Component* component)
 {
 	components.push_back(component);
 }
+
+vector<GameObject*>* const GameObject::GetGameObjects() 
+{ 
+	return scene->GetGameObjects(); 
+}
+

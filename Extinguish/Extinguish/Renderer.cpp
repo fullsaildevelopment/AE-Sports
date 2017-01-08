@@ -3,16 +3,14 @@
 //constructor
 Renderer::Renderer()
 {
-	//initialize everything to -1, which means it wasn't set
-	//indexBuffer = -1;
-	//vertexBuffer = -1;
-	////vertexSlice = -1; 
-	//numOfVertices = -1;
-	//inputLayout = -1;
-	//pixelShader = -1;
-	//vertexShader = -1;
-	//computeShader = -1;
+
 }
+
+Renderer::~Renderer()
+{
+	//no need to delete anything
+}
+
 
 //basic
 void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, ResourceManager* resources, DeviceResources* deviceResources)
@@ -34,7 +32,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	//blender.SetCurAnimationIndex(curAnimationIndex);
 }
 
-void Renderer::Update()
+void Renderer::Update(float dt)
 {
 	//update blender
 	blender.Update(1.0f / 60.0f / 2, 0);

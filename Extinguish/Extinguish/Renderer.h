@@ -46,7 +46,7 @@ public:
 	~Renderer();
 
 	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, ResourceManager* resources, DeviceResources* deviceResources);
-	void Update() override;
+	void Update(float dt) override;
 
 	//getters
 	std::vector<DirectX::XMFLOAT4X4>& GetBoneOffsets();
