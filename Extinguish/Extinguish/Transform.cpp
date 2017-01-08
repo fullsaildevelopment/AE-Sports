@@ -2,6 +2,23 @@
 
 using namespace DirectX;
 
+Transform::Transform()
+{
+	bDirty = false;
+}
+
+Transform::~Transform()
+{
+
+}
+
+//basic
+void Transform::Init(XMFLOAT4X4 matrix)
+{
+	local = matrix;
+}
+
+//misc
 void Transform::Translate(DirectX::XMFLOAT3 vector)
 {
 	position.x += vector.x;
@@ -63,6 +80,8 @@ DirectX::XMFLOAT4X4 Transform::GetWorld()
 		XMMATRIX tempWorld = XMMatrixMultiply(tempLocal, tempParentWorld);
 
 		XMStoreFloat4x4(&world, tempWorld);
+
+		bDirty = false;
 	}
 	else
 	{

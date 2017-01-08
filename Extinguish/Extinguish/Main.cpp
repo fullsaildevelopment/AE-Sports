@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <windowsx.h>
-#include <vld.h>
+//#include <vld.h>
 #include "Application.h"
 #include "XTime.h"
 #include <iostream>

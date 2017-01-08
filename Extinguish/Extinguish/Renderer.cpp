@@ -108,6 +108,11 @@ void Renderer::SetModel(XMMATRIX& model)
 	mvpData.model = tempModel;
 }
 
+void Renderer::SetModel(XMFLOAT4X4& model)
+{
+	mvpData.model = model;
+}
+
 void Renderer::SetView(XMFLOAT4X4 view)
 { 
 	mvpData.view = view;

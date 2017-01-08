@@ -55,6 +55,7 @@ public:
 	//setters
 	void SetNextAnimation(unsigned int index);
 	void SetModel(XMMATRIX& model);
+	void SetModel(XMFLOAT4X4& model);
 	void SetView(XMFLOAT4X4 view);
 	void SetProjection(XMFLOAT4X4 projection);
 	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }

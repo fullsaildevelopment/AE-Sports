@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "InputManager.h"
 #include "HashString.h"
+#include "Transform.h"
 
 class Game
 {
