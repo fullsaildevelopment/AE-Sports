@@ -6,6 +6,7 @@
 #include "Renderer.h"
 
 class Component;
+class Collider;
 class Scene;
 
 class GameObject
@@ -16,7 +17,7 @@ private:
 	
 	//I could have a vector of components... 
 	std::vector<Component*> components;
-
+	string tag;
 	//or I could have a pointer to each component. Not as polymorphic necessarily, and it doesn't allow me to have duplicates
 	//but maybe only one of each component will be fine for a game of our small scale
 	//Renderer* renderer;
@@ -25,14 +26,22 @@ public:
 	//basic
 	//void Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased);
 	void Update(float deltaTime);
-
+	string GetTag() { return tag; };
 	//misc
 	void AddComponent(Component* component);
+
+	void(*OnCollisionEnter) (Collider*);
+	void(*OnCollisionStay) (Collider*);
+	void(*OnCollisionExit) (Collider*);
+
+	void(*OnTriggerEnter) (Collider*);
+	void(*OnTriggerStay) (Collider*);
+	void(*OnTriggerExit) (Collider*);
 
 	template <class T>
 	T* GetComponent();
 	//setters
-
+	void SetTag(string t) { tag = t; };
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();

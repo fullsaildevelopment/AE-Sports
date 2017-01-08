@@ -82,6 +82,11 @@ bool Transform::GetBDirty()
 	return bDirty;
 }
 
+DirectX::XMFLOAT3 Transform::GetPosition()
+{
+	return position;
+}
+
 void Transform::AddChild(Transform* tempChild)
 {
 	if (!child)
