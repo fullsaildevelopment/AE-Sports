@@ -10,7 +10,7 @@ private:
 	float radius;
 	float length;
 public:
-	bool Update(float dt) override;
+	void Update(float dt) override;
 	void setRadius(float r);
 	float GetRadius();
 };

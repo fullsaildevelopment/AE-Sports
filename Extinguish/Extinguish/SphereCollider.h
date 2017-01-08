@@ -9,5 +9,5 @@ class SphereCollider : Collider
 private:
 	float radius;
 public:
-	bool Update(float dt) override;
+	void Update(float dt) override;
 };
