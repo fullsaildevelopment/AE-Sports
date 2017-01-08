@@ -1,8 +1,9 @@
 #pragma once
 #include <DirectXMath.h>
 #include <string>
+#include "Component.h"
 
-class Transform
+class Transform : public Component
 {
 private:
 	std::string name;
@@ -22,6 +23,10 @@ private:
 	//void AddChild(TransformNode2* tempChild);
 public:
 	Transform();
+	~Transform();
+
+	//basic
+	void Init(DirectX::XMFLOAT4X4 matrix);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);

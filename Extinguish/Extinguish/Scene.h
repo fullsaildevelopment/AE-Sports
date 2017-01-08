@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Transform.h"
 
 #define NUMOFPOINTLIGHTS 1
 #define NUMOFSPOTLIGHTS 0

@@ -1,6 +1,8 @@
 #pragma once
 #include "Game.h"
 
+using namespace DirectX;
+
 void Game::Init(DeviceResources* devResources)
 {
 	//initialize resource manager
@@ -51,6 +53,23 @@ void Game::CreateScenes(DeviceResources* devResources)
 	//create menus, levels, etc.//
 
 	//create basic level
+
+	//set projection matrix
+	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
+	float fovAngleY = 70.0f * XM_PI / 180.0f;
+
+	if (aspectRatio < 1.0f)
+	{
+		fovAngleY *= 2.0f;
+	}
+
+	DirectX::XMFLOAT4X4 projection;
+	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 100.0f);
+	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
+
+	XMFLOAT4X4 identity;
+	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+
 	Scene basic;
 
 	basic.Init(devResources);
@@ -58,8 +77,11 @@ void Game::CreateScenes(DeviceResources* devResources)
 	GameObject* box = new GameObject();
 	Renderer* boxRenderer = new Renderer();
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
-	boxRenderer->SetModel(DirectX::XMMatrixIdentity());
+	boxRenderer->SetProjection(projection);
 	box->AddComponent(boxRenderer);
+	Transform* boxTransform = new Transform();
+	boxTransform->Init(identity);
+	box->AddComponent(boxTransform);
 	basic.AddGameObject(box);
 
 	GameObject* bear = new GameObject;

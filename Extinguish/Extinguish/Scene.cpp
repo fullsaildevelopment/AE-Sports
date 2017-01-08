@@ -18,17 +18,7 @@ void Scene::Init(DeviceResources const * devResources)
 
 	camPitch = camYaw = 0.0f;
 
-	//set projection matrix
-	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
-	float fovAngleY = 70.0f * XM_PI / 180.0f;
 
-	if (aspectRatio < 1.0f)
-	{
-		fovAngleY *= 2.0f;
-	}
-
-	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 100.0f);
-	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
 
 	//get resources manager singleton
 	//resourceManager = ResourceManager::GetSingleton();
@@ -449,6 +439,13 @@ void Scene::Update(InputManager input, float dt)
 		{
 			//renderer->SetModel(
 			renderer->SetView(tempCamera);
+			
+			Transform* transform = gameObjects[i]->GetComponent<Transform>();
+
+			if (transform)
+			{
+				renderer->SetModel(transform->GetWorld());
+			}
 		}
 	}
 	OutputDebugString("taco bell\n");
