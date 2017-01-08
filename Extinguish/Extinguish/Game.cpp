@@ -1,7 +1,7 @@
 #pragma once
 #include "Game.h"
 
-void Game::Init(DeviceResources const * devResources)
+void Game::Init(DeviceResources* devResources)
 {
 	//initialize resource manager
 	resourceManager.Init(devResources);
@@ -43,7 +43,7 @@ void Game::LoadScene(unsigned int index)
 //private helper functions//
 
 //this function will create a scene and add it to the scenes vector, where I can then load any scene throughout the game based on input
-void Game::CreateScenes(DeviceResources const * devResources)
+void Game::CreateScenes(DeviceResources* devResources)
 {
 	//create menus, levels, etc.//
 
@@ -52,13 +52,19 @@ void Game::CreateScenes(DeviceResources const * devResources)
 
 	basic.Init(devResources);
 
-	GameObject bear;
+	GameObject box;
+	Renderer* boxRenderer = new Renderer();
+	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
+	boxRenderer->SetModel(DirectX::XMMatrixIdentity());
+	box.AddComponent(boxRenderer);
+	basic.AddGameObject(box);
 
-	Renderer* bearRenderer = new Renderer();
-	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
-	bear.AddComponent(bearRenderer);
+	//Renderer* bearRenderer = new Renderer();
+	//bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
+	//bearRenderer->SetModel(DirectX::XMMatrixIdentity());
+	//bear.AddComponent(bearRenderer);
+	//basic.AddGameObject(bear);
 
-	basic.AddGameObject(bear);
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

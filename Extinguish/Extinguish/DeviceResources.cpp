@@ -91,8 +91,11 @@ void DeviceResources::Init(HWND hwnd)
 
 	//set up mvp constant buffer
 	CD3D11_BUFFER_DESC mvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
-	HRESULT hrtemp = device->CreateBuffer(&mvpBufferDesc, NULL, mvpConstantBuffer.GetAddressOf());
+	HRESULT mvpResult = device->CreateBuffer(&mvpBufferDesc, NULL, mvpConstantBuffer.GetAddressOf());
 
+	//set up bone offset buffer
+	CD3D11_BUFFER_DESC boneBufferDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
 }
 
 void DeviceResources::Clear()

@@ -15,9 +15,9 @@ private:
 	ResourceManager resourceManager;
 
 	//private helper functions
-	void CreateScenes(DeviceResources const * devResources);
+	void CreateScenes(DeviceResources* devResources);
 public:
-	void Init(DeviceResources const * devResources);
+	void Init(DeviceResources* devResources);
 	void Update(InputManager& inputManager);
 	void Render();
 	void Shutdown();
