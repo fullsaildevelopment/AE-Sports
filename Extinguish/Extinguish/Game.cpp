@@ -11,11 +11,11 @@ void Game::Init(DeviceResources* devResources)
 	CreateScenes(devResources);
 }
 
-void Game::Update(InputManager& inputManager)
+void Game::Update(InputManager& inputManager, float dt)
 {
 	input = inputManager;
 
-	scenes[currentScene].Update(input);
+	scenes[currentScene].Update(input, dt);
 }
 
 void Game::Render()
@@ -25,7 +25,10 @@ void Game::Render()
 
 void Game::Shutdown()
 {
-
+	for (int i = 0; i < scenes.size(); ++i)
+	{
+		scenes[i].Shutdown();
+	}
 }
 
 //if scenes are already all loaded, then this should be setscene instead
@@ -52,19 +55,23 @@ void Game::CreateScenes(DeviceResources* devResources)
 
 	basic.Init(devResources);
 
-	GameObject box;
+	GameObject* box = new GameObject();
 	Renderer* boxRenderer = new Renderer();
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
 	boxRenderer->SetModel(DirectX::XMMatrixIdentity());
-	box.AddComponent(boxRenderer);
+	box->AddComponent(boxRenderer);
 	basic.AddGameObject(box);
 
-	//Renderer* bearRenderer = new Renderer();
+	GameObject* bear = new GameObject;
+	Renderer* bearRenderer = new Renderer();
+	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
 	//bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
 	//bearRenderer->SetModel(DirectX::XMMatrixIdentity());
-	//bear.AddComponent(bearRenderer);
+	bear->AddComponent(bearRenderer);
 	//basic.AddGameObject(bear);
 
+
+	//Renderer* snak = bear->GetComponent<Renderer>();
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

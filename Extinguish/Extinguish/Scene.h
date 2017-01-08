@@ -39,7 +39,7 @@ private:
 
 	//ResourceManager* resourceManager;
 	//vector<AnimatedRenderNode*> renderNodes;
-	vector<GameObject> gameObjects;
+	vector<GameObject*> gameObjects;
 	unsigned int curFrame;
 
 	float radiusChange[2] = { 1.0f / 60.0f, 1.0f / 60.0f };
@@ -73,13 +73,15 @@ private:
 public:
 	//basics
 	void Init(DeviceResources const * devResources);
-	void Update(InputManager input);
+	void Update(InputManager input, float dt);
 	void Render();
 	void Shutdown();
 
 	//misc
 	void CreateGameObject();
-	void AddGameObject(GameObject gameObject);
+	void AddGameObject(GameObject* gameObject);
+
+	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }

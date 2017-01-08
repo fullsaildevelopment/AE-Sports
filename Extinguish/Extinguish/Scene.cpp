@@ -398,11 +398,11 @@ void Scene::LoadModelsFromBinary()
 	//gameObjects.push_back(mageGameObject);
 }
 
-void Scene::Update(InputManager input)
+void Scene::Update(InputManager input, float dt)
 {
 	//delta time
-	float dt;
-	dt = 1.0f / 60.0f;
+	//float dt;
+	//dt = 1.0f / 60.0f;
 
 	//handle input
 	this->input = input;
@@ -441,13 +441,17 @@ void Scene::Update(InputManager input)
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
-		gameObjects[i].Update(dt);
+		gameObjects[i]->Update(dt);
+
+		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
+
+		if (renderer)
+		{
+			//renderer->SetModel(
+			renderer->SetView(tempCamera);
+		}
 	}
 	OutputDebugString("taco bell\n");
-
-	Renderer* renderer = dynamic_cast<Renderer*>( gameObjects[0].GetComponent(0));
-	renderer->SetView(tempCamera);
-	renderer->SetProjection(projection);
 }
 
 void Scene::HandleInput()
@@ -590,10 +594,10 @@ void Scene::Shutdown()
 	//	delete renderNodes[i];
 	//}
 
-	//for (int i = 0; i < gameObjects.size(); ++i)
-	//{
-	//	delete gameObjects[i];
-	//}
+	for (int i = 0; i < gameObjects.size(); ++i)
+	{
+		delete gameObjects[i];
+	}
 
 	//clean up singleton resource manager
 	//resourceManager->CleanUp();
@@ -604,7 +608,7 @@ void Scene::CreateGameObject()
 
 }
 
-void Scene::AddGameObject(GameObject gameObject)
+void Scene::AddGameObject(GameObject* gameObject)
 {
 	gameObjects.push_back(gameObject);
 }
