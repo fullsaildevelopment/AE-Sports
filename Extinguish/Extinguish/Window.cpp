@@ -10,7 +10,7 @@ void Window::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 	ShowWind(nCmdShow);
 }
 
-int Window::Update(InputManager& input)
+int Window::Update(InputManager* input)
 {
 	MSG msg;
 	bool handledMsg = true;
@@ -20,25 +20,25 @@ int Window::Update(InputManager& input)
 		switch (msg.message)
 		{
 			case (WM_KEYDOWN):
-				input.SetKeyboardKey(msg.wParam, true);
+				input->SetKeyboardKey(msg.wParam, true);
 				break;
 			case (WM_KEYUP):
-				input.SetKeyboardKey(msg.wParam, false);
+				input->SetKeyboardKey(msg.wParam, false);
 				break;
 			case (WM_LBUTTONDOWN):
-				input.SetMouseButtons(-1, true);
+				input->SetMouseButtons(-1, true);
 				break;
 			case (WM_LBUTTONUP):
-				input.SetMouseButtons(-1, false);
+				input->SetMouseButtons(-1, false);
 				break;
 			case (WM_RBUTTONDOWN):
-				input.SetMouseButtons(1, true);
+				input->SetMouseButtons(1, true);
 				break;
 			case (WM_RBUTTONUP):
-				input.SetMouseButtons(1, false);
+				input->SetMouseButtons(1, false);
 				break;
 			case (WM_MOUSEMOVE):
-				input.SetMousePosition(msg.lParam);
+				input->SetMousePosition(msg.lParam);
 				break;
 			default:
 				handledMsg = false;

@@ -26,11 +26,13 @@ public:
 	~Transform();
 
 	//basic
-	void Init(DirectX::XMFLOAT4X4 matrix);
+	void Init(DirectX::XMFLOAT4X4 matrix, std::string text);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);
-	void Rotate(DirectX::XMFLOAT3 vector);
+	void RotateX(float degrees);
+	void RotateY(float degrees);
+	void RotateZ(float degrees);
 	void AddChild(Transform* tempChild);
 	void AddSibling(Transform* tempSibling);
 

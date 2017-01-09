@@ -8,11 +8,13 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	//initialize device resources
 	devResources.Init(window.GetHWND());
 
-	//initalize game
-	game.Init(&devResources);
+	//initialize buttons... This needs to be done before initializing games
+	input = new InputManager();
+	input->ClearKeyboard();
 
-	//initialize buttons
-	input.ClearKeyboard();
+	//initalize game
+	game.Init(&devResources, input);
+
 }
 
 bool Application::Update(float dt)
@@ -32,7 +34,8 @@ bool Application::Update(float dt)
 	}
 	else //handle game code
 	{
-		game.Update(input,dt);
+		//game.Update(input, dt);
+		game.Update(dt);
 		game.Render();
 	}
 
@@ -46,4 +49,5 @@ void Application::Shutdown()
 {
 	//clean up any memory application dynamically allocated
 	game.Shutdown();
+	delete input;
 }

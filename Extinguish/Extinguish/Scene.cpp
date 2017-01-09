@@ -1,7 +1,8 @@
+#include <iostream>
 #include "Scene.h"
 #include "../Bin/FBXLoader/FBXLoader.h"
 
-void Scene::Init(DeviceResources const * devResources)
+void Scene::Init(DeviceResources const * devResources, InputManager* inputRef)
 {
 	//set previousTime to current time
 	previousTime = time(nullptr);
@@ -35,11 +36,10 @@ void Scene::Init(DeviceResources const * devResources)
 	//create models in scene
 	CreateModels();
 
-	//load in models
-	LoadModelsFromBinary();
-
 	//temporary
 	curFrame = 0;
+
+	input = inputRef;
 }
 
 void Scene::CreateDevResources(DeviceResources const * devResources)
@@ -346,88 +346,37 @@ void Scene::CreateModels()
 	//}
 }
 
-void Scene::LoadModelsFromBinary()
+//void Scene::Update(InputManager input, float dt)
+void Scene::Update(float dt)
 {
-	//make a function for this later
-	//but make the animated render node and animated game objects
-	//probably should only be making animated render node, but I don't understand how to do such a thing
-	//AnimatedRenderNode* boxRenderNode = new AnimatedRenderNode();
-	//GameObject* boxGameObject = new GameObject();
-
-	//boxGameObject->Init("Box", 1, -1, false);
-	//boxGameObject->SetRenderNode(boxRenderNode);
-
-	//renderNodes.push_back(boxRenderNode);
-	//gameObjects.push_back(boxGameObject);
-
-	//AnimatedRenderNode* teddyRenderNode = new AnimatedRenderNode();
-	//GameObject* teddyGameObject = new GameObject();
-
-	//teddyGameObject->Init("Teddy", 3, -1, true);
-	//teddyGameObject->SetRenderNode(teddyRenderNode);
-
-	//renderNodes.push_back(teddyRenderNode);
-	//gameObjects.push_back(teddyGameObject);
-
-	//AnimatedRenderNode* boxAttackRenderNode = new AnimatedRenderNode();
-	//GameObject* boxAttackGameObject = new GameObject();
-
-	//boxAttackGameObject->Init("Box", 0, -1, true);
-	//boxAttackGameObject->SetRenderNode(boxAttackRenderNode);
-
-	//renderNodes.push_back(boxAttackRenderNode);
-	//gameObjects.push_back(boxAttackGameObject);
-	//
-	//AnimatedRenderNode* mageRenderNode = new AnimatedRenderNode();
-	//GameObject* mageGameObject = new GameObject();
-
-	//mageGameObject->Init("Mage", 0, -1, false);
-	//mageGameObject->SetRenderNode(mageRenderNode);
-
-	//renderNodes.push_back(mageRenderNode);
-	//gameObjects.push_back(mageGameObject);
-}
-
-void Scene::Update(InputManager input, float dt)
-{
-	//delta time
-	//float dt;
-	//dt = 1.0f / 60.0f;
-
 	//handle input
-	this->input = input;
+	//this->input = input;
 	HandleInput();
 
 	//update lights
-	if (pointLights.size())
-	{
+	//if (pointLights.size())
+	//{
 
-		pointLights[0].DoRadiusEffect(5.0f, radiusChange[0]);
-		pointLights[1].DoRadiusEffect(7.0f, radiusChange[1]);
+	//	pointLights[0].DoRadiusEffect(5.0f, radiusChange[0]);
+	//	pointLights[1].DoRadiusEffect(7.0f, radiusChange[1]);
 
-		devContext->UpdateSubresource(pointLightConstantBuffer.Get(), NULL, NULL, pointLights.data(), NULL, NULL);
+	//	devContext->UpdateSubresource(pointLightConstantBuffer.Get(), NULL, NULL, pointLights.data(), NULL, NULL);
 
-		devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
-	}
+	//	devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
+	//}
 
 	//update camera (private function)
 	UpdateCamera(dt, 5.0f, 0.75f);
 
 	//update camera constant buffer
-	cameraBufferData.cameraposW = XMFLOAT4(camera._41, camera._42, camera._43, 1);
-	devContext->UpdateSubresource(cameraConstantBuffer.Get(), NULL, NULL, &cameraBufferData, NULL, NULL);
-	devContext->PSSetConstantBuffers(2, 1, cameraConstantBuffer.GetAddressOf());
+	//cameraBufferData.cameraposW = XMFLOAT4(camera._41, camera._42, camera._43, 1);
+	//devContext->UpdateSubresource(cameraConstantBuffer.Get(), NULL, NULL, &cameraBufferData, NULL, NULL);
+	//devContext->PSSetConstantBuffers(2, 1, cameraConstantBuffer.GetAddressOf());
 
 
 	//update view on every object
 	XMFLOAT4X4 tempCamera;
-
 	XMStoreFloat4x4(&tempCamera, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
-
-	//for (int i = 0; i < models.size(); ++i)
-	//{
-	//	models[i].SetView(tempCamera);
-	//}
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
@@ -444,26 +393,28 @@ void Scene::Update(InputManager input, float dt)
 
 			if (transform)
 			{
+				//transform->Translate({ 0.001f, 0, 0 });
+				//transform->SetScale({ 1.0f, 1.0f, 1.0f });
+				//transform->SetRotation({ 45, 45, 45 });
 				renderer->SetModel(transform->GetWorld());
 			}
 		}
 	}
-	OutputDebugString("taco bell\n");
 }
 
 void Scene::HandleInput()
 {
-	if (input.GetKeyDown('O'))
+	if (input->GetKeyDown('O'))
 	{
 		++curFrame;
 	}
 
-	if (input.GetKeyDown('P'))
+	if (input->GetKeyDown('P'))
 	{
 		--curFrame;
 	}
 
-	if (input.GetKeyDown('K')) // go to idle
+	if (input->GetKeyDown('K')) // go to idle
 	{
 		//BlendInfo info;
 		//info.totalBlendTime = 2.0f;
@@ -473,7 +424,7 @@ void Scene::HandleInput()
 		//gameObjects[1]->CreateNextAnimation(true);
 	}
 
-	if (input.GetKeyDown('J')) //go to run
+	if (input->GetKeyDown('J')) //go to run
 	{
 		//BlendInfo info;
 		//info.totalBlendTime = 2.0f;
@@ -487,7 +438,7 @@ void Scene::HandleInput()
 
 void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed)
 {
-	if (input.GetKey('W'))
+	if (input->GetKeyDown('W'))
 	{
 		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpeed * dt);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -495,7 +446,7 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-	if (input.GetKey('S'))
+	if (input->GetKey('S'))
 	{
 		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpeed * dt);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -503,7 +454,7 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-	if (input.GetKey('A'))
+	if (input->GetKey('A'))
 	{
 		XMMATRIX translation = XMMatrixTranslation(-moveSpeed * dt, 0.0f, 0.0f);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -511,7 +462,7 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-	if (input.GetKey('D'))
+	if (input->GetKey('D'))
 	{
 		XMMATRIX translation = XMMatrixTranslation(moveSpeed * dt, 0.0f, 0.0f);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -519,7 +470,7 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-	if (input.GetKey('Q')) //up
+	if (input->GetKey('Q')) //up
 	{
 		XMMATRIX translation = XMMatrixTranslation(0.0f, moveSpeed * dt, 0.0f);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -527,7 +478,7 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-	if (input.GetKey('E')) //down
+	if (input->GetKey('E')) //down
 	{
 		XMMATRIX translation = XMMatrixTranslation(0.0f, -moveSpeed * dt, 0.0f);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -535,12 +486,12 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-	if (input.GetMouseX() && input.GetMouseY())
+	if (input->GetMouseX() && input->GetMouseY())
 	{
-		if (input.GetMouseButton(1) && prevMouseX && prevMouseY)
+		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
 		{
-			float dx = (float)input.GetMouseX() - (float)prevMouseX;
-			float dy = (float)input.GetMouseY() - (float)prevMouseY;
+			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
 			//store old cam position
 			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
@@ -566,8 +517,8 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 			camera._43 = camPosition.z;
 		}
 
-		prevMouseX = input.GetMouseX();
-		prevMouseY = input.GetMouseY();
+		prevMouseX = input->GetMouseX();
+		prevMouseY = input->GetMouseY();
 	}
 }
 

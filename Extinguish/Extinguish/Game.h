@@ -12,14 +12,14 @@ private:
 	unsigned int currentScene;
 	HashString scenesNamesTable;
 
-	InputManager input;
+	//InputManager* input;
 	ResourceManager resourceManager;
 
 	//private helper functions
-	void CreateScenes(DeviceResources* devResources);
+	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
 public:
-	void Init(DeviceResources* devResources);
-	void Update(InputManager& inputManager, float dt);
+	void Init(DeviceResources* devResources, InputManager* inputManager);
+	void Update(float dt);
 	void Render();
 	void Shutdown();
 	void LoadScene(unsigned int index);
