@@ -104,6 +104,27 @@ void ResourceManager::LoadInAnimationSetsAndMeshes()
 					indexBuffersTable.Insert(folderData.cFileName);
 				}
 
+				//load in basic mesh
+				filePath = resourcesPath;
+				filePath += folderData.cFileName;
+				filePath += "/*.bmesh";
+
+				hFileFind = ::FindFirstFile(filePath.c_str(), &fileData);
+
+				if (hFileFind != INVALID_HANDLE_VALUE)
+				{
+					//set file path to the mesh file
+					filePath = resourcesPath;
+					filePath += folderData.cFileName;
+					filePath += "/";
+					filePath += fileData.cFileName;
+
+					LoadInBasicMesh(filePath);
+
+					vertexBuffersTable.Insert(folderData.cFileName);
+					indexBuffersTable.Insert(folderData.cFileName);
+				}
+
 				//load in every animation
 				filePath = resourcesPath;
 				filePath += folderData.cFileName;
@@ -209,6 +230,72 @@ void ResourceManager::LoadInMesh(std::string path)
 
 	//push back vertex stride
 	vertexStrides.push_back(sizeof(Vertex));
+
+	//push back num of vertices
+	numVertices.push_back(numVerts);
+
+	//push back num of indices
+	numIndices.push_back(tempNumIndices);
+}
+
+void ResourceManager::LoadInBasicMesh(std::string path)
+{
+	std::ifstream bin;
+	std::vector<VS_BasicInput> verts;
+	std::vector<unsigned int> tempIndices;
+	unsigned int numVerts;
+	unsigned int tempNumIndices;
+	unsigned int sizeOfVertex;
+
+	bin.open(path, std::ios::binary);
+
+	if (bin.is_open())
+	{
+		//Read Header
+		bin.read((char*)&numVerts, sizeof(unsigned int));
+		bin.read((char*)&tempNumIndices, sizeof(unsigned int));
+		bin.read((char*)&sizeOfVertex, sizeof(unsigned int));
+
+		//resize based off of header
+		verts.resize(numVerts);
+		tempIndices.resize(tempNumIndices);
+
+		//read in verts
+		bin.read((char*)verts.data(), sizeOfVertex * numVerts);
+
+		//read in names
+		bin.read((char*)tempIndices.data(), sizeof(unsigned int) * tempNumIndices);
+
+		bin.close();
+	}
+
+	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
+
+	//create index buffer
+	D3D11_SUBRESOURCE_DATA indexBufferData;
+	indexBufferData.pSysMem = tempIndices.data();
+	indexBufferData.SysMemPitch = 0;
+	indexBufferData.SysMemSlicePitch = 0;
+
+	CD3D11_BUFFER_DESC indexBufferDesc(sizeof(unsigned int) * (unsigned int)tempIndices.size(), D3D11_BIND_INDEX_BUFFER);
+	device->CreateBuffer(&indexBufferDesc, &indexBufferData, indexBuffer.GetAddressOf());
+
+	indexBuffers.push_back(indexBuffer);
+
+	//create vertex buffer
+	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	vertexBufferData.SysMemPitch = 0;
+	vertexBufferData.SysMemSlicePitch = 0;
+	vertexBufferData.pSysMem = verts.data();
+
+	CD3D11_BUFFER_DESC vertexBufferDesc(sizeOfVertex * (unsigned int)verts.size(), D3D11_BIND_VERTEX_BUFFER);
+	device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, vertexBuffer.GetAddressOf());
+
+	vertexBuffers.push_back(vertexBuffer);
+
+	//push back vertex stride
+	vertexStrides.push_back(sizeof(VS_BasicInput));
 
 	//push back num of vertices
 	numVertices.push_back(numVerts);
@@ -442,7 +529,7 @@ void ResourceManager::LoadAndCreateShaders()
 					vertexShadersTable.Insert(curFileName);
 
 					//create input layout for this vertex
-					if (inputLayoutsTable.GetKey("Bind") == -1)
+					if (inputLayoutsTable.GetKey("Bind") == -1 && curFileName == "Bind")
 					{
 						Microsoft::WRL::ComPtr<ID3D11InputLayout> bindInput;
 
@@ -460,6 +547,22 @@ void ResourceManager::LoadAndCreateShaders()
 						HRESULT bindInputResult = device->CreateInputLayout(bindInputElementDescs, ARRAYSIZE(bindInputElementDescs), &shaderData[0], shaderData.size(), bindInput.GetAddressOf());
 
 						inputLayouts.push_back(bindInput);
+						inputLayoutsTable.Insert(curFileName);
+					}
+					else if (inputLayoutsTable.GetKey("Static") == -1 && curFileName == "Static")
+					{
+						Microsoft::WRL::ComPtr<ID3D11InputLayout> staticInput;
+
+						D3D11_INPUT_ELEMENT_DESC staticInputElementDescs[] =
+						{
+							{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+						};
+
+						HRESULT inputResult = device->CreateInputLayout(staticInputElementDescs, ARRAYSIZE(staticInputElementDescs), &shaderData[0], shaderData.size(), staticInput.GetAddressOf());
+
+						inputLayouts.push_back(staticInput);
 						inputLayoutsTable.Insert(curFileName);
 					}
 				}
@@ -586,20 +689,23 @@ void ResourceManager::DoFBXExporting()
 {
 #if 0
 	// load in box animations and rig
-	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Box\\Box_Idle.fbx", "Box", "Box_Idle");
-	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Box\\Box_Attack.fbx", "Box", "Box_Attack");
+	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Box\\Box_Idle.fbx", "Box", "Box_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Box\\Box_Attack.fbx", "Box", "Box_Attack");
 
-	////load in teddy animation and rig
-	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Teddy\\Teddy_Idle.fbx", "Teddy", "Teddy_Idle");
-	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack1.fbx", "Teddy", "Teddy_Attack1");
-	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack2.fbx", "Teddy", "Teddy_Attack2");
-	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Run.fbx", "Teddy", "Teddy_Run");
+	//////load in teddy animation and rig
+	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Teddy\\Teddy_Idle.fbx", "Teddy", "Teddy_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack1.fbx", "Teddy", "Teddy_Attack1");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack2.fbx", "Teddy", "Teddy_Attack2");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Run.fbx", "Teddy", "Teddy_Run");
 
-	////load in sphere
-	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Sphere.fbx", "Sphere");
+	//////load in sphere
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Sphere.fbx", "Sphere");
 
-	////load in mage with rig and animation
-	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
+	//////load in mage with rig and animation
+	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
+
+	//load in plane
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
 #endif
 }
 

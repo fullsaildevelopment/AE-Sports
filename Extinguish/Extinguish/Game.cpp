@@ -3,21 +3,22 @@
 
 using namespace DirectX;
 
-void Game::Init(DeviceResources* devResources)
+void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
 	currentScene = 0;
 
-	CreateScenes(devResources);
+	CreateScenes(devResources, inputManager);
 }
 
-void Game::Update(InputManager& inputManager, float dt)
+void Game::Update(float dt)
 {
-	input = inputManager;
+	//input = inputManager;
 
-	scenes[currentScene].Update(input, dt);
+	//scenes[currentScene].Update(*input, dt);
+	scenes[currentScene].Update(dt);
 }
 
 void Game::Render()
@@ -48,7 +49,7 @@ void Game::LoadScene(unsigned int index)
 //private helper functions//
 
 //this function will create a scene and add it to the scenes vector, where I can then load any scene throughout the game based on input
-void Game::CreateScenes(DeviceResources* devResources)
+void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 {
 	//create menus, levels, etc.//
 
@@ -72,27 +73,37 @@ void Game::CreateScenes(DeviceResources* devResources)
 
 	Scene basic;
 
-	basic.Init(devResources);
+	basic.Init(devResources, input);
 
 	GameObject* box = new GameObject();
 	Renderer* boxRenderer = new Renderer();
-	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
-	boxRenderer->SetProjection(projection);
+	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, projection, &resourceManager, devResources);
 	box->AddComponent(boxRenderer);
 	Transform* boxTransform = new Transform();
-	boxTransform->Init(identity);
+	boxTransform->Init(identity, "Box");
+	//boxTransform->SetScale({ 0.1f, 0.1f, 0.1f });
 	box->AddComponent(boxTransform);
 	basic.AddGameObject(box);
 
-	GameObject* bear = new GameObject;
+	GameObject* bear = new GameObject();
 	Renderer* bearRenderer = new Renderer();
-	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
-	//bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
-	//bearRenderer->SetModel(DirectX::XMMatrixIdentity());
+	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, projection, &resourceManager, devResources);
 	bear->AddComponent(bearRenderer);
-	//basic.AddGameObject(bear);
+	Transform* bearTransform = new Transform();
+	bearTransform->Init(identity, "Bear");
+	bearTransform->SetScale({ 0.025f, 0.025f, 0.025f });
+	bearTransform->Translate({ 5, 0, 0 });
+	bear->AddComponent(bearTransform); 
+	basic.AddGameObject(bear);
 
-
+	GameObject* plane = new GameObject();
+	Renderer* planeRenderer = new Renderer();
+	planeRenderer->Init("Plane", "Static", "Static", "", -1, projection, &resourceManager, devResources);
+	plane->AddComponent(planeRenderer);
+	Transform* planeTransform = new Transform();
+	planeTransform->Init(identity, "Plane");
+	plane->AddComponent(planeTransform);
+	basic.AddGameObject(plane);
 	//Renderer* snak = bear->GetComponent<Renderer>();
 
 	scenes.push_back(basic);

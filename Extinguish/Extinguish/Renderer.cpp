@@ -3,17 +3,18 @@
 //constructor
 Renderer::Renderer()
 {
-
+	blender = nullptr;
 }
 
 Renderer::~Renderer()
 {
 	//no need to delete anything
+	delete blender;
 }
 
 
 //basic
-void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, ResourceManager* resources, DeviceResources* deviceResources)
+void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
 {
 	indexBuffer = resources->GetIndexBuffer(mesh);
 	vertexBuffer = resources->GetVertexBuffer(mesh);
@@ -27,15 +28,23 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	numIndices = resources->GetNumIndices(mesh);
 	devResources = deviceResources;
 
-	blender.SetAnimationSet(resources->GetAnimationSet(mesh));
-	blender.Init(true, curAnimationIndex, -1);
-	//blender.SetCurAnimationIndex(curAnimationIndex);
+	SetProjection(projection);
+
+	if (curAnimationIndex != -1)
+	{
+		blender = new Blender();
+		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
+		blender->Init(true, curAnimationIndex, -1);
+	}
 }
 
 void Renderer::Update(float dt)
 {
 	//update blender
-	blender.Update(1.0f / 60.0f / 2, 0);
+	if (blender)
+	{
+		blender->Update(1.0f / 60.0f / 2, 0);
+	}
 
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
@@ -51,12 +60,15 @@ void Renderer::Update(float dt)
 	devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
 	devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
 
-	std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender.GetBoneOffsets();
-	if (!boneOffsets.empty())
+	if (blender)
 	{
-		ID3D11Buffer* boneOffsetConstantBuffer = devResources->GetBoneOffsetConstantBuffer();
-		devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, boneOffsets.data(), NULL, NULL);
-		devContext->VSSetConstantBuffers(1, 1, &boneOffsetConstantBuffer);
+		std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
+		if (!boneOffsets.empty())
+		{
+			ID3D11Buffer* boneOffsetConstantBuffer = devResources->GetBoneOffsetConstantBuffer();
+			devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, boneOffsets.data(), NULL, NULL);
+			devContext->VSSetConstantBuffers(1, 1, &boneOffsetConstantBuffer);
+		}
 	}
 
 	//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
@@ -92,12 +104,18 @@ void Renderer::Update(float dt)
 
 std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBoneOffsets()
 { 
-	return blender.GetBoneOffsets();
+	if (blender)
+	{
+		return blender->GetBoneOffsets();
+	}
 }
 
 std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBonesWorlds()
 { 
-	return blender.GetBonesWorlds();
+	if (blender)
+	{
+		return blender->GetBonesWorlds();
+	}
 }
 
 //setters
