@@ -7,7 +7,7 @@ Transform::Transform()
 	bDirty = false;
 	position = { 0, 0, 0 };
 	rotation = { 0, 0, 0 };
-	scale = { 0, 0, 0 };
+	scale = { 1, 1, 1 };
 }
 
 Transform::~Transform()
@@ -104,18 +104,21 @@ void Transform::SetScale(DirectX::XMFLOAT3 vector)
 	scale = vector;
 
 	XMMATRIX tempScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	XMMATRIX tempLocal;
-	tempLocal = XMMatrixMultiply(XMMatrixIdentity(), tempScale);
+	XMMATRIX tempLocal = XMMatrixMultiply(tempScale, XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y)), XMMatrixRotationZ(rotation.z)));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
 	XMStoreFloat4x4(&local, tempLocal);
 }
 
-void Transform::SetPosition(DirectX::XMFLOAT3 vector)
+void Transform::SetPosition(DirectX::XMFLOAT3 vector) 
 {
 	position = vector;
 
 	XMMATRIX tempPosition = XMMatrixTranslation(position.x, position.y, position.z);
 	XMMATRIX tempLocal;
-	tempLocal = XMMatrixMultiply(XMMatrixIdentity(), tempPosition);
+	tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
+	tempLocal = XMMatrixMultiply(tempLocal, tempPosition);
 	XMStoreFloat4x4(&local, tempLocal);
 }
 
@@ -126,6 +129,8 @@ void Transform::SetRotation(DirectX::XMFLOAT3 vector)
 	XMMATRIX tempLocal;
 	tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
 	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
 	XMStoreFloat4x4(&local, tempLocal);
 }
 
@@ -178,27 +183,12 @@ DirectX::XMFLOAT3 Transform::GetPosition()
 	return position;
 }
 
-void Transform::AddChild(Transform* tempChild)
+DirectX::XMFLOAT3 Transform::GetRotation()
 {
-	if (!child)
-	{
-		child = tempChild;
-	}
-	else
-	{
-		//if there's already a child, give that child a sibling
-		child->AddSibling(tempChild);
-	}
+	return rotation;
 }
 
-void Transform::AddSibling(Transform* tempSibling)
+DirectX::XMFLOAT3 Transform::GetScale()
 {
-	if (!sibling)
-	{
-		sibling = tempSibling;
-	}
-	else
-	{
-		sibling->AddSibling(tempSibling);
-	}
+	return scale;
 }

@@ -393,9 +393,6 @@ void Scene::Update(float dt)
 
 			if (transform)
 			{
-				//transform->Translate({ 0.001f, 0, 0 });
-				//transform->SetScale({ 1.0f, 1.0f, 1.0f });
-				//transform->SetRotation({ 45, 45, 45 });
 				renderer->SetModel(transform->GetWorld());
 			}
 		}
@@ -438,7 +435,7 @@ void Scene::HandleInput()
 
 void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed)
 {
-	if (input->GetKeyDown('W'))
+	if (input->GetKey('W'))
 	{
 		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpeed * dt);
 		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
@@ -486,6 +483,44 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
+#if _RELEASE
+	if (input->GetMouseX() && input->GetMouseY())
+	{
+		if (prevMouseX && prevMouseY)
+		{
+			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+
+			//store old cam position
+			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+
+			camera._41 = 0;
+			camera._42 = 0;
+			camera._43 = 0;
+
+			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
+			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
+
+			//apply rotations to camera
+			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+			tempCamera = XMMatrixMultiply(rotX, tempCamera);
+			tempCamera = XMMatrixMultiply(tempCamera, rotY);
+
+			//store new camera
+			XMStoreFloat4x4(&camera, tempCamera);
+
+			//change position to where it was earlier
+			camera._41 = camPosition.x;
+			camera._42 = camPosition.y;
+			camera._43 = camPosition.z;
+		}
+
+		prevMouseX = input->GetMouseX();
+		prevMouseY = input->GetMouseY();
+	}
+#endif
+
+#if _DEBUG
 	if (input->GetMouseX() && input->GetMouseY())
 	{
 		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
@@ -520,6 +555,8 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		prevMouseX = input->GetMouseX();
 		prevMouseY = input->GetMouseY();
 	}
+#endif
+
 }
 
 void Scene::Render()

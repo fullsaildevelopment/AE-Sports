@@ -49,4 +49,6 @@ public:
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
 	DirectX::XMFLOAT3 GetPosition();
+	DirectX::XMFLOAT3 GetRotation();
+	DirectX::XMFLOAT3 GetScale();
 };
