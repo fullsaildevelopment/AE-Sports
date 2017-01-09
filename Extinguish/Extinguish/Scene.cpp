@@ -122,34 +122,34 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	//pixelShaders.push_back(shadowPS);
 
 	//set up input layouts
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> basicInput;
+	//Microsoft::WRL::ComPtr<ID3D11InputLayout> basicInput;
 
-	D3D11_INPUT_ELEMENT_DESC basicInputElementDescs[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
+	//D3D11_INPUT_ELEMENT_DESC basicInputElementDescs[] =
+	//{
+	//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//};
 
-	//HRESULT inputResult = device->CreateInputLayout(basicInputElementDescs, ARRAYSIZE(basicInputElementDescs), basicVSBuffer->GetBufferPointer(), basicVSBuffer->GetBufferSize(), basicInput.GetAddressOf());
+	////HRESULT inputResult = device->CreateInputLayout(basicInputElementDescs, ARRAYSIZE(basicInputElementDescs), basicVSBuffer->GetBufferPointer(), basicVSBuffer->GetBufferSize(), basicInput.GetAddressOf());
 
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> bindInput;
+	//Microsoft::WRL::ComPtr<ID3D11InputLayout> bindInput;
 
-	D3D11_INPUT_ELEMENT_DESC bindInputElementDescs[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
+	//D3D11_INPUT_ELEMENT_DESC bindInputElementDescs[] =
+	//{
+	//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//	{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	//};
 
-	//HRESULT bindInputResult = device->CreateInputLayout(bindInputElementDescs, ARRAYSIZE(bindInputElementDescs), bindVSBuffer->GetBufferPointer(), bindVSBuffer->GetBufferSize(), bindInput.GetAddressOf());
+	////HRESULT bindInputResult = device->CreateInputLayout(bindInputElementDescs, ARRAYSIZE(bindInputElementDescs), bindVSBuffer->GetBufferPointer(), bindVSBuffer->GetBufferSize(), bindInput.GetAddressOf());
 
-	//inputLayouts.push_back(basicInput);
-	//inputLayouts.push_back(bindInput);
+	////inputLayouts.push_back(basicInput);
+	////inputLayouts.push_back(bindInput);
 
 	//set topology
 	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -398,11 +398,11 @@ void Scene::LoadModelsFromBinary()
 	//gameObjects.push_back(mageGameObject);
 }
 
-void Scene::Update(InputManager input)
+void Scene::Update(InputManager input, float dt)
 {
 	//delta time
-	float dt;
-	dt = 1.0f / 60.0f;
+	//float dt;
+	//dt = 1.0f / 60.0f;
 
 	//handle input
 	this->input = input;
@@ -439,6 +439,10 @@ void Scene::Update(InputManager input)
 		models[i].SetView(tempCamera);
 	}
 
+	for (int i = 0; i < gameObjects.size(); ++i)
+	{
+		gameObjects[i]->Update(dt);
+	}
 
 	//this is for models where I want to click to move them
 	//gameObjects[0]->SetCurFrame(curFrame);
@@ -590,13 +594,13 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 void Scene::Render()
 {
 	//render all models
-	for (size_t i = 0; i < models.size(); ++i)
-	{
-		//if (i == 0) //to not render the idle test box
-		{
-			models[i].Render();
-		}
-	}
+	//for (size_t i = 0; i < models.size(); ++i)
+	//{
+	//	//if (i == 0) //to not render the idle test box
+	//	{
+	//		models[i].Render();
+	//	}
+	//}
 }
 
 void Scene::Shutdown()
@@ -619,4 +623,9 @@ void Scene::Shutdown()
 void Scene::CreateGameObject()
 {
 
+}
+
+void Scene::AddGameObject(GameObject* gameObject)
+{
+	gameObjects.push_back(gameObject);
 }

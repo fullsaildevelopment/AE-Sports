@@ -7,7 +7,7 @@ class HashString
 private:
 	//static HashString* singleton;
 	std::map<std::string, unsigned int> hashTable;
-	unsigned int index = 0;
+	int index = 0;
 
 public:
 	//~HashString()
@@ -17,7 +17,8 @@ public:
 	//}
 
 	//static HashString* GetSingleton() { if (!singleton) { singleton = new HashString(); } return singleton; }
-	unsigned int GetKey(std::string key);
+	int GetKey(std::string key);
 	void Insert(std::string key) { hashTable[key] = index++; }
+	//void Insert(std::string key, unsigned int theirIndex) { hashTable[key] = theirIndex; }
 	//void CleanUp() { delete singleton; singleton = nullptr; }
 };

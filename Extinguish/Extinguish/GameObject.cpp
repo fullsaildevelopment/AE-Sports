@@ -17,4 +17,20 @@ void GameObject::Update(float deltaTime)
 	//send animatedrendernode inverse bind matrices
 	//renderNode->SetInverseBindPoses(blender.GetBoneOffsets());
 	//renderNode->SetBonesWorlds(blender.GetBonesWorlds());
+
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->Update(deltaTime);
+	}
 }
+
+void GameObject::AddComponent(Component* component)
+{
+	components.push_back(component);
+}
+
+vector<GameObject*>* const GameObject::GetGameObjects() 
+{ 
+	return scene->GetGameObjects(); 
+}
+

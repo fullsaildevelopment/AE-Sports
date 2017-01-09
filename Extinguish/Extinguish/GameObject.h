@@ -1,36 +1,50 @@
 #pragma once
 #include <vector>
 #include <DirectXMath.h>
+#include "Scene.h"
 #include "Blender.h"
-#include "AnimatedRenderNode.h"
+#include "Renderer.h"
+
+class Component;
+class Collider;
+class Scene;
 
 class GameObject
 {
 private:
-	Blender blender;
 	//AnimatedRenderNode* renderNode;
 	//unsigned int curFrame;
 	
 	//I could have a vector of components... 
-	//std::vector<Component*> components;
-
+	std::vector<Component*> components;
+	string tag;
 	//or I could have a pointer to each component. Not as polymorphic necessarily, and it doesn't allow me to have duplicates
 	//but maybe only one of each component will be fine for a game of our small scale
-	AnimatedRenderNode* renderer;
-
+	//Renderer* renderer;
+	Scene* scene;
 public:
 	//basic
 	//void Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased);
 	void Update(float deltaTime);
-
+	string GetTag() { return tag; };
 	//misc
-	//void AddComponent(Component* component);
+	void AddComponent(Component* component);
 
+	void(*OnCollisionEnter) (Collider*);
+	void(*OnCollisionStay) (Collider*);
+	void(*OnCollisionExit) (Collider*);
+
+	void(*OnTriggerEnter) (Collider*);
+	void(*OnTriggerStay) (Collider*);
+	void(*OnTriggerExit) (Collider*);
+
+	template <class T>
+	T* GetComponent();
 	//setters
-
+	void SetTag(string t) { tag = t; };
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
-	void SetRenderNode(AnimatedRenderNode* node) { renderer = node; }
-
+	//void SetRenderer(Renderer* node) { renderer = node; }
+	vector<GameObject*>* const GetGameObjects();
 	//void SetCurFrame(unsigned int num) { curFrame = num; }
 	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }
 	//void SetCurAnimation(unsigned int curAnimationIndex) { blender.SetCurAnimationIndex(curAnimationIndex); }
@@ -38,3 +52,14 @@ public:
 	//void CreateCurAnimation(bool timeBased) { blender.MakeCurAnimation(timeBased); }
 	//void CreateNextAnimation(bool timeBased) { blender.MakeNextAnimation(timeBased); }
 };
+
+template <class T>
+T*	GameObject::GetComponent()
+{
+	for (size_t i = 0; i < components.size(); ++i)
+	{
+		T* Comp = dynamic_cast<T*>(components[i]);
+		if (Comp != nullptr) return Comp;
+	}
+	return nullptr;
+}

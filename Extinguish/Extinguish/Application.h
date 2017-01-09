@@ -13,11 +13,10 @@ private:
 	Window window;
 	DeviceResources devResources;
 	Game game;
-	ResourceManager resourceManager;
 	InputManager input;
 
 public:
 	void Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
-	bool Update();
+	bool Update(float dt);
 	void Shutdown();
 };

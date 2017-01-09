@@ -2,7 +2,7 @@
 #include <DirectXMath.h>
 #include "KeyFrame.h"
 #include "Bone.h"
-#include "TransformNode.h"
+#include "FriendlyIOTransformNode.h"
 //#include "Skeleton.h"
 
 struct TransformNode
