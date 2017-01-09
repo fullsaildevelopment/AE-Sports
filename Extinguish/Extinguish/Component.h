@@ -38,5 +38,5 @@ public:
 	//Component(GameObject* o) { Object = o; };
 protected:
 	void SetCompType(CompType t) { type = t; };
-	void SetGameObject(GameObject* g) { Object = g; };
+	//void SetGameObject(GameObject* g) { Object = g; };
 };
