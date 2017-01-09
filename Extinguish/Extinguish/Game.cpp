@@ -18,19 +18,19 @@ void Game::Update(float dt)
 	//input = inputManager;
 
 	//scenes[currentScene].Update(*input, dt);
-	scenes[currentScene].Update(dt);
+	scenes[currentScene]->Update(dt);
 }
 
 void Game::Render()
 {
-	scenes[currentScene].Render();
+	scenes[currentScene]->Render();
 }
 
 void Game::Shutdown()
 {
 	for (int i = 0; i < scenes.size(); ++i)
 	{
-		scenes[i].Shutdown();
+		scenes[i]->Shutdown();
 	}
 }
 
@@ -71,30 +71,46 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
-	Scene basic;
+	Scene* basic = new Scene();
 
-	basic.Init(devResources, input);
+	basic->Init(devResources, input);
 
 	GameObject* box = new GameObject();
-	box->Init("Box", identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	box->Init("Box");
+	box->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* boxRenderer = new Renderer();
-	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, projection, &resourceManager, devResources);
+	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
 	box->AddComponent(boxRenderer);
-	basic.AddGameObject(box);
+	basic->AddGameObject(box);
 
 	GameObject* bear = new GameObject();
-	bear->Init("Bear", identity, { 5, 0, 0 }, { 0, 0, 0 }, { 0.025f, 0.025f, 0.025f });
+	bear->Init("Bear");
+	bear->InitTransform(identity, { 5, 0, 0 }, { 0, 0, 0 }, { 0.025f, 0.025f, 0.025f }, nullptr, nullptr, nullptr);
 	Renderer* bearRenderer = new Renderer();
-	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, projection, &resourceManager, devResources);
+	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	bear->AddComponent(bearRenderer);
-	basic.AddGameObject(bear);
+	PlayerController* playerController = new PlayerController();
+	bear->AddComponent(playerController);
+	basic->AddGameObject(bear);
 
 	GameObject* plane = new GameObject();
-	plane->Init("Plane", identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
+	plane->Init("Plane");
+	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* planeRenderer = new Renderer();
-	planeRenderer->Init("Plane", "Static", "Static", "", -1, projection, &resourceManager, devResources);
+	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	plane->AddComponent(planeRenderer);
-	basic.AddGameObject(plane);
+	basic->AddGameObject(plane);
+
+	GameObject* crosse = new GameObject();
+	crosse->Init("Crosse");
+	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.1f, 0.1f, 0.1f }, bear->GetTransform(), nullptr, nullptr);
+	Renderer* crosseRenderer = new Renderer();
+	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	crosse->AddComponent(crosseRenderer);
+	Crosse* crosseController = new Crosse();
+	crosse->AddComponent(crosseController);
+	basic->AddGameObject(crosse);
+	
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

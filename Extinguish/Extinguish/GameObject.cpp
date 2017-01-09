@@ -16,24 +16,30 @@ GameObject::~GameObject()
 }
 
 //basic
-void GameObject::Init(std::string name, DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale)
+void GameObject::Init(std::string name)
 {
 	this->name = name;
-
-	//set transform
-	transform->Init(localMatrix, position, rotation, scale);
 }
 
-void GameObject::Update(float deltaTime)
+void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling)
+{
+	//set transform
+	transform->Init(localMatrix, position, rotation, scale, parent, child, sibling);
+	transform->SetGameObject(this);
+}
+
+void GameObject::Update(float deltaTime, InputManager* input)
 {
 	for (int i = 0; i < components.size(); ++i)
 	{
-		components[i]->Update(deltaTime);
+		components[i]->Update(deltaTime, input);
 	}
 }
 
+//automatically sets component's game object pointer
 void GameObject::AddComponent(Component* component)
 {
+	component->SetGameObject(this);
 	components.push_back(component);
 }
 
@@ -46,5 +52,10 @@ vector<GameObject*>* const GameObject::GetGameObjects()
 Transform* GameObject::GetTransform()
 {
 	return transform;
+}
+
+std::string GameObject::GetName()
+{
+	return name;
 }
 

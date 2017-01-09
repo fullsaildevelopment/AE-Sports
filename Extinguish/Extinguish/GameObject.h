@@ -6,6 +6,7 @@
 #include "Blender.h"
 #include "Renderer.h"
 #include "Transform.h"
+#include "InputManager.h"
 
 class Component;
 class Collider;
@@ -29,8 +30,9 @@ public:
 	GameObject();
 	~GameObject();
 
-	void Init(std::string name, DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale);
-	void Update(float deltaTime);
+	void Init(std::string name);
+	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling);
+	void Update(float deltaTime, InputManager* input);
 	string GetTag() { return tag; };
 	//misc
 	void AddComponent(Component* component);
@@ -51,6 +53,7 @@ public:
 	//getters
 	Component* GetComponent(unsigned int index) { return components[index]; }
 	Transform* GetTransform();
+	std::string GetName();
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }

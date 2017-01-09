@@ -71,6 +71,9 @@ private:
 	void DoFBXExporting();
 
 public:
+	Scene();
+	~Scene();
+
 	//basics
 	void Init(DeviceResources const * devResources, InputManager* inputRef);
 	void Update(float dt);
