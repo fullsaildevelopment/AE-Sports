@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "InputManager.h"
 #include "HashString.h"
+#include "Transform.h"
 
 class Game
 {
@@ -11,14 +12,14 @@ private:
 	unsigned int currentScene;
 	HashString scenesNamesTable;
 
-	InputManager input;
+	//InputManager* input;
 	ResourceManager resourceManager;
 
 	//private helper functions
-	void CreateScenes(DeviceResources const * devResources);
+	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
 public:
-	void Init(DeviceResources const * devResources);
-	void Update(InputManager& inputManager, float dt);
+	void Init(DeviceResources* devResources, InputManager* inputManager);
+	void Update(float dt);
 	void Render();
 	void Shutdown();
 	void LoadScene(unsigned int index);

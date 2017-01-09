@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include <iostream>
 
 void InputManager::ClearKeyboard()
 {
@@ -15,7 +16,7 @@ bool InputManager::GetKey(unsigned int button)
 {
 	bool result = false;
 
-	if (keyboard[button] == KeyState::DOWN || keyboard[button] == KeyState::UP)
+	if (keyboard[button] == KeyState::DOWN || keyboard[button] == KeyState::HELD)
 	{
 		result = true;
 	}
@@ -30,6 +31,7 @@ bool InputManager::GetKeyDown(unsigned int button)
 	if (keyboard[button] == KeyState::DOWN)
 	{
 		result = true;
+		std::cout << "down" << std::endl;
 	}
 
 	return result;
@@ -92,6 +94,8 @@ void InputManager::SetKeyboardKey(unsigned int index, bool toggle)
 	{
 		keyboard[index] = KeyState::NOTPRESSED;
 	}
+
+	//std::cout << keyboard[index] << " " << toggle << std::endl;
 }
 
 //-1 is left. 0 is middle. 1 is right.

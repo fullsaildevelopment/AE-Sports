@@ -50,6 +50,7 @@ private:
 	Animation LoadInAnimation(std::string path);
 	void LoadAndCreateShaders();
 	void LoadInMesh(std::string path);
+	void LoadInBasicMesh(std::string path);
 	void LoadInAnimationSetsAndMeshes();
 	void DoFBXExporting();
 	void CreateInputLayouts();

@@ -7,10 +7,10 @@ class InputManager
 private:
 	enum KeyState
 	{
-		DOWN = 0, 
+		NOTPRESSED,
+		DOWN,
 		UP,
 		HELD,
-		NOTPRESSED,
 	};
 
 	KeyState keyboard[256];
