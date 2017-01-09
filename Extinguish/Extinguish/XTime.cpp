@@ -74,9 +74,9 @@ void XTime::Signal()
 		localStack.elapsedSignals = 0;
 	}// done
 }
-double XTime::Delta()
+float XTime::Delta()
 {
-	return localStack.deltaTime;
+	return (float)localStack.deltaTime;
 }
 double XTime::SmoothDelta()
 {
