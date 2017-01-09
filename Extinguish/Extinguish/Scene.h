@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Transform.h"
 
 #define NUMOFPOINTLIGHTS 1
 #define NUMOFSPOTLIGHTS 0
@@ -27,7 +28,7 @@ private:
 	float camPitch;
 
 	//input data
-	InputManager input;
+	InputManager* input;
 	int prevMouseX, prevMouseY;
 
 	time_t previousTime; //deltaTime
@@ -66,14 +67,13 @@ private:
 	void CreateLights();
 	void UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed);
 	void CreateModels();
-	void LoadModelsFromBinary();
 	void HandleInput();
 	void DoFBXExporting();
 
 public:
 	//basics
-	void Init(DeviceResources const * devResources);
-	void Update(InputManager input, float dt);
+	void Init(DeviceResources const * devResources, InputManager* inputRef);
+	void Update(float dt);
 	void Render();
 	void Shutdown();
 

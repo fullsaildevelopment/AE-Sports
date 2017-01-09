@@ -24,6 +24,8 @@ private:
 	Scene* scene;
 public:
 	//basic
+	GameObject();
+	~GameObject();
 	//void Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased);
 	void Update(float deltaTime);
 	string GetTag() { return tag; };
@@ -42,6 +44,9 @@ public:
 	T* GetComponent();
 	//setters
 	void SetTag(string t) { tag = t; };
+	//getters
+	Component* GetComponent(unsigned int index) { return components[index]; }
+
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();

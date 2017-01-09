@@ -13,7 +13,7 @@ private:
 	Window window;
 	DeviceResources devResources;
 	Game game;
-	InputManager input;
+	InputManager* input;
 
 public:
 	void Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);

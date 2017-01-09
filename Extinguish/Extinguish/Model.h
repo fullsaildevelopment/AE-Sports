@@ -2,6 +2,10 @@
 #include "../ShaderStructures/ShaderStructures.h"
 #include "DeviceResources.h"
 
+// THIS CLASS HAS DEPRECATED //
+// THIS WAS THE RENDERER BACK IN RTA //
+// I USE IT FOR REFERENCE WHEN I'M WRITING MY RENDERER //
+
 class Model
 {
 private:

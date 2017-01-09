@@ -1,5 +1,18 @@
 #include "GameObject.h"
 
+GameObject::GameObject()
+{
+
+}
+
+GameObject::~GameObject()
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		delete components[i];
+	}
+}
+
 //void GameObject::Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased)
 //{
 //	//set blender's anim state
