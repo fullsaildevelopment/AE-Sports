@@ -1,0 +1,429 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\TWS Network\RakNet\AutopatcherPatchContext.h" />
+    <ClInclude Include="..\TWS Network\RakNet\AutopatcherRepositoryInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Base64Encoder.h" />
+    <ClInclude Include="..\TWS Network\RakNet\BitStream.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CCRakNetSlidingWindow.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CCRakNetUDT.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CheckSum.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CloudClient.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CloudCommon.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CloudServer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\CommandParserInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ConnectionGraph2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ConsoleServer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DataCompressor.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DirectoryDeltaTransfer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DR_SHA1.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_BinarySearchTree.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_BPlusTree.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_BytePool.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_ByteQueue.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Hash.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Heap.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_HuffmanEncodingTree.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_HuffmanEncodingTreeFactory.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_HuffmanEncodingTreeNode.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_LinkedList.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_List.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Map.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_MemoryPool.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Multilist.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_OrderedChannelHeap.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_OrderedList.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Queue.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_QueueLinkedList.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_RangeList.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Table.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_ThreadsafeAllocatingQueue.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_Tree.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DS_WeightedGraph.h" />
+    <ClInclude Include="..\TWS Network\RakNet\DynDNS.h" />
+    <ClInclude Include="..\TWS Network\RakNet\EmailSender.h" />
+    <ClInclude Include="..\TWS Network\RakNet\EmptyHeader.h" />
+    <ClInclude Include="..\TWS Network\RakNet\EpochTimeToString.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Export.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FileList.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FileListNodeContext.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FileListTransfer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FileListTransferCBInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FileOperations.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FormatString.h" />
+    <ClInclude Include="..\TWS Network\RakNet\FullyConnectedMesh2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Getche.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Gets.h" />
+    <ClInclude Include="..\TWS Network\RakNet\GetTime.h" />
+    <ClInclude Include="..\TWS Network\RakNet\gettimeofday.h" />
+    <ClInclude Include="..\TWS Network\RakNet\GridSectorizer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\HTTPConnection.h" />
+    <ClInclude Include="..\TWS Network\RakNet\HTTPConnection2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\IncrementalReadInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\InternalPacket.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Itoa.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Kbhit.h" />
+    <ClInclude Include="..\TWS Network\RakNet\LinuxStrings.h" />
+    <ClInclude Include="..\TWS Network\RakNet\LocklessTypes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\LogCommandParser.h" />
+    <ClInclude Include="..\TWS Network\RakNet\MessageFilter.h" />
+    <ClInclude Include="..\TWS Network\RakNet\MessageIdentifiers.h" />
+    <ClInclude Include="..\TWS Network\RakNet\MTUSize.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NativeFeatureIncludes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NativeFeatureIncludesOverrides.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NativeTypes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NatPunchthroughClient.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NatPunchthroughServer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NatTypeDetectionClient.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NatTypeDetectionCommon.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NatTypeDetectionServer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NetworkIDManager.h" />
+    <ClInclude Include="..\TWS Network\RakNet\NetworkIDObject.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketConsoleLogger.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketFileLogger.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketizedTCP.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketLogger.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketOutputWindowLogger.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketPool.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PacketPriority.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PluginInterface2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PS3Includes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\PS4Includes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Rackspace.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakAlloca.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakAssert.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakMemoryOverride.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetCommandParser.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetDefines.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetDefinesOverrides.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetSmartPtr.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetSocket.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetSocket2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetStatistics.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetTime.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetTransport2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetTypes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakNetVersion.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakPeer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakPeerInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakSleep.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakString.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakThread.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RakWString.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Rand.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RandSync.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ReadyEvent.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RefCountedObj.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RelayPlugin.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ReliabilityLayer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ReplicaEnums.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ReplicaManager3.h" />
+    <ClInclude Include="..\TWS Network\RakNet\Router2.h" />
+    <ClInclude Include="..\TWS Network\RakNet\RPC4Plugin.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SecureHandshake.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SendToThread.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SignaledEvent.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SimpleMutex.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SimpleTCPServer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SingleProducerConsumer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SocketDefines.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SocketIncludes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SocketLayer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\StatisticsHistory.h" />
+    <ClInclude Include="..\TWS Network\RakNet\StringCompressor.h" />
+    <ClInclude Include="..\TWS Network\RakNet\StringTable.h" />
+    <ClInclude Include="..\TWS Network\RakNet\SuperFastHash.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TableSerializer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TCPInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TeamBalancer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TeamManager.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TelnetTransport.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ThreadPool.h" />
+    <ClInclude Include="..\TWS Network\RakNet\ThreadsafePacketLogger.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TransportInterface.h" />
+    <ClInclude Include="..\TWS Network\RakNet\TwoWayAuthentication.h" />
+    <ClInclude Include="..\TWS Network\RakNet\UDPForwarder.h" />
+    <ClInclude Include="..\TWS Network\RakNet\UDPProxyClient.h" />
+    <ClInclude Include="..\TWS Network\RakNet\UDPProxyCommon.h" />
+    <ClInclude Include="..\TWS Network\RakNet\UDPProxyCoordinator.h" />
+    <ClInclude Include="..\TWS Network\RakNet\UDPProxyServer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\VariableDeltaSerializer.h" />
+    <ClInclude Include="..\TWS Network\RakNet\VariableListDeltaTracker.h" />
+    <ClInclude Include="..\TWS Network\RakNet\VariadicSQLParser.h" />
+    <ClInclude Include="..\TWS Network\RakNet\VitaIncludes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\WindowsIncludes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\WSAStartupSingleton.h" />
+    <ClInclude Include="..\TWS Network\RakNet\XBox360Includes.h" />
+    <ClInclude Include="..\TWS Network\RakNet\_FindFirst.h" />
+    <ClInclude Include="Server.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\TWS Network\RakNet\Base64Encoder.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\BitStream.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CCRakNetSlidingWindow.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CCRakNetUDT.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CheckSum.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CloudClient.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CloudCommon.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CloudServer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\CommandParserInterface.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\ConnectionGraph2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\ConsoleServer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DataCompressor.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DirectoryDeltaTransfer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DR_SHA1.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DS_BytePool.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DS_ByteQueue.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DS_HuffmanEncodingTree.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DS_Table.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\DynDNS.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\EmailSender.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\EpochTimeToString.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\FileList.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\FileListTransfer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\FileOperations.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\FormatString.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\FullyConnectedMesh2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\Getche.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\Gets.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\GetTime.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\gettimeofday.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\GridSectorizer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\HTTPConnection.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\HTTPConnection2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\IncrementalReadInterface.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\Itoa.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\LinuxStrings.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\LocklessTypes.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\LogCommandParser.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\MessageFilter.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NatPunchthroughClient.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NatPunchthroughServer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NatTypeDetectionClient.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NatTypeDetectionCommon.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NatTypeDetectionServer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NetworkIDManager.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\NetworkIDObject.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PacketConsoleLogger.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PacketFileLogger.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PacketizedTCP.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PacketLogger.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PacketOutputWindowLogger.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PluginInterface2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\PS4Includes.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\Rackspace.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakMemoryOverride.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetCommandParser.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_360_720.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_Berkley.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_Berkley_NativeClient.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_NativeClient.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_PS3_PS4.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_PS4.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_Vita.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_WindowsStore8.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_Windows_Linux.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetSocket2_Windows_Linux_360.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetStatistics.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetTransport2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakNetTypes.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakPeer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakSleep.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakString.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakThread.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RakWString.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\Rand.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RandSync.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\ReadyEvent.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RelayPlugin.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\ReliabilityLayer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\ReplicaManager3.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\Router2.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\RPC4Plugin.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\SecureHandshake.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\SendToThread.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\SignaledEvent.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\SimpleMutex.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\SocketLayer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\StatisticsHistory.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\StringCompressor.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\StringTable.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\SuperFastHash.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\TableSerializer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\TCPInterface.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\TeamBalancer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\TeamManager.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\TelnetTransport.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\ThreadsafePacketLogger.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\TwoWayAuthentication.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\UDPForwarder.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\UDPProxyClient.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\UDPProxyCoordinator.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\UDPProxyServer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\VariableDeltaSerializer.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\VariableListDeltaTracker.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\VariadicSQLParser.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\VitaIncludes.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\WSAStartupSingleton.cpp" />
+    <ClCompile Include="..\TWS Network\RakNet\_FindFirst.cpp" />
+    <ClCompile Include="Server.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\TWS Network\RakNet\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\TWS Network\RakNet\RakNet.vcproj" />
+    <None Include="..\TWS Network\RakNet\RakNet_vc8.vcproj" />
+    <None Include="..\TWS Network\RakNet\RakNet_vc9.vcproj" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{136F1F20-69B6-450B-AC39-59A84A160A36}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Server</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_RAKNET_DLL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SERVERDLL_EXPORTS;_DEBUG;_WINDOWS;_USRDLL;SERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(SolutionDir)\TWS Network\RakNet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_RAKNET_DLL;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;SERVERDLL_EXPORTS;NDEBUG;_WINDOWS;_USRDLL;SERVER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(SolutionDir)\TWS Network\RakNet;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
