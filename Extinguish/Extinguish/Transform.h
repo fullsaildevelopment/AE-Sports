@@ -6,7 +6,7 @@
 class Transform : public Component
 {
 private:
-	std::string name;
+	//std::string name;
 	DirectX::XMFLOAT4X4 world;
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 rotation;
@@ -27,7 +27,7 @@ public:
 	~Transform();
 
 	//basic
-	void Init(DirectX::XMFLOAT4X4 matrix, std::string text);
+	void Init(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, DirectX::XMFLOAT3 tempScale);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);
@@ -50,4 +50,6 @@ public:
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
 	DirectX::XMFLOAT3 GetPosition();
+	DirectX::XMFLOAT3 GetRotation();
+	DirectX::XMFLOAT3 GetScale();
 };
