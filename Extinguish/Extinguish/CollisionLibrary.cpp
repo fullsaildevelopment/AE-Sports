@@ -212,3 +212,30 @@ bool CapsuleToSphere(const Capsule& capsule, const Sphere& sphere)
 		return false;
 	return true;
 }
+
+bool AABBToCapsule(const AABB& box, const Capsule& cap)
+{
+	Sphere sphere;
+	sphere.m_Center = (box.min + box.max) * 0.5f;
+	vec3f cp = cap.m_Segment.m_End - cap.m_Segment.m_Start;
+	float ratio = dot_product(cp, sphere.m_Center - cap.m_Segment.m_Start) / dot_product(cp, cp);
+	cp = cap.m_Segment.m_Start + cp * ratio;
+	vec3f cpb = cp;
+	if (cp.x < box.min.x)
+		cpb.x = box.min.x;
+	if (cp.y < box.min.y)
+		cpb.y = box.min.y;
+	if (cp.z < box.min.z)
+		cpb.z = box.min.z;
+	if (cp.x > box.max.x)
+		cpb.x = box.max.x;
+	if (cp.y > box.max.y)
+		cpb.y = box.max.y;
+	if (cp.z > box.max.z)
+		cpb.z = box.max.z;
+
+	if (dot_product(cp - cpb, cp - cpb) > powf(cap.m_Radius, 2))
+		return false;
+	return true;
+
+}

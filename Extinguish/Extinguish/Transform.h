@@ -23,6 +23,7 @@ private:
 	//void AddChild(TransformNode2* tempChild);
 public:
 	Transform();
+	Transform(GameObject* o);
 	~Transform();
 
 	//basic

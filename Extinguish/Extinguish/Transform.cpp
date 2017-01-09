@@ -2,7 +2,15 @@
 #include <iostream>
 using namespace DirectX;
 using namespace std;
-Transform::Transform()
+Transform::Transform() : Component(nullptr)
+{
+	bDirty = false;
+	position = { 0, 0, 0 };
+	rotation = { 0, 0, 0 };
+	scale = { 0, 0, 0 };
+}
+
+Transform::Transform(GameObject* o) : Component(o)
 {
 	bDirty = false;
 	position = { 0, 0, 0 };
@@ -176,29 +184,4 @@ bool Transform::GetBDirty()
 DirectX::XMFLOAT3 Transform::GetPosition()
 {
 	return position;
-}
-
-void Transform::AddChild(Transform* tempChild)
-{
-	if (!child)
-	{
-		child = tempChild;
-	}
-	else
-	{
-		//if there's already a child, give that child a sibling
-		child->AddSibling(tempChild);
-	}
-}
-
-void Transform::AddSibling(Transform* tempSibling)
-{
-	if (!sibling)
-	{
-		sibling = tempSibling;
-	}
-	else
-	{
-		sibling->AddSibling(tempSibling);
-	}
 }
