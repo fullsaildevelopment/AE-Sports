@@ -2,6 +2,18 @@
 #include "Scene.h"
 #include "../Bin/FBXLoader/FBXLoader.h"
 
+Scene::Scene()
+{
+
+}
+
+Scene::~Scene()
+{
+
+}
+
+//basic//
+
 void Scene::Init(DeviceResources const * devResources, InputManager* inputRef)
 {
 	//set previousTime to current time
@@ -380,7 +392,7 @@ void Scene::Update(float dt)
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
-		gameObjects[i]->Update(dt);
+		gameObjects[i]->Update(dt, input);
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
 
@@ -393,7 +405,9 @@ void Scene::Update(float dt)
 
 			if (transform)
 			{
-				renderer->SetModel(transform->GetWorld());
+				XMFLOAT4X4 world;
+				XMStoreFloat4x4(&world,XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
+				renderer->SetModel(world);
 			}
 		}
 	}
@@ -483,43 +497,6 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		XMStoreFloat4x4(&camera, newCamera);
 	}
 
-#if _RELEASE
-	if (input->GetMouseX() && input->GetMouseY())
-	{
-		if (prevMouseX && prevMouseY)
-		{
-			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-
-			//store old cam position
-			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
-
-			camera._41 = 0;
-			camera._42 = 0;
-			camera._43 = 0;
-
-			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-
-			//apply rotations to camera
-			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-
-			//store new camera
-			XMStoreFloat4x4(&camera, tempCamera);
-
-			//change position to where it was earlier
-			camera._41 = camPosition.x;
-			camera._42 = camPosition.y;
-			camera._43 = camPosition.z;
-		}
-
-		prevMouseX = input->GetMouseX();
-		prevMouseY = input->GetMouseY();
-	}
-#endif
-
 #if _DEBUG
 	if (input->GetMouseX() && input->GetMouseY())
 	{
@@ -555,8 +532,42 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 		prevMouseX = input->GetMouseX();
 		prevMouseY = input->GetMouseY();
 	}
-#endif
+#else
+	if (input->GetMouseX() && input->GetMouseY())
+	{
+		if (prevMouseX && prevMouseY)
+		{
+			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
+			//store old cam position
+			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+
+			camera._41 = 0;
+			camera._42 = 0;
+			camera._43 = 0;
+
+			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
+			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
+
+			//apply rotations to camera
+			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+			tempCamera = XMMatrixMultiply(rotX, tempCamera);
+			tempCamera = XMMatrixMultiply(tempCamera, rotY);
+
+			//store new camera
+			XMStoreFloat4x4(&camera, tempCamera);
+
+			//change position to where it was earlier
+			camera._41 = camPosition.x;
+			camera._42 = camPosition.y;
+			camera._43 = camPosition.z;
+		}
+
+		prevMouseX = input->GetMouseX();
+		prevMouseY = input->GetMouseY();
+	}
+#endif
 }
 
 void Scene::Render()

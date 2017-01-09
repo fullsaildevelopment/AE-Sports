@@ -145,8 +145,14 @@ void ResourceManager::LoadInAnimationSetsAndMeshes()
 						//Load in multiple animations
 						animation = LoadInAnimation(filePath);
 
+						//get animation name by itself
+						string animName = fileData.cFileName;
+
+						animName.erase(0, animName.find('_') + 1);
+						animName.erase(animName.find(".anim"), 5);
+
 						//initialize animation set
-						animationSet.AddAnimation(animation);
+						animationSet.AddAnimation(animation, animName);
 					} while (::FindNextFile(hFileFind, &fileData));
 
 					FindClose(hFileFind);
@@ -687,7 +693,7 @@ Animation ResourceManager::LoadInAnimation(std::string path)
 
 void ResourceManager::DoFBXExporting()
 {
-#if 0
+#if 1
 	// load in box animations and rig
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Box\\Box_Idle.fbx", "Box", "Box_Idle");
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Box\\Box_Attack.fbx", "Box", "Box_Attack");
@@ -705,7 +711,10 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
 
 	//load in plane
-	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
+
+	//load in crosse
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Crosse\\Crosse.fbx", "Crosse");
 #endif
 }
 
