@@ -8,9 +8,6 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	//initialize device resources
 	devResources.Init(window.GetHWND());
 
-	//initialize resource manager
-	resourceManager.Init(&devResources);
-
 	//initalize game
 	game.Init(&devResources);
 
@@ -18,7 +15,7 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	input.ClearKeyboard();
 }
 
-bool Application::Update()
+bool Application::Update(float dt)
 {
 	bool result = true;
 	int windowResult;
@@ -38,7 +35,7 @@ bool Application::Update()
 	}
 	else //handle game code
 	{
-		game.Update(input);
+		game.Update(input,dt);
 		game.Render();
 	}
 

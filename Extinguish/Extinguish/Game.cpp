@@ -3,25 +3,24 @@
 
 void Game::Init(DeviceResources const * devResources)
 {
+	//initialize resource manager
+	resourceManager.Init(devResources);
+
+	currentScene = 0;
+
 	CreateScenes(devResources);
 }
 
-void Game::Update(InputManager& inputManager)
+void Game::Update(InputManager& inputManager, float dt)
 {
 	input = inputManager;
 
-	for (int i = 0; i < scenes.size(); ++i)
-	{
-		scenes[i].Update(input);
-	}
+	scenes[currentScene].Update(input, dt);
 }
 
 void Game::Render()
 {
-	for (int i = 0; i < scenes.size(); ++i)
-	{
-		scenes[i].Render();
-	}
+	scenes[currentScene].Render();
 }
 
 void Game::Shutdown()
@@ -29,6 +28,7 @@ void Game::Shutdown()
 
 }
 
+//if scenes are already all loaded, then this should be setscene instead
 void Game::LoadScene(unsigned int index)
 {
 
@@ -52,9 +52,15 @@ void Game::CreateScenes(DeviceResources const * devResources)
 
 	basic.Init(devResources);
 
-	GameObject bear;
-	AnimatedRenderNode bearRenderer;
-	//bearRenderer.Init
+	GameObject* bear = new GameObject;
+
+	Renderer* bearRenderer = new Renderer();
+	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, &resourceManager, devResources);
+	bear->AddComponent(bearRenderer);
+
+	basic.AddGameObject(bear);
+
+	Renderer* snak = bear->GetComponent<Renderer>();
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

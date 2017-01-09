@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "TransformNode.h"
+#include "FriendlyIOTransformNode.h"
 
 class Skeleton
 {

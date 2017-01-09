@@ -89,6 +89,10 @@ void DeviceResources::Init(HWND hwnd)
 
 	deviceContext->RSSetViewports(1, &viewPort);
 
+	//set up mvp constant buffer
+	CD3D11_BUFFER_DESC mvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	HRESULT hrtemp = device->CreateBuffer(&mvpBufferDesc, NULL, mvpConstantBuffer.GetAddressOf());
+
 }
 
 void DeviceResources::Clear()

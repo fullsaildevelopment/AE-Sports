@@ -30,9 +30,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedRenderNode.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -75,14 +72,33 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="CapsuleCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionLibrary.cpp">
+      <Filter>CollisionLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="XTime.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
     <ClCompile Include="AI.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedRenderNode.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -128,6 +144,42 @@
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="CapsuleCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionLibrary.h">
+      <Filter>CollisionLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix4.h">
+      <Filter>CollisionLibrary\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="vec3.h">
+      <Filter>CollisionLibrary\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix3.h">
+      <Filter>CollisionLibrary\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="vec4.h">
+      <Filter>CollisionLibrary\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="XTime.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
     <ClInclude Include="AI.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -163,6 +215,15 @@
     </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{64aa26ad-6bc2-463e-ad16-882ae7af435e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Colliders">
+      <UniqueIdentifier>{746b4f18-15e1-4ad0-b149-849ec1587090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CollisionLibrary">
+      <UniqueIdentifier>{2d81b696-b2fb-4afc-8433-eba8bc4e16cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CollisionLibrary\Structs">
+      <UniqueIdentifier>{fbb3e4ed-d3ff-40b8-88a1-d614b8e9c3b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

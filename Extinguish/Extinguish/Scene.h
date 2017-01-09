@@ -6,7 +6,7 @@
 #include "SpotLight.h"
 #include "DeviceResources.h"
 #include "ResourceManager.h"
-#include "AnimatedRenderNode.h"
+#include "Renderer.h"
 #include "GameObject.h"
 #include "InputManager.h"
 
@@ -73,12 +73,15 @@ private:
 public:
 	//basics
 	void Init(DeviceResources const * devResources);
-	void Update(InputManager input);
+	void Update(InputManager input, float dt);
 	void Render();
 	void Shutdown();
 
 	//misc
 	void CreateGameObject();
+	void AddGameObject(GameObject* gameObject);
+
+	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }

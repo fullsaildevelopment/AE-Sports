@@ -141,11 +141,11 @@
     <ClInclude Include="Blender.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="ForFBX.h" />
+    <ClInclude Include="FriendlyIOTransformNode.h" />
     <ClInclude Include="HashString.h" />
     <ClInclude Include="Interpolator.h" />
     <ClInclude Include="KeyFrame.h" />
     <ClInclude Include="Skeleton.h" />
-    <ClInclude Include="TransformNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
@@ -156,7 +156,6 @@
     <ClCompile Include="Interpolator.cpp" />
     <ClCompile Include="KeyFrame.cpp" />
     <ClCompile Include="Skeleton.cpp" />
-    <ClCompile Include="TransformNode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
