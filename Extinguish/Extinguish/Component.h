@@ -31,10 +31,12 @@ public:
 	//getters
 	GameObject* const GetGameObject(void) { return Object; };
 	CompType GetCompType() { return type; };
+	Component(GameObject* o) { Object = o; };
 
 	//setters
 	void SetGameObject(GameObject* object) { Object = object; }
 	//Component(GameObject* o) { Object = o; };
 protected:
 	void SetCompType(CompType t) { type = t; };
+	void SetGameObject(GameObject* g) { Object = g; };
 };
