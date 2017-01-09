@@ -7,7 +7,7 @@ Transform::Transform() : Component(nullptr)
 	bDirty = false;
 	position = { 0, 0, 0 };
 	rotation = { 0, 0, 0 };
-	scale = { 0, 0, 0 };
+	scale = { 1, 1, 1 };
 }
 
 Transform::Transform(GameObject* o) : Component(o)
@@ -24,10 +24,12 @@ Transform::~Transform()
 }
 
 //basic
-void Transform::Init(XMFLOAT4X4 matrix, string txt)
+void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, DirectX::XMFLOAT3 tempScale)
 {
-	local = matrix;
-	name = txt;
+	local = localMatrix;
+	SetPosition(pos);
+	SetRotation(rot);
+	SetScale(tempScale);
 }
 
 //misc
@@ -112,18 +114,21 @@ void Transform::SetScale(DirectX::XMFLOAT3 vector)
 	scale = vector;
 
 	XMMATRIX tempScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	XMMATRIX tempLocal;
-	tempLocal = XMMatrixMultiply(XMMatrixIdentity(), tempScale);
+	XMMATRIX tempLocal = XMMatrixMultiply(tempScale, XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y)), XMMatrixRotationZ(rotation.z)));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
 	XMStoreFloat4x4(&local, tempLocal);
 }
 
-void Transform::SetPosition(DirectX::XMFLOAT3 vector)
+void Transform::SetPosition(DirectX::XMFLOAT3 vector) 
 {
 	position = vector;
 
 	XMMATRIX tempPosition = XMMatrixTranslation(position.x, position.y, position.z);
 	XMMATRIX tempLocal;
-	tempLocal = XMMatrixMultiply(XMMatrixIdentity(), tempPosition);
+	tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
+	tempLocal = XMMatrixMultiply(tempLocal, tempPosition);
 	XMStoreFloat4x4(&local, tempLocal);
 }
 
@@ -134,6 +139,8 @@ void Transform::SetRotation(DirectX::XMFLOAT3 vector)
 	XMMATRIX tempLocal;
 	tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
 	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
+	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
 	XMStoreFloat4x4(&local, tempLocal);
 }
 
@@ -184,4 +191,14 @@ bool Transform::GetBDirty()
 DirectX::XMFLOAT3 Transform::GetPosition()
 {
 	return position;
+}
+
+DirectX::XMFLOAT3 Transform::GetRotation()
+{
+	return rotation;
+}
+
+DirectX::XMFLOAT3 Transform::GetScale()
+{
+	return scale;
 }
