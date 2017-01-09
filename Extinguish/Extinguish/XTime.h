@@ -34,7 +34,7 @@ public:
 	// This marks the cycling time period, typically called only once per frame per thread.
 	void Signal();
 	// what is the change in time? (between last 2 signals on this thread)
-	double Delta();
+	float Delta();
 	// Because the delta is one frame behind and not a linear change, visual motion can appear rough compared to fixed time steps.  
 	// This method can be used to reterive a more granular version of the delta.(Better for motion)
 	// This is acheived by using previous Delta values to compute a weighted running average.

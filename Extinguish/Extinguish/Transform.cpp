@@ -172,3 +172,33 @@ bool Transform::GetBDirty()
 {
 	return bDirty;
 }
+
+DirectX::XMFLOAT3 Transform::GetPosition()
+{
+	return position;
+}
+
+void Transform::AddChild(Transform* tempChild)
+{
+	if (!child)
+	{
+		child = tempChild;
+	}
+	else
+	{
+		//if there's already a child, give that child a sibling
+		child->AddSibling(tempChild);
+	}
+}
+
+void Transform::AddSibling(Transform* tempSibling)
+{
+	if (!sibling)
+	{
+		sibling = tempSibling;
+	}
+	else
+	{
+		sibling->AddSibling(tempSibling);
+	}
+}
