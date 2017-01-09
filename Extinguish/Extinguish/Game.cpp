@@ -76,35 +76,25 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic.Init(devResources, input);
 
 	GameObject* box = new GameObject();
+	box->Init("Box", identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
 	Renderer* boxRenderer = new Renderer();
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", 0, projection, &resourceManager, devResources);
 	box->AddComponent(boxRenderer);
-	Transform* boxTransform = new Transform();
-	boxTransform->Init(identity, "Box");
-	//boxTransform->SetScale({ 0.1f, 0.1f, 0.1f });
-	box->AddComponent(boxTransform);
 	basic.AddGameObject(box);
 
 	GameObject* bear = new GameObject();
+	bear->Init("Bear", identity, { 5, 0, 0 }, { 0, 0, 0 }, { 0.025f, 0.025f, 0.025f });
 	Renderer* bearRenderer = new Renderer();
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", 0, projection, &resourceManager, devResources);
 	bear->AddComponent(bearRenderer);
-	Transform* bearTransform = new Transform();
-	bearTransform->Init(identity, "Bear");
-	bearTransform->SetScale({ 0.025f, 0.025f, 0.025f });
-	bearTransform->Translate({ 5, 0, 0 });
-	bear->AddComponent(bearTransform); 
 	basic.AddGameObject(bear);
 
 	GameObject* plane = new GameObject();
+	plane->Init("Plane", identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 });
 	Renderer* planeRenderer = new Renderer();
 	planeRenderer->Init("Plane", "Static", "Static", "", -1, projection, &resourceManager, devResources);
 	plane->AddComponent(planeRenderer);
-	Transform* planeTransform = new Transform();
-	planeTransform->Init(identity, "Plane");
-	plane->AddComponent(planeTransform);
 	basic.AddGameObject(plane);
-	//Renderer* snak = bear->GetComponent<Renderer>();
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

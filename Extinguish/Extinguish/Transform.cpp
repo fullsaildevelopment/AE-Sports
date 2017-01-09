@@ -16,10 +16,12 @@ Transform::~Transform()
 }
 
 //basic
-void Transform::Init(XMFLOAT4X4 matrix, string txt)
+void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, DirectX::XMFLOAT3 tempScale)
 {
-	local = matrix;
-	name = txt;
+	local = localMatrix;
+	SetPosition(pos);
+	SetRotation(rot);
+	SetScale(tempScale);
 }
 
 //misc
