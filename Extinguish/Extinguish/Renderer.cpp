@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 //constructor
-Renderer::Renderer()
+Renderer::Renderer() : Component(nullptr)
 {
 	blender = nullptr;
 }

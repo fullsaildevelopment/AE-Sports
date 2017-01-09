@@ -90,11 +90,13 @@
     <ClCompile Include="CollisionLibrary.cpp">
       <Filter>CollisionLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="XTime.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="AI.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>

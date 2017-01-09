@@ -24,7 +24,8 @@ public:
 	virtual void Shutdown() {};
 	GameObject* const GetGameObject(void) { return Object; };
 	CompType GetCompType() { return type; };
-	//Component(GameObject* o) { Object = o; };
+	Component(GameObject* o) { Object = o; };
 protected:
 	void SetCompType(CompType t) { type = t; };
+	void SetGameObject(GameObject* g) { Object = g; };
 };
