@@ -94,6 +94,9 @@
     <ClCompile Include="XTime.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="AI.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -176,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="XTime.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="AI.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

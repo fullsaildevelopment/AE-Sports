@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="AI.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="CapsuleCollider.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="AI.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="CapsuleCollider.h" />
