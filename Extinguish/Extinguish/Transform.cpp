@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace DirectX;
 using namespace std;
-Transform::Transform()
+Transform::Transform() : Component(nullptr)
 {
 	bDirty = true;
 
@@ -13,6 +13,14 @@ Transform::Transform()
 	parent = nullptr;
 	child = nullptr;
 	sibling = nullptr;
+}
+
+Transform::Transform(GameObject* o) : Component(o)
+{
+	bDirty = false;
+	position = { 0, 0, 0 };
+	rotation = { 0, 0, 0 };
+	scale = { 0, 0, 0 };
 }
 
 Transform::~Transform()

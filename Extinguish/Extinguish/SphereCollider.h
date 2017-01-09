@@ -10,4 +10,6 @@ private:
 	float radius;
 public:
 	void Update(float dt) override;
+	Sphere GetSphere();
+	Sphere GetWorldSphere();
 };

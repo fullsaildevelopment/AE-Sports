@@ -69,3 +69,5 @@ bool SphereToSphere(const Sphere& lhs, const Sphere& rhs);
 bool SphereToAABB(const Sphere& lhs, const AABB& rhs);
 
 bool CapsuleToSphere(const Capsule& capsule, const Sphere& sphere);
+
+bool AABBToCapsule(const AABB& box, const Capsule& cap);

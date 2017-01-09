@@ -29,63 +29,61 @@ AABB BoxCollider::GetWorldAABB()
 	box.min.z += m.z;
 	return box;
 }
+BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : Collider(g,t)
+{
+	max = _max;
+	min = _min;
+}
 
 void BoxCollider::Update(float dt)
 {
-	vector<GameObject*>* Others1 = GetGameObject()->GetGameObjects();
-	vector<GameObject*>* Others2 = GetGameObject()->GetGameObjects();
-	vector<GameObject*>* Others3 = GetGameObject()->GetGameObjects();
-	concurrency::task<void> AABBChecks([Others1, this]()
+	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
+
+	size_t size = Others->size();
+	for (int i = 0; i < size; ++i)
 	{
-		size_t size = Others1->size();
-		for (int i = 0; i < size; ++i)
+		if ((*Others)[i] == GetGameObject()) continue;
+		///////////////////////////////////////AABB vs AABB///////////////////////////////////////
+		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
+		if (box)
 		{
-			BoxCollider* box = (*Others1)[i]->GetComponent<BoxCollider>();
-			if (box)
+			if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
 			{
-				if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
+				if (!box->isTrigger() && !isTrigger())
 				{
-					if (!box->isTrigger() && !isTrigger())
+					//Physics
+				}
+				else
+				{
+					if (box->isTrigger())
 					{
-						//Physics
+						
+						box->GetGameObject()->OnTriggerEnter(this);
 					}
-					else
+					if (isTrigger())
 					{
-						if (box->isTrigger())
-						{
-							//box->GetGameObject()->OnTriggerEnter();
-						}
+						GetGameObject()->OnTriggerEnter(box);
 					}
 				}
-
 			}
 		}
-	});
-
-	concurrency::task<void> SphereChecks([Others2]()
-	{
-		size_t size = Others2->size();
-		for (int i = 0; i < size; ++i)
+		///////////////////////////////////////AABB vs Capsule///////////////////////////////////////
+		CapsuleCollider* capsule = (*Others)[i]->GetComponent<CapsuleCollider>();
+		if (capsule)
 		{
-			SphereCollider* sphere = (*Others2)[i]->GetComponent<SphereCollider>();
-			if (sphere)
+			if (AABBToCapsule(GetWorldAABB(), capsule->GetWorldCapsule()))
 			{
 
 			}
 		}
-	});
-
-	concurrency::task<void> CapsuleChecks([Others3]()
-	{
-		size_t size = Others3->size();
-		for (int i = 0; i < size; ++i)
+		///////////////////////////////////////AABB vs Sphere///////////////////////////////////////
+		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
+		if (sphere)
 		{
-			CapsuleCollider* capsule = (*Others3)[i]->GetComponent<CapsuleCollider>();
-			if (capsule)
+			if (SphereToAABB(sphere->GetWorldSphere(), GetWorldAABB()))
 			{
 
 			}
 		}
-	});
-
+	}
 }

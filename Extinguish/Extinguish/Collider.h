@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "CollisionLibrary.h"
 
 class Collider : public Component
 {
@@ -24,10 +25,12 @@ private:
 protected:
 	void SetType(ColliderType type) { Type = type; };
 public:
+	Collider(GameObject* o, bool trigger);
 	Transform GetTransform() { return transform; };
-	void SetTransform(Transform t) { transform = t; };
-	virtual void Update(float dt) {};
-	bool isTrigger(void) { return IsTrigger; };
-	void SetTrigger(bool trigger) { IsTrigger = trigger; };
 	ColliderType GetType() { return Type; };
+	bool isTrigger(void) { return IsTrigger; };
+	virtual void Update(float dt) {};
+	void SetTransform(Transform t) { transform = t; };
+	void SetTrigger(bool trigger) { IsTrigger = trigger; };
+	bool isColliding(Collider* c);
 };
