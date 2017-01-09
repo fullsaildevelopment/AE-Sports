@@ -389,7 +389,7 @@ void Scene::Update(float dt)
 			//renderer->SetModel(
 			renderer->SetView(tempCamera);
 			
-			Transform* transform = gameObjects[i]->GetComponent<Transform>();
+			Transform* transform = gameObjects[i]->GetTransform();
 
 			if (transform)
 			{
