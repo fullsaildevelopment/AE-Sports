@@ -16,25 +16,12 @@ Scene::~Scene()
 
 void Scene::Init(DeviceResources const * devResources, InputManager* inputRef)
 {
-	//set previousTime to current time
-	previousTime = time(nullptr);
-
-	//set buttons to zero
-	//memset(buttons, 0, sizeof(buttons));
-
 	//set camera initial position
-	static const XMVECTORF32 eye = { 0.0f, 0.7f, -1.5f, 0.0f };
-	static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
-	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
+	XMVECTORF32 eye = { 0.0f, 0.7f, -1.5f, 0.0f };
+	XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
+	XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
 	XMStoreFloat4x4(&camera, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
-
-	camPitch = camYaw = 0.0f;
-
-
-
-	//get resources manager singleton
-	//resourceManager = ResourceManager::GetSingleton();
 
 	//create all the device resources
 	CreateDevResources(devResources);
@@ -278,6 +265,7 @@ void Scene::DoFBXExporting()
 
 void Scene::CreateModels()
 {
+#if 0
 	////ground plane
 	//Model groundPlane;
 
@@ -356,6 +344,7 @@ void Scene::CreateModels()
 	//	sphereModel.CreateDevResources(deviceResources);
 	//	models.push_back(sphereModel);
 	//}
+#endif
 }
 
 //void Scene::Update(InputManager input, float dt)
@@ -390,6 +379,10 @@ void Scene::Update(float dt)
 	XMFLOAT4X4 tempCamera;
 	XMStoreFloat4x4(&tempCamera, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
 
+	//XMFLOAT4X4 camera = gameObjects[0]->FindGameObject("Camera")->GetTransform()->GetWorld();
+	//
+	//XMStoreFloat4x4(&camera, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject("Camera")->GetTransform()->GetWorld())));
+
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		gameObjects[i]->Update(dt, input);
@@ -398,7 +391,6 @@ void Scene::Update(float dt)
 
 		if (renderer)
 		{
-			//renderer->SetModel(
 			renderer->SetView(tempCamera);
 			
 			Transform* transform = gameObjects[i]->GetTransform();
@@ -584,19 +576,10 @@ void Scene::Render()
 
 void Scene::Shutdown()
 {
-	//clean up render nodes and game objects b/c I dynamically allocated them
-	//for (int i = 0; i < renderNodes.size(); ++i)
-	//{
-	//	delete renderNodes[i];
-	//}
-
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		delete gameObjects[i];
 	}
-
-	//clean up singleton resource manager
-	//resourceManager->CleanUp();
 }
 
 void Scene::CreateGameObject()
@@ -604,7 +587,9 @@ void Scene::CreateGameObject()
 
 }
 
+//this also sets game object's scene pointer
 void Scene::AddGameObject(GameObject* gameObject)
 {
+	gameObject->SetScene(this);
 	gameObjects.push_back(gameObject);
 }
