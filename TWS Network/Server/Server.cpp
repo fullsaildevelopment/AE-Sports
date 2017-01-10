@@ -39,16 +39,8 @@ int  Server::update()
 		case ID_REMOTE_NEW_INCOMING_CONNECTION:
 			printf("Another client has connected.\n");
 			break;
-		case ID_CONNECTION_REQUEST_ACCEPTED:
-		{
-			printf("Our connection request has been accepted.\n");
-
-			sendMessage("Hello world");
-		}
-		break;
 		case ID_NEW_INCOMING_CONNECTION:
 			printf("A connection is incoming.\n");
-			sendMessage("Hello world");
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 		{	
@@ -68,9 +60,22 @@ int  Server::update()
 
 		case ID_TEST:
 		{
-			readMessage();
-		}
+			rerouteMessage();
 		break;
+		}
+		case ID_CLIENT_REGISTER:
+		{
+			UINT16 id = registerClient();
+			string newMessage = "Please welcome the new player, ";
+			newMessage += names[id];
+			sendMessage((char*)newMessage.c_str(), ID_SERVER_MESSAGE);
+			break;
+		}
+		case ID_REQUEST:
+		{
+			sendNew();
+			break;
+		}
 
 		default:
 			printf("Message with identifier %i has arrived.\n", packet->data[0]);
@@ -88,19 +93,46 @@ void Server::stop()
 }
 
 
-void Server::sendMessage(char * message)
+void Server::sendMessage(char * message, GameMessages ID)
 {
 	BitStream bsOut;
-	bsOut.Write((RakNet::MessageID)ID_TEST);
+	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message);
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 
-void Server::readMessage()
+void Server::rerouteMessage() // sends incoming message to everyone else
+{
+	BitStream bsOut(packet->data, packet->length, false);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+}
+
+UINT16 Server::registerClient()
 {
 	RakString rs;
 	BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
-	bsIn.Read(rs);
-	printf("%s\n", rs.C_String());
+
+	UINT16 clientID;
+	char cID;
+	string temp;
+	bsIn.Read(clientID);
+	bsIn.Read(temp);
+	
+	//clientID = atoi(&cID);
+	//bsIn.IgnoreBytes(sizeof(UINT16));
+	//bsIn.Read(temp);
+	//names[clientID] = temp.c_str();
+	return clientID;
+}
+
+void Server::sendNew()
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
+	bsOut.Write(numPlayers);
+	++numPlayers;
+
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+
 }

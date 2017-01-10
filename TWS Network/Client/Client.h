@@ -12,6 +12,8 @@
 #include "..\TWS Network\RakNet\WindowsIncludes.h"
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
+#include "..\TWS Network\RakNet\Gets.h"
 
 #include "..\TWS Network\RakNet\RakPeerInterface.h"
 #include "..\TWS Network\RakNet\MessageIdentifiers.h"
@@ -30,13 +32,20 @@ private:
 
 	enum GameMessages
 	{
-		ID_TEST = ID_USER_PACKET_ENUM + 1
+		ID_TEST = ID_USER_PACKET_ENUM + 1,
+		ID_CLIENT_MESSAGE,
+		ID_SERVER_MESSAGE,
+		ID_CLIENT_DISCONNECT,
+		ID_SERVER_CLOSURE,
+		ID_CLIENT_REGISTER,
+		ID_REQUEST
 	};
 	
-public:
-
 	static RakPeerInterface * peer;
 	static Packet * packet;
+	static char * address;
+public:
+
 	Client();
 	~Client();
 
@@ -48,9 +57,13 @@ public:
 
 
 private:
+	UINT16 clientID;
+	char clientName[12];
 	int sendAlive();
 	void sendClose();
-	void sendMessage(char * message);
+	void sendMessage(char * message, GameMessages ID);
 	void readMessage();
+	void GetID();
+	void registerName();
 };
 
