@@ -1,9 +1,12 @@
 #pragma once
 #include <vector>
+#include <string>
 #include <DirectXMath.h>
 #include "Scene.h"
 #include "Blender.h"
 #include "Renderer.h"
+#include "Transform.h"
+#include "InputManager.h"
 
 class Component;
 class Collider;
@@ -12,8 +15,8 @@ class Scene;
 class GameObject
 {
 private:
-	//AnimatedRenderNode* renderNode;
-	//unsigned int curFrame;
+	std::string name;
+	Transform* transform;
 	
 	//I could have a vector of components... 
 	std::vector<Component*> components;
@@ -26,8 +29,10 @@ public:
 	//basic
 	GameObject();
 	~GameObject();
-	//void Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased);
-	void Update(float deltaTime);
+
+	void Init(std::string name);
+	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling);
+	void Update(float deltaTime, InputManager* input);
 	string GetTag() { return tag; };
 	//misc
 	void AddComponent(Component* component);
@@ -44,18 +49,15 @@ public:
 	T* GetComponent();
 	//setters
 	void SetTag(string t) { tag = t; };
+
 	//getters
 	Component* GetComponent(unsigned int index) { return components[index]; }
+	Transform* GetTransform();
+	std::string GetName();
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
-	//void SetCurFrame(unsigned int num) { curFrame = num; }
-	//void SetBlendInfo(BlendInfo info) { blender.SetBlendInfo(info); }
-	//void SetCurAnimation(unsigned int curAnimationIndex) { blender.SetCurAnimationIndex(curAnimationIndex); }
-	//void SetNextAnimation(unsigned int nextAnimationIndex) { blender.SetNextAnimationIndex(nextAnimationIndex); }
-	//void CreateCurAnimation(bool timeBased) { blender.MakeCurAnimation(timeBased); }
-	//void CreateNextAnimation(bool timeBased) { blender.MakeNextAnimation(timeBased); }
 };
 
 template <class T>

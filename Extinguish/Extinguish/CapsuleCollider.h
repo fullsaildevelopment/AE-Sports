@@ -8,9 +8,13 @@ class CapsuleCollider : Collider
 {
 private:
 	float radius;
-	float length;
+	DirectX::XMFLOAT3 Start;
+	DirectX::XMFLOAT3 End;
 public:
 	void Update(float dt) override;
 	void setRadius(float r);
+	void SetSegment(DirectX::XMFLOAT3 s, DirectX::XMFLOAT3 e);
 	float GetRadius();
+	Capsule GetWorldCapsule();
+	Capsule GetCapsule();
 };

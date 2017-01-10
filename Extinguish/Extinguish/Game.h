@@ -4,11 +4,13 @@
 #include "InputManager.h"
 #include "HashString.h"
 #include "Transform.h"
+#include "Crosse.h"
+#include "PlayerController.h"
 
 class Game
 {
 private:
-	std::vector<Scene> scenes;
+	std::vector<Scene*> scenes;
 	unsigned int currentScene;
 	HashString scenesNamesTable;
 
