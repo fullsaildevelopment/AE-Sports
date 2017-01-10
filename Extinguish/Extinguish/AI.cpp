@@ -8,54 +8,95 @@ void AI::UpdateState(State newState)
 
 	case getBall: GetBall(); break;
 
-	case attack: Attack(); break;
+	case defensive: 
+		// do something
+		break;
 
-	case score: Score(); break;
+	case offensive:
+		// do something
+		break;
 
 	default: break;
 
 	}
 }
 
+void AI::Init()
+{
+	listOfEnemies->reserve(4);
+	listOfMates->reserve(3);
+	
+	// grabbing all of the game objects
+	std::vector<GameObject*>* tmp = me->GetGameObjects();
+
+	// for each game object
+	for (int i = 0; i < tmp->size(); ++i)
+	{
+		// go through and see what is
+		// assign the ball
+		// fill out my lists
+	}
+
+	currState = idle;
+}
+
 void AI::Update()
 {
 	// check events and UpdateState accordingly
+
+	// if we do a starting timer to every game, ...
 }
 
 void AI::Idle()
 {
-	// im not sure why they'd be in idle...
 	// maybe something with power-ups
 	// or tracking
+
+	// do idle pose/anim?
 }
 
 void AI::GetBall()
 {
-	// find ball
-
-	// if person (who is enemy) already has it
+	// if person (who is enemy) already has ball
 		// RunTo(that guy)
 
-	// if person (who is team) has it
+	// if person (who is team) has ball
 		// if enemies are around him
-			// attack them
-}
-
-void AI::Attack() //
-{
-	// if enemy
-		// hit
+			// Attack(closest enemy to me around my guy)
 }
 
 void AI::Score()
 {
 	// assuming i have the ball
 
+	// if i have a clear shot to the goal
+		// Toss(to goal)
 }
 
-//RunTo(some location?)
+void AI::Attack(GameObject target)
+{
+	// if (target == enemy/not teammate)
+		// hit
+}
 
-//RunTo(gameObject Target)
+void AI::RunTo(XMFLOAT4 location)
+{
+
+}
+
+void AI::RunTo(GameObject Target)
+{
 	//...
 	// if next to
 		//Attack(Target)
+}
+
+void AI::Toss(XMFLOAT4 location)
+{
+
+}
+
+void AI::TossTo(GameObject target)
+{
+
+}
