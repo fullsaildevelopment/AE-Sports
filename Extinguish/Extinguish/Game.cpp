@@ -49,6 +49,7 @@ void Game::LoadScene(unsigned int index)
 //private helper functions//
 
 //this function will create a scene and add it to the scenes vector, where I can then load any scene throughout the game based on input
+//add the component before you initialize, so you can cache from the game object (this works because init sets component's game object pointer)
 void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 {
 	//create menus, levels, etc.//
@@ -75,38 +76,51 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
+	//GameObject* camera = new GameObject();
+	//camera->Init("Camera");
+	//camera->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, nullptr, nullptr, nullptr);
+	//Camera* cameraController = new Camera();
+	//camera->AddComponent(cameraController);
+	////cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	//basic->AddGameObject(camera);
+
 	GameObject* box = new GameObject();
 	box->Init("Box");
 	box->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* boxRenderer = new Renderer();
-	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
 	box->AddComponent(boxRenderer);
+	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
 	basic->AddGameObject(box);
 
 	GameObject* bear = new GameObject();
 	bear->Init("Bear");
 	bear->InitTransform(identity, { 5, 0, 0 }, { 0, 0, 0 }, { 0.025f, 0.025f, 0.025f }, nullptr, nullptr, nullptr);
 	Renderer* bearRenderer = new Renderer();
-	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	bear->AddComponent(bearRenderer);
+	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	PlayerController* playerController = new PlayerController();
 	bear->AddComponent(playerController);
+	playerController->Init(5.0f, 0.75f);
+	//Camera* cameraController = new Camera();
+	//bear->AddComponent(cameraController);
+	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f });
 	basic->AddGameObject(bear);
 
 	GameObject* plane = new GameObject();
 	plane->Init("Plane");
 	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* planeRenderer = new Renderer();
-	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	plane->AddComponent(planeRenderer);
+	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	basic->AddGameObject(plane);
 
 	GameObject* crosse = new GameObject();
 	crosse->Init("Crosse");
 	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.1f, 0.1f, 0.1f }, bear->GetTransform(), nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
-	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	crosse->AddComponent(crosseRenderer);
+	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
 	basic->AddGameObject(crosse);

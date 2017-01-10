@@ -15,7 +15,7 @@ GameObject::~GameObject()
 	}
 }
 
-//basic
+//basic//
 void GameObject::Init(std::string name)
 {
 	this->name = name;
@@ -36,6 +36,8 @@ void GameObject::Update(float deltaTime, InputManager* input)
 	}
 }
 
+//misc//
+
 //automatically sets component's game object pointer
 void GameObject::AddComponent(Component* component)
 {
@@ -43,7 +45,30 @@ void GameObject::AddComponent(Component* component)
 	components.push_back(component);
 }
 
-//getters
+GameObject* GameObject::FindGameObject(std::string name)
+{
+	GameObject* result = nullptr;
+	std::vector<GameObject*>* gameObjects = GetGameObjects();
+
+	for (int i = 0; i < gameObjects->size(); ++i)
+	{
+		if ((*gameObjects)[i]->GetName() == name)
+		{
+			result = (*gameObjects)[i];
+			break;
+		}
+	}
+
+	return result;
+}
+
+//setters//
+void GameObject::SetScene(Scene* tempScene)
+{
+	scene = tempScene;
+}
+
+//getters//
 vector<GameObject*>* const GameObject::GetGameObjects() 
 { 
 	return scene->GetGameObjects(); 

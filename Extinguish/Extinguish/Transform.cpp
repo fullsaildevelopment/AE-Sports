@@ -204,8 +204,6 @@ void Transform::SetParent(Transform* pParent)
 }
 
 //getters
-
-//I transpose the world only
 DirectX::XMFLOAT4X4 Transform::GetWorld()
 {
 	if (parent && bDirty)

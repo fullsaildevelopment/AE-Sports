@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "Crosse.h"
 #include "PlayerController.h"
+#include "Camera.h"
 
 class Game
 {
