@@ -6,7 +6,7 @@
 class Transform : public Component
 {
 private:
-	std::string name;
+	//std::string name;
 	DirectX::XMFLOAT4X4 world;
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 rotation;
@@ -23,10 +23,11 @@ private:
 	//void AddChild(TransformNode2* tempChild);
 public:
 	Transform();
+	Transform(GameObject* o);
 	~Transform();
 
 	//basic
-	void Init(DirectX::XMFLOAT4X4 matrix, std::string text);
+	void Init(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, DirectX::XMFLOAT3 tempScale, Transform* parent, Transform* child, Transform* sibling);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);
@@ -37,16 +38,22 @@ public:
 	void AddSibling(Transform* tempSibling);
 
 	//setters
-	void SetBDirty();
+	void BDirty();
 	void SetScale(DirectX::XMFLOAT3 vector);
 	void SetPosition(DirectX::XMFLOAT3 vector);
 	void SetRotation(DirectX::XMFLOAT3 vector);
 	void SetWorld(DirectX::XMFLOAT4X4 matrix);
 	void SetLocal(DirectX::XMFLOAT4X4 matrix);
+	void SetParent(Transform* pParent);
 
 	//getters
 	DirectX::XMFLOAT4X4 GetWorld();
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
 	DirectX::XMFLOAT3 GetPosition();
+	DirectX::XMFLOAT3 GetRotation();
+	DirectX::XMFLOAT3 GetScale();
+	Transform* GetParent();
+	Transform* GetChild();
+	Transform* GetSibling();
 };

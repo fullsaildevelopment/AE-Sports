@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include "Animation.h"
 #include "Skeleton.h"
 #include "AnimationIncludes.h"
@@ -13,16 +14,16 @@ private:
 	std::vector<std::vector<BlendInfo>> blendInfos;
 	unsigned int defaultAnimation;
 	//should make a hashstring for every animation set. When animation is added.
-	HashString* animationsTable;
+	HashString animationsTable;
 public:
-	void AddAnimation(Animation animation) { animations.push_back(animation); }
+	void AddAnimation(Animation animation, std::string animationName);
 
 	//setters
-	void SetSkeleton(Skeleton skele) { skeleton = skele; }
+	void SetSkeleton(Skeleton skele);
 
 	//getters
-	Animation* GetAnimation(unsigned int index) { return &animations[index]; }
-	const BlendInfo* GetBlendInfo(unsigned int animationFrom, unsigned int animationTo) { return &blendInfos[animationFrom][animationTo]; } // TODO: good chance this is wrong
-	const Animation* GetDefaultAnimation() { return &animations[defaultAnimation]; }
-	Skeleton GetSkeleton() { return skeleton; }
+	Animation* GetAnimation(std::string animationName);
+	const BlendInfo* GetBlendInfo(unsigned int animationFrom, unsigned int animationTo); // TODO: good chance this is wrong
+	const Animation* GetDefaultAnimation();
+	Skeleton GetSkeleton();
 };

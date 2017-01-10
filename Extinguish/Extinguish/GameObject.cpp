@@ -2,48 +2,60 @@
 
 GameObject::GameObject()
 {
-
+	transform = new Transform();
 }
 
 GameObject::~GameObject()
 {
+	delete transform;
+
 	for (int i = 0; i < components.size(); ++i)
 	{
 		delete components[i];
 	}
 }
 
-//void GameObject::Init(std::string animSet, unsigned int curAnimationIndex, int nextAnimationIndex, bool timeBased)
-//{
-//	//set blender's anim state
-//	//blender.SetAnimationSet(animSet);
-//	//blender.SetCurAnimationIndex(curAnimationIndex);
-//	//blender.SetNextAnimationIndex(nextAnimationIndex);
-//	//blender.Init(timeBased, curAnimationIndex, nextAnimationIndex); //this sets the blenders interpolator
-//}
-
-void GameObject::Update(float deltaTime)
+//basic
+void GameObject::Init(std::string name)
 {
-	//update blender
-	//blender.Update(deltaTime, curFrame); //just for now I will set its time to 0.0f
+	this->name = name;
+}
 
-	//send animatedrendernode inverse bind matrices
-	//renderNode->SetInverseBindPoses(blender.GetBoneOffsets());
-	//renderNode->SetBonesWorlds(blender.GetBonesWorlds());
+void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling)
+{
+	//set transform
+	transform->Init(localMatrix, position, rotation, scale, parent, child, sibling);
+	transform->SetGameObject(this);
+}
 
+void GameObject::Update(float deltaTime, InputManager* input)
+{
 	for (int i = 0; i < components.size(); ++i)
 	{
-		components[i]->Update(deltaTime);
+		components[i]->Update(deltaTime, input);
 	}
 }
 
+//automatically sets component's game object pointer
 void GameObject::AddComponent(Component* component)
 {
+	component->SetGameObject(this);
 	components.push_back(component);
 }
 
+//getters
 vector<GameObject*>* const GameObject::GetGameObjects() 
 { 
 	return scene->GetGameObjects(); 
+}
+
+Transform* GameObject::GetTransform()
+{
+	return transform;
+}
+
+std::string GameObject::GetName()
+{
+	return name;
 }
 

@@ -19,21 +19,17 @@ private:
 	Interpolator* nextInterpolator;
 	HashString* hashString;
 	ResourceManager* resourceManager;
-	//unsigned int curAnimationIndex;
-	//int nextAnimationIndex;
 	KeyFrame blendedKeyFrame;
 	float curBlendTime;
 
 	//private helper functions
 	void Interpolate(KeyFrame* previous, KeyFrame* next, float ratio);
-	//void MakeCurAnimation(bool timeBased);
-	//void MakeNextAnimation(bool timeBased);
 
 public:
 	Blender();
 	~Blender();
 
-	void Init(bool timeBased, unsigned int curAnimIndex, int nextAnimIndex);
+	void Init(bool timeBased, std::string curAnimName, std::string nextAnimName);
 	void Update(float time, unsigned int frameIndex);
 
 	//getters
@@ -41,8 +37,8 @@ public:
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds() { return bonesWorlds; }
 
 	//setters
-	void SetCurAnimationIndex(unsigned int curIndex);
-	void SetNextAnimationIndex(unsigned int nextIndex);
+	void SetCurAnimation(std::string animName);
+	void SetNextAnimation(std::string animName);
 	void SetAnimationSet(AnimationSet* set) { animationSet = set; }
 	void SetBlendInfo(BlendInfo info) { blendInfo = info; }
 	Skeleton GetSkeleton() { return animationSet->GetSkeleton(); }
