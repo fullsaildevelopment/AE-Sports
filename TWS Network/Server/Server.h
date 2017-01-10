@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
+#include <string>
 #include "..\TWS Network\RakNet\RakPeerInterface.h"
 #include "..\TWS Network\RakNet\MessageIdentifiers.h"
 #include "..\TWS Network\RakNet\BitStream.h"
@@ -26,12 +26,19 @@ private:
 
 	enum GameMessages
 	{
-		ID_TEST = ID_USER_PACKET_ENUM + 1
+		ID_TEST = ID_USER_PACKET_ENUM + 1,
+		ID_CLIENT_MESSAGE,
+		ID_SERVER_MESSAGE,
+		ID_CLIENT_DISCONNECT,
+		ID_SERVER_CLOSURE,
+		ID_CLIENT_REGISTER,
+		ID_REQUEST
 	};
 
-	int numPlayers = 0;
+	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
+	string names[MAX_PLAYERS];
 public:
 	Server();
 	~Server();
@@ -42,7 +49,9 @@ public:
 
 private:
 
-	void sendMessage(char * message);
-	void readMessage();
+	void sendMessage(char * message, GameMessages ID);
+	void rerouteMessage();
+	UINT16 registerClient();
+	void sendNew();
 };
 
