@@ -27,6 +27,7 @@ private:
 public:
 	//basic
 	GameObject();
+	GameObject(Scene* s);
 	~GameObject();
 
 	void Init(std::string name, DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale);
@@ -55,6 +56,8 @@ public:
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
+	GameObject* const GetGameObjects(int i);
+	int GetNumObjects();
 };
 
 template <class T>

@@ -64,7 +64,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		fovAngleY *= 2.0f;
 	}
 
-	DirectX::XMFLOAT4X4 projection;
+	XMFLOAT4X4 projection;
 	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 100.0f);
 	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
 

@@ -4,6 +4,9 @@
 #include "InputManager.h"
 #include "HashString.h"
 #include "Transform.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+#include "CapsuleCollider.h"
 
 class Game
 {
