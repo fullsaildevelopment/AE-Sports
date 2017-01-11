@@ -91,14 +91,14 @@ void PlayerController::MovePlayer(float dt)
 	{
 		GetGameObject()->GetComponent<Renderer>()->SetNextAnimation("Run");
 		BlendInfo info;
-		info.totalBlendTime = 0.5f;
+		info.totalBlendTime = 0.1f;
 		GetGameObject()->GetComponent<Renderer>()->SetBlendInfo(info);
 	}
-	else
+	else if (!isMoving)
 	{
 		GetGameObject()->GetComponent<Renderer>()->SetNextAnimation("Idle");
 		BlendInfo info;
-		info.totalBlendTime = 0.5f;
+		info.totalBlendTime = 0.1f;
 		GetGameObject()->GetComponent<Renderer>()->SetBlendInfo(info);
 	}
 
