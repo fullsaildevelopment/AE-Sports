@@ -32,8 +32,8 @@ void Crosse::ClampToPlayer()
 
 	//alter the world to suitable stick position
 	XMFLOAT3 playerPos = playerTransform->GetPosition();
-	//playerPos.y += 100;
-	playerPos.z += 1;
+	playerPos.y += 100;
+	//playerPos.z += 1;
 
 	//set crosse's pos to pos
 	GetGameObject()->GetTransform()->SetPosition(playerPos);
