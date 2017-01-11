@@ -9,6 +9,10 @@ class ClientWrapper
 private:
 	Client newClient;
 public:
+	~ClientWrapper()
+	{
+		//newClient.stop();
+	}
 	int init(char* address, UINT16 port)
 	{
 		return newClient.init(address, port);

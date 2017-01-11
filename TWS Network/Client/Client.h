@@ -20,6 +20,7 @@
 #include "..\TWS Network\RakNet\BitStream.h"
 #include "..\TWS Network\RakNet\RakNetTypes.h"
 #include "..\TWS Network\RakNet\Router2.h"
+#include "..\TWS Network\RakNet\Kbhit.h"
 
 
 
@@ -32,7 +33,7 @@ private:
 
 	enum GameMessages
 	{
-		ID_TEST = ID_USER_PACKET_ENUM + 1,
+		ID_TEST = ID_USER_PACKET_ENUM + 2,
 		ID_CLIENT_MESSAGE,
 		ID_SERVER_MESSAGE,
 		ID_CLIENT_DISCONNECT,
@@ -57,11 +58,14 @@ public:
 
 
 private:
-	UINT16 clientID;
-	char clientName[12];
-	int sendAlive();
-	void sendClose();
+
+	SystemAddress serverAddress;
+	bool disconnect = false;
+	UINT8 clientID;
+	char clientName[8];
 	void sendMessage(char * message, GameMessages ID);
+	void sendMessage(char * message, GameMessages ID, SystemAddress sAddress);
+	void sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress);
 	void readMessage();
 	void GetID();
 	void registerName();
