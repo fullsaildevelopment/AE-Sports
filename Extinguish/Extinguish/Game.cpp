@@ -1,5 +1,6 @@
 #pragma once
 #include "Game.h"
+#include "Movement.h"
 
 using namespace DirectX;
 
@@ -101,15 +102,19 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* bear = new GameObject();
 	basic->AddGameObject(bear);
 	bear->Init("Bear");
-	bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.025f, 0.025f, 0.025f }, nullptr, nullptr, nullptr);
+	bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* bearRenderer = new Renderer();
 	bear->AddComponent(bearRenderer);
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	PlayerController* playerController = new PlayerController();
 	bear->AddComponent(playerController);
-	playerController->Init(50.0f, 0.75f);
+	playerController->Init();
 	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
 	bear->AddComponent(bearcol);
+	Movement* bearMover = new Movement();
+	bear->AddComponent(bearMover);
+	bearMover->Init(100.0f, 0.75f);
+
 	//Camera* cameraController = new Camera();
 	//bear->AddComponent(cameraController);
 	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
@@ -131,7 +136,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* crosse = new GameObject();
 	basic->AddGameObject(crosse);
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.1f, 0.1f, 0.1f }, bear->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.001f, 0.001f, 0.001f }, nullptr, nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);

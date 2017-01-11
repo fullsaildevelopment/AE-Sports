@@ -108,6 +108,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Movement.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -203,12 +206,16 @@
     <ClInclude Include="Camera.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_NM.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_Spec.dds" />
+    <Media Include="..\Assets\Textures\DDS\Plane.dds" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -247,8 +254,5 @@
     <Filter Include="Components\Scripts">
       <UniqueIdentifier>{7bfdbc4c-e776-4654-8fee-21c2dc060658}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\Assets\Textures\DDS\Plane.dds" />
   </ItemGroup>
 </Project>
