@@ -8,13 +8,11 @@ Renderer::Renderer() : Component(nullptr)
 
 Renderer::~Renderer()
 {
-	//no need to delete anything
 	delete blender;
 }
 
-
 //basic
-void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, unsigned int curAnimationIndex, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
+void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
 {
 	indexBuffer = resources->GetIndexBuffer(mesh);
 	vertexBuffer = resources->GetVertexBuffer(mesh);
@@ -30,15 +28,15 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 
 	SetProjection(projection);
 
-	if (curAnimationIndex != -1)
+	if (!curAnimName.empty())
 	{
 		blender = new Blender();
 		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
-		blender->Init(true, curAnimationIndex, -1);
+		blender->Init(true, curAnimName, "");
 	}
 }
 
-void Renderer::Update(float dt)
+void Renderer::Update(float dt, InputManager* input)
 {
 	//update blender
 	if (blender)
@@ -118,6 +116,11 @@ std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBonesWorlds()
 	}
 }
 
+Blender* Renderer::GetBlender()
+{
+	return blender;
+}
+
 //setters
 void Renderer::SetModel(XMMATRIX& model)
 {
@@ -138,4 +141,14 @@ void Renderer::SetView(XMFLOAT4X4 view)
 void Renderer::SetProjection(XMFLOAT4X4 projection)
 { 
 	mvpData.projection = projection;
+}
+
+void Renderer::SetNextAnimation(std::string animName)
+{
+	blender->SetNextAnimation(animName);
+}
+
+void Renderer::SetBlendInfo(BlendInfo info)
+{
+	blender->SetBlendInfo(info);
 }

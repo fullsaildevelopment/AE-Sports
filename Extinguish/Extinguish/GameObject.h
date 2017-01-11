@@ -6,6 +6,7 @@
 #include "Blender.h"
 #include "Renderer.h"
 #include "Transform.h"
+#include "InputManager.h"
 
 class Component;
 class Collider;
@@ -25,16 +26,18 @@ private:
 	//Renderer* renderer;
 	Scene* scene;
 public:
-	//basic
 	GameObject();
 	GameObject(Scene* s);
 	~GameObject();
 
-	void Init(std::string name, DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale);
-	void Update(float deltaTime);
-	string GetTag() { return tag; };
+	//basic
+	void Init(std::string name);
+	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling);
+	void Update(float deltaTime, InputManager* input);
+
 	//misc
 	void AddComponent(Component* component);
+	GameObject* FindGameObject(std::string name);
 
 	void(*OnCollisionEnter) (Collider*);
 	void(*OnCollisionStay) (Collider*);
@@ -44,14 +47,18 @@ public:
 	void(*OnTriggerStay) (Collider*);
 	void(*OnTriggerExit) (Collider*);
 
-	template <class T>
-	T* GetComponent();
+
 	//setters
 	void SetTag(string t) { tag = t; };
+	void SetScene(Scene* tempScene);
 
 	//getters
+	template <class T>
+	T* GetComponent();
 	Component* GetComponent(unsigned int index) { return components[index]; }
 	Transform* GetTransform();
+	std::string GetName();
+	string GetTag() { return tag; };
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }

@@ -4,6 +4,9 @@
 #include "InputManager.h"
 #include "HashString.h"
 #include "Transform.h"
+#include "Crosse.h"
+#include "PlayerController.h"
+#include "Camera.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
@@ -11,7 +14,7 @@
 class Game
 {
 private:
-	std::vector<Scene> scenes;
+	std::vector<Scene*> scenes;
 	unsigned int currentScene;
 	HashString scenesNamesTable;
 

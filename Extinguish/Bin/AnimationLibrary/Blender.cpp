@@ -20,17 +20,14 @@ Blender::~Blender()
 	delete nextInterpolator;
 }
 
-void Blender::Init(bool timeBased, unsigned int curAnimIndex, int nextAnimIndex)
+void Blender::Init(bool timeBased, std::string curAnimName, std::string nextAnimName)
 {
 	//set interpolators values
-	curInterpolator->SetAnimation(animationSet->GetAnimation(curAnimIndex));
+	curInterpolator->SetAnimation(animationSet->GetAnimation(curAnimName));
 	curInterpolator->SetIsTimeBased(timeBased);
 
-	if (nextAnimIndex >= 0) // i set it to 0 if I don't want a next animation
-	{
-		nextInterpolator->SetAnimation(animationSet->GetAnimation(nextAnimIndex));
-		nextInterpolator->SetIsTimeBased(timeBased);
-	}
+	nextInterpolator->SetAnimation(animationSet->GetAnimation(nextAnimName));
+	nextInterpolator->SetIsTimeBased(timeBased);
 }
 
 void Blender::Update(float time, unsigned int frameIndex) // i just use frameIndex for bear, so if its 0 and time isn't 0, don't update
@@ -103,22 +100,29 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 	}
 }
 
-void Blender::SetCurAnimationIndex(unsigned int curIndex)
+//setters//
+void Blender::SetCurAnimation(std::string animName)
 { 
 	//curAnimationIndex = curIndex;
 
-	curInterpolator->SetAnimation(animationSet->GetAnimation(curIndex));
+	curInterpolator->SetAnimation(animationSet->GetAnimation(animName));
 }
 
-void Blender::SetNextAnimationIndex(unsigned int nextIndex)
+void Blender::SetNextAnimation(std::string animName)
 {
 	//nextAnimationIndex = nextIndex;
 
 	if (!nextInterpolator->HasAnimation())
 	{
-		nextInterpolator->SetAnimation(animationSet->GetAnimation(nextIndex));
+		nextInterpolator->SetAnimation(animationSet->GetAnimation(animName));
 		nextInterpolator->SetIsTimeBased(true);
 	}
+}
+
+//getters//
+Interpolator* Blender::GetNextInterpolator()
+{
+	return nextInterpolator;
 }
 
 //private helper functions
