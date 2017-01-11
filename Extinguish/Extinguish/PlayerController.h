@@ -13,8 +13,7 @@ private:
 	Transform* transform;
 	Camera* camera;
 	Transform* cameraTransform;
-	float moveSpeed;
-	float rotateSpeed;
+
 	int prevMouseX, prevMouseY;
 
 	//private helper functions
@@ -26,6 +25,6 @@ public:
 	~PlayerController();
 
 	//basic
-	void Init(float moveVelocity, float rotateVelocity);
+	void Init();
 	void Update(float dt, InputManager* input) override;
 };

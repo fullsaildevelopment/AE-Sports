@@ -11,16 +11,13 @@ PlayerController::~PlayerController()
 
 }
 
-void PlayerController::Init(float moveVelocity, float rotateVelocity)
+void PlayerController::Init()
 {
 	//cache
 	transform = GetGameObject()->GetTransform();
 	cameraTransform = GetGameObject()->FindGameObject("Camera")->GetTransform();
 	camera = GetGameObject()->FindGameObject("Camera")->GetComponent<Camera>();;
 	//camera->GetGameObject()->GetTransform()->SetPosition(transform->GetPosition());
-
-	moveSpeed = moveVelocity;
-	rotateSpeed = rotateVelocity;
 }
 
 void PlayerController::Update(float dt, InputManager* input)
@@ -42,65 +39,7 @@ void PlayerController::Update(float dt, InputManager* input)
 //private helper functions
 void PlayerController::MovePlayer(float dt)
 {
-	bool isMoving = false;
-
-	if (input->GetKey('I'))
-	{
-		transform->Translate({ 0.0f, 0.0f, moveSpeed * dt });
-		
-		isMoving = true;
-		//cameraTransform->Translate({ 0.0f, 0.0f, moveSpeed * dt });
-	}
-
-	if (input->GetKey('K'))
-	{
-		transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
-		isMoving = true;
-		//cameraTransform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
-	}
-
-	if (input->GetKey('J'))
-	{
-		transform->Translate({ -moveSpeed * dt, 0.0f, 0.0f });
-		isMoving = true;
-		//cameraTransform->Translate({ -moveSpeed * dt, 0.0f, 0.0f });
-	}
-
-	if (input->GetKey('L'))
-	{
-		transform->Translate({ moveSpeed * dt, 0.0f, 0.0f });
-		isMoving = true;
-		//cameraTransform->Translate({ moveSpeed * dt, 0.0f, 0.0f });
-	}
-
-	if (input->GetKey('U')) //up
-	{
-		transform->Translate({ 0.0f, moveSpeed * dt, 0.0f });
-		isMoving = true;
-		//cameraTransform->Translate({ 0.0f, moveSpeed * dt, 0.0f });
-	}
-
-	if (input->GetKey('O')) //down
-	{
-		transform->Translate({ 0.0f, -moveSpeed * dt, 0.0f });
-		isMoving = true;
-		//cameraTransform->Translate({ 0.0f, -moveSpeed * dt, 0.0f });
-	}
-
-	if (!GetGameObject()->GetComponent<Renderer>()->GetBlender()->GetNextInterpolator()->HasAnimation() && isMoving)
-	{
-		GetGameObject()->GetComponent<Renderer>()->SetNextAnimation("Run");
-		BlendInfo info;
-		info.totalBlendTime = 0.1f;
-		GetGameObject()->GetComponent<Renderer>()->SetBlendInfo(info);
-	}
-	else if (!isMoving)
-	{
-		GetGameObject()->GetComponent<Renderer>()->SetNextAnimation("Idle");
-		BlendInfo info;
-		info.totalBlendTime = 0.1f;
-		GetGameObject()->GetComponent<Renderer>()->SetBlendInfo(info);
-	}
+	
 
 //#if _DEBUG
 //	if (input->GetMouseX() && input->GetMouseY())
