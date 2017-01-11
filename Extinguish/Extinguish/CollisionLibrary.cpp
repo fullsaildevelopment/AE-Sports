@@ -4,6 +4,21 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
+bool isZero(float3 v)
+{
+	if (v.x <= FLT_EPSILON && v.x >= -FLT_EPSILON)
+	{
+		if (v.y <= FLT_EPSILON && v.y >= -FLT_EPSILON)
+		{
+			if (v.z <= FLT_EPSILON && v.z >= -FLT_EPSILON)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 // ComputePlane
 //
 // Calculate the plane normal and plane offset from the input points
@@ -238,4 +253,93 @@ bool AABBToCapsule(const AABB& box, const Capsule& cap)
 		return false;
 	return true;
 
+}
+
+bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
+{
+	float3 cpl;
+	float3 cpr;
+
+	float3 p1 = capl.m_Segment.m_Start;
+	float3 p2 = capl.m_Segment.m_End;
+	float3 p3 = capr.m_Segment.m_Start;
+	float3 p4 = capr.m_Segment.m_End;
+
+	float d1321 = (p1.x - p3.x)*(p2.x - p1.x) + (p1.y - p3.y)*(p2.y - p1.y) + (p1.z - p3.z)*(p2.z - p1.z);
+	float d2121 = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y) + (p2.z - p1.z)*(p2.z - p1.z);
+	float d4321 = (p4.x - p3.x)*(p2.x - p1.x) + (p4.y - p3.y)*(p2.y - p1.y) + (p4.z - p3.z)*(p2.z - p1.z);
+	float d1343 = (p1.x - p3.x)*(p4.x - p3.x) + (p1.y - p3.y)*(p4.y - p3.y) + (p1.z - p3.z)*(p4.z - p3.z);
+	float d4343 = (p4.x - p3.x)*(p4.x - p3.x) + (p4.y - p3.y)*(p4.y - p3.y) + (p4.z - p3.z)*(p4.z - p3.z);
+
+	float t = (d1343 * d4321 - d1321 * d4343) / (d2121*d4343 - d4321*d4321);
+	float u = (d1343 + t * d4321) / d4343;
+
+	cpl = p1 + (p2 - p1)*t;
+	cpr = p3 + (p4 - p3)*u;
+
+	Sphere s1;
+	Sphere s2;
+
+	s1.m_Center = cpl;
+	s1.m_Radius = capl.m_Radius;
+	s2.m_Center = cpr;
+	s2.m_Radius = capr.m_Radius;
+
+	return SphereToSphere(s1, s2);
+	//float3 d1 = capl.m_Segment.m_End - capl.m_Segment.m_Start;
+	//float3 d2 = capr.m_Segment.m_End - capr.m_Segment.m_Start;
+	//
+	//float a = dot_product(d1, d1);
+	//float b = dot_product(d1, d2);
+	//float e = dot_product(d2, d2);
+	//
+	//float d = a*e - b*b;
+	//if (d != 0)
+	//{
+	//	float3 r = capl.m_Segment.m_Start - capr.m_Segment.m_Start;
+	//	float c = dot_product(d1, r);
+	//	float f = dot_product(d2, r);
+	//
+	//	float s = (b*f - c*e) / d;
+	//	float t = (a*f - b*c) / d;
+	//
+	//	cpl = d1 * min(max(s,0),1);
+	//	cpr = d2 * min(max(t,0),1);
+	//
+	//	return true;
+	//}
+	//else
+	//{
+	//	return false;
+	//}
+	//float3 la = capl.m_Segment.m_End - capl.m_Segment.m_Start;
+	//float3 lb = capr.m_Segment.m_End - capr.m_Segment.m_Start;
+	//
+	//float lala = dot_product(la, la);
+	//float lblb = dot_product(lb, lb);
+	//float lalb = dot_product(la, lb);
+	//float lapba = dot_product(la, capr.m_Segment.m_Start - capl.m_Segment.m_Start);
+	//float lbpba = dot_product(lb, capr.m_Segment.m_Start - capl.m_Segment.m_Start);
+	//
+	//float s = (lapba + lalb*t) / lala;
+	//float t = (lbpba + lalb*((lapba + lalb*t) / lala)) / lblb;
+	//float3 r = capl.m_Segment.m_End - capl.m_Segment.m_Start;
+	//float3 s = capr.m_Segment.m_End - capr.m_Segment.m_Start;
+	//float3 qp = (capr.m_Segment.m_Start - capl.m_Segment.m_Start);
+	//
+	//float3 rxs;
+	//cross_product(rxs,r, s);
+	//float3 qpxr;
+	//cross_product(qpxr, capl.m_Segment.m_Start - capr.m_Segment.m_Start, r);
+	//
+	//float3 t;
+	//cross_product(t, qp, s);
+	//
+	//t = t / rxs;
+	//
+	//float3 u;
+	//cross_product(u, qp, r);
+	//u = u / rxs;
+	//
+	//cpl = capl.m_Segment.m_Start + t*r;
 }

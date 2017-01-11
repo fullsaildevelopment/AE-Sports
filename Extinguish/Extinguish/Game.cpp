@@ -65,7 +65,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		fovAngleY *= 2.0f;
 	}
 
-	DirectX::XMFLOAT4X4 projection;
+	XMFLOAT4X4 projection;
 	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 100.0f);
 	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
 
@@ -92,6 +92,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* boxRenderer = new Renderer();
 	box->AddComponent(boxRenderer);
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
+	BoxCollider* boxcol = new BoxCollider(box, true, { 0.7f,1,1 }, { -1,0,-1 });
+	box->AddComponent(boxcol);
 	//PlayerController* bplayerController = new PlayerController();
 	//box->AddComponent(bplayerController);
 	//bplayerController->Init(5.0f, 0.75f);
@@ -106,6 +108,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	PlayerController* playerController = new PlayerController();
 	bear->AddComponent(playerController);
 	playerController->Init(50.0f, 0.75f);
+	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
+	bear->AddComponent(bearcol);
 	//Camera* cameraController = new Camera();
 	//bear->AddComponent(cameraController);
 	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);

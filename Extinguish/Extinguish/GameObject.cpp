@@ -5,6 +5,12 @@ GameObject::GameObject()
 	transform = new Transform();
 }
 
+GameObject::GameObject(Scene* s)
+{
+	transform = new Transform();
+	scene = s;
+}
+
 GameObject::~GameObject()
 {
 	delete transform;
@@ -72,6 +78,16 @@ void GameObject::SetScene(Scene* tempScene)
 vector<GameObject*>* const GameObject::GetGameObjects() 
 { 
 	return scene->GetGameObjects(); 
+}
+
+GameObject* const GameObject::GetGameObjects(int i)
+{
+	return scene->GetGameObjects(i);
+}
+
+int GameObject::GetNumObjects()
+{
+	return scene->GetNumObjects();
 }
 
 Transform* GameObject::GetTransform()
