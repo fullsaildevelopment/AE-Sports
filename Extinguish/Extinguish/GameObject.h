@@ -27,6 +27,7 @@ private:
 	Scene* scene;
 public:
 	GameObject();
+	GameObject(Scene* s);
 	~GameObject();
 
 	//basic
@@ -62,6 +63,8 @@ public:
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
+	GameObject* const GetGameObjects(int i);
+	int GetNumObjects();
 };
 
 template <class T>

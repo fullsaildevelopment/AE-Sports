@@ -85,6 +85,8 @@ public:
 	void AddGameObject(GameObject* gameObject);
 
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
+	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
+	int GetNumObjects() { return (int)gameObjects.size(); };
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }
