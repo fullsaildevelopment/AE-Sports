@@ -206,7 +206,6 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
-    <Media Include="..\Resources\FloorTexture.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_NM.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_Spec.dds" />
@@ -248,5 +247,8 @@
     <Filter Include="Components\Scripts">
       <UniqueIdentifier>{7bfdbc4c-e776-4654-8fee-21c2dc060658}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Assets\Textures\DDS\Plane.dds" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@ class Scene
 {
 private:
 	//buffer data
-	DirectX::XMFLOAT4X4 camera;
+	//DirectX::XMFLOAT4X4 camera;
 	//DirectX::XMFLOAT4X4 projection;
 
 	//camera movement data
@@ -30,7 +30,7 @@ private:
 
 	//input data
 	InputManager* input;
-	int prevMouseX, prevMouseY;
+	//int prevMouseX, prevMouseY;
 
 	//time_t previousTime; //deltaTime
 
@@ -69,7 +69,6 @@ private:
 	void UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed);
 	void CreateModels();
 	void HandleInput();
-	void DoFBXExporting();
 
 public:
 	Scene();

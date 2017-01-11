@@ -76,55 +76,74 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
-	//GameObject* camera = new GameObject();
-	//camera->Init("Camera");
-	//camera->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, nullptr, nullptr, nullptr);
-	//Camera* cameraController = new Camera();
-	//camera->AddComponent(cameraController);
-	////cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
-	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
-	//basic->AddGameObject(camera);
+	GameObject* camera = new GameObject();
+	basic->AddGameObject(camera);
+	camera->Init("Camera");
+	camera->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Camera* cameraController = new Camera();
+	camera->AddComponent(cameraController);
+	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
 	GameObject* box = new GameObject();
+	basic->AddGameObject(box);
 	box->Init("Box");
 	box->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* boxRenderer = new Renderer();
 	box->AddComponent(boxRenderer);
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
-	basic->AddGameObject(box);
+	//PlayerController* bplayerController = new PlayerController();
+	//box->AddComponent(bplayerController);
+	//bplayerController->Init(5.0f, 0.75f);
 
 	GameObject* bear = new GameObject();
+	basic->AddGameObject(bear);
 	bear->Init("Bear");
-	bear->InitTransform(identity, { 5, 0, 0 }, { 0, 0, 0 }, { 0.025f, 0.025f, 0.025f }, nullptr, nullptr, nullptr);
+	bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.025f, 0.025f, 0.025f }, nullptr, nullptr, nullptr);
 	Renderer* bearRenderer = new Renderer();
 	bear->AddComponent(bearRenderer);
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	PlayerController* playerController = new PlayerController();
 	bear->AddComponent(playerController);
-	playerController->Init(5.0f, 0.75f);
+	playerController->Init(50.0f, 0.75f);
 	//Camera* cameraController = new Camera();
 	//bear->AddComponent(cameraController);
-	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f });
-	basic->AddGameObject(bear);
+	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+	//Transform* bearHead = new Transform();
+	//bearHead->SetLocal(bearRenderer->GetBlender()->GetSkeleton().GetBones()[5].world);
+	//bearHead->Init(bearRenderer->GetBlender()->GetSkeleton().GetBones()[5].world, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, nullptr, nullptr, nullptr);
+
+	//bearHead->Init(
 
 	GameObject* plane = new GameObject();
+	basic->AddGameObject(plane);
 	plane->Init("Plane");
-	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 10, 0.1f, 10 }, nullptr, nullptr, nullptr);
 	Renderer* planeRenderer = new Renderer();
 	plane->AddComponent(planeRenderer);
 	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	basic->AddGameObject(plane);
 
 	GameObject* crosse = new GameObject();
+	basic->AddGameObject(crosse);
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.1f, 0.1f, 0.1f }, bear->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
-	basic->AddGameObject(crosse);
 	
+	GameObject* mage = new GameObject();
+	basic->AddGameObject(mage);
+	mage->Init("Mage");
+	mage->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0}, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* mageRenderer = new Renderer();
+	mage->AddComponent(mageRenderer);
+	mageRenderer->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
+	//PlayerController* bplayerController = new PlayerController();
+	//mage->AddComponent(bplayerController);
+	//bplayerController->Init(5.0f, 0.75f);
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

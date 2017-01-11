@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Scene.h"
 #include "../Bin/FBXLoader/FBXLoader.h"
+#include "Camera.h"
 
 Scene::Scene()
 {
@@ -17,20 +18,17 @@ Scene::~Scene()
 void Scene::Init(DeviceResources const * devResources, InputManager* inputRef)
 {
 	//set camera initial position
-	XMVECTORF32 eye = { 0.0f, 0.7f, -1.5f, 0.0f };
-	XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
-	XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
+	//XMVECTORF32 eye = { 0.0f, 0.7f, -1.5f, 0.0f };
+	//XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
+	//XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-	XMStoreFloat4x4(&camera, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
+	//XMStoreFloat4x4(&camera, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
 
 	//create all the device resources
 	CreateDevResources(devResources);
 
 	//create all lights
 	CreateLights();
-
-	//export all fbx data to binary
-	DoFBXExporting();
 
 	//create models in scene
 	CreateModels();
@@ -242,27 +240,6 @@ void Scene::CreateLights()
 	}
 }
 
-void Scene::DoFBXExporting()
-{
-#if 0
-	// load in box animations and rig
-	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Box\\Box_Idle.fbx", "Box", "Box_Idle");
-	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Box\\Box_Attack.fbx", "Box", "Box_Attack");
-
-	//////load in teddy animation and rig
-	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Teddy\\Teddy_Idle.fbx", "Teddy", "Teddy_Idle");
-	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack1.fbx", "Teddy", "Teddy_Attack1");
-	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Attack2.fbx", "Teddy", "Teddy_Attack2");
-	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Teddy\\Teddy_Run.fbx", "Teddy", "Teddy_Run");
-
-	//////load in sphere
-	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Sphere.fbx", "Sphere");
-
-	////load in mage with rig and animation
-	FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
-#endif
-}
-
 void Scene::CreateModels()
 {
 #if 0
@@ -352,7 +329,7 @@ void Scene::Update(float dt)
 {
 	//handle input
 	//this->input = input;
-	HandleInput();
+	//HandleInput();
 
 	//update lights
 	//if (pointLights.size())
@@ -367,7 +344,7 @@ void Scene::Update(float dt)
 	//}
 
 	//update camera (private function)
-	UpdateCamera(dt, 5.0f, 0.75f);
+	//UpdateCamera(dt, 5.0f, 0.75f);
 
 	//update camera constant buffer
 	//cameraBufferData.cameraposW = XMFLOAT4(camera._41, camera._42, camera._43, 1);
@@ -376,12 +353,14 @@ void Scene::Update(float dt)
 
 
 	//update view on every object
-	XMFLOAT4X4 tempCamera;
-	XMStoreFloat4x4(&tempCamera, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
+	//XMFLOAT4X4 sceneCam;
+	//XMStoreFloat4x4(&sceneCam, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
 
-	//XMFLOAT4X4 camera = gameObjects[0]->FindGameObject("Camera")->GetTransform()->GetWorld();
-	//
-	//XMStoreFloat4x4(&camera, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject("Camera")->GetTransform()->GetWorld())));
+	//update camera first because we need an accurate camera
+	gameObjects[0]->Update(dt, input);
+
+	XMFLOAT4X4 cameraCam;
+	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject("Camera")->GetComponent<Camera>()->GetView())));;
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
@@ -391,14 +370,14 @@ void Scene::Update(float dt)
 
 		if (renderer)
 		{
-			renderer->SetView(tempCamera);
+			renderer->SetView(cameraCam);
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
 			if (transform)
 			{
 				XMFLOAT4X4 world;
-				XMStoreFloat4x4(&world,XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
+				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
 			}
 		}
@@ -441,125 +420,125 @@ void Scene::HandleInput()
 
 void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed)
 {
-	if (input->GetKey('W'))
-	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpeed * dt);
-		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-		XMStoreFloat4x4(&camera, newCamera);
-	}
-
-	if (input->GetKey('S'))
-	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpeed * dt);
-		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-		XMStoreFloat4x4(&camera, newCamera);
-	}
-
-	if (input->GetKey('A'))
-	{
-		XMMATRIX translation = XMMatrixTranslation(-moveSpeed * dt, 0.0f, 0.0f);
-		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-		XMStoreFloat4x4(&camera, newCamera);
-	}
-
-	if (input->GetKey('D'))
-	{
-		XMMATRIX translation = XMMatrixTranslation(moveSpeed * dt, 0.0f, 0.0f);
-		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-		XMStoreFloat4x4(&camera, newCamera);
-	}
-
-	if (input->GetKey('Q')) //up
-	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, moveSpeed * dt, 0.0f);
-		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-		XMStoreFloat4x4(&camera, newCamera);
-	}
-
-	if (input->GetKey('E')) //down
-	{
-		XMMATRIX translation = XMMatrixTranslation(0.0f, -moveSpeed * dt, 0.0f);
-		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-		XMStoreFloat4x4(&camera, newCamera);
-	}
-
-#if _DEBUG
-	if (input->GetMouseX() && input->GetMouseY())
-	{
-		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
-		{
-			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-
-			//store old cam position
-			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
-
-			camera._41 = 0;
-			camera._42 = 0;
-			camera._43 = 0;
-
-			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-
-			//apply rotations to camera
-			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-
-			//store new camera
-			XMStoreFloat4x4(&camera, tempCamera);
-
-			//change position to where it was earlier
-			camera._41 = camPosition.x;
-			camera._42 = camPosition.y;
-			camera._43 = camPosition.z;
-		}
-
-		prevMouseX = input->GetMouseX();
-		prevMouseY = input->GetMouseY();
-	}
-#else
-	if (input->GetMouseX() && input->GetMouseY())
-	{
-		if (prevMouseX && prevMouseY)
-		{
-			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-
-			//store old cam position
-			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
-
-			camera._41 = 0;
-			camera._42 = 0;
-			camera._43 = 0;
-
-			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-
-			//apply rotations to camera
-			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-
-			//store new camera
-			XMStoreFloat4x4(&camera, tempCamera);
-
-			//change position to where it was earlier
-			camera._41 = camPosition.x;
-			camera._42 = camPosition.y;
-			camera._43 = camPosition.z;
-		}
-
-		prevMouseX = input->GetMouseX();
-		prevMouseY = input->GetMouseY();
-	}
-#endif
+//	if (input->GetKey('W'))
+//	{
+//		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpeed * dt);
+//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+//		XMStoreFloat4x4(&camera, newCamera);
+//	}
+//
+//	if (input->GetKey('S'))
+//	{
+//		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpeed * dt);
+//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+//		XMStoreFloat4x4(&camera, newCamera);
+//	}
+//
+//	if (input->GetKey('A'))
+//	{
+//		XMMATRIX translation = XMMatrixTranslation(-moveSpeed * dt, 0.0f, 0.0f);
+//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+//		XMStoreFloat4x4(&camera, newCamera);
+//	}
+//
+//	if (input->GetKey('D'))
+//	{
+//		XMMATRIX translation = XMMatrixTranslation(moveSpeed * dt, 0.0f, 0.0f);
+//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+//		XMStoreFloat4x4(&camera, newCamera);
+//	}
+//
+//	if (input->GetKey('Q')) //up
+//	{
+//		XMMATRIX translation = XMMatrixTranslation(0.0f, moveSpeed * dt, 0.0f);
+//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+//		XMStoreFloat4x4(&camera, newCamera);
+//	}
+//
+//	if (input->GetKey('E')) //down
+//	{
+//		XMMATRIX translation = XMMatrixTranslation(0.0f, -moveSpeed * dt, 0.0f);
+//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+//		XMStoreFloat4x4(&camera, newCamera);
+//	}
+//
+//#if _DEBUG
+//	if (input->GetMouseX() && input->GetMouseY())
+//	{
+//		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
+//		{
+//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+//
+//			//store old cam position
+//			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+//
+//			camera._41 = 0;
+//			camera._42 = 0;
+//			camera._43 = 0;
+//
+//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
+//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
+//
+//			//apply rotations to camera
+//			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//			tempCamera = XMMatrixMultiply(rotX, tempCamera);
+//			tempCamera = XMMatrixMultiply(tempCamera, rotY);
+//
+//			//store new camera
+//			XMStoreFloat4x4(&camera, tempCamera);
+//
+//			//change position to where it was earlier
+//			camera._41 = camPosition.x;
+//			camera._42 = camPosition.y;
+//			camera._43 = camPosition.z;
+//		}
+//
+//		prevMouseX = input->GetMouseX();
+//		prevMouseY = input->GetMouseY();
+//	}
+//#else
+//	if (input->GetMouseX() && input->GetMouseY())
+//	{
+//		if (prevMouseX && prevMouseY)
+//		{
+//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+//
+//			//store old cam position
+//			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+//
+//			camera._41 = 0;
+//			camera._42 = 0;
+//			camera._43 = 0;
+//
+//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
+//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
+//
+//			//apply rotations to camera
+//			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+//			tempCamera = XMMatrixMultiply(rotX, tempCamera);
+//			tempCamera = XMMatrixMultiply(tempCamera, rotY);
+//
+//			//store new camera
+//			XMStoreFloat4x4(&camera, tempCamera);
+//
+//			//change position to where it was earlier
+//			camera._41 = camPosition.x;
+//			camera._42 = camPosition.y;
+//			camera._43 = camPosition.z;
+//		}
+//
+//		prevMouseX = input->GetMouseX();
+//		prevMouseY = input->GetMouseY();
+//	}
+//#endif
 }
 
 void Scene::Render()

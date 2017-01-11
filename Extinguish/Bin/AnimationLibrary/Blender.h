@@ -35,6 +35,7 @@ public:
 	//getters
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets() { return boneOffsets; }
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds() { return bonesWorlds; }
+	Interpolator* GetNextInterpolator();
 
 	//setters
 	void SetCurAnimation(std::string animName);
