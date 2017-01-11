@@ -12,7 +12,6 @@ Client::Client()
 
 Client::~Client()
 {
-	stop();
 }
 
 int Client::init(char* _address, UINT16 port)
@@ -30,7 +29,12 @@ int Client::init(char* _address, UINT16 port)
 
 int Client::run()
 {
-	//Packet * packet;
+	if (disconnect)
+	{
+		stop();
+		return 0;
+	}
+
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
 		switch (packet->data[0])
@@ -42,7 +46,10 @@ int Client::run()
 		}
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 		{
+			serverAddress = packet->systemAddress;
 			printf("Connected to server.\nWelcome to the lobby.\n");
+
+			
 			sendMessage("idpls", ID_REQUEST);
 		break;
 		}
@@ -59,13 +66,11 @@ int Client::run()
 		case ID_REMOTE_NEW_INCOMING_CONNECTION:
 		{
 			printf("Another client has connected.\n");
-			//sendMessage("Hello, newb!\n");
 			break;
 		}
 		case ID_NEW_INCOMING_CONNECTION:
 		{
 			printf("A connection is incoming.\n");
-			//sendMessage("Hello, newb!\n");
 		break; 
 		}
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
@@ -94,20 +99,43 @@ int Client::run()
 		case ID_CLIENT_REGISTER:
 		{
 			GetID();
+			printf("Please enter a name (8 characters max): ");
 			cin >> clientName;
-			//sendMessage(name, ID_CLIENT_REGISTER);
 			registerName();
 			break;
 		}
 		case ID_SERVER_MESSAGE:
 		{
 			readMessage();
-		}
-		default:
-		{
-			printf("Message with identifier %i has arrived.\n", packet->data[0]);
 			break;
 		}
+		case ID_CLIENT_DISCONNECT:
+		{
+			readMessage();
+			break;
+		}
+		}
+	}
+
+	if (_kbhit())
+	{
+		char message[255];
+		Gets(message, sizeof(message));
+
+		if (strcmp(message, "exit") == 0)
+		{
+
+			disconnect = true;
+			//char _message = (char)clientID;
+			sendMessage(clientID, ID_CLIENT_DISCONNECT, serverAddress);
+		}
+
+		else if (strcmp(message, "talk") == 0)
+		{
+			printf("Input message: ");
+			char newMessage[255];
+			Gets(newMessage, sizeof(newMessage));
+			sendMessage(newMessage, ID_TEST, serverAddress);
 		}
 	}
 
@@ -126,23 +154,31 @@ int Client::sendInput(UINT8 keyUp, UINT8 keyDown, UINT8 keyQuit) // inputs need 
 	return 0;
 }
 
-
-void Client::sendClose()
-{
-
-}
-
-int Client::sendAlive()
-{
-	return 0;
-}
-
 void Client::sendMessage(char * message, GameMessages ID)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
-	bsOut.Write(message);
+	bsOut.Write(message, (unsigned int)strlen(message));
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+}
+
+void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)
+{
+
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(message, (unsigned int)strlen(message));
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sAddress, false);
+}
+
+
+void Client::sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress)
+{
+
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(clientid);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sAddress, false);
 }
 
 void Client::readMessage()
@@ -164,10 +200,14 @@ void Client::GetID()
 
 void Client::registerName()
 {
+	char test[10];
+	test[0] = clientID;
+	test[1] = (char)strlen(clientName);
+	strcpy(&test[2], clientName);
+	
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
-	bsOut.Write(clientID);
-	//bsOut.Write((unsigned short)strlen(clientName));
-	bsOut.Write(clientName, strlen(clientName));
+	bsOut.Write(test, (unsigned int)strlen(test));
+
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }

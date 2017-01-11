@@ -8,6 +8,8 @@ private:
 	Server newServer;
 	Client serverClient;
 public:
+	~ServerWrapper() { //serverClient.stop();
+	newServer.stop(); }
 	int init(char * address, UINT16 port)
 	{
 		newServer.init(port);
