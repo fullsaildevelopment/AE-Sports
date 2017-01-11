@@ -96,7 +96,16 @@
     <ClCompile Include="AI.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Crosse.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
     <ClCompile Include="Transform.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -185,10 +194,18 @@
     <ClInclude Include="AI.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Crosse.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
-    <Media Include="..\Resources\FloorTexture.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_NM.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_Spec.dds" />
@@ -227,5 +244,11 @@
     <Filter Include="CollisionLibrary\Structs">
       <UniqueIdentifier>{fbb3e4ed-d3ff-40b8-88a1-d614b8e9c3b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components\Scripts">
+      <UniqueIdentifier>{7bfdbc4c-e776-4654-8fee-21c2dc060658}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Assets\Textures\DDS\Plane.dds" />
   </ItemGroup>
 </Project>
