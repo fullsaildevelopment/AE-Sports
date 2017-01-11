@@ -23,18 +23,43 @@ void AI::UpdateState(State newState)
 
 void AI::Init()
 {
-	listOfEnemies->reserve(4);
-	listOfMates->reserve(3);
+	listOfEnemies.reserve(4);
+	listOfMates.reserve(4); // I'll include myself for now*************************************
 	
 	// grabbing all of the game objects
-	std::vector<GameObject*>* tmp = me->GetGameObjects();
+	std::vector<GameObject*> tmp = *me->GetGameObjects();
+
+	// assuming we name the individual AI as their team number***************************************
+	string myTeam = me->GetName();
 
 	// for each game object
-	for (int i = 0; i < tmp->size(); ++i)
+	for (int i = 0; i < tmp.size(); ++i)
 	{
-		// go through and see what is
-		// assign the ball
-		// fill out my lists
+		// if it's the ball, do the thing
+		if (tmp[i]->GetTag() == "Ball")
+			ball = tmp[i];
+
+		// if it's a goal
+		if (tmp[i]->GetTag() == "Goal")
+		{
+			// if it's my goal
+			if (tmp[i]->GetName() == myTeam)
+				myGoal = tmp[i];
+
+			// if it's enemy's goal
+			else
+				enemyGoal = tmp[i];
+		}
+
+		// if it's AI
+		else if (tmp[i]->GetTag() == "AI")
+		{
+			if (tmp[i]->GetName() == myTeam) // if they're on my team
+				listOfMates.push_back(tmp[i]);// add them to my team list
+
+			else // if they're not
+				listOfEnemies.push_back(tmp[i]);// put them in enemy list
+		}
 	}
 
 	currState = idle;
@@ -44,7 +69,8 @@ void AI::Update()
 {
 	// check events and UpdateState accordingly
 
-	// if we do a starting timer to every game, ...
+	// check if i have a clear shot, toss that shit
+	// 
 }
 
 void AI::Idle()
@@ -57,46 +83,62 @@ void AI::Idle()
 
 void AI::GetBall()
 {
-	// if person (who is enemy) already has ball
-		// RunTo(that guy)
+	// find the ball
 
-	// if person (who is team) has ball
-		// if enemies are around him
-			// Attack(closest enemy to me around my guy)
-}
+	for (int i = 0; i < listOfEnemies.size(); ++i)
+	{
+		// if person (who is enemy) already has ball
+			// RunTo(that guy)
+		
+		//if ((*listOfEnemies)[i]->)
 
-void AI::Score()
-{
-	// assuming i have the ball
+		// if person (who is team) has ball
+			// if enemies are around him
+				// Attack(closest enemy to me around my guy)
+	}
 
-	// if i have a clear shot to the goal
-		// Toss(to goal)
+	RunTo(listOfEnemies[1], true, true);
 }
 
 void AI::Attack(GameObject target)
 {
-	// if (target == enemy/not teammate)
+	if (target.GetName() != me->GetName()) // better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
+	{
 		// hit
+	}
 }
 
 void AI::RunTo(XMFLOAT4 location)
 {
-
+	
 }
 
-void AI::RunTo(GameObject Target)
+void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 {
 	//...
-	// if next to
-		//Attack(Target)
+	Transform *tmpLoc = me->GetTransform();
+
+	//if (tmpLoc->GetPosition())
+	//Attack(target);
 }
 
 void AI::Toss(XMFLOAT4 location)
 {
-
+	//if the goal is a game object, idk why i'd need this function
 }
 
 void AI::TossTo(GameObject target)
 {
-
+	
 }
+
+void AI::Score() // maybe i wont need this, if i just check to see if i have a clear shot in update, i can call toss in there??
+{
+	// assuming i have the ball
+
+	// if i have a clear shot to the goal
+	// Toss(to goal)
+}
+
+AI::State AI::GetCurrState() { return currState; }
+bool AI::GetHasBall() { return hasBall; }
