@@ -10,20 +10,32 @@ class Camera : public Component
 private:
 	InputManager* input;
 	Transform* transform;
-	DirectX::XMFLOAT4X4 clamp;
+	DirectX::XMFLOAT4X4 view;
+	DirectX::XMFLOAT3 clampPos;
 
 	float moveSpeed;
 	float rotateSpeed;
 	int prevMouseX, prevMouseY;
+	
+	float curRotX, curRotY;
+	const float maxRotX, maxRotY;
 
 	//private helper functions
 	void MoveCamera(float dt);
 	void ClampTo();
 public:
+	Camera();
+	~Camera();
+
 	//basic
 	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel);
 	void Update(float dt, InputManager* input) override;
+	void UpdateCamsRotation(float x, float y);
 
 	//setters
-	void SetClampMatrix(DirectX::XMFLOAT4X4 matrix);
+	//void SetClampMatrix(DirectX::XMFLOAT4X4 matrix);
+	void SetClampPos(DirectX::XMFLOAT3 pos);
+
+	//getters
+	XMFLOAT4X4 GetView();
 };
