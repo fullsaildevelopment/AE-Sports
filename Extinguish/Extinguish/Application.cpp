@@ -49,5 +49,6 @@ void Application::Shutdown()
 {
 	//clean up any memory application dynamically allocated
 	game.Shutdown();
+	devResources.Shutdown();
 	delete input;
 }

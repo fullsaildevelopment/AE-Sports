@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "InputManager.h"
 #include "Transform.h"
+#include "PlayerController.h"
 
 #define NUMOFPOINTLIGHTS 1
 #define NUMOFSPOTLIGHTS 0
@@ -20,18 +21,18 @@ class Scene
 {
 private:
 	//buffer data
-	DirectX::XMFLOAT4X4 camera;
-	DirectX::XMFLOAT4X4 projection;
+	//DirectX::XMFLOAT4X4 camera;
+	//DirectX::XMFLOAT4X4 projection;
 
 	//camera movement data
-	float camYaw;
-	float camPitch;
+	//float camYaw;
+	//float camPitch;
 
 	//input data
 	InputManager* input;
-	int prevMouseX, prevMouseY;
+	//int prevMouseX, prevMouseY;
 
-	time_t previousTime; //deltaTime
+	//time_t previousTime; //deltaTime
 
 	vector<Model> models;
 	DirectionalLight dirLight;
@@ -68,7 +69,6 @@ private:
 	void UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed);
 	void CreateModels();
 	void HandleInput();
-	void DoFBXExporting();
 
 public:
 	Scene();
@@ -85,6 +85,8 @@ public:
 	void AddGameObject(GameObject* gameObject);
 
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
+	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
+	int GetNumObjects() { return (int)gameObjects.size(); };
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }
