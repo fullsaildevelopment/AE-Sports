@@ -33,13 +33,14 @@ private:
 
 	enum GameMessages
 	{
-		ID_TEST = ID_USER_PACKET_ENUM + 2,
-		ID_CLIENT_MESSAGE,
+		ID_CLIENT_MESSAGE = ID_USER_PACKET_ENUM + 2,
 		ID_SERVER_MESSAGE,
 		ID_CLIENT_DISCONNECT,
 		ID_SERVER_CLOSURE,
 		ID_CLIENT_REGISTER,
-		ID_REQUEST
+		ID_REQUEST,
+		ID_INCOMING_PACKET,
+		ID_REMOVE_CLIENT
 	};
 	
 	static RakPeerInterface * peer;
@@ -50,16 +51,16 @@ public:
 	Client();
 	~Client();
 
-	static int init(char* address, UINT16 port);
+	int init(char* address, UINT16 port);
 	int run();
 	void stop();
 
 	int sendInput(UINT8 keyUp, UINT8 keyDown, UINT8 keyQuit);
-
+	void sendStop();
+	void sendMessage(char * newMessage);
 
 private:
 
-	SystemAddress serverAddress;
 	bool disconnect = false;
 	UINT8 clientID;
 	char clientName[8];

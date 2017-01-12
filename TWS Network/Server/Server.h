@@ -27,13 +27,14 @@ private:
 
 	enum GameMessages
 	{
-		ID_TEST = ID_USER_PACKET_ENUM + 2,
-		ID_CLIENT_MESSAGE,
+		ID_CLIENT_MESSAGE = ID_USER_PACKET_ENUM + 2,
 		ID_SERVER_MESSAGE,
 		ID_CLIENT_DISCONNECT,
 		ID_SERVER_CLOSURE,
 		ID_CLIENT_REGISTER,
-		ID_REQUEST
+		ID_REQUEST,
+		ID_INCOMING_PACKET,
+		ID_REMOVE_CLIENT
 	};
 
 	UINT16 numPlayers = 0;
@@ -53,9 +54,11 @@ public:
 private:
 
 	void sendMessage(char * message, GameMessages ID, bool broadcast);
+	void sendMessage(char * message, unsigned int length, GameMessages ID, bool broadcast);
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();
 	void unregisterClient();
+	void sendDisconnect();
 };
 

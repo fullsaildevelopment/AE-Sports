@@ -21,4 +21,12 @@ public:
 	{
 		return newClient.run();
 	}
+	void sendStop()
+	{
+		newClient.sendStop();
+	}
+	void sendMessage(char * message)
+	{
+		newClient.sendMessage(message);
+	}
 };
