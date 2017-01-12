@@ -8,7 +8,7 @@ private:
 	Server newServer;
 	Client serverClient;
 public:
-	~ServerWrapper() { //serverClient.stop();
+	~ServerWrapper() { serverClient.stop();
 	newServer.stop(); }
 	int init(char * address, UINT16 port)
 	{
@@ -19,5 +19,10 @@ public:
 	{
 		newServer.update();
 		return serverClient.run();
+	}
+	void stop()
+	{
+		serverClient.stop();
+		newServer.stop();
 	}
 };

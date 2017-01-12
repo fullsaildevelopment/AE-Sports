@@ -10,7 +10,10 @@ Server::Server()
 
 Server::~Server()
 {
-	stop();
+	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+		delete names[i];
+
+	delete[] names;
 }
 
 int Server::init(uint16_t port)
@@ -25,7 +28,7 @@ int Server::init(uint16_t port)
 
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
-
+		names[i] = new char[8];
 		openIDs[i] = i + 1;
 	}
 	return 1;
@@ -65,7 +68,7 @@ int  Server::update()
 			break;
 			}
 
-		case ID_TEST:
+		case ID_CLIENT_MESSAGE:
 		{
 			rerouteMessage();
 		break;
@@ -89,7 +92,9 @@ int  Server::update()
 		case ID_CLIENT_DISCONNECT:
 		{
 			unregisterClient();
-			
+			sendDisconnect();
+			if (numPlayers == 0)
+				peer->Shutdown(0);
 			break;
 		}
 		}
@@ -113,6 +118,14 @@ void Server::sendMessage(char * message, GameMessages ID, bool broadcast)
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
 }
 
+void Server::sendMessage(char * message, unsigned int length, GameMessages ID, bool broadcast)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(&message[0], length);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
+}
+
 void Server::rerouteMessage() // sends incoming message to everyone else
 {
 	BitStream bsOut(packet->data, packet->length, false);
@@ -129,9 +142,9 @@ UINT16 Server::registerClient()
 	char temp[8];
 	bsIn.Read(clientid);
 	bsIn.Read(length);
-	bsIn.Read(temp, length);
+	bsIn.Read(names[clientid - 1], length);
 
-	names[clientid - 1] = temp;
+	//names[clientid - 1] = temp;
 	nameSizes[clientid - 1] = length;
 	return clientid - 1;
 }
@@ -165,10 +178,16 @@ void Server::unregisterClient()
 
 	UINT8 leavingID;
 	bsIn.Read(leavingID);
+	int size = nameSizes[leavingID - 1];
 
-	openIDs[leavingID] = leavingID + 1;
-	char message[100];
-	memcpy(&message[0], names[leavingID], nameSizes[leavingID]);
-	memcpy(&message[nameSizes[leavingID]], " has left the lobby.\n", strlen(" has left the lobby.\n"));
-	sendMessage(message, ID_CLIENT_DISCONNECT, true);
+	openIDs[leavingID - 1] = leavingID;
+	char message[30];
+	memcpy(&message[0], names[leavingID - 1], size);
+	memcpy(&message[size], " has left the lobby.\n", strlen(" has left the lobby.\n"));
+	sendMessage(message, ID_SERVER_MESSAGE, true);
+}
+
+void Server::sendDisconnect()
+{
+	sendMessage("", ID_REMOVE_CLIENT, false);
 }
