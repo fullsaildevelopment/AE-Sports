@@ -29,7 +29,7 @@ void AI::Init()
 	// grabbing all of the game objects
 	std::vector<GameObject*> tmp = *me->GetGameObjects();
 
-	// assuming we name the individual AI as their team number***************************************
+	// assuming we name the individual AI&&Player as their team number***************************************
 	string myTeam = me->GetName();
 
 	// for each game object
@@ -52,7 +52,7 @@ void AI::Init()
 		}
 
 		// if it's AI
-		else if (tmp[i]->GetTag() == "AI")
+		else if (tmp[i]->GetTag() == "AI" || tmp[i]->GetTag() == "Player")
 		{
 			if (tmp[i]->GetName() == myTeam) // if they're on my team
 				listOfMates.push_back(tmp[i]);// add them to my team list
@@ -105,12 +105,14 @@ void AI::Attack(GameObject target)
 	if (target.GetName() != me->GetName()) // better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
 	{
 		// hit
+		//target.GetTransform()->Translate(me->GetTransform()->GetPosition()) ***********
 	}
 }
 
-void AI::RunTo(XMFLOAT4 location)
+void AI::RunTo(XMFLOAT3 location)
 {
-	
+	// make a vector from me to loc
+	// add velocity in that direction?
 }
 
 void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
@@ -122,7 +124,7 @@ void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 	//Attack(target);
 }
 
-void AI::Toss(XMFLOAT4 location)
+void AI::Toss(XMFLOAT3 location)
 {
 	//if the goal is a game object, idk why i'd need this function
 }
@@ -141,4 +143,3 @@ void AI::Score() // maybe i wont need this, if i just check to see if i have a c
 }
 
 AI::State AI::GetCurrState() { return currState; }
-bool AI::GetHasBall() { return hasBall; }
