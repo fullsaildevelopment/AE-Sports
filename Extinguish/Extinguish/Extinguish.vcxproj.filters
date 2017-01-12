@@ -105,6 +105,12 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -197,13 +203,22 @@
     <ClInclude Include="Crosse.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="BallController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
-    <Media Include="..\Resources\FloorTexture.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_NM.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage_Spec.dds" />
+    <Media Include="..\Assets\Textures\DDS\Plane.dds" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">

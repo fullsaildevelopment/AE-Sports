@@ -116,6 +116,11 @@ std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBonesWorlds()
 	}
 }
 
+Blender* Renderer::GetBlender()
+{
+	return blender;
+}
+
 //setters
 void Renderer::SetModel(XMMATRIX& model)
 {
@@ -136,4 +141,14 @@ void Renderer::SetView(XMFLOAT4X4 view)
 void Renderer::SetProjection(XMFLOAT4X4 projection)
 { 
 	mvpData.projection = projection;
+}
+
+void Renderer::SetNextAnimation(std::string animName)
+{
+	blender->SetNextAnimation(animName);
+}
+
+void Renderer::SetBlendInfo(BlendInfo info)
+{
+	blender->SetBlendInfo(info);
 }
