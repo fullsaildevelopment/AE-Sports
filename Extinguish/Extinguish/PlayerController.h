@@ -4,21 +4,27 @@
 #include "GameObject.h"
 #include "Transform.h"
 
+class Camera;
+
 class PlayerController : public Component
 {
 private:
 	InputManager* input;
-	DirectX::XMFLOAT4X4 camera;
+	Transform* transform;
+	Camera* camera;
+	Transform* cameraTransform;
+
+	int prevMouseX, prevMouseY;
 
 	//private helper functions
-	void HandleInput();
-	void ClampToCamera();
+	void MovePlayer(float dt);
+	//void ClampToCamera();
 
 public:
 	PlayerController();
 	~PlayerController();
 
 	//basic
+	void Init();
 	void Update(float dt, InputManager* input) override;
-	void SetCameraWorld(DirectX::XMFLOAT4X4 cam);
 };

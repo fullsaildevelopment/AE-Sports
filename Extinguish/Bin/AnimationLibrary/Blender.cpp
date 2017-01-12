@@ -100,6 +100,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 	}
 }
 
+//setters//
 void Blender::SetCurAnimation(std::string animName)
 { 
 	//curAnimationIndex = curIndex;
@@ -116,6 +117,12 @@ void Blender::SetNextAnimation(std::string animName)
 		nextInterpolator->SetAnimation(animationSet->GetAnimation(animName));
 		nextInterpolator->SetIsTimeBased(true);
 	}
+}
+
+//getters//
+Interpolator* Blender::GetNextInterpolator()
+{
+	return nextInterpolator;
 }
 
 //private helper functions

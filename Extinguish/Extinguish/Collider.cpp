@@ -5,7 +5,7 @@ Collider::Collider(GameObject* o, bool trigger) : Component(o)
 {
 	SetCompType(Component::CTBoxCollider);
 	Type = ColliderType::aabb;
-	//o->transform.AddChild(&transform);
+	o->GetTransform()->AddChild(&transform);
 }
 
 bool Collider::isColliding(Collider* c)

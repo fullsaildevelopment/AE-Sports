@@ -20,7 +20,7 @@ AABB BoxCollider::GetAABB()
 AABB BoxCollider::GetWorldAABB()
 {
 	AABB box = GetAABB();
-	XMFLOAT3 m = GetTransform().GetPosition();
+	XMFLOAT3 m = GetGameObject()->GetTransform()->GetPosition();
 	box.max.x += m.x;
 	box.max.y += m.y;
 	box.max.z += m.z;
@@ -39,7 +39,7 @@ void BoxCollider::Update(float dt)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 
-	size_t size = Others->size();
+	size_t size = (*Others).size();
 	for (int i = 0; i < size; ++i)
 	{
 		if ((*Others)[i] == GetGameObject()) continue;
@@ -49,6 +49,7 @@ void BoxCollider::Update(float dt)
 		{
 			if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
 			{
+				printf("B");
 				if (!box->isTrigger() && !isTrigger())
 				{
 					//Physics
@@ -66,6 +67,7 @@ void BoxCollider::Update(float dt)
 					}
 				}
 			}
+			continue;
 		}
 		///////////////////////////////////////AABB vs Capsule///////////////////////////////////////
 		CapsuleCollider* capsule = (*Others)[i]->GetComponent<CapsuleCollider>();
@@ -73,8 +75,10 @@ void BoxCollider::Update(float dt)
 		{
 			if (AABBToCapsule(GetWorldAABB(), capsule->GetWorldCapsule()))
 			{
+				printf("C");
 
 			}
+			continue;
 		}
 		///////////////////////////////////////AABB vs Sphere///////////////////////////////////////
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
@@ -82,8 +86,10 @@ void BoxCollider::Update(float dt)
 		{
 			if (SphereToAABB(sphere->GetWorldSphere(), GetWorldAABB()))
 			{
+				printf("S");
 
 			}
 		}
+		continue;
 	}
 }

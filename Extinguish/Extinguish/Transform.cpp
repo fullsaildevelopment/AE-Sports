@@ -49,8 +49,14 @@ void Transform::Translate(DirectX::XMFLOAT3 vector)
 
 	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
 	XMMATRIX translation = XMMatrixTranslation(vector.x, vector.y, vector.z);
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(vector.x, vector.y, vector.z));
+	tempLocal = XMMatrixMultiply(XMMatrixTranslation(vector.x, vector.y, vector.z), tempLocal);
 	XMStoreFloat4x4(&local, tempLocal);
+
+	//local._41 = position.x;
+	//local._42 = position.y;
+	//local._43 = position.z;
+
+	cout << vector.x << " " << vector.y << " " << vector.z << endl;
 
 	if (child)
 	{
@@ -63,7 +69,7 @@ void Transform::RotateX(float degrees)
 	rotation.x += degrees;
 
 	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationX(degrees));
+	tempLocal = XMMatrixMultiply(XMMatrixRotationX(degrees), tempLocal);
 	XMStoreFloat4x4(&local, tempLocal);
 
 	if (child)
@@ -77,7 +83,7 @@ void Transform::RotateY(float degrees)
 	rotation.y += degrees;
 
 	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationY(degrees));
+	tempLocal = XMMatrixMultiply(XMMatrixRotationY(degrees), tempLocal);
 	XMStoreFloat4x4(&local, tempLocal);
 
 	if (child)
@@ -91,7 +97,7 @@ void Transform::RotateZ(float degrees)
 	rotation.z += degrees;
 
 	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(degrees));
+	tempLocal = XMMatrixMultiply(XMMatrixRotationZ(degrees), tempLocal);
 	XMStoreFloat4x4(&local, tempLocal);
 
 	if (child)
@@ -150,13 +156,17 @@ void Transform::SetPosition(DirectX::XMFLOAT3 vector)
 {
 	position = vector;
 
-	XMMATRIX tempPosition = XMMatrixTranslation(position.x, position.y, position.z);
-	XMMATRIX tempLocal;
-	tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
-	tempLocal = XMMatrixMultiply(tempLocal, tempPosition);
-	XMStoreFloat4x4(&local, tempLocal);
+	//XMMATRIX tempPosition = XMMatrixTranslation(position.x, position.y, position.z);
+	//XMMATRIX tempLocal;
+	//tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
+	//tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
+	//tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
+	//tempLocal = XMMatrixMultiply(tempLocal, tempPosition);
+	//XMStoreFloat4x4(&local, tempLocal);
+
+	local._41 = position.x;
+	local._42 = position.y;
+	local._43 = position.z;
 
 	if (child)
 	{
@@ -189,6 +199,8 @@ void Transform::SetWorld(DirectX::XMFLOAT4X4 matrix)
 void Transform::SetLocal(DirectX::XMFLOAT4X4 matrix)
 {
 	local = matrix;
+
+	BDirty();
 }
 
 void Transform::SetParent(Transform* pParent)
@@ -204,8 +216,6 @@ void Transform::SetParent(Transform* pParent)
 }
 
 //getters
-
-//I transpose the world only
 DirectX::XMFLOAT4X4 Transform::GetWorld()
 {
 	if (parent && bDirty)
