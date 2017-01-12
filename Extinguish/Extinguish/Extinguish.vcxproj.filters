@@ -197,6 +197,9 @@
     <ClInclude Include="Crosse.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="BallController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
