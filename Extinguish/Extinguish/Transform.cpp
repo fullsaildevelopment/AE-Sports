@@ -52,6 +52,12 @@ void Transform::Translate(DirectX::XMFLOAT3 vector)
 	tempLocal = XMMatrixMultiply(XMMatrixTranslation(vector.x, vector.y, vector.z), tempLocal);
 	XMStoreFloat4x4(&local, tempLocal);
 
+	//local._41 = position.x;
+	//local._42 = position.y;
+	//local._43 = position.z;
+
+	cout << vector.x << " " << vector.y << " " << vector.z << endl;
+
 	if (child)
 	{
 		child->BDirty();

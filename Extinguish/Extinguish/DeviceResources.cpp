@@ -18,11 +18,11 @@ void DeviceResources::Init(HWND hwnd)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	//create swapchain and device
-	UINT flags = NULL;
+	UINT flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 #if (_DEBUG)
 	{
-		flags = D3D11_CREATE_DEVICE_DEBUG;
+		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	}
 #endif
 
@@ -103,6 +103,11 @@ void DeviceResources::Clear()
 	//clear views
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), DirectX::Colors::SkyBlue);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}
+
+void DeviceResources::Shutdown()
+{
+	swapChain->SetFullscreenState(FALSE, NULL);
 }
 
 void DeviceResources::Present()

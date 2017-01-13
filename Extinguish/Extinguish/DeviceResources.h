@@ -25,6 +25,7 @@ public:
 	void Init(HWND hwnd);
 	void Present();
 	void Clear();
+	void Shutdown();
 
 	//Getters
 	ID3D11Device* GetDevice() const { return device.Get(); }
