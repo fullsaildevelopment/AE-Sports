@@ -67,8 +67,8 @@ void Window::RegisterWindowClass(HINSTANCE hInstance, HINSTANCE hPrevInstance, L
 	wc.lpfnWndProc = WindowProc; //points to the window procedure, which will handle messages
 	wc.hInstance = hInstance;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW); //loads the cursor image
-	//wc.hbrBackground = CreateSolidBrush(RGB(0, 0, 255));
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW; //I'm not sure if it's needed because directx render target view will color window
+	//wc.hbrBackground = CreateSolidBrush(RGB(0, 0, 255)); //if we ever want a more custom background
+	//wc.hbrBackground = (HBRUSH)COLOR_WINDOW; //I'm not sure if it's needed because directx render target view will color window
 	wc.lpszClassName = "WindowClass1";
 
 	//register the window class
