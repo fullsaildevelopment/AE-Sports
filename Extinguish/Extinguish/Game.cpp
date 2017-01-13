@@ -109,7 +109,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//meterbox->AddComponent(meterboxcap);
 	BoxCollider* meterboxcol = new BoxCollider(meterbox, true , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
 	meterbox->AddComponent(meterboxcol);
-	PlayerController* meterboxplayerController = new PlayerController();
+	Movement* meterboxplayerController = new Movement();
 	meterbox->AddComponent(meterboxplayerController);
 	meterboxplayerController->Init(5.0f, 0.75f);
 	//PlayerController* bplayerController = new PlayerController();
