@@ -125,6 +125,13 @@ void Transform::AddSibling(Transform* tempSibling)
 	}
 }
 
+void Transform::Update(float dt)
+{
+	position.x += velocity.x * dt;
+	position.y += velocity.y * dt;
+	position.z += velocity.z * dt;
+}
+
 //setters
 void Transform::BDirty()
 {
@@ -209,6 +216,18 @@ void Transform::SetParent(Transform* pParent)
 	}
 }
 
+void Transform::SetVelocity(XMFLOAT3 v)
+{
+	velocity = v;
+}
+
+void Transform::AddVelocity(XMFLOAT3 a)
+{
+	velocity.x += a.x;
+	velocity.y += a.y;
+	velocity.z += a.z;
+}
+
 //getters
 DirectX::XMFLOAT4X4 Transform::GetWorld()
 {
@@ -269,4 +288,9 @@ Transform* Transform::GetChild()
 Transform* Transform::GetSibling()
 {
 	return sibling;
+}
+
+XMFLOAT3 Transform::GetVelocity()
+{
+	return velocity;
 }

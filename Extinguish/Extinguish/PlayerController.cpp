@@ -86,7 +86,7 @@ void PlayerController::MovePlayer(float dt)
 		isMoving = true;
 		//cameraTransform->Translate({ 0.0f, -moveSpeed * dt, 0.0f });
 	}
-
+#if 0
 	if (!GetGameObject()->GetComponent<Renderer>()->GetBlender()->GetNextInterpolator()->HasAnimation() && isMoving)
 	{
 		GetGameObject()->GetComponent<Renderer>()->SetNextAnimation("Run");
@@ -101,6 +101,7 @@ void PlayerController::MovePlayer(float dt)
 		info.totalBlendTime = 0.5f;
 		GetGameObject()->GetComponent<Renderer>()->SetBlendInfo(info);
 	}
+#endif
 
 //#if _DEBUG
 //	if (input->GetMouseX() && input->GetMouseY())

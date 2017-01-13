@@ -234,6 +234,7 @@ bool AABBToCapsule(const AABB& box, const Capsule& cap)
 	sphere.m_Center = (box.min + box.max) * 0.5f;
 	vec3f cp = cap.m_Segment.m_End - cap.m_Segment.m_Start;
 	float ratio = dot_product(cp, sphere.m_Center - cap.m_Segment.m_Start) / dot_product(cp, cp);
+	ratio = min(max(ratio, 1), 0);
 	cp = cap.m_Segment.m_Start + cp * ratio;
 	vec3f cpb = cp;
 	if (cp.x < box.min.x)
@@ -273,6 +274,9 @@ bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
 
 	float t = (d1343 * d4321 - d1321 * d4343) / (d2121*d4343 - d4321*d4321);
 	float u = (d1343 + t * d4321) / d4343;
+
+	t = min(max(t, 1), 0);
+	u = min(max(u, 1), 0);
 
 	cpl = p1 + (p2 - p1)*t;
 	cpr = p3 + (p4 - p3)*u;
@@ -342,4 +346,133 @@ bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
 	//u = u / rxs;
 	//
 	//cpl = capl.m_Segment.m_Start + t*r;
+}
+
+float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz)
+{
+	float xClose, yClose, zClose;
+	float xFar, yFar, zFar;
+
+	if (vel.x > 0.0f)
+	{
+		xClose = boxr.min.x - boxl.max.x;
+		xFar = boxr.max.x - boxl.min.x;
+	}
+	else
+	{
+		xClose = boxr.max.x - boxl.min.x;
+		xFar = boxr.min.x - boxl.max.x;
+	}
+	if (vel.y > 0.0f)
+	{
+		yClose = boxr.min.y - boxl.max.y;
+		yFar = boxr.max.y - boxl.min.y;
+	}
+	else
+	{
+		yClose = boxr.max.y - boxl.min.y;
+		yFar = boxr.min.y - boxl.max.y;
+	}
+	if (vel.z > 0.0f)
+	{
+		zClose = boxr.min.z - boxl.max.z;
+		zFar = boxr.max.z - boxl.min.z;
+	}
+	else
+	{
+		zClose = boxr.max.z - boxl.min.z;
+		zFar = boxr.min.z - boxl.max.z;
+	}
+
+	float xEntry, yEntry, zEntry;
+	float xExit, yExit, zExit;
+
+	if (vel.x == 0)
+	{
+		xEntry = -FLT_MAX;
+		xExit = FLT_MAX;
+	}
+	else
+	{
+		xEntry = xClose / vel.x;
+		xExit = xFar / vel.x;
+	}
+
+	if (vel.y == 0)
+	{
+		yEntry = -FLT_MAX;
+		yExit = FLT_MAX;
+	}
+	else
+	{
+		yEntry = yClose / vel.y;
+		yExit = yFar / vel.y;
+	}
+
+	if (vel.z == 0)
+	{
+		zEntry = -FLT_MAX;
+		zExit = FLT_MAX;
+	}
+	else
+	{
+		zEntry = zClose / vel.z;
+		zExit = zFar / vel.z;
+	}
+
+	float entryT = max(xEntry, max(yEntry, zEntry));
+	float exitT = min(xExit, min(yExit, zExit));
+
+	if (entryT > exitT || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f)
+	{
+		return 1.0f;
+	}
+
+	if (xEntry > yEntry && xEntry > zEntry)
+	{
+		if (xClose < 0.0f)
+		{
+			normalx = 1.0f;
+			normaly = 0.0f;
+			normalz = 0.0f;
+		}
+		else
+		{
+			normalx = -1.0f;
+			normaly = 0.0f;
+			normalz = 0.0f;
+		}
+	}
+	else if(yEntry > zEntry)
+	{
+		if (yClose < 0.0f)
+		{
+			normalx = 0.0f;
+			normaly = 1.0f;
+			normalz = 0.0f;
+		}
+		else
+		{
+			normalx = 0.0f;
+			normaly = -1.0f;
+			normalz = 0.0f;
+		}
+	}
+	else
+	{
+		if (zClose < 0.0f)
+		{
+			normalx = 0.0f;
+			normaly = 0.0f;
+			normalz = 1.0f;
+		}
+		else
+		{
+			normalx = 0.0f;
+			normaly = 0.0f;
+			normalz = -1.0f;
+		}
+	}
+
+	return entryT;
 }

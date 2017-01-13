@@ -92,8 +92,25 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* boxRenderer = new Renderer();
 	box->AddComponent(boxRenderer);
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
-	BoxCollider* boxcol = new BoxCollider(box, true, { 0.7f,1,1 }, { -1,0,-1 });
+	//CapsuleCollider* boxcap = new CapsuleCollider(1, { 0,0,0 }, { 0,2.7f,0 }, box, true);
+	//box->AddComponent(boxcap);
+	BoxCollider* boxcol = new BoxCollider(box, true, {1,1,1 }, { -1,0,-1 });
 	box->AddComponent(boxcol);
+
+	GameObject* meterbox = new GameObject();
+	basic->AddGameObject(meterbox);
+	meterbox->Init("MeterBox");
+	meterbox->InitTransform(identity, { 3, 0.5f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer = new Renderer();
+	meterbox->AddComponent(meterboxRenderer);
+	meterboxRenderer->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//CapsuleCollider* meterboxcap = new CapsuleCollider(1, { 0,-0.5f,0 }, { 0,0.5f,0 }, meterbox, true);
+	//meterbox->AddComponent(meterboxcap);
+	BoxCollider* meterboxcol = new BoxCollider(meterbox, true , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox->AddComponent(meterboxcol);
+	PlayerController* meterboxplayerController = new PlayerController();
+	meterbox->AddComponent(meterboxplayerController);
+	meterboxplayerController->Init(5.0f, 0.75f);
 	//PlayerController* bplayerController = new PlayerController();
 	//box->AddComponent(bplayerController);
 	//bplayerController->Init(5.0f, 0.75f);
