@@ -9,7 +9,7 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o,t)
 	radius = r;
 }
 
-void SphereCollider::Update(float dt)
+void SphereCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 
