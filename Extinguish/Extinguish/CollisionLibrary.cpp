@@ -352,6 +352,7 @@ float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, 
 {
 	float xClose, yClose, zClose;
 	float xFar, yFar, zFar;
+	normalx = normaly = normalz = 0;
 
 	if (vel.x > 0.0f)
 	{
@@ -423,7 +424,7 @@ float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, 
 	float entryT = max(xEntry, max(yEntry, zEntry));
 	float exitT = min(xExit, min(yExit, zExit));
 
-	if (entryT > exitT || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f)
+	if (entryT > exitT || xEntry < 0.0f && yEntry < 0.0f && zEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f || zEntry > 1.0f)
 	{
 		return 1.0f;
 	}
