@@ -36,11 +36,11 @@ void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT
 
 void GameObject::Update(float deltaTime, InputManager* input)
 {
-	transform->Update(deltaTime);
 	for (int i = 0; i < components.size(); ++i)
 	{
 		components[i]->Update(deltaTime, input);
 	}
+	transform->Update(deltaTime);
 }
 
 //misc//

@@ -75,23 +75,28 @@ void BoxCollider::Update(float dt, InputManager* input)
 			}
 			else
 			{
-				if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
-				{
 					float normx, normy, normz;
-					float t = SweptAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) , normx, normy, normz);
-					XMFLOAT3 pos = tg->GetTransform()->GetPosition();
-					XMFLOAT3 vel = tg->GetTransform()->GetVelocity();
-					pos.x += vel.x * t;
-					pos.y += vel.y * t;
-					pos.z += vel.z * t;
-					tg->GetTransform()->SetPosition(pos);
-					float rt = 1 - t;
-					float dot = dot_product(XMtoF(vel), float3(normx, normy, normz)) * rt;
-					vel.x = dot * normx;
-					vel.y = dot * normy;
-					vel.z = dot * normz;
-					tg->GetTransform()->SetVelocity(vel);
-				}
+					float t = SweptAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) * dt , normx, normy, normz);
+					if (t < 1)
+					{
+						XMFLOAT3 pos = tg->GetTransform()->GetPosition();
+						XMFLOAT3 vel = tg->GetTransform()->GetVelocity();
+						pos.x += vel.x * dt * t;
+						pos.y += vel.y * dt * t;
+						pos.z += vel.z * dt * t;
+						tg->GetTransform()->SetPosition(pos);
+						float rt = 1 - t;
+						//float dot = dot_product(XMtoF(vel), float3(normx, normy, normz)) * rt;
+						float3 v = XMtoF(vel) * rt;
+						//float dot = (v.x * normz + v.y * normx + v.z * normy) * rt;
+						float3 norms = float3(normx, normy, normz);
+						float3 rejv = v - norms * dot_product(norms, v);
+						vel.x = rejv.x;
+						vel.y = rejv.y;
+						vel.z = rejv.z;
+						tg->GetTransform()->SetVelocity(vel);
+					}
+				
 
 			}
 			continue;
