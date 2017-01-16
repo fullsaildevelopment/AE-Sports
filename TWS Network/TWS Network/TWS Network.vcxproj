@@ -146,9 +146,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RakNet\Gets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client Wrapper.h" />
+    <ClInclude Include="RakNet\Gets.h" />
     <ClInclude Include="Server Wrapper.h" />
   </ItemGroup>
   <ItemGroup>

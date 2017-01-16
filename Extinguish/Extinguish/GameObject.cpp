@@ -40,6 +40,7 @@ void GameObject::Update(float deltaTime, InputManager* input)
 	{
 		components[i]->Update(deltaTime, input);
 	}
+	transform->Update(deltaTime);
 }
 
 //misc//

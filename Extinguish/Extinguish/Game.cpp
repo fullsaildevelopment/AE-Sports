@@ -93,8 +93,25 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* boxRenderer = new Renderer();
 	box->AddComponent(boxRenderer);
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
-	BoxCollider* boxcol = new BoxCollider(box, true, { 0.7f,1,1 }, { -1,0,-1 });
+	//CapsuleCollider* boxcap = new CapsuleCollider(1, { 0,0,0 }, { 0,2.7f,0 }, box, true);
+	//box->AddComponent(boxcap);
+	BoxCollider* boxcol = new BoxCollider(box, false, {1,1,1 }, { -1,0,-1 });
 	box->AddComponent(boxcol);
+
+	GameObject* meterbox = new GameObject();
+	basic->AddGameObject(meterbox);
+	meterbox->Init("MeterBox");
+	meterbox->InitTransform(identity, { 3, 0.5f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer = new Renderer();
+	meterbox->AddComponent(meterboxRenderer);
+	meterboxRenderer->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Movement* meterboxplayerController = new Movement();
+	meterbox->AddComponent(meterboxplayerController);
+	meterboxplayerController->Init(5.0f, 0.75f);
+	//CapsuleCollider* meterboxcap = new CapsuleCollider(1, { 0,-0.5f,0 }, { 0,0.5f,0 }, meterbox, true);
+	//meterbox->AddComponent(meterboxcap);
+	BoxCollider* meterboxcol = new BoxCollider(meterbox, false , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox->AddComponent(meterboxcol);
 	//PlayerController* bplayerController = new PlayerController();
 	//box->AddComponent(bplayerController);
 	//bplayerController->Init(5.0f, 0.75f);
@@ -106,14 +123,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* bearRenderer = new Renderer();
 	bear->AddComponent(bearRenderer);
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	PlayerController* playerController = new PlayerController();
-	bear->AddComponent(playerController);
-	playerController->Init();
-	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
-	bear->AddComponent(bearcol);
+	//PlayerController* playerController = new PlayerController();
+	//bear->AddComponent(playerController);
+	//playerController->Init();
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
 	bearMover->Init(100.0f, 0.75f);
+	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
+	bear->AddComponent(bearcol);
+	
 
 	//Camera* cameraController = new Camera();
 	//bear->AddComponent(cameraController);

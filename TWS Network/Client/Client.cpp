@@ -4,42 +4,31 @@ RakPeerInterface * Client::peer = nullptr;
 
 Packet * Client::packet = nullptr;
 
+char * Client::address = nullptr;
+
 Client::Client()
 {
 }
 
 Client::~Client()
 {
-	stop();
 }
 
-int Client::init(char* address, UINT16 port)
+int Client::init(char* _address, UINT16 port)
 {
 	SocketDescriptor sd;
 	peer = RakNet::RakPeerInterface::GetInstance();
 
 	peer->Startup(1, &sd, 1);
+	address = _address;
 
-	peer->Connect("127.0.0.1", 60000, 0, 0);
-
-	/*
-	packet = peer->Receive(); 
-
-	if (packet->data[0] != ID_CONNECTION_REQUEST_ACCEPTED)
-	{
-		peer->DeallocatePacket(packet);
-		return 0;
-	}*/
-
-	
-
+	peer->Connect(address, port, 0, 0);
 
 	return 1;
 }
 
 int Client::run()
 {
-	//Packet * packet;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
 		switch (packet->data[0])
@@ -52,6 +41,8 @@ int Client::run()
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 		{
 			printf("Connected to server.\nWelcome to the lobby.\n");
+
+			sendMessage("idpls", ID_REQUEST);
 		break;
 		}
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -67,13 +58,11 @@ int Client::run()
 		case ID_REMOTE_NEW_INCOMING_CONNECTION:
 		{
 			printf("Another client has connected.\n");
-			sendMessage("Hello, newb!\n");
 			break;
 		}
 		case ID_NEW_INCOMING_CONNECTION:
 		{
 			printf("A connection is incoming.\n");
-			sendMessage("Hello, newb!\n");
 		break; 
 		}
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
@@ -94,18 +83,34 @@ int Client::run()
 			return 0;
 		break;
 		}
-		case ID_TEST:
+		case ID_CLIENT_MESSAGE:
 		{
 			readMessage();
 			break;
 		}
-		default:
+		case ID_CLIENT_REGISTER:
 		{
-			printf("Message with identifier %i has arrived.\n", packet->data[0]);
+			GetID();
+			printf("Please enter a name (8 characters max): ");
+			cin >> clientName;
+			registerName();
+			break;
+		}
+		case ID_SERVER_MESSAGE:
+		{
+			readMessage();
+			break;
+		}
+		case ID_REMOVE_CLIENT:
+		{
+			stop();
+			return 0;
 			break;
 		}
 		}
 	}
+
+
 
 	return 1;
 }
@@ -121,23 +126,31 @@ int Client::sendInput(UINT8 keyUp, UINT8 keyDown, UINT8 keyQuit) // inputs need 
 	return 0;
 }
 
-
-void Client::sendClose()
-{
-
-}
-
-int Client::sendAlive()
-{
-	return 0;
-}
-
-void Client::sendMessage(char * message)
+void Client::sendMessage(char * message, GameMessages ID)
 {
 	BitStream bsOut;
-	bsOut.Write((RakNet::MessageID)ID_TEST);
-	bsOut.Write(message);
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(message, (unsigned int)strlen(message));
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+}
+
+void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)
+{
+
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(message, (unsigned int)strlen(message));
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sAddress, false);
+}
+
+
+void Client::sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress)
+{
+
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(clientid);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sAddress, false);
 }
 
 void Client::readMessage()
@@ -146,5 +159,50 @@ void Client::readMessage()
 	BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
 	bsIn.Read(rs);
-	printf("%s\n", rs.C_String());
+	int endPoint = rs.Find("\n");
+	if (endPoint > 0 && endPoint < rs.GetLength())
+	{
+//		rs.Erase(endPoint, rs.GetCharacterCount);
+		printf("%s\n", rs.SubStr(0, endPoint).C_String());
+	}
+	else
+		printf("%s\n", rs.C_String());
+}
+
+void Client::GetID()
+{
+	RakString rs;
+	BitStream bsIn(packet->data, packet->length, false);
+	bsIn.IgnoreBytes(sizeof(MessageID));
+	bsIn.Read(clientID);
+}
+
+void Client::registerName()
+{
+	char test[10];
+	test[0] = clientID;
+	test[1] = (char)strlen(clientName);
+	strcpy(&test[2], clientName);
+	
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
+	bsOut.Write(test, (unsigned int)strlen(test));
+
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+}
+
+void Client::sendStop()
+{
+	disconnect = true;
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_CLIENT_DISCONNECT);
+	bsOut.Write(clientID);
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+
+	peer->CloseConnection(peer->GetGUIDFromIndex(0), true, '\000', IMMEDIATE_PRIORITY);
+}
+
+void Client::sendMessage(char * newMessage)
+{
+	sendMessage(newMessage, ID_CLIENT_MESSAGE, peer->GetSystemAddressFromIndex(0));
 }

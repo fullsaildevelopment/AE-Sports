@@ -11,6 +11,7 @@ private:
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 rotation;
 	DirectX::XMFLOAT3 scale;
+	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT4X4 local;
 	Transform* parent;
 	Transform* child;
@@ -36,6 +37,7 @@ public:
 	void RotateZ(float degrees);
 	void AddChild(Transform* tempChild);
 	void AddSibling(Transform* tempSibling);
+	void Update(float dt);
 
 	//setters
 	void BDirty();
@@ -45,11 +47,14 @@ public:
 	void SetWorld(DirectX::XMFLOAT4X4 matrix);
 	void SetLocal(DirectX::XMFLOAT4X4 matrix);
 	void SetParent(Transform* pParent);
+	void SetVelocity(DirectX::XMFLOAT3 v);
+	void AddVelocity(DirectX::XMFLOAT3 a);
 
 	//getters
 	DirectX::XMFLOAT4X4 GetWorld();
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
+	DirectX::XMFLOAT3 GetVelocity();
 	DirectX::XMFLOAT3 GetPosition();
 	DirectX::XMFLOAT3 GetRotation();
 	DirectX::XMFLOAT3 GetScale();
