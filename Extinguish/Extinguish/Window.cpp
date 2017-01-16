@@ -25,6 +25,12 @@ int Window::Update(InputManager* input)
 			case (WM_KEYUP):
 				input->SetKeyboardKey(msg.wParam, false);
 				break;
+			case (WM_SYSKEYDOWN):
+				input->SetKeyboardKey(msg.wParam, true);
+				break;
+			case (WM_SYSKEYUP):
+				input->SetKeyboardKey(msg.wParam, false);
+				break;
 			case (WM_LBUTTONDOWN):
 				input->SetMouseButtons(-1, true);
 				break;
