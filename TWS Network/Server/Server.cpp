@@ -1,8 +1,5 @@
 #include "Server.h"
 
-
-
-
 Server::Server()
 {
 
@@ -24,9 +21,13 @@ int Server::init(uint16_t port)
 	sd.socketFamily = AF_INET;
 	StartupResult res = peer->Startup(MAX_PLAYERS, &sd, 1);
 
+	if (res == SOCKET_FAILED_TO_BIND)
+		float temp = 0;
+
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);
 
+	printf("Server made at: %s\n", peer->GetMyBoundAddress().ToString());
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
 		names[i] = new char[8];
@@ -60,15 +61,14 @@ int  Server::update()
 		}
 		case ID_DISCONNECTION_NOTIFICATION:
 		{
-			printf("A client has disconnected.\n");
-			break;
-			}
+		printf("A client has disconnected.\n");
+		break;
+		}
 		case ID_CONNECTION_LOST:
-			{
-			printf("A client lost the connection.\n");
-			break;
-			}
-
+		{
+		printf("A client lost the connection.\n");
+		break;
+		}
 		case ID_CLIENT_MESSAGE:
 		{
 			printf("Incoming client to client message\n");
@@ -81,6 +81,8 @@ int  Server::update()
 			char newMessage[50] = "Please welcome the new player, ";
 			memcpy(&newMessage[strlen(newMessage)], names[id], nameSizes[id]);
 			memcpy(&newMessage[strlen(newMessage)], ".", 2);
+
+			printf(newMessage);
 			sendMessage(newMessage, ID_SERVER_MESSAGE, true);
 
 			sendMessage(newMessage, ID_SERVER_MESSAGE, false);
