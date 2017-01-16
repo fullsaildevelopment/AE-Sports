@@ -1,5 +1,7 @@
 #include "Server.h"
 
+Server::CLIENT_GAME_STATE * Server::clientState = new CLIENT_GAME_STATE();
+
 Server::Server()
 {
 
@@ -10,7 +12,7 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
-	delete[] names;
+	delete clientState;
 }
 
 int Server::init(uint16_t port)
@@ -101,6 +103,12 @@ int  Server::update()
 				peer->Shutdown(0);
 			break;
 		}
+		case ID_INCOMING_PACKET:
+		{
+			recievePacket();
+			sendPackets(); // for testing purposes
+			break;
+		}
 		}
 	}
 
@@ -132,8 +140,17 @@ void Server::sendMessage(char * message, unsigned int length, GameMessages ID, b
 
 void Server::rerouteMessage() // sends incoming message to everyone else
 {
-	BitStream bsOut(packet->data, packet->length, false);
+	BitStream bsOut;
+	BitStream bsIn(packet->data, packet->length, false);
+	bsIn.IgnoreBytes(sizeof(MessageID));
+	char message[255];
+	UINT8 length;
+	bsIn.Read(length);
+	bsIn.Read(message, (unsigned int)length);
+	bsOut.Write((MessageID)ID_CLIENT_MESSAGE);
+	bsOut.Write(message, (unsigned int)strlen(message));
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, true);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 
 UINT16 Server::registerClient()
@@ -143,12 +160,10 @@ UINT16 Server::registerClient()
 	bsIn.IgnoreBytes(sizeof(MessageID));
 
 	UINT8 length, clientid;
-	char temp[8];
 	bsIn.Read(clientid);
 	bsIn.Read(length);
 	bsIn.Read(names[clientid - 1], length);
 
-	//names[clientid - 1] = temp;
 	nameSizes[clientid - 1] = length;
 	return clientid - 1;
 }
@@ -194,4 +209,61 @@ void Server::unregisterClient()
 void Server::sendDisconnect()
 {
 	sendMessage("", ID_REMOVE_CLIENT, false);
+}
+
+void Server::recievePacket()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+	bIn.Read(clientState->timeStamp);
+	bIn.Read(clientState->clientID);
+	bIn.Read(clientState->nameLength);
+	bIn.Read(clientState->animationName, (unsigned int)clientState->nameLength);
+	bIn.Read(clientState->hasBall);
+	bIn.Read(clientState->world);
+
+	printf("\nClient: %s\nClient ID: %i\n", names[clientState->clientID - 1], clientState->clientID);
+	
+	printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
+		clientState->world._11,
+		clientState->world._12,
+		clientState->world._13,
+		clientState->world._14,
+		clientState->world._21,
+		clientState->world._22,
+		clientState->world._23,
+		clientState->world._24,
+		clientState->world._31,
+		clientState->world._32,
+		clientState->world._33,
+		clientState->world._34,
+		clientState->world._41,
+		clientState->world._42,
+		clientState->world._43,
+		clientState->world._44);
+
+	if (clientState->hasBall)
+		printf("hasBall: true\n");
+	else
+		printf("hasBall: false\n");
+
+}
+
+void Server::sendPackets()
+{
+	// send packet x8 to all clients
+	// presently only need a max of 4 until merged with engine
+
+
+	BitStream bOut;
+	bOut.Write((MessageID)ID_INCOMING_PACKET);
+	bOut.Write(GetTime());
+	// p1
+	bOut.Write(clientState->clientID);
+	bOut.Write(clientState->nameLength);
+	bOut.Write(clientState->animationName, (unsigned int)clientState->nameLength);
+	bOut.Write(clientState->hasBall);
+	bOut.Write(clientState->world);
+
+	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }
