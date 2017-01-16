@@ -79,6 +79,7 @@ void AI::Idle()
 	// or tracking
 
 	// do idle pose/anim?
+	UpdateState(getBall);
 }
 
 void AI::GetBall()
@@ -97,34 +98,50 @@ void AI::GetBall()
 				// Attack(closest enemy to me around my guy)
 	}
 
-	RunTo(listOfEnemies[1], true, true);
+	// RunTo(listOfEnemies[1], true, true);
 }
 
-void AI::Attack(GameObject target)
+void AI::Attack(GameObject *target)
 {
-	if (target.GetName() != me->GetName()) // better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
+	// better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
+	if (target->GetName() != me->GetName()) 
 	{
 		// hit
-		//target.GetTransform()->Translate(me->GetTransform()->GetPosition()) ***********
+		
 	}
-}
-
-void AI::RunTo(XMFLOAT3 location)
-{
-	// make a vector from me to loc
-	// add velocity in that direction?
 }
 
 void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 {
-	//...
-	Transform *tmpLoc = me->GetTransform();
+	// change this later to running with turning*********************************
+	// turn to them
 
-	//if (tmpLoc->GetPosition())
-	//Attack(target);
+	//u - forward vector
+	float3 u(me->GetTransform()->GetForward().x, me->GetTransform()->GetForward().y, me->GetTransform()->GetForward().z);
+
+	//v - vector between me and destination
+	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+	//degRad - degrees/radians between me and target
+	float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
+
+	me->GetTransform()->RotateX(degRad);
+
+	// run to them
+	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
+
+	// if im next to them already
+	if (me->GetTransform()->GetPosition().x == target->GetTransform()->GetPosition().x)
+	{
+		// will change that to not be exact
+		// should also check y
+
+		if (isPerson && isEnemy)
+			Attack(target);
+	}
 }
 
-void AI::Toss(XMFLOAT3 location)
+void AI::TossTo(float3 location)
 {
 	//if the goal is a game object, idk why i'd need this function
 }
