@@ -30,8 +30,8 @@ void GameObject::Init(std::string name)
 void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling)
 {
 	//set transform
-	transform->Init(localMatrix, position, rotation, scale, parent, child, sibling);
 	transform->SetGameObject(this);
+	transform->Init(localMatrix, position, rotation, scale, parent, child, sibling);
 }
 
 void GameObject::Update(float deltaTime, InputManager* input)

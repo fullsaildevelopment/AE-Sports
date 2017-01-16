@@ -11,8 +11,8 @@ Transform::Transform() : Component(nullptr)
 	scale = { 1, 1, 1 };
 
 	parent = nullptr;
-	child = nullptr;
-	sibling = nullptr;
+	//child = nullptr;
+	//sibling = nullptr;
 }
 
 Transform::Transform(GameObject* o) : Component(o)
@@ -47,98 +47,98 @@ void Transform::Translate(DirectX::XMFLOAT3 vector)
 	position.y += vector.y;
 	position.z += vector.z;
 
-	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	XMMATRIX translation = XMMatrixTranslation(vector.x, vector.y, vector.z);
-	tempLocal = XMMatrixMultiply(XMMatrixTranslation(vector.x, vector.y, vector.z), tempLocal);
-	XMStoreFloat4x4(&local, tempLocal);
+	//XMMATRIX tempLocal = XMLoadFloat4x4(&local);
+	//XMMATRIX translation = XMMatrixTranslation(vector.x, vector.y, vector.z);
+	//tempLocal = XMMatrixMultiply(XMMatrixTranslation(vector.x, vector.y, vector.z), tempLocal);
+	//XMStoreFloat4x4(&local, tempLocal);
 
-	//local._41 = position.x;
-	//local._42 = position.y;
-	//local._43 = position.z;
+	////local._41 = position.x;
+	////local._42 = position.y;
+	////local._43 = position.z;
 
-	cout << vector.x << " " << vector.y << " " << vector.z << endl;
+	////cout << vector.x << " " << vector.y << " " << vector.z << endl;
 
-	if (child)
-	{
-		child->BDirty();
-	}
+	BDirty();
 }
 
 void Transform::RotateX(float degrees)
 {
 	rotation.x += degrees;
 
-	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	tempLocal = XMMatrixMultiply(XMMatrixRotationX(degrees), tempLocal);
-	XMStoreFloat4x4(&local, tempLocal);
+	//XMMATRIX tempLocal = XMLoadFloat4x4(&local);
+	//tempLocal = XMMatrixMultiply(XMMatrixRotationX(degrees), tempLocal);
+	//XMStoreFloat4x4(&local, tempLocal);
 
-	if (child)
-	{
-		child->BDirty();
-	}
+	BDirty();
 }
 
 void Transform::RotateY(float degrees)
 {
 	rotation.y += degrees;
 
-	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	tempLocal = XMMatrixMultiply(XMMatrixRotationY(degrees), tempLocal);
-	XMStoreFloat4x4(&local, tempLocal);
+	//XMMATRIX tempLocal = XMLoadFloat4x4(&local);
+	//tempLocal = XMMatrixMultiply(XMMatrixRotationY(degrees), tempLocal);
+	//XMStoreFloat4x4(&local, tempLocal);
 
-	if (child)
-	{
-		child->BDirty();
-	}
+	BDirty();
 }
 
 void Transform::RotateZ(float degrees)
 {
 	rotation.z += degrees;
 
-	XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-	tempLocal = XMMatrixMultiply(XMMatrixRotationZ(degrees), tempLocal);
-	XMStoreFloat4x4(&local, tempLocal);
+	//XMMATRIX tempLocal = XMLoadFloat4x4(&local);
+	//tempLocal = XMMatrixMultiply(XMMatrixRotationZ(degrees), tempLocal);
+	//XMStoreFloat4x4(&local, tempLocal);
 
-	if (child)
-	{
-		child->BDirty();
-	}
+	BDirty();
 }
 
 void Transform::AddChild(Transform* tempChild)
 {
-	if (!child)
+	//if (!child)
+	//{
+	//	child = tempChild;
+	//}
+	//else
+	//{
+	//	//if there's already a child, give that child a sibling
+	//	child->AddSibling(tempChild);
+	//}
+
+	if (tempChild)
 	{
-		child = tempChild;
-	}
-	else
-	{
-		//if there's already a child, give that child a sibling
-		child->AddSibling(tempChild);
+		children.push_back(tempChild);
 	}
 }
 
 void Transform::AddSibling(Transform* tempSibling)
 {
-	if (!sibling)
-	{
-		sibling = tempSibling;
-	}
-	else
-	{
-		sibling->AddSibling(tempSibling);
-	}
+	//if (!sibling)
+	//{
+	//	sibling = tempSibling;
+	//}
+	//else
+	//{
+	//	sibling->AddSibling(tempSibling);
+	//}
 }
 
 //setters
 void Transform::BDirty()
 {
-	bDirty = true;
-
-	if (child)
+	//only mark as dirty if it's not already dirty. This makes sure you don't mark children as dirty unecessarily
+	if (!bDirty)
 	{
-		child->BDirty();
+		bDirty = true;
+
+		for (int i = 0; i < children.size(); ++i)
+		{
+			if (children[i])
+			{
+				children[i]->BDirty();
+			}
+		}
 	}
 }
 
@@ -146,10 +146,12 @@ void Transform::SetScale(DirectX::XMFLOAT3 vector)
 {
 	scale = vector;
 
-	XMMATRIX tempScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-	XMMATRIX tempLocal = XMMatrixMultiply(tempScale, XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y)), XMMatrixRotationZ(rotation.z)));
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
-	XMStoreFloat4x4(&local, tempLocal);
+	BDirty();
+
+	//XMMATRIX tempScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+	//XMMATRIX tempLocal = XMMatrixMultiply(tempScale, XMMatrixMultiply(XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y)), XMMatrixRotationZ(rotation.z)));
+	//tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
+	//XMStoreFloat4x4(&local, tempLocal);
 }
 
 void Transform::SetPosition(DirectX::XMFLOAT3 vector) 
@@ -164,31 +166,25 @@ void Transform::SetPosition(DirectX::XMFLOAT3 vector)
 	//tempLocal = XMMatrixMultiply(tempLocal, tempPosition);
 	//XMStoreFloat4x4(&local, tempLocal);
 
-	local._41 = position.x;
-	local._42 = position.y;
-	local._43 = position.z;
+	////local._41 = position.x;
+	////local._42 = position.y;
+	////local._43 = position.z;
 
-	if (child)
-	{
-		child->BDirty();
-	}
+	BDirty();
 }
 
 void Transform::SetRotation(DirectX::XMFLOAT3 vector)
 {
 	rotation = vector;
 
-	XMMATRIX tempLocal;
-	tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixRotationZ(rotation.z));
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixScaling(scale.x, scale.y, scale.z));
-	tempLocal = XMMatrixMultiply(tempLocal, XMMatrixTranslation(position.x, position.y, position.z));
-	XMStoreFloat4x4(&local, tempLocal);
+	//XMMATRIX tempLocal;
+	//tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
+	//tempLocal = XMMatrixMultiply(XMMatrixRotationZ(rotation.z), tempLocal);
+	//tempLocal = XMMatrixMultiply(XMMatrixScaling(scale.x, scale.y, scale.z), tempLocal);
+	//tempLocal = XMMatrixMultiply(XMMatrixTranslation(position.x, position.y, position.z), tempLocal);
+	//XMStoreFloat4x4(&local, tempLocal);
 
-	if (child)
-	{
-		child->BDirty();
-	}
+	BDirty();
 }
 
 void Transform::SetWorld(DirectX::XMFLOAT4X4 matrix)
@@ -200,7 +196,7 @@ void Transform::SetLocal(DirectX::XMFLOAT4X4 matrix)
 {
 	local = matrix;
 
-	BDirty();
+	//BDirty();
 }
 
 void Transform::SetParent(Transform* pParent)
@@ -218,20 +214,33 @@ void Transform::SetParent(Transform* pParent)
 //getters
 DirectX::XMFLOAT4X4 Transform::GetWorld()
 {
-	if (parent && bDirty)
+	if (bDirty)
 	{
-		XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-		XMMATRIX tempParentWorld = XMLoadFloat4x4(&parent->GetWorld());
-		XMMATRIX tempWorld = (XMMatrixMultiply(tempLocal, tempParentWorld));
+		XMMATRIX identity = XMMatrixIdentity();
+		XMMATRIX tempRotation = XMMatrixMultiply(identity, XMMatrixRotationX(rotation.x));
+		tempRotation = XMMatrixMultiply(tempRotation, XMMatrixRotationY(rotation.y));
+		tempRotation = XMMatrixMultiply(tempRotation, XMMatrixRotationZ(rotation.z));
+		XMMATRIX tempTranslation = XMMatrixMultiply(identity, XMMatrixTranslation(position.x, position.y, position.z));
+		XMMATRIX tempScale = XMMatrixMultiply(identity, XMMatrixScaling(scale.x, scale.y, scale.z));
 
-		XMStoreFloat4x4(&world, tempWorld);
+		XMMATRIX tempWorld = XMMatrixMultiply(tempScale, tempRotation);
+		tempWorld = XMMatrixMultiply(tempWorld, tempTranslation);
+
+		if (parent)
+		{
+			tempWorld = XMMatrixMultiply(tempWorld, XMLoadFloat4x4(&parent->GetWorld()));
+			//tempWorld = XMMatrixMultiply(XMLoadFloat4x4(&parent->GetWorld()), tempWorld);
+		}
+		
+		XMStoreFloat4x4(&local, tempWorld);
+
+		world = local;
 
 		bDirty = false;
 	}
-	else if (!parent)
+	else
 	{
-		XMMATRIX tempLocal = XMLoadFloat4x4(&local);
-		XMStoreFloat4x4(&world, (tempLocal));
+		world = local;
 	}
 
 	return world;
@@ -267,12 +276,27 @@ Transform* Transform::GetParent()
 	return parent;
 }
 
-Transform* Transform::GetChild()
+Transform* Transform::GetChild(int index)
 {
-	return child;
+	return children[index];
 }
 
-Transform* Transform::GetSibling()
+//Transform* Transform::GetSibling()
+//{
+//	return sibling;
+//}
+
+DirectX::XMFLOAT3 Transform::GetForward()
 {
-	return sibling;
+	return{ local._31, local._32, local._33 };
+}
+
+DirectX::XMFLOAT3 Transform::GetUp()
+{
+	return{ local._21, local._22, local._23 };
+}
+
+DirectX::XMFLOAT3 Transform::GetRight()
+{
+	return{ local._11, local._12, local._13 };
 }
