@@ -79,6 +79,7 @@ void AI::Idle()
 	// or tracking
 
 	// do idle pose/anim?
+	UpdateState(getBall);
 }
 
 void AI::GetBall()
@@ -100,12 +101,13 @@ void AI::GetBall()
 	// RunTo(listOfEnemies[1], true, true);
 }
 
-void AI::Attack(GameObject target)
+void AI::Attack(GameObject *target)
 {
-	if (target.GetName() != me->GetName()) // better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
+	// better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
+	if (target->GetName() != me->GetName()) 
 	{
 		// hit
-		//target.GetTransform()->Translate(me->GetTransform()->GetPosition()) ***********
+		
 	}
 }
 
@@ -114,17 +116,30 @@ void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 	if (isPerson && isEnemy)
 	{
 		// change this later to running with turning*********************************
-
 		// turn to them
-		//me->GetTransform()->RotateX(target->GetTransform()->GetRotation() - me->GetTransform()->GetRotation());
 
 		//u - forward vector
-		//v - vector between me and destination
+		float3 u(me->GetTransform()->GetForward().x, me->GetTransform()->GetForward().y, me->GetTransform()->GetForward().z);
 		
+		//v - vector between me and destination
+		float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+		
+		//degRad - degrees/radians between me and target
+		float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
+
+		me->GetTransform()->RotateX(degRad);
 
 		// run to them
+		me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
 
 		// attack them
+		if (me->GetTransform()->GetPosition().x == target->GetTransform()->GetPosition().x)
+		{
+			// will change that to not be exact
+			// should also check y
+
+			Attack(target);
+		}
 	}
 
 	else if (!isEnemy)
@@ -138,7 +153,7 @@ void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 	}
 }
 
-void AI::Toss(float3 location)
+void AI::TossTo(float3 location)
 {
 	//if the goal is a game object, idk why i'd need this function
 }
