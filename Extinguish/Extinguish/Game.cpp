@@ -80,11 +80,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* camera = new GameObject();
 	basic->AddGameObject(camera);
 	camera->Init("Camera");
-	camera->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	camera->InitTransform(identity, { 0, 1.5f, -3.0f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Camera* cameraController = new Camera();
 	camera->AddComponent(cameraController);
 	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
-	cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
 	GameObject* box = new GameObject();
 	basic->AddGameObject(box);
@@ -136,12 +136,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* crosse = new GameObject();
 	basic->AddGameObject(crosse);
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.001f, 0.001f, 0.001f }, nullptr, nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.15f, 0.9f }, { 0, 0, 0}, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
+	crosseController->Init();
 	
 	GameObject* mage = new GameObject();
 	basic->AddGameObject(mage);

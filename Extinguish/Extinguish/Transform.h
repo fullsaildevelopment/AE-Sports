@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <string>
+#include <vector>
 #include "Component.h"
 
 class Transform : public Component
@@ -13,8 +14,7 @@ private:
 	DirectX::XMFLOAT3 scale;
 	DirectX::XMFLOAT4X4 local;
 	Transform* parent;
-	Transform* child;
-	Transform* sibling;
+	std::vector<Transform*> children;
 	bool bDirty; //if you	 change the world of the parent, make all of its children dirty. This means their world needs to be updated. This is beneficial because you could make your children dirty multiple times before you actually update world, thus, saving processing
 
 	//private helper functions
@@ -54,6 +54,9 @@ public:
 	DirectX::XMFLOAT3 GetRotation();
 	DirectX::XMFLOAT3 GetScale();
 	Transform* GetParent();
-	Transform* GetChild();
+	Transform* GetChild(int index);
 	Transform* GetSibling();
+	DirectX::XMFLOAT3 GetForward();
+	DirectX::XMFLOAT3 GetUp();
+	DirectX::XMFLOAT3 GetRight();
 };

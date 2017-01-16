@@ -15,37 +15,44 @@ void Movement::Update(float dt, InputManager* input)
 {
 	if (input->GetKey('I'))
 	{
-		transform->Translate({ 0.0f, 0.0f, moveSpeed * dt });
+		XMFLOAT3 forward = transform->GetForward();
+		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
 	if (input->GetKey('K'))
 	{
-		transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
+		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
+		XMFLOAT3 forward = transform->GetForward();
+		transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 
 	if (input->GetKey('J'))
 	{
-		transform->Translate({ -moveSpeed * dt, 0.0f, 0.0f });
+		XMFLOAT3 right = transform->GetRight();
+		transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 
 	if (input->GetKey('L'))
 	{
-		transform->Translate({ moveSpeed * dt, 0.0f, 0.0f });
+		XMFLOAT3 right = transform->GetRight();
+		transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
 	if (input->GetKey('U')) //up
 	{
-		transform->Translate({ 0.0f, moveSpeed * dt, 0.0f });
+		XMFLOAT3 up = transform->GetUp();
+		transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (input->GetKey('O')) //down
+	if (input->GetKey('P')) //down
 	{
-		transform->Translate({ 0.0f, -moveSpeed * dt, 0.0f });
+		XMFLOAT3 up = transform->GetUp();
+		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 }
