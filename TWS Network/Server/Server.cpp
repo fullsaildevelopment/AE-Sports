@@ -22,10 +22,7 @@ int Server::init(uint16_t port)
 
 	SocketDescriptor sd(port, 0);
 	sd.socketFamily = AF_INET;
-	if (peer->Startup(MAX_PLAYERS, &sd, 1) == false)
-	{
-		return 0;
-	}
+	StartupResult res = peer->Startup(MAX_PLAYERS, &sd, 1);
 
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);
