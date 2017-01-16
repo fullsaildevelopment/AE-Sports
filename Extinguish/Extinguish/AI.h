@@ -36,9 +36,9 @@ public:
 	void GetBall();
 
 	// Actions
-	void Attack(GameObject target); // pass in the person you want to attack
+	void Attack(GameObject *target); // pass in the person you want to attack
 	void RunTo(GameObject *target, bool isPerson, bool isEnemy); // run to a person or object in the map
-	void Toss(float3 location); // throw the ball to a certain location ie the goal
+	void TossTo(float3 location); // throw the ball to a certain location ie the goal
 	void TossTo(GameObject target); // pass the ball off to a teammate
 	void Score(); // throw the ball into the goal
 
