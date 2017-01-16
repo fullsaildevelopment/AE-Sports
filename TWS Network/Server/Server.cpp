@@ -60,17 +60,18 @@ int  Server::update()
 		}
 		case ID_DISCONNECTION_NOTIFICATION:
 		{
-				printf("A client has disconnected.\n");
+			printf("A client has disconnected.\n");
 			break;
 			}
 		case ID_CONNECTION_LOST:
 			{
-				printf("A client lost the connection.\n");
+			printf("A client lost the connection.\n");
 			break;
 			}
 
 		case ID_CLIENT_MESSAGE:
 		{
+			printf("Incoming client to client message\n");
 			rerouteMessage();
 		break;
 		}
