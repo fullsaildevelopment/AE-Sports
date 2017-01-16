@@ -21,7 +21,11 @@ int Server::init(uint16_t port)
 	peer = RakNet::RakPeerInterface::GetInstance();
 
 	SocketDescriptor sd(port, 0);
-	peer->Startup(MAX_PLAYERS, &sd, 1);
+	sd.socketFamily = AF_INET;
+	if (peer->Startup(MAX_PLAYERS, &sd, 1) == false)
+	{
+		return 0;
+	}
 
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);

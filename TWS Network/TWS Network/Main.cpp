@@ -23,7 +23,7 @@ int main(void)
 	if (t == 'j' || t == 'J')
 	{
 		ClientWrapper newClient;
-		newClient.init("127.0.0.1", 60000);
+		newClient.init("127.0.0.1", 60001);
 	
 		while (true)
 		{
