@@ -113,43 +113,31 @@ void AI::Attack(GameObject *target)
 
 void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 {
-	if (isPerson && isEnemy)
+	// change this later to running with turning*********************************
+	// turn to them
+
+	//u - forward vector
+	float3 u(me->GetTransform()->GetForward().x, me->GetTransform()->GetForward().y, me->GetTransform()->GetForward().z);
+
+	//v - vector between me and destination
+	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+	//degRad - degrees/radians between me and target
+	float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
+
+	me->GetTransform()->RotateX(degRad);
+
+	// run to them
+	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
+
+	// if im next to them already
+	if (me->GetTransform()->GetPosition().x == target->GetTransform()->GetPosition().x)
 	{
-		// change this later to running with turning*********************************
-		// turn to them
+		// will change that to not be exact
+		// should also check y
 
-		//u - forward vector
-		float3 u(me->GetTransform()->GetForward().x, me->GetTransform()->GetForward().y, me->GetTransform()->GetForward().z);
-		
-		//v - vector between me and destination
-		float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-		
-		//degRad - degrees/radians between me and target
-		float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
-
-		me->GetTransform()->RotateX(degRad);
-
-		// run to them
-		me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
-
-		// attack them
-		if (me->GetTransform()->GetPosition().x == target->GetTransform()->GetPosition().x)
-		{
-			// will change that to not be exact
-			// should also check y
-
+		if (isPerson && isEnemy)
 			Attack(target);
-		}
-	}
-
-	else if (!isEnemy)
-	{
-		// idk why i'd run to my teammate, but do it
-	}
-
-	else
-	{
-		// just run to the gameobject
 	}
 }
 
