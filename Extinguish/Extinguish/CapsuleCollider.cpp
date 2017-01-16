@@ -52,7 +52,7 @@ Capsule CapsuleCollider::GetWorldCapsule()
 	//cap.m_Segment.m_End.x = se.x;
 	//cap.m_Segment.m_End.y = se.y;
 	//cap.m_Segment.m_End.z = se.z;
-	XMFLOAT3 pos = GetGameObject()->GetTransform()->GetPosition();
+	float3 pos = GetGameObject()->GetTransform()->GetPosition();
 	cap.m_Segment.m_Start.x += pos.x;
 	cap.m_Segment.m_Start.y += pos.y;
 	cap.m_Segment.m_Start.z += pos.z;
@@ -63,7 +63,7 @@ Capsule CapsuleCollider::GetWorldCapsule()
 	return cap;
 }
 
-void CapsuleCollider::Update(float dt)
+void CapsuleCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 

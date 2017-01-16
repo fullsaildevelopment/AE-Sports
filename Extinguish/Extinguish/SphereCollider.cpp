@@ -9,7 +9,7 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o,t)
 	radius = r;
 }
 
-void SphereCollider::Update(float dt)
+void SphereCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 
@@ -106,7 +106,7 @@ Sphere SphereCollider::GetSphere()
 }
 Sphere SphereCollider::GetWorldSphere()
 {
-	XMFLOAT3 pos = GetGameObject()->GetTransform()->GetPosition();
+	float3 pos = GetGameObject()->GetTransform()->GetPosition();
 	Sphere s;
 	s.m_Center = float3(pos.x, pos.y, pos.z);
 	s.m_Radius = radius;

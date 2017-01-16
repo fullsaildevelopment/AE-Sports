@@ -96,6 +96,7 @@ void DeviceResources::Init(HWND hwnd)
 	//set up bone offset buffer
 	CD3D11_BUFFER_DESC boneBufferDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
+	int temp = sizeof(BoneOffsetConstantBuffer);
 }
 
 void DeviceResources::Clear()

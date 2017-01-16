@@ -61,10 +61,17 @@ void Renderer::Update(float dt, InputManager* input)
 	if (blender)
 	{
 		std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
+
+		BoneOffsetConstantBuffer boneOffsetsData;
+		for (int i = 0; i < boneOffsets.size(); ++i)
+		{
+			boneOffsetsData.boneOffsets[i] = boneOffsets[i];
+		}
+
 		if (!boneOffsets.empty())
 		{
 			ID3D11Buffer* boneOffsetConstantBuffer = devResources->GetBoneOffsetConstantBuffer();
-			devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, boneOffsets.data(), NULL, NULL);
+			devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, &boneOffsetsData, NULL, NULL);
 			devContext->VSSetConstantBuffers(1, 1, &boneOffsetConstantBuffer);
 		}
 	}
