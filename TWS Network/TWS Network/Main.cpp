@@ -47,6 +47,10 @@ int main(void)
 					
 					newClient.sendMessage(newMessage);
 				}
+				else if (strcmp(message, "send") == 0)
+				{
+					newClient.sendPacket();
+				}
 			}
 
 			if (newClient.run() == 0)
