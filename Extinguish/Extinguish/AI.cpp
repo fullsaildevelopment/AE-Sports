@@ -97,7 +97,7 @@ void AI::GetBall()
 				// Attack(closest enemy to me around my guy)
 	}
 
-	RunTo(listOfEnemies[1], true, true);
+	// RunTo(listOfEnemies[1], true, true);
 }
 
 void AI::Attack(GameObject target)
@@ -109,19 +109,31 @@ void AI::Attack(GameObject target)
 	}
 }
 
-void AI::RunTo(XMFLOAT3 location)
-{
-	// make a vector from me to loc
-	// add velocity in that direction?
-}
-
 void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 {
-	//...
-	Transform *tmpLoc = me->GetTransform();
+	// Multiply what acceleration you want them to have WITH maxSpeed. Then add that to velocity???
 
-	//if (tmpLoc->GetPosition())
-	//Attack(target);
+	Transform *tmpLoc = me->GetTransform();
+	
+	float accel = 12 * maxSpeed;
+	velocity += accel; // but then i'd need to apply that velocity to my person in the direction of the target??...
+
+	if (isPerson && isEnemy)
+	{
+		// run to them
+		
+		// attack them
+	}
+
+	else if (!isEnemy)
+	{
+		// idk why i'd run to my teammate, but do it
+	}
+
+	else
+	{
+		// just run to the gameobject
+	}
 }
 
 void AI::Toss(XMFLOAT3 location)
