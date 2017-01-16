@@ -125,20 +125,20 @@ void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 	//degRad - degrees/radians between me and target
 	float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
 
+	//while im not next to target
+	while (v.magnitude() > 5)
+	{
+
+
+		if (isPerson && isEnemy)
+			Attack(target);
+	}
 	me->GetTransform()->RotateX(degRad);
 
 	// run to them
 	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
 
-	// if im next to them already
-	if (me->GetTransform()->GetPosition().x == target->GetTransform()->GetPosition().x)
-	{
-		// will change that to not be exact
-		// should also check y
-
-		if (isPerson && isEnemy)
-			Attack(target);
-	}
+	
 }
 
 void AI::TossTo(float3 location)
