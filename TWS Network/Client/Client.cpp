@@ -16,14 +16,18 @@ Client::~Client()
 
 int Client::init(char* _address, UINT16 port)
 {
-	SocketDescriptor sd;
+	SocketDescriptor sd(port, 0);
 	peer = RakNet::RakPeerInterface::GetInstance();
+	sd.socketFamily = AF_INET;
 
 	peer->Startup(1, &sd, 1);
 	address = _address;
+	
+	peer->Ping("255.255.255.255", 60000, true);
 
-	peer->Connect(address, port, 0, 0);
-
+	printf("Pinging\n");
+	//peer->Connect(address, port, 0, 0);
+	
 	return 1;
 }
 
@@ -33,6 +37,20 @@ int Client::run()
 	{
 		switch (packet->data[0])
 		{
+		case ID_UNCONNECTED_PONG:
+		{
+			ConnectionAttemptResult result = peer->Connect(packet->systemAddress.ToString(false), 60000, 0, 0);
+			if (result != CONNECTION_ATTEMPT_STARTED)
+			{
+				float temp = 0;
+			}
+			else
+			{
+				printf("Got pong from %s\n", packet->systemAddress.ToString());
+			}
+
+			break;
+		}
 		case ID_CONNECTION_ATTEMPT_FAILED:
 		{
 			return 0;
@@ -132,6 +150,7 @@ void Client::sendMessage(char * message, GameMessages ID)
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message, (unsigned int)strlen(message));
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+	//peer->SetOfflinePingResponse(message, (unsigned int)strlen(message));
 }
 
 void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)

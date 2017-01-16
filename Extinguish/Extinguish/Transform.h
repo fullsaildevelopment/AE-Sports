@@ -1,21 +1,22 @@
 #pragma once
 #include <DirectXMath.h>
 #include <string>
+#include <vector>
 #include "Component.h"
+#include "vec3.h"
 
 class Transform : public Component
 {
 private:
 	//std::string name;
 	DirectX::XMFLOAT4X4 world;
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT3 rotation;
-	DirectX::XMFLOAT3 scale;
+	float3 position;
+	float3 rotation;
+	float3 scale;
 	DirectX::XMFLOAT3 velocity;
 	DirectX::XMFLOAT4X4 local;
 	Transform* parent;
-	Transform* child;
-	Transform* sibling;
+	std::vector<Transform*> children;
 	bool bDirty; //if you	 change the world of the parent, make all of its children dirty. This means their world needs to be updated. This is beneficial because you could make your children dirty multiple times before you actually update world, thus, saving processing
 
 	//private helper functions
@@ -28,7 +29,7 @@ public:
 	~Transform();
 
 	//basic
-	void Init(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, DirectX::XMFLOAT3 tempScale, Transform* parent, Transform* child, Transform* sibling);
+	void Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, float3 tempScale, Transform* parent, Transform* child, Transform* sibling);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);
@@ -41,9 +42,9 @@ public:
 
 	//setters
 	void BDirty();
-	void SetScale(DirectX::XMFLOAT3 vector);
-	void SetPosition(DirectX::XMFLOAT3 vector);
-	void SetRotation(DirectX::XMFLOAT3 vector);
+	void SetScale(float3 vector);
+	void SetPosition(float3 vector);
+	void SetRotation(float3 vector);
 	void SetWorld(DirectX::XMFLOAT4X4 matrix);
 	void SetLocal(DirectX::XMFLOAT4X4 matrix);
 	void SetParent(Transform* pParent);
@@ -55,10 +56,13 @@ public:
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
 	DirectX::XMFLOAT3 GetVelocity();
-	DirectX::XMFLOAT3 GetPosition();
-	DirectX::XMFLOAT3 GetRotation();
-	DirectX::XMFLOAT3 GetScale();
+	float3 GetPosition();
+	float3 GetRotation();
+	float3 GetScale();
 	Transform* GetParent();
-	Transform* GetChild();
-	Transform* GetSibling();
+	Transform* GetChild(int index);
+	//Transform* GetSibling();
+	DirectX::XMFLOAT3 GetForward();
+	DirectX::XMFLOAT3 GetUp();
+	DirectX::XMFLOAT3 GetRight();
 };

@@ -4,7 +4,7 @@
 using namespace DirectX;
 using namespace std;
 
-Camera::Camera() : maxRotX(1.0f), maxRotY(1.5f)
+Camera::Camera() : maxRotX(1.5f), maxRotY(2.0f)
 {
 
 }
@@ -67,32 +67,38 @@ void Camera::MoveCamera(float dt)
 {
 	if (input->GetKey('W'))
 	{
-		transform->Translate({ 0.0f, 0.0f, moveSpeed * dt });
+		XMFLOAT3 forward = transform->GetForward();
+		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 	}
 
 	if (input->GetKey('S'))
 	{
-		transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
+		XMFLOAT3 forward = transform->GetForward();
+		transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 	}
 
 	if (input->GetKey('A'))
 	{
-		transform->Translate({ -moveSpeed * dt, 0.0f, 0.0f });
+		XMFLOAT3 right = transform->GetRight();
+		transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 	}
 
 	if (input->GetKey('D'))
 	{
-		transform->Translate({ moveSpeed * dt, 0.0f, 0.0f });
+		XMFLOAT3 right = transform->GetRight();
+		transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 	}
 
 	if (input->GetKey('Q')) //up
 	{
-		transform->Translate({ 0.0f, moveSpeed * dt, 0.0f });
+		XMFLOAT3 up = transform->GetUp();
+		transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
 	}
 
 	if (input->GetKey('E')) //down
 	{
-		transform->Translate({ 0.0f, -moveSpeed * dt, 0.0f });
+		XMFLOAT3 up = transform->GetUp();
+		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
 	}
 
 #if _DEBUG
@@ -115,6 +121,7 @@ void Camera::MoveCamera(float dt)
 			float degX = dy * rotateSpeed * dt;
 			float degY = dx * rotateSpeed * dt;
 
+
 			if (curRotX + degX > maxRotX)
 			{
 				curRotX = maxRotX;
@@ -132,35 +139,19 @@ void Camera::MoveCamera(float dt)
 
 			curRotY += degY;
 
-			cout << curRotX << " " << curRotY << endl;
+			//cout << curRotX << " " << curRotY << endl;
 
-			XMMATRIX rotX = XMMatrixRotationX(degX);
-			XMMATRIX rotY = XMMatrixRotationY(degY);
-
-			//apply rotations to camera
-
-			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-
-			//store new camera
-			XMStoreFloat4x4(&camera, tempCamera);
-
-			//change position to where it was earlier
-			camera._41 = camPosition.x;
-			camera._42 = camPosition.y;
-			camera._43 = camPosition.z;
-
-			transform->SetLocal(camera);
+			transform->RotateX(degX);
+			transform->RotateY(degY);
 		}
-
-		prevMouseX = input->GetMouseX();
-		prevMouseY = input->GetMouseY();
 	}
+
+	prevMouseX = input->GetMouseX();
+	prevMouseY = input->GetMouseY();
 #else
 	if (input->GetMouseX() && input->GetMouseY())
 	{
-		if (prevMouseX && prevMouseY)
+		if (prevMouseX && prevMouseY && !input->GetMouseButton(1))
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 
@@ -174,23 +165,8 @@ void Camera::MoveCamera(float dt)
 			camera._42 = 0;
 			camera._43 = 0;
 
-			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-
-			//apply rotations to camera
-			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-
-			//store new camera
-			XMStoreFloat4x4(&camera, tempCamera);
-
-			//change position to where it was earlier
-			camera._41 = camPosition.x;
-			camera._42 = camPosition.y;
-			camera._43 = camPosition.z;
-
-			transform->SetLocal(camera);
+			transform->RotateX(degX);
+			transform->RotateY(degY);
 		}
 
 		prevMouseX = input->GetMouseX();
@@ -205,7 +181,7 @@ void Camera::ClampTo()
 	//clamp._42 += -10.0f;
 	//clamp._43 += 5.0f;
 
-	transform->SetPosition({ clampPos.x, clampPos.y + 3.5f, clampPos.z + 0.5f});
+	transform->SetPosition({ clampPos.x, clampPos.y + 3.5f, clampPos.z + 0.5f });
 }
 
 //setters//
@@ -224,8 +200,8 @@ void Camera::SetClampPos(DirectX::XMFLOAT3 pos)
 //getters//
 XMFLOAT4X4 Camera::GetView()
 {
-	XMFLOAT4X4 view; 
-	
+	XMFLOAT4X4 view;
+
 	//XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up )));
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMLoadFloat4x4(&transform->GetWorld())));
 
