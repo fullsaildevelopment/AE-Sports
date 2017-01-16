@@ -73,3 +73,5 @@ bool CapsuleToSphere(const Capsule& capsule, const Sphere& sphere);
 bool AABBToCapsule(const AABB& box, const Capsule& cap);
 
 bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr);
+
+float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz);

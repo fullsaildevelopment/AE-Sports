@@ -15,37 +15,37 @@ void Movement::Update(float dt, InputManager* input)
 {
 	if (input->GetKey('I'))
 	{
-		transform->Translate({ 0.0f, 0.0f, moveSpeed * dt });
+		transform->AddVelocity({ 0.0f, 0.0f, moveSpeed});
 		isMoving = true;
 	}
 
 	if (input->GetKey('K'))
 	{
-		transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
+		transform->AddVelocity({ 0.0f, 0.0f, -moveSpeed});
 		isMoving = true;
 	}
 
 	if (input->GetKey('J'))
 	{
-		transform->Translate({ -moveSpeed * dt, 0.0f, 0.0f });
+		transform->AddVelocity({ -moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
 	}
 
 	if (input->GetKey('L'))
 	{
-		transform->Translate({ moveSpeed * dt, 0.0f, 0.0f });
+		transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
 	}
 
 	if (input->GetKey('U')) //up
 	{
-		transform->Translate({ 0.0f, moveSpeed * dt, 0.0f });
+		transform->AddVelocity({ 0.0f, moveSpeed, 0.0f });
 		isMoving = true;
 	}
 
 	if (input->GetKey('O')) //down
 	{
-		transform->Translate({ 0.0f, -moveSpeed * dt, 0.0f });
+		transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
 		isMoving = true;
 	}
 }

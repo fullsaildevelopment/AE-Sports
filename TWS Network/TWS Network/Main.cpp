@@ -7,8 +7,7 @@
 
 #include "Client Wrapper.h"
 #include "Server Wrapper.h"
-
-//#include "RakNet\WindowsIncludes.h"
+#include "RakNet\Gets.h"
 
 using namespace std;
 
@@ -19,7 +18,7 @@ int main(void)
 	char t = 0;
 
 	while (t == 0)
-		t = getch();
+		t = _getch();
 	
 	if (t == 'j' || t == 'J')
 	{
@@ -28,8 +27,33 @@ int main(void)
 	
 		while (true)
 		{
+			if (_kbhit())
+			{
+				char message[255];
+				Gets(message, sizeof(message));
+
+				if (strcmp(message, "exit") == 0)
+				{
+					newClient.sendStop();
+					//break;
+				}
+
+				else if (strcmp(message, "talk") == 0)
+				{
+					char * temp;
+					printf("Input message: ");
+					char newMessage[255];
+					temp = Gets(newMessage, sizeof(newMessage));
+					
+					newClient.sendMessage(newMessage);
+				}
+			}
+
 			if (newClient.run() == 0)
+			{
+				//newClient.sendStop();
 				break;
+			}
 		}
 	}
 	else
@@ -40,7 +64,10 @@ int main(void)
 		while (true)
 		{
 			if (newServer.run() == 0)
+			{
+				newServer.stop();
 				break;
+			}
 		}
 	}
 }
