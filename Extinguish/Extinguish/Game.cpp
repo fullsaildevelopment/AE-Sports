@@ -80,11 +80,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* camera = new GameObject();
 	basic->AddGameObject(camera);
 	camera->Init("Camera");
-	camera->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	camera->InitTransform(identity, { 0, 1.5f, -3.0f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Camera* cameraController = new Camera();
 	camera->AddComponent(cameraController);
 	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
-	cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
 	GameObject* box = new GameObject();
 	basic->AddGameObject(box);
@@ -93,8 +93,25 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* boxRenderer = new Renderer();
 	box->AddComponent(boxRenderer);
 	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
-	BoxCollider* boxcol = new BoxCollider(box, true, { 0.7f,1,1 }, { -1,0,-1 });
+	//CapsuleCollider* boxcap = new CapsuleCollider(1, { 0,0,0 }, { 0,2.7f,0 }, box, true);
+	//box->AddComponent(boxcap);
+	BoxCollider* boxcol = new BoxCollider(box, false, {1,1,1 }, { -1,0,-1 });
 	box->AddComponent(boxcol);
+
+	GameObject* meterbox = new GameObject();
+	basic->AddGameObject(meterbox);
+	meterbox->Init("MeterBox");
+	meterbox->InitTransform(identity, { 3, 0.5f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer = new Renderer();
+	meterbox->AddComponent(meterboxRenderer);
+	meterboxRenderer->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Movement* meterboxplayerController = new Movement();
+	meterbox->AddComponent(meterboxplayerController);
+	meterboxplayerController->Init(5.0f, 0.75f);
+	//CapsuleCollider* meterboxcap = new CapsuleCollider(1, { 0,-0.5f,0 }, { 0,0.5f,0 }, meterbox, true);
+	//meterbox->AddComponent(meterboxcap);
+	BoxCollider* meterboxcol = new BoxCollider(meterbox, false , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox->AddComponent(meterboxcol);
 	//PlayerController* bplayerController = new PlayerController();
 	//box->AddComponent(bplayerController);
 	//bplayerController->Init(5.0f, 0.75f);
@@ -106,14 +123,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* bearRenderer = new Renderer();
 	bear->AddComponent(bearRenderer);
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	PlayerController* playerController = new PlayerController();
-	bear->AddComponent(playerController);
-	playerController->Init();
-	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
-	bear->AddComponent(bearcol);
+	//PlayerController* playerController = new PlayerController();
+	//bear->AddComponent(playerController);
+	//playerController->Init();
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
 	bearMover->Init(100.0f, 0.75f);
+	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
+	bear->AddComponent(bearcol);
+	
 
 	//Camera* cameraController = new Camera();
 	//bear->AddComponent(cameraController);
@@ -136,12 +154,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* crosse = new GameObject();
 	basic->AddGameObject(crosse);
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { -2, 0, 0 }, { 0, -180, -45 }, { 0.001f, 0.001f, 0.001f }, nullptr, nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.15f, 0.9f }, { 0, 0, 0}, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
+	crosseController->Init();
 	
 	GameObject* mage = new GameObject();
 	basic->AddGameObject(mage);

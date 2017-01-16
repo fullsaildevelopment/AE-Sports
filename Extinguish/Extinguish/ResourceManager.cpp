@@ -715,6 +715,8 @@ void ResourceManager::DoFBXExporting()
 
 	//load in crosse
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Crosse\\Crosse.fbx", "Crosse");
+
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\MeterBox\\MeterBox.fbx", "MeterBox");
 #endif
 }
 

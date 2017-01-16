@@ -6,6 +6,15 @@
 
 using namespace DirectX;
 
+float3 BoxCollider::XMtoF(DirectX::XMFLOAT3 m)
+{
+	float3 f;
+	f.x = m.x;
+	f.y = m.y;
+	f.z = m.z;
+	return f;
+}
+
 AABB BoxCollider::GetAABB()
 {
 	AABB abox;
@@ -20,7 +29,7 @@ AABB BoxCollider::GetAABB()
 AABB BoxCollider::GetWorldAABB()
 {
 	AABB box = GetAABB();
-	XMFLOAT3 m = GetGameObject()->GetTransform()->GetPosition();
+	float3 m = GetGameObject()->GetTransform()->GetPosition();
 	box.max.x += m.x;
 	box.max.y += m.y;
 	box.max.z += m.z;
@@ -35,37 +44,60 @@ BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : 
 	min = _min;
 }
 
-void BoxCollider::Update(float dt)
+void BoxCollider::Update(float dt, InputManager* input)
 {
-	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
-
+	GameObject* tg = GetGameObject();
+	vector<GameObject*>* Others = tg->GetGameObjects();
 	size_t size = (*Others).size();
 	for (int i = 0; i < size; ++i)
 	{
-		if ((*Others)[i] == GetGameObject()) continue;
+		if ((*Others)[i] == tg) continue;
 		///////////////////////////////////////AABB vs AABB///////////////////////////////////////
 		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
 		if (box)
 		{
-			if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
+			GameObject* og = box->GetGameObject();
+			if (box->isTrigger() || isTrigger())
 			{
-				printf("B");
-				if (!box->isTrigger() && !isTrigger())
-				{
-					//Physics
-				}
-				else
+				if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
 				{
 					if (box->isTrigger())
 					{
-						
-						box->GetGameObject()->OnTriggerEnter(this);
+						if(og->OnTriggerEnter)
+							og->OnTriggerEnter(this);
 					}
 					if (isTrigger())
 					{
-						GetGameObject()->OnTriggerEnter(box);
+						if(tg->OnTriggerEnter)
+							tg->OnTriggerEnter(box);
 					}
 				}
+			}
+			else
+			{
+					float normx, normy, normz;
+					float t = SweptAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) * dt , normx, normy, normz);
+					if (t < 1)
+					{
+						float3 pos = tg->GetTransform()->GetPosition();
+						XMFLOAT3 vel = tg->GetTransform()->GetVelocity();
+						pos.x += vel.x * dt * t;
+						pos.y += vel.y * dt * t;
+						pos.z += vel.z * dt * t;
+						tg->GetTransform()->SetPosition(pos);
+						float rt = 1 - t;
+						//float dot = dot_product(XMtoF(vel), float3(normx, normy, normz)) * rt;
+						float3 v = XMtoF(vel) * rt;
+						//float dot = (v.x * normz + v.y * normx + v.z * normy) * rt;
+						float3 norms = float3(normx, normy, normz);
+						float3 rejv = v - norms * dot_product(norms, v);
+						vel.x = rejv.x;
+						vel.y = rejv.y;
+						vel.z = rejv.z;
+						tg->GetTransform()->SetVelocity(vel);
+					}
+				
+
 			}
 			continue;
 		}
