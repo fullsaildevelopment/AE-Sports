@@ -4,9 +4,10 @@
 
 
 
-SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o,t)
+SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o, t)
 {
 	radius = r;
+	GetGameObject()->GetTransform()->AddVelocity({ 0, -4.8f, 0 });
 }
 
 void SphereCollider::Update(float dt, InputManager* input)
@@ -16,29 +17,39 @@ void SphereCollider::Update(float dt, InputManager* input)
 	size_t size = (*Others).size();
 	for (int i = 0; i < size; ++i)
 	{
+
 		if ((*Others)[i] == GetGameObject()) continue;
 		///////////////////////////////////////Sphere vs AABB///////////////////////////////////////
 		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
 		if (box)
 		{
-			if (SphereToAABB(GetWorldSphere(), box->GetWorldAABB()))
+			if (box->isTrigger() || isTrigger())
 			{
-				printf("(SvB)");
-				if (!box->isTrigger() && !isTrigger())
+				if (SphereToAABB(GetWorldSphere(), box->GetWorldAABB()))
 				{
-					//Physics
-				}
-				else
-				{
-					if (box->isTrigger())
+					printf("(SvB)");
+
+					if (box->isTrigger() && box->GetGameObject()->OnTriggerEnter)
 					{
 
 						box->GetGameObject()->OnTriggerEnter(this);
 					}
-					if (isTrigger())
+					if (isTrigger() && GetGameObject()->OnTriggerEnter)
 					{
 						GetGameObject()->OnTriggerEnter(box);
 					}
+
+				}
+			}
+			else
+			{
+				Sphere s = GetWorldSphere();
+				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity()) * dt;
+				float c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
+				if (c == 1)
+				{
+					GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel / dt));
 				}
 			}
 			continue;
@@ -96,6 +107,7 @@ void SphereCollider::Update(float dt, InputManager* input)
 		}
 		continue;
 	}
+
 }
 Sphere SphereCollider::GetSphere()
 {
