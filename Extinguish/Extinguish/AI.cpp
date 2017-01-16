@@ -111,17 +111,19 @@ void AI::Attack(GameObject target)
 
 void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 {
-	// Multiply what acceleration you want them to have WITH maxSpeed. Then add that to velocity???
-
-	Transform *tmpLoc = me->GetTransform();
-	
-	float accel = 12 * maxSpeed;
-	velocity += accel; // but then i'd need to apply that velocity to my person in the direction of the target??...
-
 	if (isPerson && isEnemy)
 	{
-		// run to them
+		// change this later to running with turning*********************************
+
+		// turn to them
+		//me->GetTransform()->RotateX(target->GetTransform()->GetRotation() - me->GetTransform()->GetRotation());
+
+		//u - forward vector
+		//v - vector between me and destination
 		
+
+		// run to them
+
 		// attack them
 	}
 
@@ -136,7 +138,7 @@ void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 	}
 }
 
-void AI::Toss(XMFLOAT3 location)
+void AI::Toss(float3 location)
 {
 	//if the goal is a game object, idk why i'd need this function
 }
