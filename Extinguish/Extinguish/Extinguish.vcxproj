@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BallController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Crosse.cpp" />
     <ClCompile Include="Movement.cpp" />
