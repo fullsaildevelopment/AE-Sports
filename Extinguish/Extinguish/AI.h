@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
+#include "vec3.h"
 
 class AI : public Component
 {
@@ -14,8 +15,8 @@ private:
 	};
 
 	//XMFLOAT3 velocity = XMFLOAT3(0, 0, 0);
-	float velocity = 0;
-	float maxSpeed = 100; // ??*******************************
+	//float velocity = 0;
+	//float maxSpeed = 100; // ??*******************************
 
 	State currState; // the AI's current state
 	GameObject *myGoal;
@@ -37,7 +38,7 @@ public:
 	// Actions
 	void Attack(GameObject target); // pass in the person you want to attack
 	void RunTo(GameObject *target, bool isPerson, bool isEnemy); // run to a person or object in the map
-	void Toss(XMFLOAT3 location); // throw the ball to a certain location ie the goal
+	void Toss(float3 location); // throw the ball to a certain location ie the goal
 	void TossTo(GameObject target); // pass the ball off to a teammate
 	void Score(); // throw the ball into the goal
 
