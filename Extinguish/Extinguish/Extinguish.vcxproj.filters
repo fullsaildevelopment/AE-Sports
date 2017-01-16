@@ -111,6 +111,9 @@
     <ClCompile Include="Movement.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
