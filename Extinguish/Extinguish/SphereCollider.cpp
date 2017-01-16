@@ -48,7 +48,7 @@ void SphereCollider::Update(float dt, InputManager* input)
 				float c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c == 1)
 				{
-					GetGameObject()->GetTransform()->SetPosition(FtoXM(s.m_Center));
+					GetGameObject()->GetTransform()->SetPosition(s.m_Center);
 					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel / dt));
 				}
 			}
