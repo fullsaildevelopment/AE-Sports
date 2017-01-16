@@ -23,8 +23,9 @@ int Client::init(char* _address, UINT16 port)
 	peer->Startup(1, &sd, 1);
 	address = _address;
 	
-	peer->Ping("255.255.255.255", port, true);
+	peer->Ping("255.255.255.255", 60000, true);
 
+	printf("Pinging\n");
 	//peer->Connect(address, port, 0, 0);
 	
 	return 1;
@@ -148,8 +149,8 @@ void Client::sendMessage(char * message, GameMessages ID)
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message, (unsigned int)strlen(message));
-//	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-	peer->SetOfflinePingResponse(message, (unsigned int)strlen(message));
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+	//peer->SetOfflinePingResponse(message, (unsigned int)strlen(message));
 }
 
 void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)
