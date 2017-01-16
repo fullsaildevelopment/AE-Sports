@@ -23,7 +23,7 @@ int Client::init(char* _address, UINT16 port)
 	peer->Startup(1, &sd, 1);
 	address = _address;
 	
-	peer->Ping("255.255.255.255", port, true);
+	peer->Ping("255.255.255.255", 60000, true);
 
 	//peer->Connect(address, port, 0, 0);
 	
