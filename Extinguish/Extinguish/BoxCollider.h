@@ -19,5 +19,4 @@ public:
 	AABB GetWorldAABB();
 	bool isStatic() { return IsStatic; };
 	void SetStatic(bool s) { IsStatic = s; };
-	float3 XMtoF(DirectX::XMFLOAT3 m);
 };

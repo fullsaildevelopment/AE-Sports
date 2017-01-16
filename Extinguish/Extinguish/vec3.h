@@ -157,6 +157,12 @@ struct vec3
       return *this;
    }
 
+   bool isEquil(reference r)
+   {
+	   if (x == r.x && y == r.y && z == r.z) return true;
+	   return false;
+   }
+
    // Negate the vector
    reference negate(void)
    {
