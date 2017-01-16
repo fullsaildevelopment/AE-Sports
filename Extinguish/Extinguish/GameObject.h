@@ -32,8 +32,10 @@ public:
 
 	//basic
 	void Init(std::string name);
-	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling);
+	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, float3 position, float3 rotation, float3 scale, Transform* parent, Transform* child, Transform* sibling);
 	void Update(float deltaTime, InputManager* input);
+
+	XMVectorDot
 
 	//misc
 	void AddComponent(Component* component);

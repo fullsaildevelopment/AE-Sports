@@ -29,7 +29,7 @@ AABB BoxCollider::GetAABB()
 AABB BoxCollider::GetWorldAABB()
 {
 	AABB box = GetAABB();
-	XMFLOAT3 m = GetGameObject()->GetTransform()->GetPosition();
+	float3 m = GetGameObject()->GetTransform()->GetPosition();
 	box.max.x += m.x;
 	box.max.y += m.y;
 	box.max.z += m.z;
@@ -79,7 +79,7 @@ void BoxCollider::Update(float dt, InputManager* input)
 					float t = SweptAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) * dt , normx, normy, normz);
 					if (t < 1)
 					{
-						XMFLOAT3 pos = tg->GetTransform()->GetPosition();
+						float3 pos = tg->GetTransform()->GetPosition();
 						XMFLOAT3 vel = tg->GetTransform()->GetVelocity();
 						pos.x += vel.x * dt * t;
 						pos.y += vel.y * dt * t;

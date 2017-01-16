@@ -27,7 +27,7 @@ void GameObject::Init(std::string name)
 	this->name = name;
 }
 
-void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scale, Transform* parent, Transform* child, Transform* sibling)
+void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, float3 position, float3 rotation, float3 scale, Transform* parent, Transform* child, Transform* sibling)
 {
 	//set transform
 	transform->SetGameObject(this);

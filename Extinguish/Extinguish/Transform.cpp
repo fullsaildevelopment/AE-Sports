@@ -1,7 +1,9 @@
-#include "Transform.h"
 #include <iostream>
+#include "Transform.h"
+
 using namespace DirectX;
 using namespace std;
+
 Transform::Transform() : Component(nullptr)
 {
 	bDirty = true;
@@ -29,7 +31,7 @@ Transform::~Transform()
 }
 
 //basic
-void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 rot, DirectX::XMFLOAT3 tempScale, Transform* parent, Transform* child, Transform* sibling)
+void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, float3 tempScale, Transform* parent, Transform* child, Transform* sibling)
 {
 	local = localMatrix;
 	SetPosition(pos);
@@ -150,7 +152,7 @@ void Transform::BDirty()
 	}
 }
 
-void Transform::SetScale(DirectX::XMFLOAT3 vector)
+void Transform::SetScale(float3 vector)
 {
 	scale = vector;
 
@@ -162,7 +164,7 @@ void Transform::SetScale(DirectX::XMFLOAT3 vector)
 	//XMStoreFloat4x4(&local, tempLocal);
 }
 
-void Transform::SetPosition(DirectX::XMFLOAT3 vector) 
+void Transform::SetPosition(float3 vector)
 {
 	position = vector;
 
@@ -181,7 +183,7 @@ void Transform::SetPosition(DirectX::XMFLOAT3 vector)
 	BDirty();
 }
 
-void Transform::SetRotation(DirectX::XMFLOAT3 vector)
+void Transform::SetRotation(float3 vector)
 {
 	rotation = vector;
 
@@ -276,17 +278,17 @@ bool Transform::GetBDirty()
 	return bDirty;
 }
 
-DirectX::XMFLOAT3 Transform::GetPosition()
+float3 Transform::GetPosition()
 {
 	return position;
 }
 
-DirectX::XMFLOAT3 Transform::GetRotation()
+float3 Transform::GetRotation()
 {
 	return rotation;
 }
 
-DirectX::XMFLOAT3 Transform::GetScale()
+float3 Transform::GetScale()
 {
 	return scale;
 }

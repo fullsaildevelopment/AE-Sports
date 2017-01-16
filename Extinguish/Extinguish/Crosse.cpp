@@ -80,19 +80,19 @@ void Crosse::HandleInput(float dt)
 	//}
 }
 
-void Crosse::ClampToPlayer()
-{
-	////get player's world
-	Transform* playerTransform = GetGameObject()->GetTransform()->GetParent();
-
-	////alter the world to suitable stick position
-	XMFLOAT3 playerPos = playerTransform->GetPosition();
-	////playerPos.y += 100;
-	////playerPos.z += 1;
-
-	////set crosse's pos to pos
-	transform->SetPosition(playerPos);
-
-	//adjust crosse's pos given it's attached already
-	//GetGameObject()->GetTransform()->Translate({ 0, 0, 2.0f });
-}
+//void Crosse::ClampToPlayer()
+//{
+//	////get player's world
+//	Transform* playerTransform = GetGameObject()->GetTransform()->GetParent();
+//
+//	////alter the world to suitable stick position
+//	XMFLOAT3 playerPos = playerTransform->GetPosition();
+//	////playerPos.y += 100;
+//	////playerPos.z += 1;
+//
+//	////set crosse's pos to pos
+//	transform->SetPosition(playerPos);
+//
+//	//adjust crosse's pos given it's attached already
+//	//GetGameObject()->GetTransform()->Translate({ 0, 0, 2.0f });
+//}
