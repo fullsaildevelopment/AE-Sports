@@ -63,7 +63,7 @@ Capsule CapsuleCollider::GetWorldCapsule()
 	return cap;
 }
 
-void CapsuleCollider::Update(float dt)
+void CapsuleCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 
