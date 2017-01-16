@@ -23,10 +23,10 @@ int Client::init(char* _address, UINT16 port)
 	peer->Startup(1, &sd, 1);
 	address = _address;
 	
-	peer->Ping("255.255.255.255", 60000, true);
+	//peer->Ping("255.255.255.255", 60000, true);
 
-	printf("Pinging\n");
-	//peer->Connect(address, port, 0, 0);
+	//printf("Pinging\n");
+	ConnectionAttemptResult temp = peer->Connect(address, 60000, 0, 0);
 	
 	return 1;
 }
