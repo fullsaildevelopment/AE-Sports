@@ -222,7 +222,7 @@ void Server::recievePacket()
 	bIn.Read(clientState->hasBall);
 	bIn.Read(clientState->world);
 
-	printf("\nClient: %s\nClient ID: %i\n", names[clientState->clientID - 1], clientState->clientID);
+	printf("\n\nPACKET RECIEVED\nClient: %s\nClient ID: %i\n", names[clientState->clientID - 1], clientState->clientID);
 	
 	printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
 		clientState->world._11,

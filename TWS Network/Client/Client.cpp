@@ -238,6 +238,7 @@ void Client::sendMessage(char * newMessage)
 void Client::sendPacket()
 {
 	BitStream bOut;
+	clientState->clientID = clientID;
 	clientState->timeStamp = RakNet::GetTime();
 	bOut.Write((MessageID)ID_INCOMING_PACKET);
 	bOut.Write(clientState->timeStamp);
