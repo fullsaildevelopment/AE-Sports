@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "InputDownEvent.h"
 
 class Camera : public Component
 {
@@ -16,12 +17,13 @@ private:
 	float moveSpeed;
 	float rotateSpeed;
 	int prevMouseX, prevMouseY;
-	
+	float dt;
+
 	float curRotX, curRotY;
 	const float maxRotX, maxRotY;
 
 	//private helper functions
-	void MoveCamera(float dt);
+	void MoveCamera(InputDownEvent* e);
 	void ClampTo();
 public:
 	Camera();
@@ -30,6 +32,7 @@ public:
 	//basic
 	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel);
 	void Update(float dt, InputManager* input) override;
+	void HandleEvent(Event* e);
 	void UpdateCamsRotation(float x, float y);
 
 	//setters

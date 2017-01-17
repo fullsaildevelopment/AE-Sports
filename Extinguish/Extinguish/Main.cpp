@@ -29,6 +29,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	XTime timer;
 	timer.Restart();
+
 	while (run)
 	{
 		run = app.Update(timer.Delta());

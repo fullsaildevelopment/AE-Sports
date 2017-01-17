@@ -1,7 +1,9 @@
 #include "Window.h"
+#include <iostream>
 
 //function prototype
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+//LRESULT CALLBACK InputProc(HWND _hWnd, UINT _msg, WPARAM _w, LPARAM _l);
 
 void Window::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -32,16 +34,22 @@ int Window::Update(InputManager* input)
 				input->SetKeyboardKey(msg.wParam, false);
 				break;
 			case (WM_LBUTTONDOWN):
-				input->SetMouseButtons(-1, true);
+				input->SetMouseButtons(0, true);
 				break;
 			case (WM_LBUTTONUP):
-				input->SetMouseButtons(-1, false);
+				input->SetMouseButtons(0, false);
 				break;
-			case (WM_RBUTTONDOWN):
+			case (WM_MBUTTONDOWN):
 				input->SetMouseButtons(1, true);
 				break;
-			case (WM_RBUTTONUP):
+			case (WM_MBUTTONUP):
 				input->SetMouseButtons(1, false);
+				break;
+			case (WM_RBUTTONDOWN):
+				input->SetMouseButtons(2, true);
+				break;
+			case (WM_RBUTTONUP):
+				input->SetMouseButtons(2, false);
 				break;
 			case (WM_MOUSEMOVE):
 				input->SetMousePosition(msg.lParam);
@@ -51,6 +59,8 @@ int Window::Update(InputManager* input)
 				break;
 		}
 
+		//std::cout << handledMsg << std::endl;
+
 		if (!handledMsg) //let windows handle message
 		{
 			//send message to windowproc
@@ -58,6 +68,8 @@ int Window::Update(InputManager* input)
 			DispatchMessage(&msg);
 		}
 	}
+
+	//std::cout << "Window";
 
 	return msg.message;
 }
@@ -103,6 +115,10 @@ void Window::ShowWind(int nCmdShow)
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	//InputProc(hwnd, message, wParam, lParam);
+
+	//std::cout << "Proc";
+
 	switch (message)
 	{
 	case WM_DESTROY:
@@ -113,9 +129,72 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		//	DefWindowProc(hwnd, message, wParam, lParam);
 		//	break;
 	}
+	//std::cout << "Down: Held Down? " << ((lParam & (1 << 30)) >> 30) << "\n";
 
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
+
+//LRESULT CALLBACK InputProc(HWND _hWnd, UINT _msg, WPARAM _w, LPARAM _l)
+//{
+//	MSG msg;
+//	bool handledMsg = true;
+//
+//	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+//	{
+//		switch (msg.message)
+//		{
+//		case (WM_KEYDOWN):
+//			input->SetKeyboardKey(msg.wParam, true);
+//			break;
+//		case (WM_KEYUP):
+//			input->SetKeyboardKey(msg.wParam, false);
+//			break;
+//		case (WM_SYSKEYDOWN):
+//			input->SetKeyboardKey(msg.wParam, true);
+//			break;
+//		case (WM_SYSKEYUP):
+//			input->SetKeyboardKey(msg.wParam, false);
+//			break;
+//		case (WM_LBUTTONDOWN):
+//			input->SetMouseButtons(0, true);
+//			break;
+//		case (WM_LBUTTONUP):
+//			input->SetMouseButtons(0, false);
+//			break;
+//		case (WM_MBUTTONDOWN):
+//			input->SetMouseButtons(1, true);
+//			break;
+//		case (WM_MBUTTONUP):
+//			input->SetMouseButtons(1, false);
+//			break;
+//		case (WM_RBUTTONDOWN):
+//			input->SetMouseButtons(2, true);
+//			break;
+//		case (WM_RBUTTONUP):
+//			input->SetMouseButtons(2, false);
+//			break;
+//		case (WM_MOUSEMOVE):
+//			input->SetMousePosition(msg.lParam);
+//			break;
+//		default:
+//			handledMsg = false;
+//			break;
+//		}
+//
+//		//std::cout << handledMsg << std::endl;
+//
+//		if (!handledMsg) //let windows handle message
+//		{
+//			//send message to windowproc
+//			TranslateMessage(&msg);
+//			DispatchMessage(&msg);
+//		}
+//	}
+//
+//	//std::cout << "Window";
+//
+//	return msg.message;
+//}
 
 //getters
 const HWND Window::GetHWND()

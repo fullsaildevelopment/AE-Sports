@@ -310,20 +310,43 @@ Transform* Transform::GetChild(int index)
 
 DirectX::XMFLOAT3 Transform::GetForward()
 {
-	return{ local._31, local._32, local._33 };
+	XMFLOAT3 result;
+	XMVECTOR vector = { local._31, local._32, local._33 };
+
+	vector = XMVector3Normalize(vector);
+	XMStoreFloat3(&result, vector);
+
+	return result;
 }
 
 DirectX::XMFLOAT3 Transform::GetUp()
 {
-	return{ local._21, local._22, local._23 };
+	XMFLOAT3 result;
+	XMVECTOR vector = { local._21, local._22, local._23 };
+
+	vector = XMVector3Normalize(vector);
+	XMStoreFloat3(&result, vector);
+
+	return result;
 }
 
 DirectX::XMFLOAT3 Transform::GetRight()
 {
-	return{ local._11, local._12, local._13 };
+	XMFLOAT3 result;
+	XMVECTOR vector = { local._11, local._12, local._13 };
+
+	vector = XMVector3Normalize(vector);
+	XMStoreFloat3(&result, vector);
+
+	return result;
 }
 
 XMFLOAT3 Transform::GetVelocity()
 {
 	return velocity;
+}
+
+DirectX::XMFLOAT3 Transform::GetRotationDeg()
+{
+	return{ XMConvertToDegrees(rotation.x), XMConvertToDegrees(rotation.y), XMConvertToDegrees(rotation.z) };
 }
