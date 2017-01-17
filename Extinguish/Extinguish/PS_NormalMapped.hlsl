@@ -67,7 +67,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	//create new normals based on normals
 
-	float3 bumpMap = normalMap.Sample(filter, input.uv).xyz;
+	float3 bumpMap = normalMap.Sample(filter, input.uv.xy).xyz;
 	bumpMap = (bumpMap * 2.0f) - 1.0f;
 
 
