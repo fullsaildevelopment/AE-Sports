@@ -103,8 +103,7 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		{
 			if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
 			{
-				printf("(CvC)");
-
+				
 			}
 			continue;
 		}
@@ -114,8 +113,7 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		{
 			if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
 			{
-				printf("(CvS)");
-
+				
 			}
 		}
 		continue;
