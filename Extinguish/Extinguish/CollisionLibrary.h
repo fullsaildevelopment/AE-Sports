@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "vec3.h"
 #include "matrix4.h"
+#include <DirectXMath.h>
 
 struct Plane
 {
@@ -74,4 +75,10 @@ bool AABBToCapsule(const AABB& box, const Capsule& cap);
 
 bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr);
 
-float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz);
+float SweptAABBtoAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz);
+
+float SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel);
+
+float3 XMtoF(DirectX::XMFLOAT3 m);
+
+DirectX::XMFLOAT3 FtoXM(float3 f);

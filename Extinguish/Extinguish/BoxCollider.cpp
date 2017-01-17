@@ -6,15 +6,6 @@
 
 using namespace DirectX;
 
-float3 BoxCollider::XMtoF(DirectX::XMFLOAT3 m)
-{
-	float3 f;
-	f.x = m.x;
-	f.y = m.y;
-	f.z = m.z;
-	return f;
-}
-
 AABB BoxCollider::GetAABB()
 {
 	AABB abox;
@@ -76,7 +67,7 @@ void BoxCollider::Update(float dt, InputManager* input)
 			else
 			{
 					float normx, normy, normz;
-					float t = SweptAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) * dt , normx, normy, normz);
+					float t = SweptAABBtoAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) * dt , normx, normy, normz);
 					if (t < 1)
 					{
 						float3 pos = tg->GetTransform()->GetPosition();
