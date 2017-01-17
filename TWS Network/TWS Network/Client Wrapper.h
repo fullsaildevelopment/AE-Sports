@@ -29,4 +29,8 @@ public:
 	{
 		newClient.sendMessage(message);
 	}
+	void sendPacket()
+	{
+		newClient.sendPacket();
+	}
 };
