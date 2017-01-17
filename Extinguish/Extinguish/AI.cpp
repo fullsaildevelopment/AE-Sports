@@ -86,6 +86,8 @@ void AI::GetBall()
 {
 	// find the ball
 
+	
+
 	for (int i = 0; i < listOfEnemies.size(); ++i)
 	{
 		// if person (who is enemy) already has ball
@@ -111,7 +113,7 @@ void AI::Attack(GameObject *target)
 	}
 }
 
-void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
+bool AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 {
 	// change this later to running with turning*********************************
 	// turn to them
@@ -135,25 +137,15 @@ void AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 		if (isPerson && isEnemy)
 			Attack(target);
 
-		// UpdateState?
+		return true;
 	}
-}
-
-void AI::TossTo(float3 location)
-{
-	//if the goal is a game object, idk why i'd need this function
-}
-
-void AI::TossTo(GameObject target)
-{
-	
 }
 
 void AI::Score() // maybe i wont need this, if i just check to see if i have a clear shot in update, i can call toss in there??
 {
 	// assuming i have the ball
 
-	// if i have a clear shot to the goal
+	
 	// Toss(to goal)
 }
 
