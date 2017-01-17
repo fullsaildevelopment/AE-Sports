@@ -39,13 +39,13 @@ public:
 	void AddComponent(Component* component);
 	GameObject* FindGameObject(std::string name);
 
-	void virtual OnCollisionEnter(Collider*) {};
-	void virtual OnCollisionStay(Collider*) {};
-	void virtual OnCollisionExit(Collider*) {};
-		 
-	void virtual OnTriggerEnter(Collider*) {};
-	void virtual OnTriggerStay(Collider*) {};
-	void virtual OnTriggerExit(Collider*) {};
+	void(*OnCollisionEnter) (Collider*);
+	void(*OnCollisionStay) (Collider*);
+	void(*OnCollisionExit) (Collider*);
+
+	void(*OnTriggerEnter) (Collider*);
+	void(*OnTriggerStay) (Collider*);
+	void(*OnTriggerExit) (Collider*);
 
 
 	//setters

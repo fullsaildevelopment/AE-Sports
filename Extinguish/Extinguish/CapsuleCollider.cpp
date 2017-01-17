@@ -4,7 +4,7 @@
 
 using namespace DirectX;
 
-CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o, bool t) : Collider(o,t)
+CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o, bool t) : Collider(o, t)
 {
 	radius = r;
 	Start = s;
@@ -103,7 +103,8 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		{
 			if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
 			{
-				
+				printf("(CvC)");
+
 			}
 			continue;
 		}
@@ -113,7 +114,8 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		{
 			if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
 			{
-				
+				printf("(CvS)");
+
 			}
 		}
 		continue;
