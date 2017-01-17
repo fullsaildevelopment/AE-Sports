@@ -56,6 +56,8 @@ public:
 	//getters
 	template <class T>
 	T* GetComponent();
+	template <class T>
+	vector<T*> GetComponents();
 	Component* GetComponent(unsigned int index) { return components[index]; }
 	Transform* GetTransform();
 	std::string GetName();
@@ -77,4 +79,19 @@ T*	GameObject::GetComponent()
 		if (Comp != nullptr) return Comp;
 	}
 	return nullptr;
+}
+
+template <class T>
+vector<T*> GameObject::GetComponents()
+{
+	vector<T*> v;
+	for (size_t i = 0; i < components.size(); ++i)
+	{
+		T* Comp = dynamic_cast<T*>(components[i]);
+		if (Comp != nullptr)
+		{
+			v.push_back(Comp);
+		}
+	}
+	return v;
 }

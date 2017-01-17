@@ -77,8 +77,14 @@ bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr);
 
 float SweptAABBtoAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz);
 
-float SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel);
+float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel);
+
+float3 SweptSpheretoSphere(Sphere& s, const Sphere& ss, float3& vel);
+
+bool SweptSpheretoSweptSphere(Sphere& sl, Sphere& sr, float3& vell, float3& velr);
 
 float3 XMtoF(DirectX::XMFLOAT3 m);
 
 DirectX::XMFLOAT3 FtoXM(float3 f);
+
+bool QuadraticFormula(float a, float b, float c, float& u0, float& u1);
