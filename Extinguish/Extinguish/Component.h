@@ -1,10 +1,12 @@
 #pragma once
 //#include "GameObject.h"
 #include "InputManager.h"
+#include "EventHandler.h"
+
+class GameObject;
 
 //This class will be used to make future components such as renderer, AI, etc.
-class GameObject;
-class Component
+class Component : public EventHandler
 {
 public:
 	enum CompType
@@ -27,6 +29,7 @@ public:
 	virtual void Init(GameObject* obj) { Object = obj; };
 	virtual void Update(float dt, InputManager* input) {};
 	virtual void Shutdown() {};
+	virtual void HandleEvent(Event* e) {};
 
 	//getters
 	GameObject* const GetGameObject(void) { return Object; };

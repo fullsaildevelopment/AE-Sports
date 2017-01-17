@@ -13,19 +13,32 @@ private:
 		HELD,
 	};
 
-	KeyState keyboard[256];
+	//KeyState keyboard[256];
+	bool keyboard[256];
+	bool keyboardDown[256];
+	bool keyboardUp[256];
 	int mouseX, mouseY;
-	bool rightButtonPressed, leftButtonPressed;
+	//bool rightButtonPressed, leftButtonPressed, middleButtonPressed;
+	KeyState mouseButtons[3];
+
+	bool sendEvent;
+
+	//private helper functions
+	void SendEvent();
 
 public:
 	void ClearKeyboard();
+	void Update();
 
 	//getters
 	bool GetKey(unsigned int button);
 	bool GetKeyDown(unsigned int button);
+	bool GetKeyUp(unsigned int button);
 	int GetMouseX();
 	int GetMouseY();
 	bool GetMouseButton(int index);
+	bool GetMouseButtonDown(int index);
+	bool GetMouseButtonUp(int index);
 
 	//I've taken out buttonUp because it's not necessarily needed, and I didn't know hot to implement without wasting
 	//processing time or memory 

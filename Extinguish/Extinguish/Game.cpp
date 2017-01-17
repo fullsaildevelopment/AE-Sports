@@ -154,7 +154,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* crosse = new GameObject();
 	basic->AddGameObject(crosse);
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { 0, 0.15f, 0.9f }, { 0, 0, 0}, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.25f, 0.9f }, { 0, 0, 0}, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);

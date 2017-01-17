@@ -1,5 +1,8 @@
-#include "Crosse.h"
 #include <iostream>
+#include "Crosse.h"
+#include "EventDispatcher.h"
+
+using namespace std;
 
 Crosse::Crosse()
 {
@@ -15,13 +18,17 @@ void Crosse::Init()
 {
 	//cache
 	transform = GetGameObject()->GetTransform();
+	//ballTransform = GetGameObject()->FindGameObject("Ball")->GetTransform();
+
+	EventDispatcher::GetSingleton()->RegisterHandler(this);
 }
 
 void Crosse::Update(float dt, InputManager* input)
 {
-	this->input = input;
+	//this->input = input;
 
-	HandleInput(dt);
+	this->dt = dt;
+	//HandleInput(dt);
 
 	//transform->RotateY(0.01f);
 
@@ -29,15 +36,37 @@ void Crosse::Update(float dt, InputManager* input)
 	//ClampToPlayer();
 }
 
+void Crosse::Throw()
+{
+	// do animation on crosse
+	transform->RotateX(XMConvertToRadians(45));
+
+	//add force to ball
+}
+
+void Crosse::HandleEvent(Event* e)
+{
+	//filter throw events to find right one
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+	if (inputDownEvent)
+	{
+		HandleInput(inputDownEvent);
+	}
+}
+
 //private helper functions//
 
-void Crosse::HandleInput(float dt)
+void Crosse::HandleInput(InputDownEvent* e)
 {
+	input = e->GetInput();
+
 	//rotate the crosse
 	if (input->GetMouseX() && input->GetMouseY())
 	{
-		if (input->GetMouseButton(-1))
+		if (input->GetMouseButton(0))
 		{
+			//cout << "Click!" << endl;
 			float dx = (float)input->GetMouseX() - (float)prevMouseX;
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
@@ -56,16 +85,35 @@ void Crosse::HandleInput(float dt)
 				transform->RotateZ(rotateRad);
 
 				//also translate up or down depending on rotateRad
-				XMFLOAT3 up = transform->GetUp();
+				//XMFLOAT3 up = { transform->GetUp().x * 10, transform->GetUp().y * 10, transform->GetUp().z * 10 };
+				XMFLOAT3 up = { 0.05f, 0.05f, 0.05f };
 
-				if (rotateRad > 0.0f)
+				//move the crosse to make it look better
+				if (degY < 0.0f)
 				{
-					transform->Translate(up);
+					float moveX = (-maxX - transform->GetPosition().x) * (float)(degY / curZDeg) + transform->GetPosition().x;
+					float moveY = (-maxY - transform->GetPosition().y) * (float)(degY / curZDeg) + transform->GetPosition().y;
+
+					cout << moveX << " " << moveY << endl;
 				}
-				else
+				else if (degY > 0.0f)
 				{
-					transform->Translate({ -up.x, -up.y, -up.z });
+					float moveX = (maxX - transform->GetPosition().x) * (float)(degY / curZDeg) + transform->GetPosition().x;
+					float moveY = (maxY - transform->GetPosition().y) * (float)(degY / curZDeg) + transform->GetPosition().y;
+
+					cout << moveX << " " << moveY << endl;
 				}
+
+				//if ((rotateRad > 0.0f && transform->GetRotationDeg().z > 0.0f) || (rotateRad < 0.0f && transform->GetRotationDeg().z < 0.0f))
+				//{
+				//	transform->Translate(up);
+				//	cout << "up" << endl;
+				//}
+				//else if (rotateRad != 0.0f)
+				//{
+				//	transform->Translate({ -up.x, -up.y, -up.z });
+				//	cout << "down" << endl;
+				//}
 			}
 		}
 
@@ -73,26 +121,26 @@ void Crosse::HandleInput(float dt)
 		prevMouseY = input->GetMouseY();
 	}
 
-	//if (input->GetKey('T'))
-	//{
-	//	transform->Translate(transform->GetUp());
-	//	cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
-	//}
-}
+	//cout << "Input!" << endl;
 
-//void Crosse::ClampToPlayer()
-//{
-//	////get player's world
-//	Transform* playerTransform = GetGameObject()->GetTransform()->GetParent();
-//
-//	////alter the world to suitable stick position
-//	XMFLOAT3 playerPos = playerTransform->GetPosition();
-//	////playerPos.y += 100;
-//	////playerPos.z += 1;
-//
-//	////set crosse's pos to pos
-//	transform->SetPosition(playerPos);
-//
-//	//adjust crosse's pos given it's attached already
-//	//GetGameObject()->GetTransform()->Translate({ 0, 0, 2.0f });
-//}
+	if (input->GetMouseButtonDown(1))
+	{
+		Throw();
+	}
+
+	//if (input->GetKeyDown('Y'))
+	//{
+	//	cout << "It works!" << endl;
+	//}
+
+	//if (input->GetKey('H'))
+	//{
+	//	cout << "This should work more!" << endl;
+	//}
+
+	if (input->GetKey('T'))
+	{
+		transform->Translate(transform->GetUp());
+		cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
+	}
+}
