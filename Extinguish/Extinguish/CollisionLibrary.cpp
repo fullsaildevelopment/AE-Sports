@@ -348,7 +348,7 @@ bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
 	//cpl = capl.m_Segment.m_Start + t*r;
 }
 
-float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz)
+float SweptAABBtoAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, float& normaly, float& normalz)
 {
 	float xClose, yClose, zClose;
 	float xFar, yFar, zFar;
@@ -476,4 +476,81 @@ float SweptAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& normalx, 
 	}
 
 	return entryT;
+}
+
+float SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
+{
+	float3 centerb = (b.max + b.min) * 0.5f;
+	float3 move = (s.m_Center - centerb).normalize();
+	AABB offset;
+	offset.max = move * s.m_Radius + b.max;
+	offset.min = move * s.m_Radius + b.min;
+	float3 v1 = float3(offset.min.x, offset.max.y, offset.max.z);
+	float3 v2 = float3(offset.max.x, offset.max.y, offset.max.z);
+	float3 v3 = float3(offset.max.x, offset.max.y, offset.min.x);
+	float3 v4 = float3(offset.min.x, offset.max.y, offset.min.z);
+	float3 v5 = float3(offset.min.x, offset.min.y, offset.max.z);
+	float3 v6 = float3(offset.max.x, offset.min.y, offset.max.z);
+	float3 v7 = float3(offset.max.x, offset.min.y, offset.min.x);
+	float3 v8 = float3(offset.min.x, offset.min.y, offset.min.z);
+
+	//test y
+	float3 l = (s.m_Center + vel) - s.m_Center;
+	float3 testyznx = v1 - s.m_Center;
+	float3 testyznxl = v1 - (s.m_Center + l);
+	float3 testnynznx = v8 - s.m_Center;
+	float3 testnynznxl = v8 - (s.m_Center + l);
+	float doty = dot_product(testyznx, float3(0, 1, 0));
+	float dotyl = dot_product(testyznxl, float3(0, 1, 0));
+	float dotny = dot_product(testnynznx, float3(0, -1, 0));
+	float dotnyl = dot_product(testnynznxl, float3(0, -1, 0));
+	if (doty <= 0 && dotyl >= 0)
+	{
+		float d0 = dot_product(float3(0, 1, 0),s.m_Center);
+		float d1 = dot_product(float3(0, 1, 0), v1);
+		float d2 = d0 - d1;
+		float d3 = dot_product(float3(0, 1, 0), l);
+		float df = -(d2 / d3);
+		float3 cp = s.m_Center + l * df;
+		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
+		{
+			s.m_Center = cp + float3(0,0.001f,0);
+			vel = vel * float3(1, -1, 1);
+			return 1;
+		}
+	}
+	else if (dotny <= 0 && dotnyl >= 0)
+	{
+		float d0 = dot_product(float3(0, -1, 0), s.m_Center);
+		float d1 = dot_product(float3(0, -1, 0), v8);
+		float d2 = d0 - d1;
+		float d3 = dot_product(float3(0, -1, 0), l);
+		float df = -(d2 / d3);
+		float3 cp = s.m_Center + l * df;
+		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
+		{
+			s.m_Center = cp + float3(0, 0.001f, 0);
+			vel = vel * float3(1, -1, 1);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+float3 XMtoF(DirectX::XMFLOAT3 m)
+{
+	float3 f;
+	f.x = m.x;
+	f.y = m.y;
+	f.z = m.z;
+	return f;
+}
+
+DirectX::XMFLOAT3 FtoXM(float3 f)
+{
+	DirectX::XMFLOAT3 m;
+	m.x = f.x;
+	m.y = f.y;
+	m.z = f.z;
+	return m;
 }

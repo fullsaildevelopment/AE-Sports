@@ -23,7 +23,7 @@ int main(void)
 	if (t == 'j' || t == 'J')
 	{
 		ClientWrapper newClient;
-		newClient.init("127.0.0.1", 60000);
+		newClient.init("10.63.6.159", 60001);
 	
 		while (true)
 		{
@@ -46,6 +46,10 @@ int main(void)
 					temp = Gets(newMessage, sizeof(newMessage));
 					
 					newClient.sendMessage(newMessage);
+				}
+				else if (strcmp(message, "send") == 0)
+				{
+					newClient.sendPacket();
 				}
 			}
 
