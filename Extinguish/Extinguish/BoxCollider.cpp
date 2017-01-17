@@ -54,12 +54,10 @@ void BoxCollider::Update(float dt, InputManager* input)
 				{
 					if (box->isTrigger())
 					{
-						if(og->OnTriggerEnter)
 							og->OnTriggerEnter(this);
 					}
 					if (isTrigger())
 					{
-						if(tg->OnTriggerEnter)
 							tg->OnTriggerEnter(box);
 					}
 				}
