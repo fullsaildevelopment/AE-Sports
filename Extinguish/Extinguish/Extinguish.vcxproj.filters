@@ -117,6 +117,9 @@
     <ClCompile Include="InputDownEvent.cpp">
       <Filter>Event Manager\Events</Filter>
     </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
