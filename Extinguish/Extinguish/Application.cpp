@@ -1,4 +1,5 @@
 #include "Application.h"
+#include <iostream>
 
 void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -28,6 +29,8 @@ bool Application::Update(float dt)
 	//check window for messages and get input
 	windowResult = window.Update(input);
 
+	//std::cout << windowResult << std::endl;
+
 	if (windowResult == WM_QUIT)
 	{
 		result = false;
@@ -35,12 +38,16 @@ bool Application::Update(float dt)
 	else //handle game code
 	{
 		//game.Update(input, dt);
+		input->Update();
 		game.Update(dt);
 		game.Render();
 	}
 
 	//present backbuffer
 	devResources.Present();
+
+	//std::cout << result << std::endl;
+
 
 	return result;
 }
