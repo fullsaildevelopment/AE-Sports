@@ -109,7 +109,7 @@ void AI::Attack(GameObject *target)
 	if (target->GetName() != me->GetName()) 
 	{
 		// hit
-		
+		// if they have the ball, make them drop it
 	}
 }
 
@@ -139,7 +139,8 @@ bool AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 
 		return true;
 	}
-	return false;
+
+	//return false;
 }
 
 void AI::Score() // maybe i wont need this, if i just check to see if i have a clear shot in update, i can call toss in there??

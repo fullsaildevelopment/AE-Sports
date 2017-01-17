@@ -8,11 +8,13 @@ class Ball : public Component
 private:
 	bool isHeld = false;
 	GameObject *me = GetGameObject();
+	GameObject *holder;
 
 
 public:
 	void Init();
 	void Update();
+	void OnCollisionEnter(Collider *e);
 
 	// actions
 	void ThrowTo(GameObject *target);

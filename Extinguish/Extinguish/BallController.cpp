@@ -12,10 +12,17 @@ void Ball::Update()
 		// stay with player who has me
 	}
 
-	else
-	{
-		// do velocity stuff?
-	}
+	
+
+	//else
+	//{
+	//	// do velocity stuff?
+	//}
+}
+
+void Ball::OnCollisionEnter(Collider *obj)
+{
+	
 }
 
 void Ball::ThrowTo(GameObject *target)
