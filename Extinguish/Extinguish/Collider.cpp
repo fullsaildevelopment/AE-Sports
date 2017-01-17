@@ -17,3 +17,12 @@ bool Collider::isColliding(Collider* c)
 	}
 	return false;
 }
+
+
+void OnCollisionEnter(Collider* c)
+{
+	if (c->GetGameObject()->GetName() == "Bob")
+	{
+
+	}
+}
