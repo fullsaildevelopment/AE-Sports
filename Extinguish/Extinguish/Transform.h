@@ -65,4 +65,5 @@ public:
 	DirectX::XMFLOAT3 GetForward();
 	DirectX::XMFLOAT3 GetUp();
 	DirectX::XMFLOAT3 GetRight();
+	DirectX::XMFLOAT3 GetRotationDeg();
 };
