@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include <iostream>
+#include "EventDispatcher.h"
 
 using namespace DirectX;
 using namespace std;
@@ -20,6 +21,9 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 	//cache
 	transform = GetGameObject()->GetTransform();
 
+	//register handler
+	EventDispatcher::GetSingleton()->RegisterHandler(this);
+
 	//set camera initial position
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
 	transform->SetLocal(view);
@@ -30,11 +34,23 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 
 void Camera::Update(float dt, InputManager* input)
 {
-	this->input = input;
+	//this->input = input;
+	this->dt = dt;
 
 	//ClampTo();
-	MoveCamera(dt);
+	//MoveCamera();
 	//transform->RotateY(0.001f);
+}
+
+void Camera::HandleEvent(Event* e)
+{
+	//filter throw events to find right one
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+	if (inputDownEvent)
+	{
+		MoveCamera(inputDownEvent);
+	}
 }
 
 void Camera::UpdateCamsRotation(float x, float y)
@@ -63,12 +79,17 @@ void Camera::UpdateCamsRotation(float x, float y)
 
 //private helper functions
 
-void Camera::MoveCamera(float dt)
+void Camera::MoveCamera(InputDownEvent* e)
 {
+	input = e->GetInput();
+
+	//cout << "Input!" << endl;
+
 	if (input->GetKey('W'))
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
+	//	cout << "Forward!" << endl;
 	}
 
 	if (input->GetKey('S'))
@@ -104,7 +125,7 @@ void Camera::MoveCamera(float dt)
 #if _DEBUG
 	if (input->GetMouseX() && input->GetMouseY())
 	{
-		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
+		if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 
@@ -151,7 +172,7 @@ void Camera::MoveCamera(float dt)
 #else
 	if (input->GetMouseX() && input->GetMouseY())
 	{
-		if (prevMouseX && prevMouseY && !input->GetMouseButton(1))
+		if (prevMouseX && prevMouseY && !input->GetMouseButton(2))
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 
