@@ -478,7 +478,7 @@ float SweptAABBtoAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& nor
 	return entryT;
 }
 
-float SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
+float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 {
 	float3 centerb = (b.max + b.min) * 0.5f;
 	float3 move = (s.m_Center - centerb).normalize();
@@ -487,54 +487,183 @@ float SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 	offset.min = move * s.m_Radius + b.min;
 	float3 v1 = float3(offset.min.x, offset.max.y, offset.max.z);
 	float3 v2 = float3(offset.max.x, offset.max.y, offset.max.z);
-	float3 v3 = float3(offset.max.x, offset.max.y, offset.min.x);
+	float3 v3 = float3(offset.max.x, offset.max.y, offset.min.z);
 	float3 v4 = float3(offset.min.x, offset.max.y, offset.min.z);
 	float3 v5 = float3(offset.min.x, offset.min.y, offset.max.z);
 	float3 v6 = float3(offset.max.x, offset.min.y, offset.max.z);
-	float3 v7 = float3(offset.max.x, offset.min.y, offset.min.x);
+	float3 v7 = float3(offset.max.x, offset.min.y, offset.min.z);
 	float3 v8 = float3(offset.min.x, offset.min.y, offset.min.z);
+
+	float3 y = float3(0, 1, 0);
+	float3 ny = float3(0, -1, 0);
+	float3 x = float3(1, 0, 0);
+	float3 nx = float3(-1, 0, 0);
+	float3 z = float3(0, 0, 1);
+	float3 nz = float3(0, 0, -1);
 
 	//test y
 	float3 l = (s.m_Center + vel) - s.m_Center;
 	float3 testyznx = v1 - s.m_Center;
 	float3 testyznxl = v1 - (s.m_Center + l);
-	float3 testnynznx = v8 - s.m_Center;
-	float3 testnynznxl = v8 - (s.m_Center + l);
-	float doty = dot_product(testyznx, float3(0, 1, 0));
-	float dotyl = dot_product(testyznxl, float3(0, 1, 0));
-	float dotny = dot_product(testnynznx, float3(0, -1, 0));
-	float dotnyl = dot_product(testnynznxl, float3(0, -1, 0));
+	float3 testnynzx = v7 - s.m_Center;
+	float3 testnynzxl = v7 - (s.m_Center + l);
+	float doty = dot_product(testyznx, y);
+	float dotyl = dot_product(testyznxl, y);
+	float dotny = dot_product(testnynzx, ny);
+	float dotnyl = dot_product(testnynzxl, ny);
 	if (doty <= 0 && dotyl >= 0)
 	{
-		float d0 = dot_product(float3(0, 1, 0),s.m_Center);
-		float d1 = dot_product(float3(0, 1, 0), v1);
+		float d0 = dot_product(y,s.m_Center);
+		float d1 = dot_product(y, v1);
 		float d2 = d0 - d1;
-		float d3 = dot_product(float3(0, 1, 0), l);
+		float d3 = dot_product(y, l);
 		float df = -(d2 / d3);
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
 			s.m_Center = cp + float3(0,0.001f,0);
-			vel = vel * float3(1, -1, 1);
-			return 1;
+			return float3(1, -1, 1);
 		}
 	}
 	else if (dotny <= 0 && dotnyl >= 0)
 	{
-		float d0 = dot_product(float3(0, -1, 0), s.m_Center);
-		float d1 = dot_product(float3(0, -1, 0), v8);
+		float d0 = dot_product(ny, s.m_Center);
+		float d1 = dot_product(ny, v7);
 		float d2 = d0 - d1;
-		float d3 = dot_product(float3(0, -1, 0), l);
+		float d3 = dot_product(ny, l);
 		float df = -(d2 / d3);
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
-			s.m_Center = cp + float3(0, 0.001f, 0);
-			vel = vel * float3(1, -1, 1);
-			return 1;
+			s.m_Center = cp + float3(0, -0.001f, 0);
+			return float3(1, -1, 1);
 		}
 	}
-	return 0;
+
+	float dotx = dot_product(testnynzx, x);
+	float dotxl = dot_product(testnynzxl, x);
+	float dotnx = dot_product(testyznx, nx);
+	float dotnxl = dot_product(testyznxl, nx);
+	if (dotx <= 0 && dotxl >= 0)
+	{
+		float d0 = dot_product(x, s.m_Center);
+		float d1 = dot_product(x, v7);
+		float d2 = d0 - d1;
+		float d3 = dot_product(x, l);
+		float df = -(d2 / d3);
+		float3 cp = s.m_Center + l * df;
+		if (cp.y >= offset.min.y && cp.y <= offset.max.y && cp.z >= offset.min.z && cp.z <= offset.max.z)
+		{
+			s.m_Center = cp + float3(0.001f, 0, 0);
+			return float3(-1, 1, 1);
+		}
+	}
+	else if (dotnx <= 0 && dotnxl >= 0)
+	{
+		float d0 = dot_product(nx, s.m_Center);
+		float d1 = dot_product(nx, v1);
+		float d2 = d0 - d1;
+		float d3 = dot_product(nx, l);
+		float df = -(d2 / d3);
+		float3 cp = s.m_Center + l * df;
+		if (cp.y >= offset.min.y && cp.y <= offset.max.y && cp.z >= offset.min.z && cp.z <= offset.max.z)
+		{
+			s.m_Center = cp + float3(-0.001f, 0, 0);
+			return float3(-1, 1, 1);
+		}
+	}
+
+	float dotz = dot_product(testyznx, z);
+	float dotzl = dot_product(testyznxl, z);
+	float dotnz = dot_product(testnynzx, nz);
+	float dotnzl = dot_product(testnynzxl, nz);
+	if (dotz <= 0 && dotzl >= 0)
+	{
+		float d0 = dot_product(z, s.m_Center);
+		float d1 = dot_product(z, v1);
+		float d2 = d0 - d1;
+		float d3 = dot_product(z, l);
+		float df = -(d2 / d3);
+		float3 cp = s.m_Center + l * df;
+		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.y >= offset.min.y && cp.y <= offset.max.y)
+		{
+			s.m_Center = cp + float3(0, 0, 0.001f);
+			return float3(1, 1, -1);
+		}
+	}
+	else if (dotnz <= 0 && dotnzl >= 0)
+	{
+		float d0 = dot_product(nz, s.m_Center);
+		float d1 = dot_product(nz, v7);
+		float d2 = d0 - d1;
+		float d3 = dot_product(nz, l);
+		float df = -(d2 / d3);
+		float3 cp = s.m_Center + l * df;
+		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.y >= offset.min.y && cp.y <= offset.max.y)
+		{
+			s.m_Center = cp + float3(0, 0, -0.001f);
+			return float3(1, 1, -1);
+		}
+	}
+
+
+	return float3().make_zero();
+}
+
+float3 SweptSpheretoSphere(Sphere& sp, const Sphere& ss, float3& vel)
+{
+	float3 s = sp.m_Center;
+	float3 e = sp.m_Center + vel;
+	float3 se = e - s;
+	float ratio = dot_product(se, ss.m_Center - s) / dot_product(se, se);
+	ratio = max(0, min(ratio, 1));
+	se = s + se * ratio;
+	if (dot_product(ss.m_Center - se, ss.m_Center - se) > powf(ss.m_Radius + sp.m_Radius, 2))
+	{
+		return float3().make_zero();
+	}
+	sp.m_Center = se;
+	float3 n = (sp.m_Center - ss.m_Center).normalize();
+	vel = vel - n * 2 * dot_product(vel, n);
+	return n;
+}
+
+bool SweptSpheretoSweptSphere(Sphere& sl, Sphere& sr, float3& vell, float3& velr)
+{
+	float3 va = vell;
+	float3 vb = velr;
+	float3 ab = sr.m_Center - sl.m_Center;
+	float3 vab = vb - va;
+	float rab = sl.m_Radius + sr.m_Radius;
+	float a = dot_product(vab, vab) + 0.0001f;
+	float b = 2 * dot_product(vab, ab) + 0.0001f;
+	float c = dot_product(ab, ab) - rab * rab + 0.0001f;
+	float u0 = 0;
+	float u1 = 0;
+	if (dot_product(ab, ab) <= rab*rab)
+	{
+		float3 n = (sr.m_Center - sl.m_Center).normalize();
+		vell = vell - n * 2 * dot_product(vell, n);
+		velr = velr - n.negate() * 2 * dot_product(velr, n);
+	}
+	else if (QuadraticFormula(a,b,c,u0,u1))
+	{
+		if (u0 > u1)
+		{
+			u0 += u1;
+			u1 = u0 - u1;
+			u0 -= u1;
+		}
+		sl.m_Center = sl.m_Center + vell * u0;
+		sr.m_Center = sr.m_Center + velr * u0;
+		float3 nl = (sr.m_Center - sl.m_Center).normalize();
+		float3 nr = (sl.m_Center - sr.m_Center).normalize();
+		vell = vell - nl * 2 * dot_product(vell, nl);
+		velr = velr - nr * 2 * dot_product(velr, nr);
+	}
+	if(u0 <= 0 || u0 >= 1)
+		return false;
+	return true;
 }
 
 float3 XMtoF(DirectX::XMFLOAT3 m)
@@ -553,4 +682,18 @@ DirectX::XMFLOAT3 FtoXM(float3 f)
 	m.y = f.y;
 	m.z = f.z;
 	return m;
+}
+
+bool QuadraticFormula(float a, float b, float c, float& u0, float& u1)
+{
+	float q = b * b - 4 * a * c;
+	if (q >= 0)
+	{
+		float sq = sqrt(q);
+		float d = 1 / (2 * a);
+		u0 = (-b + sq) * d;
+		u1 = (-b - sq) * d;
+		return true;
+	}
+	return false;
 }

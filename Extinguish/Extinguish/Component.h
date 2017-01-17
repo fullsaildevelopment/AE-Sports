@@ -17,6 +17,7 @@ public:
 		CTCapsuleCollider,
 		CTPhysics,
 		CTAI,
+		CTBall,
 	};
 private:
 	GameObject* Object;

@@ -11,9 +11,9 @@ Collider::Collider(GameObject* o, bool trigger) : Component(o)
 
 bool Collider::isColliding(Collider* c)
 {
-	for (int i = 0; i < (int)colliding.size(); ++i)
+	for (int i = 0; i < (int)checked.size(); ++i)
 	{
-		if (colliding[i] == c) return true;
+		if (checked[i] == c) return true;
 	}
 	return false;
 }
