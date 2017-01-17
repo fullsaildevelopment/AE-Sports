@@ -1,12 +1,25 @@
 #pragma once
 #include "Component.h"
 #include "GameObject.h"
+#include "vec3.h"
 
 class Ball : public Component
 {
-	// give velocity
+private:
+	bool isHeld = false;
+	GameObject *me = GetGameObject();
 
-	// add a 'throw' function
 
-	// be able to see if someone is holding it
+public:
+	void Init();
+	void Update();
+
+	// actions
+	void ThrowTo(GameObject *target);
+
+	// accessors
+	bool GetIsHeld();
+
+	// mutators
+	void SetIsHeld(bool ans);
 };

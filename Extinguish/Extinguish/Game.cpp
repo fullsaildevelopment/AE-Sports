@@ -126,18 +126,84 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	BoxCollider* meterboxcol2 = new BoxCollider(meterbox2, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
 	meterbox2->AddComponent(meterboxcol2);
 
+	GameObject* meterbox3 = new GameObject();
+	basic->AddGameObject(meterbox3);
+	meterbox3->Init("MeterBox3");
+	meterbox3->InitTransform(identity, { 0,3, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer3 = new Renderer();
+	meterbox3->AddComponent(meterboxRenderer3);
+	meterboxRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	BoxCollider* meterboxcol3 = new BoxCollider(meterbox3, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox3->AddComponent(meterboxcol3);
+
+	GameObject* meterbox4 = new GameObject();
+	basic->AddGameObject(meterbox4);
+	meterbox4->Init("MeterBox4");
+	meterbox4->InitTransform(identity, { 6,3, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer4 = new Renderer();
+	meterbox4->AddComponent(meterboxRenderer4);
+	meterboxRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	BoxCollider* meterboxcol4 = new BoxCollider(meterbox4, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox4->AddComponent(meterboxcol4);
+
+	GameObject* meterbox5 = new GameObject();
+	basic->AddGameObject(meterbox5);
+	meterbox5->Init("MeterBox5");
+	meterbox5->InitTransform(identity, { 3,3, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer5 = new Renderer();
+	meterbox5->AddComponent(meterboxRenderer5);
+	meterboxRenderer5->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	BoxCollider* meterboxcol5 = new BoxCollider(meterbox5, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox5->AddComponent(meterboxcol5);
+
+	GameObject* meterbox6 = new GameObject();
+	basic->AddGameObject(meterbox6);
+	meterbox6->Init("MeterBox6");
+	meterbox6->InitTransform(identity, { 3,3, 3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer6 = new Renderer();
+	meterbox6->AddComponent(meterboxRenderer6);
+	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	meterbox6->AddComponent(meterboxcol6);
+
 	GameObject* Ball = new GameObject();
 	basic->AddGameObject(Ball);
 	Ball->Init("Ball");
-	Ball->InitTransform(identity, { 3,3.5f,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Ball->InitTransform(identity, { 3,1,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer = new Renderer();
 	Ball->AddComponent(ballrenderer);
 	ballrenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover = new Movement();
 	Ball->AddComponent(ballMover);
 	ballMover->Init(5.0f, 0.75f);
-	SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false);
+	SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false, float3(1,1,0).normalize() * 1.5f);
 	Ball->AddComponent(ballcol);
+
+	GameObject* Ball2 = new GameObject();
+	basic->AddGameObject(Ball2);
+	Ball2->Init("Ball2");
+	Ball2->InitTransform(identity, { 3,3,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Renderer* ballrenderer2 = new Renderer();
+	Ball2->AddComponent(ballrenderer2);
+	ballrenderer2->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Movement* ballMover2 = new Movement();
+	Ball2->AddComponent(ballMover2);
+	ballMover2->Init(5.0f, 0.75f);
+	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false, float3(0, 0, 1).normalize() * 3.5f);
+	Ball2->AddComponent(ballcol2);
+
+	GameObject* Ball3 = new GameObject();
+	basic->AddGameObject(Ball3);
+	Ball3->Init("Ball3");
+	Ball3->InitTransform(identity, { 3,3,2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Renderer* ballrenderer3 = new Renderer();
+	Ball3->AddComponent(ballrenderer3);
+	ballrenderer3->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Movement* ballMover3 = new Movement();
+	Ball3->AddComponent(ballMover3);
+	ballMover3->Init(5.0f, 0.75f);
+	SphereCollider* ballcol3 = new SphereCollider(0.5f, Ball3, false, float3(0, 0, -1).normalize() * 3.5f);
+	Ball3->AddComponent(ballcol3);
 
 	GameObject* bear = new GameObject();
 	basic->AddGameObject(bear);

@@ -19,11 +19,11 @@ public:
 	};
 private:
 	bool IsTrigger;
-	std::vector<Collider*> colliding;
 	ColliderType Type;
 	Transform transform;
 protected:
 	void SetType(ColliderType type) { Type = type; };
+	std::vector<Collider*> checked;
 public:
 	Collider(GameObject* o, bool trigger);
 	Transform GetTransform() { return transform; };

@@ -10,6 +10,7 @@ private:
 	float radius;
 public:
 	SphereCollider(float r, GameObject* o, bool t);
+	SphereCollider(float r, GameObject* o, bool t, float3 v);
 	void Update(float dt, InputManager* input) override;
 	Sphere GetSphere();
 	Sphere GetWorldSphere();
