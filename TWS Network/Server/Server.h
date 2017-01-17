@@ -15,9 +15,12 @@
 #include "..\TWS Network\RakNet\BitStream.h"
 #include "..\TWS Network\RakNet\RakNetTypes.h"
 #include "..\TWS Network\RakNet\Router2.h"
+#include "..\TWS Network\RakNet\GetTime.h"
+#include <DirectXMath.h>
 
 using namespace RakNet;
 using namespace std;
+using namespace DirectX;
 
 #define MAX_PLAYERS 4
 
@@ -37,6 +40,23 @@ private:
 		ID_REMOVE_CLIENT
 	};
 
+#pragma pack(push, 1)
+	struct CLIENT_GAME_STATE
+	{
+		Time timeStamp;
+		UINT8 clientID;
+		UINT8 nameLength;
+		char animationName[125];
+		bool hasBall = false;
+		XMFLOAT4X4 world;
+		// something about input
+		// requires all controls
+
+		CLIENT_GAME_STATE() {}
+	};
+#pragma pack(pop)
+
+	static CLIENT_GAME_STATE * clientState;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
@@ -60,5 +80,7 @@ private:
 	void sendNew();
 	void unregisterClient();
 	void sendDisconnect();
+	void recievePacket();
+	void sendPackets();
 };
 
