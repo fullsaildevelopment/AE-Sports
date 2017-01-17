@@ -7,13 +7,19 @@ class Ball : public Component
 {
 private:
 	bool isHeld = false;
-	
-public:
-	void Throw();
+	GameObject *me = GetGameObject();
 
-	//accessors
+
+public:
+	void Init();
+	void Update();
+
+	// actions
+	void ThrowTo(GameObject *target);
+
+	// accessors
 	bool GetIsHeld();
 
-	//mutators
-	void SetIsHeld();
+	// mutators
+	void SetIsHeld(bool ans);
 };
