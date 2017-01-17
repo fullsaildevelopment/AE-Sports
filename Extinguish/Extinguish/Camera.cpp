@@ -186,6 +186,26 @@ void Camera::MoveCamera(InputDownEvent* e)
 			camera._42 = 0;
 			camera._43 = 0;
 
+			float degX = dy * rotateSpeed * dt;
+			float degY = dx * rotateSpeed * dt;
+
+			if (curRotX + degX > maxRotX)
+			{
+				curRotX = maxRotX;
+				degX = maxRotX - curRotX;
+			}
+			else if (curRotX + degX < -maxRotX)
+			{
+				curRotX = -maxRotX;
+				degX = -maxRotX - curRotX;
+			}
+			else
+			{
+				curRotX += degX;
+			}
+
+			curRotY += degY;
+
 			transform->RotateX(degX);
 			transform->RotateY(degY);
 		}
