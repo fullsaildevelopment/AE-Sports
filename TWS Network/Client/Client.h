@@ -21,11 +21,15 @@
 #include "..\TWS Network\RakNet\RakNetTypes.h"
 #include "..\TWS Network\RakNet\Router2.h"
 #include "..\TWS Network\RakNet\Kbhit.h"
+#include "..\TWS Network\RakNet\GetTime.h"
+
+#include <DirectXMath.h>
 
 
 
 using namespace RakNet;
 using namespace std;
+using namespace DirectX;
 
 class CLIENTDLL_API Client
 {
@@ -42,10 +46,26 @@ private:
 		ID_INCOMING_PACKET,
 		ID_REMOVE_CLIENT
 	};
-	
+#pragma pack(push, 1)
+	struct CLIENT_GAME_STATE
+	{
+		Time timeStamp;
+		UINT8 clientID;
+		UINT8 nameLength;
+		char animationName[125];
+		bool hasBall = false;
+		XMFLOAT4X4 world;
+		// something about input
+		// requires all controls
+
+		CLIENT_GAME_STATE() {}
+	};
+#pragma pack(pop)
+
 	static RakPeerInterface * peer;
 	static Packet * packet;
 	static char * address;
+	static CLIENT_GAME_STATE * clientState;
 public:
 
 	Client();
@@ -58,6 +78,7 @@ public:
 	int sendInput(UINT8 keyUp, UINT8 keyDown, UINT8 keyQuit);
 	void sendStop();
 	void sendMessage(char * newMessage);
+	void sendPacket();
 
 private:
 
@@ -70,5 +91,6 @@ private:
 	void readMessage();
 	void GetID();
 	void registerName();
+	void recievePackets();
 };
 

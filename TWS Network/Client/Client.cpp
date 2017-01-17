@@ -6,12 +6,18 @@ Packet * Client::packet = nullptr;
 
 char * Client::address = nullptr;
 
+Client::CLIENT_GAME_STATE * Client::clientState = new CLIENT_GAME_STATE();
+
 Client::Client()
 {
+	XMStoreFloat4x4(&clientState->world, XMMatrixIdentity());
+	memcpy(clientState->animationName, "name here", strlen("name here"));
+	clientState->nameLength = (UINT8)strlen("name here");
 }
 
 Client::~Client()
 {
+	delete clientState;
 }
 
 int Client::init(char* _address, UINT16 port)
@@ -23,10 +29,10 @@ int Client::init(char* _address, UINT16 port)
 	peer->Startup(1, &sd, 1);
 	address = _address;
 	
-	//peer->Ping("255.255.255.255", 60000, true);
+	peer->Ping("255.255.255.255", 60000, true);
 
 	//printf("Pinging\n");
-	ConnectionAttemptResult temp = peer->Connect(address, 60000, 0, 0);
+	//ConnectionAttemptResult temp = peer->Connect(address, 60000, 0, 0);
 	
 	return 1;
 }
@@ -125,6 +131,11 @@ int Client::run()
 			return 0;
 			break;
 		}
+		case ID_INCOMING_PACKET:
+		{
+			recievePackets();
+			break;
+		}
 		}
 	}
 
@@ -150,7 +161,6 @@ void Client::sendMessage(char * message, GameMessages ID)
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message, (unsigned int)strlen(message));
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-	//peer->SetOfflinePingResponse(message, (unsigned int)strlen(message));
 }
 
 void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)
@@ -178,10 +188,9 @@ void Client::readMessage()
 	BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
 	bsIn.Read(rs);
-	int endPoint = rs.Find("\n");
+	int endPoint = (int)rs.Find("\n");
 	if (endPoint > 0 && endPoint < rs.GetLength())
 	{
-//		rs.Erase(endPoint, rs.GetCharacterCount);
 		printf("%s\n", rs.SubStr(0, endPoint).C_String());
 	}
 	else
@@ -224,4 +233,59 @@ void Client::sendStop()
 void Client::sendMessage(char * newMessage)
 {
 	sendMessage(newMessage, ID_CLIENT_MESSAGE, peer->GetSystemAddressFromIndex(0));
+}
+
+void Client::sendPacket()
+{
+	BitStream bOut;
+	clientState->timeStamp = RakNet::GetTime();
+	bOut.Write((MessageID)ID_INCOMING_PACKET);
+	bOut.Write(clientState->timeStamp);
+	bOut.Write(clientID);
+	bOut.Write(clientState->nameLength);
+	bOut.Write(clientState->animationName, clientState->nameLength);
+	bOut.Write(clientState->hasBall);
+
+	bOut.Write(clientState->world);
+
+	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+}
+
+void Client::recievePackets()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+	bIn.Read(clientState->timeStamp);
+	bIn.Read(clientState->clientID);
+
+	bIn.Read(clientState->nameLength);
+	bIn.Read(clientState->animationName, (unsigned int)clientState->nameLength);
+	bIn.Read(clientState->hasBall);
+	bIn.Read(clientState->world);
+
+	printf("\nClient ID: %i\n", clientState->clientID);
+
+	printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
+		clientState->world._11,
+		clientState->world._12,
+		clientState->world._13,
+		clientState->world._14,
+		clientState->world._21,
+		clientState->world._22,
+		clientState->world._23,
+		clientState->world._24,
+		clientState->world._31,
+		clientState->world._32,
+		clientState->world._33,
+		clientState->world._34,
+		clientState->world._41,
+		clientState->world._42,
+		clientState->world._43,
+		clientState->world._44);
+
+	if (clientState->hasBall)
+		printf("hasBall: true\n");
+	else
+		printf("hasBall: false\n");
+
 }
