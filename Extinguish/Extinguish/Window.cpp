@@ -22,16 +22,16 @@ int Window::Update(InputManager* input)
 		switch (msg.message)
 		{
 			case (WM_KEYDOWN):
-				input->SetKeyboardKey(msg.wParam, true);
+				input->SetKeyboardKey((unsigned int)msg.wParam, true);
 				break;
 			case (WM_KEYUP):
-				input->SetKeyboardKey(msg.wParam, false);
+				input->SetKeyboardKey((unsigned int)msg.wParam, false);
 				break;
 			case (WM_SYSKEYDOWN):
-				input->SetKeyboardKey(msg.wParam, true);
+				input->SetKeyboardKey((unsigned int)msg.wParam, true);
 				break;
 			case (WM_SYSKEYUP):
-				input->SetKeyboardKey(msg.wParam, false);
+				input->SetKeyboardKey((unsigned int)msg.wParam, false);
 				break;
 			case (WM_LBUTTONDOWN):
 				input->SetMouseButtons(0, true);

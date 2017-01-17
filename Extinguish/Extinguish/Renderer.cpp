@@ -107,20 +107,24 @@ void Renderer::Update(float dt, InputManager* input)
 
 //getters//
 
-std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBoneOffsets()
+std::vector<DirectX::XMFLOAT4X4> Renderer::GetBoneOffsets()
 { 
 	if (blender)
 	{
 		return blender->GetBoneOffsets();
 	}
+	vector<DirectX::XMFLOAT4X4> b;
+	return b;
 }
 
-std::vector<DirectX::XMFLOAT4X4>& Renderer::GetBonesWorlds()
+std::vector<DirectX::XMFLOAT4X4> Renderer::GetBonesWorlds()
 { 
 	if (blender)
 	{
 		return blender->GetBonesWorlds();
 	}
+	vector<DirectX::XMFLOAT4X4> b;
+	return b;
 }
 
 Blender* Renderer::GetBlender()
