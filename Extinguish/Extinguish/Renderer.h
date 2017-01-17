@@ -33,8 +33,8 @@ public:
 	void Update(float dt, InputManager* input) override;
 
 	//getters
-	std::vector<DirectX::XMFLOAT4X4>& GetBoneOffsets();
-	std::vector<DirectX::XMFLOAT4X4>& GetBonesWorlds();
+	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets();
+	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds();
 	Blender* GetBlender();
 
 	//setters
