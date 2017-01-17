@@ -139,6 +139,7 @@ bool AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 
 		return true;
 	}
+	return false;
 }
 
 void AI::Score() // maybe i wont need this, if i just check to see if i have a clear shot in update, i can call toss in there??
