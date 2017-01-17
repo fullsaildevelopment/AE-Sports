@@ -7,18 +7,31 @@
 SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o, t)
 {
 	radius = r;
-	GetGameObject()->GetTransform()->AddVelocity({ 0, -4.8f, 0 });
+}
+
+SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Collider(o, t)
+{
+	radius = r;
+	GetGameObject()->GetTransform()->AddVelocity(FtoXM(v * 3));
 }
 
 void SphereCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
+	//GetGameObject()->GetTransform()->AddVelocity({ 0, -9.8f * dt, 0 });
 
 	size_t size = (*Others).size();
 	for (int i = 0; i < size; ++i)
 	{
 
 		if ((*Others)[i] == GetGameObject()) continue;
+		bool c = false;
+		for (int j = 0; j < checked.size(); ++j)
+		{
+			if ((*Others)[i]->GetComponent<Collider>() == checked[j]) c = true;
+		}
+		if (c) continue;
+
 		///////////////////////////////////////Sphere vs AABB///////////////////////////////////////
 		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
 		if (box)
@@ -27,8 +40,6 @@ void SphereCollider::Update(float dt, InputManager* input)
 			{
 				if (SphereToAABB(GetWorldSphere(), box->GetWorldAABB()))
 				{
-					printf("(SvB)");
-
 					if (box->isTrigger() && box->GetGameObject()->OnTriggerEnter)
 					{
 
@@ -45,10 +56,11 @@ void SphereCollider::Update(float dt, InputManager* input)
 			{
 				Sphere s = GetWorldSphere();
 				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity()) * dt;
-				float c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
-				if (c == 1)
+				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
+				if (c.x == 1 || c.y == 1)
 				{
 					GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+					vel *= c;
 					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel / dt));
 				}
 			}
@@ -60,19 +72,18 @@ void SphereCollider::Update(float dt, InputManager* input)
 		{
 			if (CapsuleToSphere(capsule->GetWorldCapsule(), GetWorldSphere()))
 			{
-				printf("(SvC)");
 				if (!capsule->isTrigger() && !isTrigger())
 				{
 					//Physics
 				}
 				else
 				{
-					if (capsule->isTrigger())
+					if (capsule->isTrigger() && capsule->GetGameObject()->OnTriggerEnter)
 					{
 
 						capsule->GetGameObject()->OnTriggerEnter(this);
 					}
-					if (isTrigger())
+					if (isTrigger() && GetGameObject()->OnTriggerEnter)
 					{
 						GetGameObject()->OnTriggerEnter(box);
 					}
@@ -84,30 +95,54 @@ void SphereCollider::Update(float dt, InputManager* input)
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
+			if (sphere->isTrigger() && isTrigger())
 			{
-				printf("(SvS)");
-				if (!sphere->isTrigger() && !isTrigger())
+				if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
 				{
-					//Physics
-				}
-				else
-				{
-					if (sphere->isTrigger())
+					if (sphere->isTrigger() && sphere->GetGameObject()->OnTriggerEnter)
 					{
-
 						sphere->GetGameObject()->OnTriggerEnter(this);
 					}
-					if (isTrigger())
+					if (isTrigger() && GetGameObject()->OnTriggerEnter)
 					{
 						GetGameObject()->OnTriggerEnter(box);
 					}
 				}
 			}
+			else
+			{
+				Sphere s = GetWorldSphere();
+				Sphere os = sphere->GetWorldSphere();
+				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity()) * dt;
+				float3 bvel = XMtoF(GetGameObject()->GetTransform()->GetVelocity()) * dt;
+				float3 svel = XMtoF(sphere->GetGameObject()->GetTransform()->GetVelocity()) * dt;
+				float3 bsvel = XMtoF(sphere->GetGameObject()->GetTransform()->GetVelocity()) * dt;
+				if (!vel.isEquil(float3(0, 0, 0)) && svel.isEquil(float3().make_zero()))
+				{
+					float3 n = SweptSpheretoSphere(s, os, vel);
+					if (!n.isEquil(float3(0, 0, 0)))
+					{
+						GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel / dt));
+						GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+					}
+				}
+				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
+				{
+					if (SweptSpheretoSweptSphere(s, os, vel, svel))
+					{
+						checked.push_back(sphere);
+						sphere->checked.push_back((Collider*)this);
+						GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel / dt));
+						GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+						sphere->GetGameObject()->GetTransform()->SetVelocity(FtoXM(svel / dt));
+						sphere->GetGameObject()->GetTransform()->SetPosition(os.m_Center);
+					}
+				}
+			}
+			continue;
 		}
-		continue;
 	}
-
+	checked.clear();
 }
 Sphere SphereCollider::GetSphere()
 {
