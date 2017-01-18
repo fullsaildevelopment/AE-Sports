@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "vec3.h"
 #include "BallController.h"
+#include "SphereCollider.h"
 
 class AI : public Component
 {
@@ -28,6 +29,7 @@ public:
 	void Init();
 	void Update();
 	void UpdateState(State newState);
+	void OnTriggerEnter(Collider *obj) override;
 
 	// States
 	void Idle();
