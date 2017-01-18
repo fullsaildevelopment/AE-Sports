@@ -8,6 +8,7 @@ class ClientWrapper
 {
 private:
 	Client newClient;
+
 public:
 	~ClientWrapper()
 	{
@@ -32,5 +33,17 @@ public:
 	void sendPacket()
 	{
 		newClient.sendPacket();
+	}
+	void sendInput()
+	{
+		
+		Client::KeyStates * temp = new Client::KeyStates;
+		
+		temp->up = 1;
+		temp->down = 2;
+		temp->left = 3;
+		temp->right = 4;
+		newClient.sendInput(temp);
+		delete temp;
 	}
 };
