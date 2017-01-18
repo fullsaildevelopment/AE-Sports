@@ -54,7 +54,7 @@ void Movement::Update(float dt, InputManager* input)
 		isMoving = true;
 	}
 
-	if (input->GetKey('P')) //down
+	if (input->GetKey('O')) //down
 	{
 		XMFLOAT3 up = transform->GetUp();
 		transform->AddVelocity({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });

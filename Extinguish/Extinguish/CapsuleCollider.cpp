@@ -11,7 +11,6 @@ CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o,
 	End = e;
 }
 
-
 Capsule CapsuleCollider::GetCapsule()
 {
 	Capsule cap;
@@ -77,22 +76,14 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		{
 			if (AABBToCapsule(box->GetWorldAABB(), GetWorldCapsule()))
 			{
-				printf("(CvB)");
-				if (!box->isTrigger() && !isTrigger())
+				if (box->isTrigger() && box->GetGameObject()->OnTriggerEnter)
 				{
-					//Physics
-				}
-				else
-				{
-					if (box->isTrigger())
-					{
 
-						box->GetGameObject()->OnTriggerEnter(this);
-					}
-					if (isTrigger())
-					{
-						GetGameObject()->OnTriggerEnter(box);
-					}
+					box->GetGameObject()->OnTriggerEnter(this,box);
+				}
+				if (isTrigger() && GetGameObject()->OnTriggerEnter)
+				{
+					GetGameObject()->OnTriggerEnter(box,this);
 				}
 			}
 			continue;
@@ -101,10 +92,43 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		CapsuleCollider* capsule = (*Others)[i]->GetComponent<CapsuleCollider>();
 		if (capsule)
 		{
-			if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
+			if (isTrigger() || capsule->isTrigger())
 			{
-				printf("(CvC)");
-
+				if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
+				{
+					if (capsule->GetGameObject()->OnTriggerEnter)
+					{
+						capsule->GetGameObject()->OnTriggerEnter(this,capsule);
+					}
+					if (GetGameObject()->OnTriggerEnter)
+					{
+						GetGameObject()->OnTriggerEnter(capsule,this);
+					}
+				}
+			}
+			else
+			{
+				Capsule c = GetWorldCapsule();
+				Capsule o = capsule->GetWorldCapsule();
+				float3 pos = GetGameObject()->GetTransform()->GetPosition();
+				float3 opos = capsule->GetGameObject()->GetTransform()->GetPosition();
+				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity());
+				float3 ovel = XMtoF(capsule->GetGameObject()->GetTransform()->GetVelocity());
+				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
+				{
+					GetGameObject()->GetTransform()->SetPosition(pos);
+					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel * 0.6f));
+					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
+					capsule->GetGameObject()->GetTransform()->SetVelocity(FtoXM(ovel * 0.6f));
+					if (capsule->GetGameObject()->OnCollisionEnter)
+					{
+						capsule->GetGameObject()->OnCollisionEnter(this,capsule);
+					}
+					if (GetGameObject()->OnCollisionEnter)
+					{
+						GetGameObject()->OnCollisionEnter(capsule,this);
+					}
+				}
 			}
 			continue;
 		}
@@ -112,10 +136,19 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
+			if (isTrigger() || sphere->isTrigger())
 			{
-				printf("(CvS)");
-
+				if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
+				{
+					if (capsule->GetGameObject()->OnTriggerEnter)
+					{
+						capsule->GetGameObject()->OnTriggerEnter(this,sphere);
+					}
+					if (GetGameObject()->OnTriggerEnter)
+					{
+						GetGameObject()->OnTriggerEnter(sphere,this);
+					}
+				}
 			}
 		}
 		continue;
