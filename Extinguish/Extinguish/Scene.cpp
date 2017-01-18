@@ -5,7 +5,7 @@
 
 Scene::Scene()
 {
-
+	
 }
 
 Scene::~Scene()
@@ -190,7 +190,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 0.6f, 0.6f, 0.6f, 0.6f });
+	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 1, 1, 1, 1 });
 
 	//create point lights
 	PointLight pointLight0;
