@@ -15,6 +15,7 @@ private:
 public:
 	void Init();
 	void Update();
+	void OnTriggerEnter(Collider *obj) override;
 
 	// actions
 	void ThrowTo(GameObject *target);
