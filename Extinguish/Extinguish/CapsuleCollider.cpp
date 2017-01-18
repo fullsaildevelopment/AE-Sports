@@ -76,14 +76,10 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 		{
 			if (AABBToCapsule(box->GetWorldAABB(), GetWorldCapsule()))
 			{
-				if (box->isTrigger() && box->GetGameObject()->OnTriggerEnter)
+				if (box->isTrigger() || isTrigger())
 				{
-
-					box->GetGameObject()->OnTriggerEnter(this,box);
-				}
-				if (isTrigger() && GetGameObject()->OnTriggerEnter)
-				{
-					GetGameObject()->OnTriggerEnter(box,this);
+					box->GetGameObject()->OnTriggerEnter(this);
+					GetGameObject()->OnTriggerEnter(box);
 				}
 			}
 			continue;
@@ -96,14 +92,8 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 			{
 				if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
 				{
-					if (capsule->GetGameObject()->OnTriggerEnter)
-					{
-						capsule->GetGameObject()->OnTriggerEnter(this,capsule);
-					}
-					if (GetGameObject()->OnTriggerEnter)
-					{
-						GetGameObject()->OnTriggerEnter(capsule,this);
-					}
+						capsule->GetGameObject()->OnTriggerEnter(this);
+						GetGameObject()->OnTriggerEnter(capsule);
 				}
 			}
 			else
@@ -120,14 +110,8 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel * 0.6f));
 					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
 					capsule->GetGameObject()->GetTransform()->SetVelocity(FtoXM(ovel * 0.6f));
-					if (capsule->GetGameObject()->OnCollisionEnter)
-					{
-						capsule->GetGameObject()->OnCollisionEnter(this,capsule);
-					}
-					if (GetGameObject()->OnCollisionEnter)
-					{
-						GetGameObject()->OnCollisionEnter(capsule,this);
-					}
+						capsule->GetGameObject()->OnCollisionEnter(this);
+						GetGameObject()->OnCollisionEnter(capsule);
 				}
 			}
 			continue;
@@ -140,14 +124,8 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 			{
 				if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
 				{
-					if (capsule->GetGameObject()->OnTriggerEnter)
-					{
-						capsule->GetGameObject()->OnTriggerEnter(this,sphere);
-					}
-					if (GetGameObject()->OnTriggerEnter)
-					{
-						GetGameObject()->OnTriggerEnter(sphere,this);
-					}
+						capsule->GetGameObject()->OnTriggerEnter(this);
+						GetGameObject()->OnTriggerEnter(sphere);
 				}
 			}
 		}
