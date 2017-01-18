@@ -52,15 +52,10 @@ void BoxCollider::Update(float dt, InputManager* input)
 			{
 				if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
 				{
-					if (box->isTrigger())
+					if (box->isTrigger() || isTrigger())
 					{
-						if (og->OnTriggerEnter)
-							og->OnTriggerEnter(this);
-					}
-					if (isTrigger())
-					{
-						if (tg->OnTriggerEnter)
-							tg->OnTriggerEnter(box);
+						og->OnTriggerEnter(this);
+						tg->OnTriggerEnter(box);
 					}
 				}
 			}
@@ -77,9 +72,7 @@ void BoxCollider::Update(float dt, InputManager* input)
 					pos.z += vel.z * dt * t;
 					tg->GetTransform()->SetPosition(pos);
 					float rt = 1 - t;
-					//float dot = dot_product(XMtoF(vel), float3(normx, normy, normz)) * rt;
 					float3 v = XMtoF(vel) * rt;
-					//float dot = (v.x * normz + v.y * normx + v.z * normy) * rt;
 					float3 norms = float3(normx, normy, normz);
 					float3 rejv = v - norms * dot_product(norms, v);
 					vel.x = rejv.x;

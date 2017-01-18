@@ -80,7 +80,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		isMoving = true;
 	}
 
-	if (input->GetKey('P')) //down
+	if (input->GetKey('O')) //down
 	{
 		XMFLOAT3 up = transform->GetUp();
 		transform->AddVelocity({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });

@@ -1,33 +1,34 @@
 #include "BallController.h"
 
+void BallController::OnTriggerEnter(Collider *obj)
+{
+	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+
+	if (col)
+	{
+		// set everything to them being the holder
+		isHeld = true;
+		holder = obj->GetGameObject();
+	}
+}
+
 void BallController::Init()
 {
-	//me->OnCollisionEnter = Collide;
+	
 }
 
 void BallController::Update()
 {
-	if (isHeld)
-	{
-		// stay with player who has me
-	}
-
-	else
-	{
+	if (!isHeld)
 		SetHolder(nullptr);
-	}
-}
-
-//void Collide(Collider *obj)
-//{
-//
-//}
-
 void BallController::ThrowTo(GameObject *target)
 {
-	// do stuff
-
 	isHeld = false;
+	holder = nullptr;
+
+	float num = 5;
+	XMFLOAT3 vel = XMFLOAT3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
+	me->GetTransform()->AddVelocity(vel);
 }
 
 bool  BallController::GetIsHeld()
@@ -38,9 +39,7 @@ bool  BallController::GetIsHeld()
 GameObject* BallController::GetHolder()
 {
 	if (isHeld)
-	{
-		// return holder
-	}
+		return holder;
 
 	return nullptr;
 }
@@ -53,5 +52,8 @@ void BallController::SetIsHeld(bool ans)
 void BallController::SetHolder(GameObject *person)
 {
 	if (isHeld)
+	{
 		holder = person;
+		person->GetTransform()->AddChild(me->GetTransform());
+	}
 }

@@ -190,7 +190,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover2 = new Movement();
 	Ball2->AddComponent(ballMover2);
 	ballMover2->Init(5.0f, 0.75f);
-	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false, float3(0, 0, 1).normalize() * 3.5f);
+	CapsuleCollider* ballcol2 = new CapsuleCollider(0.5f, { 0,0,0 }, { 0,3,0 }, Ball2, false);
 	Ball2->AddComponent(ballcol2);
 
 	GameObject* Ball3 = new GameObject();
@@ -201,9 +201,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Ball3->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover3 = new Movement();
-	Ball3->AddComponent(ballMover3);
-	ballMover3->Init(5.0f, 0.75f);
-	SphereCollider* ballcol3 = new SphereCollider(0.5f, Ball3, false, float3(0, 0, -1).normalize() * 3.5f);
+	//Ball3->AddComponent(ballMover3);
+	//ballMover3->Init(5.0f, 0.75f);
+	CapsuleCollider* ballcol3 = new CapsuleCollider(0.5f, { 0,0,0 }, { 0,1,0 }, Ball3, false);
 	Ball3->AddComponent(ballcol3);
 
 	GameObject* bear = new GameObject();
