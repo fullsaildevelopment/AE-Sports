@@ -296,6 +296,9 @@
     <ProjectReference Include="..\Bin\ShaderStructures\ShaderStructures.vcxproj">
       <Project>{179bba62-7114-4d1f-b7b6-2bedfa346dd7}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Bin\TWS Network\TWS Network.vcxproj">
+      <Project>{b8f7258a-20bc-4a18-9a0b-e7533a5a3c25}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Textures\DDS\Mage.dds">
