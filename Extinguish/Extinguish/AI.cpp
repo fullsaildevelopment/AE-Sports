@@ -28,7 +28,7 @@ void AI::UpdateState(State newState)
 
 void AI::Init()
 {
-	me->OnCollisionEnter = Collide;
+	//me->OnCollisionEnter = Collide;
 
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(4); // I'll include myself for now*************************************
