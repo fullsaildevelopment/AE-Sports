@@ -52,15 +52,10 @@ void BoxCollider::Update(float dt, InputManager* input)
 			{
 				if (AABBtoAABB(GetWorldAABB(), box->GetWorldAABB()))
 				{
-					if (box->isTrigger())
+					if (box->isTrigger() || isTrigger())
 					{
-						if (og->OnTriggerEnter)
-							og->OnTriggerEnter(this,box);
-					}
-					if (isTrigger())
-					{
-						if (tg->OnTriggerEnter)
-							tg->OnTriggerEnter(box,this);
+						og->OnTriggerEnter(this);
+						tg->OnTriggerEnter(box);
 					}
 				}
 			}

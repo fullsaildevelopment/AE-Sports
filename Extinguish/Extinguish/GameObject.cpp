@@ -101,3 +101,47 @@ std::string GameObject::GetName()
 	return name;
 }
 
+void GameObject::OnCollisionEnter(Collider* e)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->OnCollisionEnter(e);
+	}
+}
+void GameObject::OnCollisionStay(Collider* e)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->OnCollisionStay(e);
+	}
+}
+void GameObject::OnCollisionExit(Collider* e)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->OnCollisionExit(e);
+	}
+}
+
+void GameObject::OnTriggerEnter(Collider* e)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->OnTriggerEnter(e);
+	}
+}
+void GameObject::OnTriggerStay(Collider* e)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->OnTriggerStay(e);
+	}
+}
+void GameObject::OnTriggerExit(Collider* e)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->OnTriggerExit(e);
+	}
+}
+
