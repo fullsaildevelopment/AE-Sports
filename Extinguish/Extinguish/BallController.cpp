@@ -1,43 +1,55 @@
 #include "BallController.h"
 
-void Ball::Init()
+void BallController::Init()
 {
-
+	me->OnCollisionEnter = Collide;
 }
 
-void Ball::Update()
+void BallController::Update()
 {
 	if (isHeld)
 	{
 		// stay with player who has me
 	}
 
-	
-
-	//else
-	//{
-	//	// do velocity stuff?
-	//}
+	else
+	{
+		SetHolder(nullptr);
+	}
 }
 
-void Ball::OnCollisionEnter(Collider *obj)
+void Collide(Collider *obj)
 {
-	
+
 }
 
-void Ball::ThrowTo(GameObject *target)
+void BallController::ThrowTo(GameObject *target)
 {
 	// do stuff
 
 	isHeld = false;
 }
 
-bool  Ball::GetIsHeld()
+bool  BallController::GetIsHeld()
 {
 	return isHeld;
 }
 
-void  Ball::SetIsHeld(bool ans)
+GameObject* BallController::GetHolder()
+{
+	if (isHeld)
+	{
+		// return holder
+	}
+}
+
+void  BallController::SetIsHeld(bool ans)
 {
 	isHeld = ans;
+}
+
+void BallController::SetHolder(GameObject *person)
+{
+	if (isHeld)
+		holder = person;
 }

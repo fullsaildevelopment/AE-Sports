@@ -1,5 +1,10 @@
 #include "AI.h"
 
+void Collide(Collider *obj)
+{
+	// onCollisionEnter stuff
+}
+
 void AI::UpdateState(State newState)
 {
 	switch (currState)
@@ -23,6 +28,8 @@ void AI::UpdateState(State newState)
 
 void AI::Init()
 {
+	me->OnCollisionEnter = Collide;
+
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(4); // I'll include myself for now*************************************
 	
@@ -62,6 +69,7 @@ void AI::Init()
 		}
 	}
 
+	ballClass = ball->GetComponent<BallController>();
 	currState = idle;
 }
 
@@ -69,8 +77,8 @@ void AI::Update()
 {
 	// check events and UpdateState accordingly
 
-	// check if i have a clear shot, toss that shit
-	// 
+	// if i have the ball
+		// Score();
 }
 
 void AI::Idle()
@@ -84,23 +92,22 @@ void AI::Idle()
 
 void AI::GetBall()
 {
-	// find the ball
-
-	
-
-	for (int i = 0; i < listOfEnemies.size(); ++i)
+	// if someone has the ball
+	if (ballClass->GetIsHeld())
 	{
-		// if person (who is enemy) already has ball
-			// RunTo(that guy)
-		
-		//if ((*listOfEnemies)[i]->)
+		if (ballClass->GetHolder()->GetName() != me->GetName()) // if they're not on my team********
+		{
+			if (RunTo(ballClass->GetHolder()))
+				Attack(ballClass->GetHolder());
+		}
 
-		// if person (who is team) has ball
-			// if enemies are around him
-				// Attack(closest enemy to me around my guy)
+		else // he's my teammate
+		{
+			// help him?
+		}
 	}
 
-	// RunTo(listOfEnemies[1], true, true);
+	
 }
 
 void AI::Attack(GameObject *target)
@@ -113,7 +120,7 @@ void AI::Attack(GameObject *target)
 	}
 }
 
-bool AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
+bool AI::RunTo(GameObject *target)
 {
 	// change this later to running with turning*********************************
 	// turn to them
@@ -133,22 +140,22 @@ bool AI::RunTo(GameObject *target, bool isPerson, bool isEnemy)
 	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
 
 	if (v.magnitude() < 5)
-	{
-		if (isPerson && isEnemy)
-			Attack(target);
-
 		return true;
-	}
-
-	//return false;
 }
 
-void AI::Score() // maybe i wont need this, if i just check to see if i have a clear shot in update, i can call toss in there??
+void AI::Score()
 {
-	// assuming i have the ball
+	// if the vector between me and the goal is clear
+		// call the balls ThrowTo(goal) funtion
 
-	
-	// Toss(to goal)
+	// or if i'm right next to the goal
+		// run into the goal
+}
+
+void AI::DropBall()
+{
+	ballClass->SetIsHeld(false);
+	ballClass->SetHolder(nullptr);
 }
 
 AI::State AI::GetCurrState() { return currState; }
