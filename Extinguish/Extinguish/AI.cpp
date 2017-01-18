@@ -1,6 +1,6 @@
 #include "AI.h"
 
-void Collide(Collider *obj)
+void Collide(Collider *obj, Collider *me)
 {
 	// onCollisionEnter stuff
 }
@@ -28,7 +28,7 @@ void AI::UpdateState(State newState)
 
 void AI::Init()
 {
-	//me->OnCollisionEnter = Collide;
+	me->OnCollisionEnter = Collide;
 
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(4); // I'll include myself for now*************************************
