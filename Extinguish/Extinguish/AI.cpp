@@ -78,7 +78,14 @@ void AI::Update()
 	// check events and UpdateState accordingly
 
 	// if i have the ball
-		// Score();
+	if (ballClass->GetIsHeld())
+		if (ballClass->GetHolder() == me)
+			Score();
+	
+
+	// for each enemy
+		// if they're coming closer to me
+			// pass the ball to a teammate
 }
 
 void AI::Idle()
@@ -145,10 +152,13 @@ bool AI::RunTo(GameObject *target)
 
 void AI::Score()
 {
+	bool tmp = RunTo(enemyGoal);
+
+
 	// if the vector between me and the goal is clear
 		// call the balls ThrowTo(goal) funtion
 
-	// or if i'm right next to the goal
+	// if (tmp)
 		// run into the goal
 }
 
