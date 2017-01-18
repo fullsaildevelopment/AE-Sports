@@ -18,6 +18,7 @@
 #include "..\TWS Network\RakNet\GetTime.h"
 #include <DirectXMath.h>
 
+
 using namespace RakNet;
 using namespace std;
 using namespace DirectX;
@@ -56,6 +57,17 @@ private:
 	};
 #pragma pack(pop)
 
+
+#pragma pack(push, 1)
+	struct KeyStates
+	{
+		UINT8 up;
+		UINT8 down;
+		UINT8 left;
+		UINT8 right;
+	};
+#pragma pack(pop)
+
 	static CLIENT_GAME_STATE * clientState;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
@@ -70,9 +82,11 @@ public:
 	int init(uint16_t port);
 	int update();
 	void stop();
+	bool Shutdown();
 
 private:
-
+	bool shutdown = false;
+	int shutdowntimer = 0;
 	void sendMessage(char * message, GameMessages ID, bool broadcast);
 	void sendMessage(char * message, unsigned int length, GameMessages ID, bool broadcast);
 	void rerouteMessage();

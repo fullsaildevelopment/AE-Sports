@@ -62,12 +62,23 @@ private:
 	};
 #pragma pack(pop)
 
+
+
 	static RakPeerInterface * peer;
 	static Packet * packet;
 	static char * address;
 	static CLIENT_GAME_STATE * clientState;
 public:
 
+#pragma pack(push, 1)
+	struct KeyStates
+	{
+		UINT8 up;
+		UINT8 down;
+		UINT8 left;
+		UINT8 right;
+	};
+#pragma pack(pop)
 	Client();
 	~Client();
 
@@ -75,7 +86,7 @@ public:
 	int run();
 	void stop();
 
-	int sendInput(UINT8 keyUp, UINT8 keyDown, UINT8 keyQuit);
+	int sendInput(KeyStates * states);
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendPacket();
