@@ -2,7 +2,7 @@
 
 void BallController::Init()
 {
-	me->OnCollisionEnter = Collide;
+	//me->OnCollisionEnter = Collide;
 }
 
 void BallController::Update()
@@ -18,10 +18,10 @@ void BallController::Update()
 	}
 }
 
-void Collide(Collider *obj)
-{
-
-}
+//void Collide(Collider *obj)
+//{
+//
+//}
 
 void BallController::ThrowTo(GameObject *target)
 {
@@ -41,9 +41,11 @@ GameObject* BallController::GetHolder()
 	{
 		// return holder
 	}
+
+	return nullptr;
 }
 
-void  BallController::SetIsHeld(bool ans)
+void BallController::SetIsHeld(bool ans)
 {
 	isHeld = ans;
 }
