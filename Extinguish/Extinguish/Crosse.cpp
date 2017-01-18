@@ -66,7 +66,6 @@ void Crosse::HandleInput(InputDownEvent* e)
 	{
 		if (input->GetMouseButton(0))
 		{
-			//cout << "Click!" << endl;
 			float dx = (float)input->GetMouseX() - (float)prevMouseX;
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
@@ -82,38 +81,69 @@ void Crosse::HandleInput(InputDownEvent* e)
 			{
 				//cout << transform->GetRotation().x / XM_PI * 180 << " " << transform->GetRotation().y / XM_PI * 180 << " " << transform->GetRotation().z / XM_PI * 180 << endl;
 
+				if (rotateRad)
+				{
+					//cout << radY << " " << curZDeg << endl;
+				}
+
 				transform->RotateZ(rotateRad);
 
 				//also translate up or down depending on rotateRad
 				//XMFLOAT3 up = { transform->GetUp().x * 10, transform->GetUp().y * 10, transform->GetUp().z * 10 };
-				XMFLOAT3 up = { 0.05f, 0.05f, 0.05f };
+				XMFLOAT3 up = { 0.005f, 0.005f, 0 };
 
 				//move the crosse to make it look better
-				if (degY < 0.0f)
+				//move down if I'm going left and on right side or if I'm going right and on left side 
+				if ((degY < 0.0f && curZDeg > 0.0f) || (degY > 0.0f && curZDeg < 0.0f))
 				{
-					float moveX = (-maxX - transform->GetPosition().x) * (float)(degY / curZDeg) + transform->GetPosition().x;
-					float moveY = (-maxY - transform->GetPosition().y) * (float)(degY / curZDeg) + transform->GetPosition().y;
+					float moveX = (-maxX - transform->GetPosition().x) * (float)(degY / -maxRotZ) + transform->GetPosition().x * dt;
+					float moveY = (-maxY - transform->GetPosition().y) * (float)(degY / -maxRotZ) + transform->GetPosition().y * dt;
 
-					cout << moveX << " " << moveY << endl;
+					if (!((moveX + transform->GetPosition().x < -maxX) || (moveY + transform->GetPosition().y < -maxY)))
+					{
+						moveX = maxX - transform->GetPosition().x;
+					}
+	/*				else if (moveY + transform->GetPosition().y > maxY)
+					{
+						moveY = maxY - transform->GetPosition().y;
+					}*/
+					else
+					{
+						transform->Translate({ -up.x, -up.y, -up.z });
+						//cout << "Down" << endl;
+						//transform->Translate({ -maxX * (degY / -maxRotZ) * 0.1f, -maxY * (degY / -maxRotZ) * 0.1f, 0 });
+						//transform->Translate({ moveX, moveY, 0 });
+					}
+
+
+					//cout << moveX << " " << moveY << " " << degY << endl;
 				}
-				else if (degY > 0.0f)
+				else if ((degY < 0.0f && curZDeg <= 0.0f) || (degY > 0.0f && curZDeg >= 0.0f))
 				{
-					float moveX = (maxX - transform->GetPosition().x) * (float)(degY / curZDeg) + transform->GetPosition().x;
-					float moveY = (maxY - transform->GetPosition().y) * (float)(degY / curZDeg) + transform->GetPosition().y;
+					float moveX = (maxX - transform->GetPosition().x) * (float)(degY / maxRotZ) + transform->GetPosition().x;
+					float moveY = (maxY - transform->GetPosition().y) * (float)(degY / maxRotZ) + transform->GetPosition().y;
 
-					cout << moveX << " " << moveY << endl;
+					//transform->Translate({ maxX * (degY / maxRotZ), maxY * (degY / maxRotZ), 0 });
+
+					if (moveX + transform->GetPosition().x > maxX)
+					{
+						moveX = maxX - transform->GetPosition().x;
+					}
+					else if (moveY + transform->GetPosition().y > maxY)
+					{
+						moveY = maxY - transform->GetPosition().y;
+					}
+					else
+					{
+						transform->Translate({ up.x, up.y,  up.z });
+						//transform->Translate({ maxX * (degY / -maxRotZ) * 0.1f, maxY * (degY / -maxRotZ) * 0.1f, 0 });
+						//transform->Translate({ moveX, moveY, 0 });
+					}
+
+					//cout << "Up" << endl;
+
+					//cout << moveX << " " << moveY << " " << degY << endl;
 				}
-
-				//if ((rotateRad > 0.0f && transform->GetRotationDeg().z > 0.0f) || (rotateRad < 0.0f && transform->GetRotationDeg().z < 0.0f))
-				//{
-				//	transform->Translate(up);
-				//	cout << "up" << endl;
-				//}
-				//else if (rotateRad != 0.0f)
-				//{
-				//	transform->Translate({ -up.x, -up.y, -up.z });
-				//	cout << "down" << endl;
-				//}
 			}
 		}
 
@@ -138,9 +168,10 @@ void Crosse::HandleInput(InputDownEvent* e)
 	//	cout << "This should work more!" << endl;
 	//}
 
-	if (input->GetKey('T'))
+	if (input->GetKeyDown('T'))
 	{
-		transform->Translate(transform->GetUp());
+		XMFLOAT3 up = transform->GetUp();
+		transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
 		cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
 	}
 }

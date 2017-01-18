@@ -6,24 +6,27 @@ class ServerWrapper
 {
 private:
 	Server newServer;
-	//Client serverClient;
+	bool shutdown = false;
+	bool noPeer = false;
 public:
 	~ServerWrapper() { 
 		//serverClient.stop();
-	newServer.stop(); }
+	//newServer.stop();
+	}
 	int init(char * address, UINT16 port)
 	{
 		
-		return newServer.init(port);//serverClient.init(address, port);
+		return newServer.init(port);
 	}
 	int run()
 	{
-		
-		return newServer.update(); //serverClient.run();
+		if (shutdown && !noPeer)
+			noPeer = newServer.Shutdown();
+		return newServer.update();
 	}
 	void stop()
 	{
-		//serverClient.stop();
-		newServer.stop();
+		noPeer = newServer.Shutdown();
+		shutdown = true;
 	}
 };

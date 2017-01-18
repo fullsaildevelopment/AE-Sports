@@ -14,9 +14,11 @@ private:
 	InputManager* input;
 
 	int prevMouseX, prevMouseY;
-	const float maxRotZ = 60.0f;
-	const float maxX = 33.0f;
-	const float maxY = 35.0f;
+	const float maxRotZ = 70.0f;
+	//const float maxX = 33.0f;
+	//const float maxY = 35.0f;
+	const float maxX = 43.0f;
+	const float maxY = 46.0f;
 	float dt;
 
 	//private helper functions
