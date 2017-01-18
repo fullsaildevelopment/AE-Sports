@@ -21,13 +21,9 @@ void Crosse::Init()
 	transform = GetGameObject()->GetTransform();
 	minX = transform->GetPosition().x;
 	minY = transform->GetPosition().y;
-
-	//point collider to function
-	//GetGameObject()->OnTriggerEnter = OnTriggerEnter;
-
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 
-
+	//register crosse event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this);
 }
 
@@ -47,7 +43,7 @@ void Crosse::Update(float dt, InputManager* input)
 
 void Crosse::OnTriggerEnter(Collider* collider)
 {
-
+	
 }
 
 //misc

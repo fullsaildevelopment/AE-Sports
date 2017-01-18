@@ -21,12 +21,15 @@ void BallController::Update()
 {
 	if (!isHeld)
 		SetHolder(nullptr);
+}
+
 void BallController::ThrowTo(GameObject *target)
 {
 	isHeld = false;
 	holder = nullptr;
 
 	float num = 5;
+
 	XMFLOAT3 vel = XMFLOAT3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
 	me->GetTransform()->AddVelocity(vel);
 }
