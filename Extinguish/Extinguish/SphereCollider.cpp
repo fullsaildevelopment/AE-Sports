@@ -43,11 +43,11 @@ void SphereCollider::Update(float dt, InputManager* input)
 					if (box->isTrigger() && box->GetGameObject()->OnTriggerEnter)
 					{
 
-						box->GetGameObject()->OnTriggerEnter(this);
+						box->GetGameObject()->OnTriggerEnter(this,box);
 					}
 					if (isTrigger() && GetGameObject()->OnTriggerEnter)
 					{
-						GetGameObject()->OnTriggerEnter(box);
+						GetGameObject()->OnTriggerEnter(box,this);
 					}
 
 				}
@@ -56,13 +56,25 @@ void SphereCollider::Update(float dt, InputManager* input)
 			{
 				Sphere s = GetWorldSphere();
 				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity()) * dt;
+				float3 bvel = vel;
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c.x == 1 || c.y == 1)
 				{
 					GetGameObject()->GetTransform()->SetPosition(s.m_Center);
 					vel *= c;
 					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel / dt));
+					if (box->GetGameObject()->OnCollisionEnter)
+					{
+
+						box->GetGameObject()->OnCollisionEnter(this, box);
+					}
+					if (GetGameObject()->OnCollisionEnter)
+					{
+						GetGameObject()->OnCollisionEnter(box,this);
+					}
 				}
+				else if(!bvel.isEquil(vel))
+					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel/dt));
 			}
 			continue;
 		}
@@ -81,11 +93,11 @@ void SphereCollider::Update(float dt, InputManager* input)
 					if (capsule->isTrigger() && capsule->GetGameObject()->OnTriggerEnter)
 					{
 
-						capsule->GetGameObject()->OnTriggerEnter(this);
+						capsule->GetGameObject()->OnTriggerEnter(this, capsule);
 					}
 					if (isTrigger() && GetGameObject()->OnTriggerEnter)
 					{
-						GetGameObject()->OnTriggerEnter(box);
+						GetGameObject()->OnTriggerEnter(capsule,this);
 					}
 				}
 			}
@@ -101,11 +113,11 @@ void SphereCollider::Update(float dt, InputManager* input)
 				{
 					if (sphere->isTrigger() && sphere->GetGameObject()->OnTriggerEnter)
 					{
-						sphere->GetGameObject()->OnTriggerEnter(this);
+						sphere->GetGameObject()->OnTriggerEnter(this,sphere);
 					}
 					if (isTrigger() && GetGameObject()->OnTriggerEnter)
 					{
-						GetGameObject()->OnTriggerEnter(box);
+						GetGameObject()->OnTriggerEnter(sphere, this);
 					}
 				}
 			}
@@ -136,6 +148,15 @@ void SphereCollider::Update(float dt, InputManager* input)
 						GetGameObject()->GetTransform()->SetPosition(s.m_Center);
 						sphere->GetGameObject()->GetTransform()->SetVelocity(FtoXM(svel / dt));
 						sphere->GetGameObject()->GetTransform()->SetPosition(os.m_Center);
+						if (sphere->GetGameObject()->OnCollisionEnter)
+						{
+
+							sphere->GetGameObject()->OnCollisionEnter(this,sphere);
+						}
+						if (GetGameObject()->OnCollisionEnter)
+						{
+							GetGameObject()->OnCollisionEnter(sphere,this);
+						}
 					}
 				}
 			}

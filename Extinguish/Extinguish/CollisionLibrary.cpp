@@ -4,6 +4,8 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
+#define clamp(a) (max(0,min(1,a)))
+
 bool isZero(float3 v)
 {
 	if (v.x <= FLT_EPSILON && v.x >= -FLT_EPSILON)
@@ -606,6 +608,11 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		}
 	}
 
+	if (dotx <= 0 && dotnx <= 0 && doty <= 0 && dotny <= 0 && dotz <= 0 && dotnz <= 0)
+	{
+		vel = vel - move * 2 * dot_product(vel, move);
+	}
+
 
 	return float3().make_zero();
 }
@@ -664,6 +671,106 @@ bool SweptSpheretoSweptSphere(Sphere& sl, Sphere& sr, float3& vell, float3& velr
 	if(u0 <= 0 || u0 >= 1)
 		return false;
 	return true;
+}
+
+bool stuff(Capsule& capl, Capsule& capr, float3& vell, float3& velr, float3& pos, float3& opos)
+{
+	float3 cpl;
+	float3 cpr;
+
+	float3 p1 = capl.m_Segment.m_Start;
+	float3 p2 = capl.m_Segment.m_End;
+	float3 p3 = capr.m_Segment.m_Start;
+	float3 p4 = capr.m_Segment.m_End;
+
+	float d1321 = (p1.x - p3.x)*(p2.x - p1.x) + (p1.y - p3.y)*(p2.y - p1.y) + (p1.z - p3.z)*(p2.z - p1.z);
+	float d2121 = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y) + (p2.z - p1.z)*(p2.z - p1.z);
+	float d4321 = (p4.x - p3.x)*(p2.x - p1.x) + (p4.y - p3.y)*(p2.y - p1.y) + (p4.z - p3.z)*(p2.z - p1.z);
+	float d1343 = (p1.x - p3.x)*(p4.x - p3.x) + (p1.y - p3.y)*(p4.y - p3.y) + (p1.z - p3.z)*(p4.z - p3.z);
+	float d4343 = (p4.x - p3.x)*(p4.x - p3.x) + (p4.y - p3.y)*(p4.y - p3.y) + (p4.z - p3.z)*(p4.z - p3.z);
+
+	float t = (d1343 * d4321 - d1321 * d4343) / (d2121*d4343 - d4321*d4321);
+	float u = (d1343 + t * d4321) / d4343;
+
+	t = min(max(t, 1), 0);
+	u = min(max(u, 1), 0);
+
+	cpl = p1 + (p2 - p1)*t;
+	cpr = p3 + (p4 - p3)*u;
+
+	Sphere s1;
+	Sphere s2;
+
+	s1.m_Center = cpl;
+	s1.m_Radius = capl.m_Radius;
+	s2.m_Center = cpr;
+	s2.m_Radius = capr.m_Radius;
+
+	if (SphereToSphere(s1, s2))
+	{
+		float3 mid = (cpl + cpr) * 0.5f;
+		float3 ml = mid + (cpl - mid).normalize() * (capl.m_Radius + 0.0001);
+		float3 mr = mid + (cpr - mid).normalize() * (capr.m_Radius + 0.0001);
+		
+		pos = ml;
+		opos = mr;
+
+		float3 nl = (opos - pos).normalize();
+		float3 nr = (pos - opos).normalize();
+		vell = vell - nr * 2 * dot_product(vell, nr);
+		velr = velr - nl * 2 * dot_product(velr, nl);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr, float3& pos, float3& opos)
+{
+	float3 p0 = capl.m_Segment.m_Start;
+	float3 u = capl.m_Segment.m_End - capl.m_Segment.m_Start;
+
+	float3 q0 = capr.m_Segment.m_Start;
+	float3 v = capr.m_Segment.m_End - capr.m_Segment.m_Start;
+	float3 w0 = p0 - q0;
+
+	float a = dot_product(u, u);
+	float b = dot_product(u, v) + 0.00001f;
+	float c = dot_product(v, v);
+	float d = dot_product(u, w0);
+	float e = dot_product(v, w0);
+
+	float sc = (b*e - c*d) / (a*c - b*b);
+	float tc = (a*e - b*d) / (a*c - b*b);
+
+	sc = max(0,min(sc,1));
+	tc = max(0, min(tc, 1));
+
+	p0 = p0 + u*sc;
+	q0 = q0 + v*tc;
+	Sphere sl;
+	Sphere sr;
+	sl.m_Center = p0;
+	sr.m_Center = q0;
+	sl.m_Radius = capl.m_Radius;
+	sr.m_Radius = capr.m_Radius;
+	if (SphereToSphere(sl, sr))
+	{
+		float3 mid = (p0 + q0) * 0.5f;
+		float3 ml = (p0 - mid).normalize() * (capl.m_Radius + 0.0001);
+		float3 mr = (q0 - mid).normalize() * (capr.m_Radius + 0.0001);
+
+		pos += ml;
+		opos += mr;
+
+		float3 nl = (q0 - p0).normalize();
+		float3 nr = (p0 - q0).normalize();
+		vell = vell - nr * 2 * dot_product(vell, nr);
+		velr = velr - nl * 2 * dot_product(velr, nl);
+		return true;
+	}
+	return false;
 }
 
 float3 XMtoF(DirectX::XMFLOAT3 m)
