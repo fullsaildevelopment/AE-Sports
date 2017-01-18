@@ -1,8 +1,15 @@
 #include "AI.h"
 
-void Collide(Collider *obj, Collider *me)
+void AI::OnTriggerEnter(Collider *obj)
 {
-	// onCollisionEnter stuff
+	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+
+	if (col)
+	{
+		// set everything to them being the holder
+		//isHeld = true;
+		//holder = obj->GetGameObject();
+	}
 }
 
 void AI::UpdateState(State newState)
@@ -28,8 +35,6 @@ void AI::UpdateState(State newState)
 
 void AI::Init()
 {
-	//me->OnCollisionEnter = Collide;
-
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(4); // I'll include myself for now*************************************
 	
