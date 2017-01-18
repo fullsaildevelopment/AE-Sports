@@ -11,6 +11,8 @@
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
 
+class BallController;
+
 class Game
 {
 private:

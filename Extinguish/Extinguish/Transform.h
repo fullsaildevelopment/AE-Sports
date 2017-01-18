@@ -37,6 +37,7 @@ public:
 	void RotateY(float degrees);
 	void RotateZ(float degrees);
 	void AddChild(Transform* tempChild);
+	void RemoveChild(Transform* abortee);
 	void AddSibling(Transform* tempSibling);
 	void Update(float dt);
 
