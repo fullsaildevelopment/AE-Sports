@@ -1,22 +1,23 @@
 #include "BallController.h"
 
-//void Collide(Collider *obj, Collider *me)
-//{
-//	// if i collide with a persons crosse
-//	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
-//
-//	if (col)
-//	{
-//		//BallController::SetIsHeld(true);
-//		
-//		
-//	}
-//		// set everything to them being the holder etc.
-//}
+void Collide(Collider *obj, Collider *ball)
+{
+	BallController *me = ball->GetGameObject()->GetComponent<BallController>();
+
+	// if i collide with a persons crosse
+	SphereCollider *col = dynamic_cast<SphereCollider*>(ball);
+
+	if (col)
+	{
+		// set everything to them being the holder
+		me->SetIsHeld(true);
+		me->SetHolder(obj->GetGameObject());
+	}
+}
 
 void BallController::Init()
 {
-	//me->OnCollisionEnter = Collide;
+	me->OnCollisionEnter = Collide;
 }
 
 void BallController::Update()
