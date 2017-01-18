@@ -1,6 +1,6 @@
 #include "AI.h"
 
-void Collide(Collider *obj)
+void Collide(Collider *obj, Collider *me)
 {
 	// onCollisionEnter stuff
 }
