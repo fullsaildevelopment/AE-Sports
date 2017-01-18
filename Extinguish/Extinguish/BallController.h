@@ -2,8 +2,9 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "vec3.h"
+#include "SphereCollider.h"
 
-class Ball : public Component
+class BallController : public Component
 {
 private:
 	bool isHeld = false;
@@ -14,14 +15,15 @@ private:
 public:
 	void Init();
 	void Update();
-	void OnCollisionEnter(Collider *e);
 
 	// actions
 	void ThrowTo(GameObject *target);
 
 	// accessors
 	bool GetIsHeld();
+	GameObject* GetHolder();
 
 	// mutators
 	void SetIsHeld(bool ans);
+	void SetHolder(GameObject *person);
 };
