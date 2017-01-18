@@ -20,6 +20,7 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 {
 	//cache
 	transform = GetGameObject()->GetTransform();
+	input = InputManager::GetSingleton();
 
 	//register handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this);
@@ -30,6 +31,7 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 
 	moveSpeed = moveVel;
 	rotateSpeed = rotateVel;
+
 }
 
 void Camera::Update(float dt, InputManager* input)
