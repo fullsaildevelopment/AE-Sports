@@ -5,7 +5,7 @@
 
 Scene::Scene()
 {
-
+	
 }
 
 Scene::~Scene()
@@ -190,7 +190,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 0.6f, 0.6f, 0.6f, 0.6f });
+	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 1, 1, 1, 1 });
 
 	//create point lights
 	PointLight pointLight0;
@@ -386,35 +386,35 @@ void Scene::Update(float dt)
 
 void Scene::HandleInput()
 {
-	if (input->GetKeyDown('O'))
-	{
-		++curFrame;
-	}
+	//if (input->GetKeyDown('O'))
+	//{
+	//	++curFrame;
+	//}
 
-	if (input->GetKeyDown('P'))
-	{
-		--curFrame;
-	}
+	//if (input->GetKeyDown('P'))
+	//{
+	//	--curFrame;
+	//}
 
-	if (input->GetKeyDown('K')) // go to idle
-	{
-		//BlendInfo info;
-		//info.totalBlendTime = 2.0f;
+	//if (input->GetKeyDown('K')) // go to idle
+	//{
+	//	//BlendInfo info;
+	//	//info.totalBlendTime = 2.0f;
 
-		//gameObjects[1]->SetBlendInfo(info);
-		//gameObjects[1]->SetNextAnimation(2);
-		//gameObjects[1]->CreateNextAnimation(true);
-	}
+	//	//gameObjects[1]->SetBlendInfo(info);
+	//	//gameObjects[1]->SetNextAnimation(2);
+	//	//gameObjects[1]->CreateNextAnimation(true);
+	//}
 
-	if (input->GetKeyDown('J')) //go to run
-	{
-		//BlendInfo info;
-		//info.totalBlendTime = 2.0f;
+	//if (input->GetKeyDown('J')) //go to run
+	//{
+	//	//BlendInfo info;
+	//	//info.totalBlendTime = 2.0f;
 
-		//gameObjects[1]->SetNextAnimation(3);
-		//gameObjects[1]->SetBlendInfo(info);
-		//gameObjects[1]->CreateNextAnimation(true);
-	}
+	//	//gameObjects[1]->SetNextAnimation(3);
+	//	//gameObjects[1]->SetBlendInfo(info);
+	//	//gameObjects[1]->CreateNextAnimation(true);
+	//}
 
 }
 
