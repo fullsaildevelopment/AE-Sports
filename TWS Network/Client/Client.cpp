@@ -136,6 +136,11 @@ int Client::run()
 			recievePackets();
 			break;
 		}
+		case ID_SERVER_CLOSURE:
+		{
+			sendStop();
+			break;
+		}
 		}
 	}
 
@@ -150,9 +155,19 @@ void Client::stop()
 	RakPeerInterface::DestroyInstance(peer);
 }
 
-int Client::sendInput(UINT8 keyUp, UINT8 keyDown, UINT8 keyQuit) // inputs need to change
+int Client::sendInput(KeyStates * states)
 {
-	return 0;
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_INCOMING_PACKET);
+	bsOut.Write((UINT8)sizeof(KeyStates));
+	bsOut.Write(clientID);
+	//bsOut.Write(states);
+	bsOut.Write(states->up);
+	bsOut.Write(states->down);
+	bsOut.Write(states->left);
+	bsOut.Write(states->right);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+	return 1;
 }
 
 void Client::sendMessage(char * message, GameMessages ID)

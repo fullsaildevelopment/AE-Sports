@@ -57,37 +57,38 @@ int  Server::update()
 			printf("A connection is incoming.\n");
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
-		{	
+		{
 			printf("The server is full.\n");
-		break;
+			break;
 		}
 		case ID_DISCONNECTION_NOTIFICATION:
 		{
-		printf("A client has disconnected.\n");
-		break;
+			printf("A client has disconnected.\n");
+
+			if (numPlayers == 0)
+				return 0;
+			break;
 		}
 		case ID_CONNECTION_LOST:
 		{
-		printf("A client lost the connection.\n");
-		break;
+			printf("A client lost the connection.\n");
+			break;
 		}
 		case ID_CLIENT_MESSAGE:
 		{
 			printf("Incoming client to client message\n");
 			rerouteMessage();
-		break;
+			break;
 		}
 		case ID_CLIENT_REGISTER:
 		{
 			UINT16 id = registerClient();
 			char newMessage[50] = "Please welcome the new player, ";
 			memcpy(&newMessage[strlen(newMessage)], names[id], nameSizes[id]);
-			memcpy(&newMessage[strlen(newMessage)], ".", 2);
+			memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
 
 			printf(newMessage);
 			sendMessage(newMessage, ID_SERVER_MESSAGE, true);
-
-			sendMessage(newMessage, ID_SERVER_MESSAGE, false);
 			break;
 		}
 		case ID_REQUEST:
@@ -99,8 +100,7 @@ int  Server::update()
 		{
 			unregisterClient();
 			sendDisconnect();
-			if (numPlayers == 0)
-				peer->Shutdown(0);
+
 			break;
 		}
 		case ID_INCOMING_PACKET:
@@ -112,22 +112,41 @@ int  Server::update()
 		}
 	}
 
+
 	return 1;
 }
 
 void Server::stop()
 {
-	peer->DeallocatePacket(packet);
+	shutdown = true;
 	RakPeerInterface::DestroyInstance(peer);
 }
 
+bool Server::Shutdown()
+{
+	printf("\nClosing server\n");
+
+	sendMessage("", ID_SERVER_CLOSURE, true);
+	if (numPlayers == 0)
+	{
+		shutdown = true;
+		return true;
+	}
+
+	return false;
+}
 
 void Server::sendMessage(char * message, GameMessages ID, bool broadcast)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message);
-	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
+	if (!broadcast)
+		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
+	else if (broadcast && ID != ID_SERVER_CLOSURE)
+		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), broadcast);
+	else
+		peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), broadcast);
 }
 
 void Server::sendMessage(char * message, unsigned int length, GameMessages ID, bool broadcast)
@@ -204,6 +223,8 @@ void Server::unregisterClient()
 	memcpy(&message[0], names[leavingID - 1], size);
 	memcpy(&message[size], " has left the lobby.\n", strlen(" has left the lobby.\n"));
 	sendMessage(message, ID_SERVER_MESSAGE, true);
+
+	--numPlayers;
 }
 
 void Server::sendDisconnect()
@@ -215,38 +236,63 @@ void Server::recievePacket()
 {
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
-	bIn.Read(clientState->timeStamp);
-	bIn.Read(clientState->clientID);
-	bIn.Read(clientState->nameLength);
-	bIn.Read(clientState->animationName, (unsigned int)clientState->nameLength);
-	bIn.Read(clientState->hasBall);
-	bIn.Read(clientState->world);
 
-	printf("\n\nPACKET RECIEVED\nClient: %s\nClient ID: %i\n", names[clientState->clientID - 1], clientState->clientID);
-	
-	printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
-		clientState->world._11,
-		clientState->world._12,
-		clientState->world._13,
-		clientState->world._14,
-		clientState->world._21,
-		clientState->world._22,
-		clientState->world._23,
-		clientState->world._24,
-		clientState->world._31,
-		clientState->world._32,
-		clientState->world._33,
-		clientState->world._34,
-		clientState->world._41,
-		clientState->world._42,
-		clientState->world._43,
-		clientState->world._44);
+	if (packet->data[1] != sizeof(KeyStates))
+	{
+		bIn.Read(clientState->timeStamp);
+		bIn.Read(clientState->clientID);
+		bIn.Read(clientState->nameLength);
+		bIn.Read(clientState->animationName, (unsigned int)clientState->nameLength);
+		bIn.Read(clientState->hasBall);
+		bIn.Read(clientState->world);
 
-	if (clientState->hasBall)
-		printf("hasBall: true\n");
+		printf("\n\nPACKET RECIEVED\nClient: %s\nClient ID: %i\n", names[clientState->clientID - 1], clientState->clientID);
+
+		printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
+			clientState->world._11,
+			clientState->world._12,
+			clientState->world._13,
+			clientState->world._14,
+			clientState->world._21,
+			clientState->world._22,
+			clientState->world._23,
+			clientState->world._24,
+			clientState->world._31,
+			clientState->world._32,
+			clientState->world._33,
+			clientState->world._34,
+			clientState->world._41,
+			clientState->world._42,
+			clientState->world._43,
+			clientState->world._44);
+
+		if (clientState->hasBall)
+			printf("hasBall: true\n");
+		else
+			printf("hasBall: false\n");
+	}
 	else
-		printf("hasBall: false\n");
+	{
+		KeyStates tempState;
+		UINT8 id;
+		bIn.IgnoreBytes(sizeof(UINT8));
+		bIn.Read(id);
+		bIn.EndianSwapBytes(3, sizeof(KeyStates));
+		bIn.Read(tempState);
+		//bIn.Read(tempState.up);
+		//bIn.Read(tempState.down);
+		//bIn.Read(tempState.left);
+		//bIn.Read(tempState.right);
 
+		if (tempState.down == 1)
+			printf("down\n");
+		if (tempState.up == 1)
+			printf("up\n");
+		if (tempState.left == 1)
+			printf("left\n");
+		if (tempState.right == 1)
+			printf("right\n");
+	}
 }
 
 void Server::sendPackets()
