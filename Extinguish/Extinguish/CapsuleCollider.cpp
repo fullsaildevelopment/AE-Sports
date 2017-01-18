@@ -4,7 +4,7 @@
 
 using namespace DirectX;
 
-CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o, bool t) : Collider(o,t)
+CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o, bool t) : Collider(o, t)
 {
 	radius = r;
 	Start = s;

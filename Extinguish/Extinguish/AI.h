@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "vec3.h"
+#include "BallController.h"
 
 class AI : public Component
 {
@@ -18,6 +19,7 @@ private:
 	GameObject *myGoal;
 	GameObject *enemyGoal;
 	GameObject *ball;
+	BallController *ballClass;
 	GameObject *me = GetGameObject(); // access to the gameObject stuff through me
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
 	std::vector<GameObject*> listOfMates; // list of AI's teammates
@@ -33,8 +35,9 @@ public:
 
 	// Actions
 	void Attack(GameObject *target); // pass in the person you want to attack
-	bool RunTo(GameObject *target, bool isPerson, bool isEnemy); // run to a person or object in the map
+	bool RunTo(GameObject *target); // returns true when near target
 	void Score(); // throw the ball into the goal
+	void DropBall(); // 
 
 	// Accessors
 	State GetCurrState();

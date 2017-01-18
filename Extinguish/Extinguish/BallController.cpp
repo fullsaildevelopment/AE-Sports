@@ -1,11 +1,11 @@
 #include "BallController.h"
 
-void Ball::Init()
+void BallController::Init()
 {
-
+	me->OnCollisionEnter = Collide;
 }
 
-void Ball::Update()
+void BallController::Update()
 {
 	if (isHeld)
 	{
@@ -14,23 +14,42 @@ void Ball::Update()
 
 	else
 	{
-		// do velocity stuff?
+		SetHolder(nullptr);
 	}
 }
 
-void Ball::ThrowTo(GameObject *target)
+void Collide(Collider *obj)
+{
+
+}
+
+void BallController::ThrowTo(GameObject *target)
 {
 	// do stuff
 
 	isHeld = false;
 }
 
-bool  Ball::GetIsHeld()
+bool  BallController::GetIsHeld()
 {
 	return isHeld;
 }
 
-void  Ball::SetIsHeld(bool ans)
+GameObject* BallController::GetHolder()
+{
+	if (isHeld)
+	{
+		// return holder
+	}
+}
+
+void  BallController::SetIsHeld(bool ans)
 {
 	isHeld = ans;
+}
+
+void BallController::SetHolder(GameObject *person)
+{
+	if (isHeld)
+		holder = person;
 }

@@ -9,7 +9,15 @@
 #include "Server Wrapper.h"
 #include "RakNet\Gets.h"
 
+
+
+#define KEY_UP 72
+#define KEY_DOWN 80
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+
 using namespace std;
+bool input = false;
 
 int main(void)
 {
@@ -23,7 +31,7 @@ int main(void)
 	if (t == 'j' || t == 'J')
 	{
 		ClientWrapper newClient;
-		newClient.init("10.63.6.159", 60001);
+		newClient.init("127.0.0.1", 60001);
 	
 		while (true)
 		{
@@ -51,6 +59,10 @@ int main(void)
 				{
 					newClient.sendPacket();
 				}
+				else if (strcmp(message, "move") == 0)
+				{
+					newClient.sendInput();
+				}
 			}
 
 			if (newClient.run() == 0)
@@ -67,11 +79,22 @@ int main(void)
 	
 		while (true)
 		{
+			if (_kbhit())
+			{
+				char message[255];
+				Gets(message, sizeof(message));
+
+				if (strcmp(message, "exit") == 0)
+				{
+					newServer.stop();
+				}
+			}
+
 			if (newServer.run() == 0)
 			{
-				newServer.stop();
 				break;
 			}
 		}
+
 	}
 }
