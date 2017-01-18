@@ -252,6 +252,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	SphereCollider* gameBallCollider = new SphereCollider(0.05f, gameBall, false);
+	gameBall->AddComponent(gameBallCollider);
+	gameBallCollider->Init(gameBall);
 	BallController* ballController = new BallController();
 	gameBall->AddComponent(ballController);
 	ballController->Init();
