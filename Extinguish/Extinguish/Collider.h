@@ -21,6 +21,7 @@ private:
 	bool IsTrigger;
 	ColliderType Type;
 	Transform transform;
+	bool IsStatic;
 protected:
 	void SetType(ColliderType type) { Type = type; };
 	std::vector<Collider*> checked;
@@ -33,4 +34,6 @@ public:
 	void SetTransform(Transform t) { transform = t; };
 	void SetTrigger(bool trigger) { IsTrigger = trigger; };
 	bool isColliding(Collider* c);
+	bool isStatic() { return IsStatic; };
+	void SetStatic(bool s) { IsStatic = s; };
 };

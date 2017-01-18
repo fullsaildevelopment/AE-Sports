@@ -1,8 +1,15 @@
 #include "AI.h"
 
-void Collide(Collider *obj)
+void AI::OnTriggerEnter(Collider *obj)
 {
-	// onCollisionEnter stuff
+	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+
+	if (col)
+	{
+		// set everything to them being the holder
+		//isHeld = true;
+		//holder = obj->GetGameObject();
+	}
 }
 
 void AI::UpdateState(State newState)
@@ -28,8 +35,6 @@ void AI::UpdateState(State newState)
 
 void AI::Init()
 {
-	me->OnCollisionEnter = Collide;
-
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(4); // I'll include myself for now*************************************
 	
@@ -78,7 +83,14 @@ void AI::Update()
 	// check events and UpdateState accordingly
 
 	// if i have the ball
-		// Score();
+	if (ballClass->GetIsHeld())
+		if (ballClass->GetHolder() == me)
+			Score();
+	
+
+	// for each enemy
+		// if they're coming closer to me
+			// pass the ball to a teammate
 }
 
 void AI::Idle()
@@ -145,10 +157,13 @@ bool AI::RunTo(GameObject *target)
 
 void AI::Score()
 {
+	bool tmp = RunTo(enemyGoal);
+
+
 	// if the vector between me and the goal is clear
 		// call the balls ThrowTo(goal) funtion
 
-	// or if i'm right next to the goal
+	// if (tmp)
 		// run into the goal
 }
 
