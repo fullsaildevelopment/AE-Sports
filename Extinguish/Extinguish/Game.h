@@ -27,7 +27,7 @@ private:
 	//InputManager* input;
 	ResourceManager resourceManager;
 
-	bool isServer = true;
+	bool isServer = false;
 	bool isMultiplayer = true;
 
 	ClientWrapper client;

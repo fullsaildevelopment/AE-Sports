@@ -29,7 +29,7 @@ void BallController::ThrowTo(GameObject *target)
 	holder = nullptr;
 
 	float num = 5;
-	XMFLOAT3 vel = XMFLOAT3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
+	float3 vel = float3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
 	me->GetTransform()->AddVelocity(vel);
 }
 

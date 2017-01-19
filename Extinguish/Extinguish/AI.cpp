@@ -162,7 +162,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateX(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
+	me->GetTransform()->AddVelocity(float3(12, 12, 12));
 
 	if (v.magnitude() < 3)
 		return true;
