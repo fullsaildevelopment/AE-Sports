@@ -816,32 +816,32 @@ bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
 		float3 ref;
 		if (dx < dnx && dx < dy && dx < dny && dx < dz && dx < dnz)
 		{
-			cp.x = box.max.x + cap.m_Radius + 0.0001;
+			cp.x = box.max.x + cap.m_Radius + 0.0001f;
 			ref = x;
 		}
 		else if (dnx < dx && dnx < dy && dnx < dny && dnx < dz && dnx < dnz)
 		{
-			cp.x = box.min.x - cap.m_Radius - 0.0001;
+			cp.x = box.min.x - cap.m_Radius - 0.0001f;
 			ref = nx;
 		}
 		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
 		{
-			cp.y = box.max.y + cap.m_Radius + 0.0001;
+			cp.y = box.max.y + cap.m_Radius + 0.0001f;
 			ref = y;
 		}
 		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
 		{
-			cp.y = box.min.y - cap.m_Radius - 0.0001;
+			cp.y = box.min.y - cap.m_Radius - 0.0001f;
 			ref = ny;
 		}
 		else if (dz < dnx && dz < dy && dz < dny && dz < dx && dz < dnz)
 		{
-			cp.z = box.max.z + cap.m_Radius + 0.0001;
+			cp.z = box.max.z + cap.m_Radius + 0.0001f;
 			ref = z;
 		}
 		else if (dnz < dnx && dnz < dy && dnz < dny && dnz < dz && dnz < dx)
 		{
-			cp.z = box.min.z - cap.m_Radius - 0.0001;
+			cp.z = box.min.z - cap.m_Radius - 0.0001f;
 			ref = nz;
 		}
 		else
@@ -853,6 +853,22 @@ bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
 		return true;
 	}
 	return false;
+}
+
+bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
+{
+	vec3f SE = capsule.m_Segment.m_End - capsule.m_Segment.m_Start;
+	float ratio = dot_product(SE, sphere.m_Center - capsule.m_Segment.m_Start) / dot_product(SE, SE);
+	ratio = max(0, min(ratio, 1));
+	SE = capsule.m_Segment.m_Start + SE * ratio;
+	if (dot_product(sphere.m_Center - SE, sphere.m_Center - SE) > powf(sphere.m_Radius + capsule.m_Radius, 2))
+		return false;
+	float3 cs = sphere.m_Center - SE;
+	float3 ref = cs.normalize();
+	float3 m = ref * (sphere.m_Radius + capsule.m_Radius);
+	sphere.m_Center += m;
+	vel = vel - ref * 2 * dot_product(vel, ref);
+	return true;
 }
 
 float3 XMtoF(DirectX::XMFLOAT3 m)

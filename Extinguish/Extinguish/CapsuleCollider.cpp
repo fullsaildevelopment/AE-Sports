@@ -86,12 +86,11 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 			{
 				Capsule c = GetWorldCapsule();
 				float3 pos = GetGameObject()->GetTransform()->GetPosition();
-				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity());
+				float3 vel = GetGameObject()->GetTransform()->GetVelocity();
 				if (AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos))
 				{
 					GetGameObject()->GetTransform()->SetPosition(pos);
-					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel));
-					printf("CR");
+					GetGameObject()->GetTransform()->SetVelocity(vel);
 				}
 			}
 			continue;
@@ -114,14 +113,14 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 				Capsule o = capsule->GetWorldCapsule();
 				float3 pos = GetGameObject()->GetTransform()->GetPosition();
 				float3 opos = capsule->GetGameObject()->GetTransform()->GetPosition();
-				float3 vel = XMtoF(GetGameObject()->GetTransform()->GetVelocity());
-				float3 ovel = XMtoF(capsule->GetGameObject()->GetTransform()->GetVelocity());
+				float3 vel = GetGameObject()->GetTransform()->GetVelocity();
+				float3 ovel = capsule->GetGameObject()->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
 					GetGameObject()->GetTransform()->SetPosition(pos);
-					GetGameObject()->GetTransform()->SetVelocity(FtoXM(vel * 0.6f));
+					GetGameObject()->GetTransform()->SetVelocity(vel * 0.6f);
 					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
-					capsule->GetGameObject()->GetTransform()->SetVelocity(FtoXM(ovel * 0.6f));
+					capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
 					capsule->GetGameObject()->OnCollisionEnter(this);
 					GetGameObject()->OnCollisionEnter(capsule);
 					capsule->checked.push_back(this);
