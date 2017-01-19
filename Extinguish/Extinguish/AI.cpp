@@ -11,7 +11,7 @@ void AI::OnTriggerEnter(Collider *obj)
 		ballClass->DropBall(me);
 
 		float num = 3;
-		XMFLOAT3 vel = XMFLOAT3(obj->GetGameObject()->GetTransform()->GetForward().x * num, obj->GetGameObject()->GetTransform()->GetForward().y * num, obj->GetGameObject()->GetTransform()->GetForward().z * num);
+		float3 vel = float3(obj->GetGameObject()->GetTransform()->GetForward().x * num, obj->GetGameObject()->GetTransform()->GetForward().y * num, obj->GetGameObject()->GetTransform()->GetForward().z * num);
 		me->GetTransform()->AddVelocity(vel);
 	}
 }
@@ -167,7 +167,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateX(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
+	me->GetTransform()->AddVelocity(float3(12, 12, 12));
 
 	if (v.magnitude() < 3)
 		return true;

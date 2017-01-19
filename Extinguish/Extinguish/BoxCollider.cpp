@@ -62,17 +62,17 @@ void BoxCollider::Update(float dt, InputManager* input)
 			else
 			{
 				float normx, normy, normz;
-				float t = SweptAABBtoAABB(GetWorldAABB(), box->GetWorldAABB(), XMtoF(tg->GetTransform()->GetVelocity()) * dt, normx, normy, normz);
+				float t = SweptAABBtoAABB(GetWorldAABB(), box->GetWorldAABB(), tg->GetTransform()->GetVelocity() * dt, normx, normy, normz);
 				if (t < 1)
 				{
 					float3 pos = tg->GetTransform()->GetPosition();
-					XMFLOAT3 vel = tg->GetTransform()->GetVelocity();
+					float3 vel = tg->GetTransform()->GetVelocity();
 					pos.x += vel.x * dt * t;
 					pos.y += vel.y * dt * t;
 					pos.z += vel.z * dt * t;
 					tg->GetTransform()->SetPosition(pos);
 					float rt = 1 - t;
-					float3 v = XMtoF(vel) * rt;
+					float3 v = vel * rt;
 					float3 norms = float3(normx, normy, normz);
 					float3 rejv = v - norms * dot_product(norms, v);
 					vel.x = rejv.x;
