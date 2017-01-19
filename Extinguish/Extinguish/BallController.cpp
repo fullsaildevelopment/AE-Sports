@@ -28,14 +28,20 @@ void BallController::ThrowTo(GameObject *target)
 	isHeld = false;
 	holder = nullptr;
 
-	float num = 5;
+	float num = 15;
 	float3 vel = float3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
 	me->GetTransform()->AddVelocity(vel);
 }
 
-void BallController::DropBall(GameObject *holder)
+void BallController::DropBall(GameObject *person)
 {
+	isHeld = false;
+	holder = nullptr;
 
+	// add some velocity to me in the holders forward vec
+	float num = 3;
+	float3 vel = float3(person->GetTransform()->GetForward().x * num, person->GetTransform()->GetForward().y * num, person->GetTransform()->GetForward().z * num);
+	me->GetTransform()->AddVelocity(vel);
 }
 
 bool  BallController::GetIsHeld()

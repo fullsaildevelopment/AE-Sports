@@ -7,7 +7,12 @@ void AI::OnTriggerEnter(Collider *obj)
 	// if i bump into a player and they are intentionally attacking me
 	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
 	{
-		// drop the ball and react??
+		// drop the ball and 'stumble' in the way they pushed me
+		ballClass->DropBall(me);
+
+		float num = 3;
+		float3 vel = float3(obj->GetGameObject()->GetTransform()->GetForward().x * num, obj->GetGameObject()->GetTransform()->GetForward().y * num, obj->GetGameObject()->GetTransform()->GetForward().z * num);
+		me->GetTransform()->AddVelocity(vel);
 	}
 }
 
