@@ -33,6 +33,11 @@ void BallController::ThrowTo(GameObject *target)
 	me->GetTransform()->AddVelocity(vel);
 }
 
+void BallController::DropBall(GameObject *holder)
+{
+
+}
+
 bool  BallController::GetIsHeld()
 {
 	return isHeld;
