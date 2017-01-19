@@ -91,7 +91,6 @@ void BoxCollider::Update(float dt, InputManager* input)
 		{
 			if (AABBToCapsule(GetWorldAABB(), capsule->GetWorldCapsule()))
 			{
-				printf("C");
 
 			}
 			continue;
@@ -102,7 +101,6 @@ void BoxCollider::Update(float dt, InputManager* input)
 		{
 			if (SphereToAABB(sphere->GetWorldSphere(), GetWorldAABB()))
 			{
-				//printf("S");
 
 			}
 		}

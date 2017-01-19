@@ -1,4 +1,8 @@
 #pragma once
+
+//#include <WinSock2.h>
+//#include <Windows.h>
+#include "Includes.h"
 #include <vector>
 #include "Scene.h"
 #include "InputManager.h"
@@ -10,6 +14,8 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
+#include "Client Wrapper.h"
+#include "Server Wrapper.h"
 
 class Game
 {
@@ -20,6 +26,12 @@ private:
 
 	//InputManager* input;
 	ResourceManager resourceManager;
+
+	bool isServer = true;
+	bool isMultiplayer = true;
+
+	ClientWrapper client;
+	ServerWrapper server;
 
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);

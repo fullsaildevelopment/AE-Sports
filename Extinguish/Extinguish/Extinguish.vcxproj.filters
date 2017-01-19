@@ -233,6 +233,12 @@
     <ClInclude Include="InputDownEvent.h">
       <Filter>Event Manager\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Client Wrapper.h">
+      <Filter>Network Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Server Wrapper.h">
+      <Filter>Network Wrappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -283,6 +289,9 @@
     </Filter>
     <Filter Include="Event Manager\Events">
       <UniqueIdentifier>{d02a6e4c-7032-48c5-afc1-3d3487929227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network Wrappers">
+      <UniqueIdentifier>{7883d501-1961-42ce-a698-f4d0fd022a71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
