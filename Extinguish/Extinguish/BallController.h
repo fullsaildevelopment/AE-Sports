@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "vec3.h"
+#include "SphereCollider.h"
 
 class BallController : public Component
 {
@@ -14,7 +15,7 @@ private:
 public:
 	void Init();
 	void Update();
-	//void Collide(Collider *obj);
+	void OnTriggerEnter(Collider *obj) override;
 
 	// actions
 	void ThrowTo(GameObject *target);
