@@ -9,22 +9,22 @@
 #define CLIENTDLL_API __declspec(dllimport)
 #endif
 
-#include "..\TWS Network\RakNet\WindowsIncludes.h"
+#include "..\RakNet\WindowsIncludes.h"
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include "..\TWS Network\RakNet\Gets.h"
 
-#include "..\TWS Network\RakNet\RakPeerInterface.h"
-#include "..\TWS Network\RakNet\MessageIdentifiers.h"
-#include "..\TWS Network\RakNet\BitStream.h"
-#include "..\TWS Network\RakNet\RakNetTypes.h"
-#include "..\TWS Network\RakNet\Router2.h"
-#include "..\TWS Network\RakNet\Kbhit.h"
-#include "..\TWS Network\RakNet\GetTime.h"
+#include "..\RakNet\Gets.h"
+#include "..\RakNet\RakPeerInterface.h"
+#include "..\RakNet\MessageIdentifiers.h"
+#include "..\RakNet\BitStream.h"
+#include "..\RakNet\RakNetTypes.h"
+#include "..\RakNet\Router2.h"
+#include "..\RakNet\Kbhit.h"
+#include "..\RakNet\GetTime.h"
+
 
 #include <DirectXMath.h>
-
 
 
 using namespace RakNet;
@@ -55,14 +55,10 @@ private:
 		char animationName[125];
 		bool hasBall = false;
 		XMFLOAT4X4 world;
-		// something about input
-		// requires all controls
 
 		CLIENT_GAME_STATE() {}
 	};
 #pragma pack(pop)
-
-
 
 	static RakPeerInterface * peer;
 	static Packet * packet;

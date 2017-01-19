@@ -1,9 +1,12 @@
 #pragma once
 //libraries
+//#pragma comment(lib,"ws2_32")
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
 //includes
+#include <WinSock2.h>
+#include <Windows.h>
 #include <d3d11.h>
 #include <iostream>
 #include <wrl\client.h>

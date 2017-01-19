@@ -1,4 +1,6 @@
-#include <windows.h>
+
+#include "Includes.h"
+//#include <windows.h>
 #include <windowsx.h>
 //#include <vld.h>
 #include "Application.h"

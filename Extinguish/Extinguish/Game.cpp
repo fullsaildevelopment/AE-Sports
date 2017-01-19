@@ -9,6 +9,16 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
+	if (isMultiplayer)
+	{
+		if (isServer)
+		{
+			server.init("127.0.0.1", 60000);
+		}
+
+		client.init("127.0.0.1", 60001);
+	}
+
 	currentScene = 0;
 
 	CreateScenes(devResources, inputManager);
@@ -17,6 +27,16 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 void Game::Update(float dt)
 {
 	//input = inputManager;
+
+	if (isMultiplayer)
+	{
+		if (isServer)
+		{
+			int serverState = server.run();
+		}
+
+		int clientState = client.run();
+	}
 
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
@@ -182,7 +202,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Ball2 = new GameObject();
 	basic->AddGameObject(Ball2);
 	Ball2->Init("Ball2");
-	Ball2->InitTransform(identity, { 3,3,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Ball2->InitTransform(identity, { 3,1.5f,-3 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer2 = new Renderer();
 	Ball2->AddComponent(ballrenderer2);
 	ballrenderer2->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
@@ -243,7 +263,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* crosse = new GameObject();
 	basic->AddGameObject(crosse);
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
