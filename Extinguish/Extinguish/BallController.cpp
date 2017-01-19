@@ -2,7 +2,7 @@
 
 void BallController::Init()
 {
-	me->OnCollisionEnter = Collide;
+//	me->OnCollisionEnter = Collide;
 }
 
 void BallController::Update()
@@ -35,13 +35,13 @@ bool  BallController::GetIsHeld()
 	return isHeld;
 }
 
-GameObject* BallController::GetHolder()
+/*GameObject* BallController::GetHolder()
 {
 	if (isHeld)
 	{
 		// return holder
 	}
-}
+}*/
 
 void  BallController::SetIsHeld(bool ans)
 {

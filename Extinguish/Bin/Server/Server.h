@@ -10,12 +10,12 @@
 #include <string.h>
 #include <string>
 #include <vector>
-#include "..\TWS Network\RakNet\RakPeerInterface.h"
-#include "..\TWS Network\RakNet\MessageIdentifiers.h"
-#include "..\TWS Network\RakNet\BitStream.h"
-#include "..\TWS Network\RakNet\RakNetTypes.h"
-#include "..\TWS Network\RakNet\Router2.h"
-#include "..\TWS Network\RakNet\GetTime.h"
+#include "..\RakNet\RakPeerInterface.h"
+#include "..\RakNet\MessageIdentifiers.h"
+#include "..\RakNet\BitStream.h"
+#include "..\RakNet\RakNetTypes.h"
+#include "..\RakNet\Router2.h"
+#include "..\RakNet\GetTime.h"
 #include <DirectXMath.h>
 
 
