@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "vec3.h"
 #include "BallController.h"
-#include "SphereCollider.h"
+#include "CapsuleCollider.h"
 
 class AI : public Component
 {
@@ -16,6 +16,7 @@ private:
 		offensive,
 	};
 
+	bool isAttacking = false; // 
 	State currState; // the AI's current state
 	GameObject *myGoal;
 	GameObject *enemyGoal;
@@ -43,6 +44,7 @@ public:
 
 	// Accessors
 	State GetCurrState();
+	bool GetIsAttacking();
 
 	// Mutators
 
