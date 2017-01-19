@@ -29,7 +29,7 @@ void BallController::ThrowTo(GameObject *target)
 	holder = nullptr;
 
 	float num = 15;
-	XMFLOAT3 vel = XMFLOAT3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
+	float3 vel = float3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
 	me->GetTransform()->AddVelocity(vel);
 }
 
@@ -40,7 +40,7 @@ void BallController::DropBall(GameObject *person)
 
 	// add some velocity to me in the holders forward vec
 	float num = 3;
-	XMFLOAT3 vel = XMFLOAT3(person->GetTransform()->GetForward().x * num, person->GetTransform()->GetForward().y * num, person->GetTransform()->GetForward().z * num);
+	float3 vel = float3(person->GetTransform()->GetForward().x * num, person->GetTransform()->GetForward().y * num, person->GetTransform()->GetForward().z * num);
 	me->GetTransform()->AddVelocity(vel);
 }
 
