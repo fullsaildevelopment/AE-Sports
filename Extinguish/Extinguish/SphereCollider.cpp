@@ -88,8 +88,8 @@ void SphereCollider::Update(float dt, InputManager* input)
 				{
 					tgt->SetPosition(s.m_Center);
 					tgt->SetVelocity(vel);
-					capsule->OnCollisionEnter(this);
-					OnCollisionEnter(capsule);
+					capsule->GetGameObject()->OnCollisionEnter(this);
+					tg->OnCollisionEnter(capsule);
 				}
 
 			}
@@ -125,6 +125,8 @@ void SphereCollider::Update(float dt, InputManager* input)
 					{
 						tgt->SetVelocity(vel / dt);
 						tgt->SetPosition(s.m_Center);
+						sphere->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(sphere);
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))

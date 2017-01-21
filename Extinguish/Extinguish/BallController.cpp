@@ -12,15 +12,20 @@ void BallController::OnTriggerEnter(Collider *obj)
 	}
 }
 
-void BallController::Init()
+BallController::BallController(GameObject* o) : Component(o)
 {
-	
+	me = o;
 }
 
-void BallController::Update()
+void BallController::Init()
 {
-	if (!isHeld)
-		SetHolder(nullptr);
+
+}
+
+void BallController::Update(float dt)
+{
+
+	me->GetTransform()->AddVelocity(float3(0, -9.8 * dt, 0));
 }
 
 void BallController::ThrowTo(GameObject *target)
@@ -51,8 +56,7 @@ bool  BallController::GetIsHeld()
 
 GameObject* BallController::GetHolder()
 {
-	if (isHeld)
-		return holder;
+	return holder;
 }
 
 void  BallController::SetIsHeld(bool ans)
@@ -62,9 +66,7 @@ void  BallController::SetIsHeld(bool ans)
 
 void BallController::SetHolder(GameObject *person)
 {
-	if (isHeld)
-	{
-		holder = person;
-		person->GetTransform()->AddChild(me->GetTransform());
-	}
+	isHeld = true;
+	holder = person;
+	person->GetTransform()->AddChild(me->GetTransform());
 }
