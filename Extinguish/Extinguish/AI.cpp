@@ -185,12 +185,6 @@ void AI::Score()
 		// run into the goal
 }
 
-void AI::DropBall()
-{
-	ballClass->SetIsHeld(false);
-	ballClass->SetHolder(nullptr);
-}
-
 AI::State AI::GetCurrState() { return currState; }
 
 bool AI::GetIsAttacking() { return isAttacking; }

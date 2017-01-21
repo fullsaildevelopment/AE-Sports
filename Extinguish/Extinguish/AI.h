@@ -40,7 +40,6 @@ public:
 	void Attack(GameObject *target); // pass in the person you want to attack
 	bool RunTo(GameObject *target); // returns true when near target
 	void Score(); // throw the ball into the goal
-	void DropBall(); // 
 
 	// Accessors
 	State GetCurrState();
