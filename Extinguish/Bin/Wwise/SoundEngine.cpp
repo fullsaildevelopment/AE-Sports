@@ -7,10 +7,48 @@
 #include "AK/SoundEngine/Common/IAkStreamMgr.h"
 #include "AK/Tools/Common/AkPlatformFuncs.h"
 #include "AK/MusicEngine/Common/AkMusicEngine.h"
+#include "AkFilePackageLowLevelIOBlocking.h"
 
 #ifndef AK_OPTIMIZED
 	#include <AK/Comm/AkCommunication.h>
 #endif
+
+// Custom alloc/free functions. These are declared as "extern" in AkMemoryMgr.h
+// and MUST be defined by the game developer.
+namespace AK
+{
+#ifdef WIN32
+	void * AllocHook(size_t in_size)
+	{
+		return malloc(in_size);
+	}
+	void FreeHook(void * in_ptr)
+	{
+		free(in_ptr);
+	}
+	// Note: VirtualAllocHook() may be used by I/O pools of the default implementation
+	// of the Stream Manager, to allow "true" unbuffered I/O (using FILE_FLAG_NO_BUFFERING
+	// - refer to the Windows SDK documentation for more details). This is NOT mandatory;
+	// you may implement it with a simple malloc().
+	void * VirtualAllocHook(
+		void * in_pMemAddress,
+		size_t in_size,
+		DWORD in_dwAllocationType,
+		DWORD in_dwProtect
+	)
+	{
+		return VirtualAlloc(in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect);
+	}
+	void VirtualFreeHook(
+		void * in_pMemAddress,
+		size_t in_size,
+		DWORD in_dwFreeType
+	)
+	{
+		VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
+	}
+#endif
+}
 
 bool SoundEngine::InitSoundEngine()
 {
@@ -40,7 +78,7 @@ void SoundEngine::Terminate()
 	AK::SoundEngine::Term();
 
 	//terminate low level io
-	lowLevelIO.Term();
+	lowLevelIO->Term();
 
 	//terminate streaming manager
 	if (AK::IAkStreamMgr::Get())
@@ -78,7 +116,7 @@ bool SoundEngine::InitSettings()
 	AkDeviceSettings devSettings;
 	AK::StreamMgr::GetDefaultDeviceSettings(devSettings);
 
-	if (lowLevelIO.Init(devSettings) != AK_Success)
+	if (lowLevelIO->Init(devSettings) != AK_Success)
 	{
 		result = false;
 	}
@@ -120,7 +158,7 @@ bool SoundEngine::InitSettings()
 
 void SoundEngine::InitBank()
 {
-	lowLevelIO.SetBasePath(AKTEXT("../../../samples/IntegrationDemo/WwiseProject/GeneratedSoundBanks/Windows/"));
+	lowLevelIO->SetBasePath(AKTEXT("../../../samples/IntegrationDemo/WwiseProject/GeneratedSoundBanks/Windows/"));
 	AK::StreamMgr::SetCurrentLanguage(AKTEXT("English(US)"));
 
 	AkBankID bankID;
