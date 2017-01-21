@@ -8,13 +8,14 @@ class BallController : public Component
 {
 private:
 	bool isHeld = false;
-	GameObject *me = GetGameObject();
+	GameObject *me;
 	GameObject *holder;
 
 
 public:
+	BallController(GameObject* o);
 	void Init();
-	void Update();
+	void Update(float dt);
 	void OnTriggerEnter(Collider *obj) override;
 
 	// actions

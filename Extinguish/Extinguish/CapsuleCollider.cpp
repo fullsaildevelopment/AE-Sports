@@ -98,6 +98,8 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 				{
 					tgt->SetPosition(pos);
 					tgt->SetVelocity(vel);
+					tg->OnCollisionEnter(box);
+					box->GetGameObject()->OnCollisionEnter(this);
 				}
 			}
 			continue;

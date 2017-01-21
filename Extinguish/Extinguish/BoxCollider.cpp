@@ -86,6 +86,8 @@ void BoxCollider::Update(float dt, InputManager* input)
 					vel.y = rejv.y;
 					vel.z = rejv.z;
 					tg->GetTransform()->SetVelocity(vel);
+					tg->OnCollisionEnter(box);
+					box->GetGameObject()->OnCollisionEnter(this);
 				}
 
 
@@ -100,8 +102,8 @@ void BoxCollider::Update(float dt, InputManager* input)
 			{
 				if (AABBToCapsule(GetWorldAABB(), capsule->GetWorldCapsule()))
 				{
-					OnTriggerEnter(capsule);
-					capsule->OnTriggerEnter(this);
+					tg->OnTriggerEnter(capsule);
+					capsule->GetGameObject()->OnTriggerEnter(this);
 				}
 			}
 			continue;
@@ -114,8 +116,8 @@ void BoxCollider::Update(float dt, InputManager* input)
 			{
 				if (SphereToAABB(sphere->GetWorldSphere(), GetWorldAABB()))
 				{
-					OnTriggerEnter(sphere);
-					sphere->OnTriggerEnter(this);
+					tg->OnTriggerEnter(sphere);
+					sphere->GetGameObject()->OnTriggerEnter(this);
 				}
 			}
 		}
