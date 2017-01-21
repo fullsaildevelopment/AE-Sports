@@ -248,7 +248,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { 200, 0, 2 }, { 0,0,0 }, { 200, 200, 200 }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, { 0.1f, 0.1f, 0.1f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
@@ -260,7 +260,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	ballController->Init();
 
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	SphereCollider* crosseNetCollider = new SphereCollider(0.7f, Ball3, true);
 	crosseNetCollider->Init(crosse);
