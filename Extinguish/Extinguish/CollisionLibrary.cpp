@@ -28,7 +28,7 @@ void ComputePlane(Plane &plane, const vec3f& pointA, const vec3f& pointB, const 
 {
 	cross_product(plane.normal, pointB - pointA, pointC - pointB);
 	plane.normal.normalize();
-	plane.offset = dot_product(pointA,plane.normal);
+	plane.offset = dot_product(pointA, plane.normal);
 }
 
 // ClassifyPointToPlane
@@ -69,7 +69,7 @@ int ClassifyAabbToPlane(const Plane& plane, const AABB& aabb)
 {
 	Sphere sphere;
 	sphere.m_Center = (aabb.min + aabb.max) * 0.5f;
-	sphere.m_Radius = dot_product(aabb.max - sphere.m_Center, vec3f(abs(plane.normal.x),abs(plane.normal.y),abs(plane.normal.z)));
+	sphere.m_Radius = dot_product(aabb.max - sphere.m_Center, vec3f(abs(plane.normal.x), abs(plane.normal.y), abs(plane.normal.z)));
 	return ClassifySphereToPlane(plane, sphere);
 }
 
@@ -94,7 +94,7 @@ int ClassifyCapsuleToPlane(const Plane& plane, const Capsule& capsule)
 // BuildFrustum
 //
 // Calculates the corner points and planes of the frustum based upon input values.
-void BuildFrustum( Frustum& frustum, float fov, float nearDist, float farDist, float ratio, const matrix4f& camXform )
+void BuildFrustum(Frustum& frustum, float fov, float nearDist, float farDist, float ratio, const matrix4f& camXform)
 {
 	// TO DO:
 	// Calculate the 8 corner points of the frustum and store them in the frustum.corners[] array.
@@ -134,12 +134,12 @@ void BuildFrustum( Frustum& frustum, float fov, float nearDist, float farDist, f
 // Perform a Sphere-to-Frustum check. Returns true if the sphere is inside. False if not.
 bool FrustumToSphere(const Frustum& frustum, const Sphere& sphere)
 {
-	if(ClassifySphereToPlane(frustum.planes[NEAR_PLANE], sphere)   == 2) return false;
-	if(ClassifySphereToPlane(frustum.planes[FAR_PLANE], sphere)	   == 2) return false;
-	if(ClassifySphereToPlane(frustum.planes[LEFT_PLANE], sphere)   == 2) return false;
-	if(ClassifySphereToPlane(frustum.planes[RIGHT_PLANE], sphere)  == 2) return false;
-	if(ClassifySphereToPlane(frustum.planes[TOP_PLANE], sphere)	   == 2) return false;
-	if(ClassifySphereToPlane(frustum.planes[BOTTOM_PLANE], sphere) == 2) return false;
+	if (ClassifySphereToPlane(frustum.planes[NEAR_PLANE], sphere) == 2) return false;
+	if (ClassifySphereToPlane(frustum.planes[FAR_PLANE], sphere) == 2) return false;
+	if (ClassifySphereToPlane(frustum.planes[LEFT_PLANE], sphere) == 2) return false;
+	if (ClassifySphereToPlane(frustum.planes[RIGHT_PLANE], sphere) == 2) return false;
+	if (ClassifySphereToPlane(frustum.planes[TOP_PLANE], sphere) == 2) return false;
+	if (ClassifySphereToPlane(frustum.planes[BOTTOM_PLANE], sphere) == 2) return false;
 	return true;
 }
 
@@ -187,7 +187,7 @@ bool AABBtoAABB(const AABB& lhs, const AABB& rhs)
 // Returns true if the Spheres collide. False if not.
 bool SphereToSphere(const Sphere& lhs, const Sphere& rhs)
 {
-	if(dot_product(lhs.m_Center - rhs.m_Center, lhs.m_Center - rhs.m_Center) > powf(lhs.m_Radius + rhs.m_Radius,2))
+	if (dot_product(lhs.m_Center - rhs.m_Center, lhs.m_Center - rhs.m_Center) > powf(lhs.m_Radius + rhs.m_Radius, 2))
 		return false;
 	return true;
 }
@@ -211,7 +211,7 @@ bool SphereToAABB(const Sphere& lhs, const AABB& rhs)
 	if (lhs.m_Center.z > rhs.max.z)
 		cp.z = rhs.max.z;
 
-	if (dot_product(lhs.m_Center - cp, lhs.m_Center - cp) > powf(lhs.m_Radius, 2))
+	if (dot_product(lhs.m_Center - cp, lhs.m_Center - cp) < powf(lhs.m_Radius, 2))
 		return false;
 	return true;
 }
@@ -446,7 +446,7 @@ float SweptAABBtoAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& nor
 			normalz = 0.0f;
 		}
 	}
-	else if(yEntry > zEntry)
+	else if (yEntry > zEntry)
 	{
 		if (yClose < 0.0f)
 		{
@@ -487,21 +487,15 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 	AABB offset;
 	offset.max = move * s.m_Radius + b.max;
 	offset.min = move * s.m_Radius + b.min;
-	float3 v1 = float3(offset.min.x, offset.max.y, offset.max.z);
-	float3 v2 = float3(offset.max.x, offset.max.y, offset.max.z);
-	float3 v3 = float3(offset.max.x, offset.max.y, offset.min.z);
-	float3 v4 = float3(offset.min.x, offset.max.y, offset.min.z);
-	float3 v5 = float3(offset.min.x, offset.min.y, offset.max.z);
-	float3 v6 = float3(offset.max.x, offset.min.y, offset.max.z);
-	float3 v7 = float3(offset.max.x, offset.min.y, offset.min.z);
-	float3 v8 = float3(offset.min.x, offset.min.y, offset.min.z);
+	float3 v1(offset.min.x, offset.max.y, offset.max.z);
+	float3 v7(offset.max.x, offset.min.y, offset.min.z);
 
-	float3 y = float3(0, 1, 0);
-	float3 ny = float3(0, -1, 0);
-	float3 x = float3(1, 0, 0);
-	float3 nx = float3(-1, 0, 0);
-	float3 z = float3(0, 0, 1);
-	float3 nz = float3(0, 0, -1);
+	float3 y(0,1,0);
+	float3 ny(0, -1, 0);
+	float3 x(1, 0, 0);
+	float3 nx(-1, 0, 0);
+	float3 z(0, 0, 1);
+	float3 nz(0, 0, -1);
 
 	//test y
 	float3 l = (s.m_Center + vel) - s.m_Center;
@@ -515,7 +509,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 	float dotnyl = dot_product(testnynzxl, ny);
 	if (doty <= 0 && dotyl >= 0)
 	{
-		float d0 = dot_product(y,s.m_Center);
+		float d0 = dot_product(y, s.m_Center);
 		float d1 = dot_product(y, v1);
 		float d2 = d0 - d1;
 		float d3 = dot_product(y, l);
@@ -523,7 +517,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
-			s.m_Center = cp + float3(0,0.001f,0);
+			s.m_Center = cp + float3(0, 0.001f, 0);
 			return float3(1, -1, 1);
 		}
 	}
@@ -653,7 +647,7 @@ bool SweptSpheretoSweptSphere(Sphere& sl, Sphere& sr, float3& vell, float3& velr
 		vell = vell - n * 2 * dot_product(vell, n);
 		velr = velr - n.negate() * 2 * dot_product(velr, n);
 	}
-	else if (QuadraticFormula(a,b,c,u0,u1))
+	else if (QuadraticFormula(a, b, c, u0, u1))
 	{
 		if (u0 > u1)
 		{
@@ -668,7 +662,7 @@ bool SweptSpheretoSweptSphere(Sphere& sl, Sphere& sr, float3& vell, float3& velr
 		vell = vell - nl * 2 * dot_product(vell, nl);
 		velr = velr - nr * 2 * dot_product(velr, nr);
 	}
-	if(u0 <= 0 || u0 >= 1)
+	if (u0 <= 0 || u0 >= 1)
 		return false;
 	return true;
 }
@@ -709,9 +703,9 @@ bool stuff(Capsule& capl, Capsule& capr, float3& vell, float3& velr, float3& pos
 	if (SphereToSphere(s1, s2))
 	{
 		float3 mid = (cpl + cpr) * 0.5f;
-		float3 ml = mid + (cpl - mid).normalize() * (capl.m_Radius + 0.0001);
-		float3 mr = mid + (cpr - mid).normalize() * (capr.m_Radius + 0.0001);
-		
+		float3 ml = mid + (cpl - mid).normalize() * (capl.m_Radius + 0.0001f);
+		float3 mr = mid + (cpr - mid).normalize() * (capr.m_Radius + 0.0001f);
+
 		pos = ml;
 		opos = mr;
 
@@ -728,27 +722,69 @@ bool stuff(Capsule& capl, Capsule& capr, float3& vell, float3& velr, float3& pos
 
 bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr, float3& pos, float3& opos)
 {
-	float3 p0 = capl.m_Segment.m_Start;
-	float3 u = capl.m_Segment.m_End - capl.m_Segment.m_Start;
+	//float3 p0 = capl.m_Segment.m_Start;
+	//float3 u = capl.m_Segment.m_End - capl.m_Segment.m_Start;
+	//
+	//float3 q0 = capr.m_Segment.m_Start;
+	//float3 v = capr.m_Segment.m_End - capr.m_Segment.m_Start;
+	//float3 w0 = p0 - q0;
+	//
+	//float a = dot_product(u, u);
+	//float b = dot_product(u, v) + 0.00001f;
+	//float c = dot_product(v, v);
+	//float d = dot_product(u, w0);
+	//float e = dot_product(v, w0);
+	//
+	//float sc = (b*e - c*d) / (a*c - b*b);
+	//float tc = (a*e - b*d) / (a*c - b*b);
+	//
+	//sc = max(0, min(sc, 1));
+	//tc = max(0, min(tc, 1));
+	//
+	//p0 = p0 + u*sc;
+	//q0 = q0 + v*tc;
 
-	float3 q0 = capr.m_Segment.m_Start;
-	float3 v = capr.m_Segment.m_End - capr.m_Segment.m_Start;
-	float3 w0 = p0 - q0;
+	float3 p0;
+	float3 q0;
 
-	float a = dot_product(u, u);
-	float b = dot_product(u, v) + 0.00001f;
-	float c = dot_product(v, v);
-	float d = dot_product(u, w0);
-	float e = dot_product(v, w0);
+	float3 p1 = capl.m_Segment.m_Start;
+	float3 p2 = capl.m_Segment.m_End;
+	float3 p3 = capr.m_Segment.m_Start;
+	float3 p4 = capr.m_Segment.m_End;
+	float3 pr;
+	float3 pl;
+	float dot = dot_product((p2 - p1).normalize(), (p4 - p3).normalize());
+	float t;
+	float u;
+	if (dot == 1 || dot == -1)
+	{
+		pr.x = max(min(max(p3.x, p4.x), p1.x), min(p3.x, p4.x));
+		pr.y = max(min(max(p3.y, p4.y), p1.y), min(p3.y, p4.y));
+		pr.z = max(min(max(p3.z, p4.z), p1.z), min(p3.z, p4.z));
 
-	float sc = (b*e - c*d) / (a*c - b*b);
-	float tc = (a*e - b*d) / (a*c - b*b);
+		pl.x = max(min(max(p1.x, p2.x), p3.x), min(p1.x, p2.x));
+		pl.y = max(min(max(p1.y, p2.y), p3.y), min(p1.y, p2.y));
+		pl.z = max(min(max(p1.z, p2.z), p3.z), min(p1.z, p2.z));
+	}
+	else
+	{
+		float d1321 = (p1.x - p3.x)*(p2.x - p1.x) + (p1.y - p3.y)*(p2.y - p1.y) + (p1.z - p3.z)*(p2.z - p1.z);
+		float d2121 = (p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y) + (p2.z - p1.z)*(p2.z - p1.z);
+		float d4321 = (p4.x - p3.x)*(p2.x - p1.x) + (p4.y - p3.y)*(p2.y - p1.y) + (p4.z - p3.z)*(p2.z - p1.z);
+		float d1343 = (p1.x - p3.x)*(p4.x - p3.x) + (p1.y - p3.y)*(p4.y - p3.y) + (p1.z - p3.z)*(p4.z - p3.z);
+		float d4343 = (p4.x - p3.x)*(p4.x - p3.x) + (p4.y - p3.y)*(p4.y - p3.y) + (p4.z - p3.z)*(p4.z - p3.z);
 
-	sc = max(0,min(sc,1));
-	tc = max(0, min(tc, 1));
+		t = (d1343 * d4321 - d1321 * d4343) / (d2121*d4343 - d4321*d4321 + 0.00001f);
+		u = (d1343 + t * d4321) / d4343;
 
-	p0 = p0 + u*sc;
-	q0 = q0 + v*tc;
+		t = min(max(t, 1), 0);
+		u = min(max(u, 1), 0);
+
+		pl = p1 + (p2 - p1)*t;
+		pr = p3 + (p4 - p3)*u;
+	}
+	p0 = pl;
+	q0 = pr;
 	Sphere sl;
 	Sphere sr;
 	sl.m_Center = p0;
@@ -757,20 +793,124 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	sr.m_Radius = capr.m_Radius;
 	if (SphereToSphere(sl, sr))
 	{
-		float3 ml = (q0 - p0).normalize() * (capl.m_Radius + 0.0001);
-		float3 mr = (p0 - q0).normalize() * (capr.m_Radius + 0.0001);
+		float3 ml = (q0 - p0).normalize() * (capl.m_Radius + 0.00011f);
+		float3 mr = (p0 - q0).normalize() * (capr.m_Radius + 0.00011f);
 		float3 mid = (p0 + ml + q0 + mr) * 0.5f;
 
-		pos = (p0 - mid).normalize() * capl.m_Radius + p0;
-		opos = (q0 - mid).normalize() * capr.m_Radius + q0;
+		ml += (p0 - mid).normalize() * (capl.m_Radius + 0.0011f);
+		mr += (q0 - mid).normalize() * (capr.m_Radius + 0.0011f);
 
-		float3 nl = (opos - pos).normalize();
-		float3 nr = (pos - opos).normalize();
+		pos += ml;
+		opos += mr;
+
+		float3 nl = (q0 - p0).normalize();
+		float3 nr = (p0 - q0).normalize();
 		vell = vell - nr * 2 * dot_product(vell, nr);
 		velr = velr - nl * 2 * dot_product(velr, nl);
+		vell *= 0;
+		velr *= 0;
 		return true;
 	}
 	return false;
+}
+
+bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
+{
+	float3 Center = (box.min + box.max) * 0.5f;
+	vec3f cp = cap.m_Segment.m_End - cap.m_Segment.m_Start;
+	float ratio = dot_product(cp, Center - cap.m_Segment.m_Start) / dot_product(cp, cp);
+	ratio = max(min(ratio, 1), 0);
+	cp = cap.m_Segment.m_Start + cp * ratio;
+	vec3f cpb = cp;
+	if (cp.x < box.min.x)
+		cpb.x = box.min.x;
+	if (cp.y < box.min.y)
+		cpb.y = box.min.y;
+	if (cp.z < box.min.z)
+		cpb.z = box.min.z;
+	if (cp.x > box.max.x)
+		cpb.x = box.max.x;
+	if (cp.y > box.max.y)
+		cpb.y = box.max.y;
+	if (cp.z > box.max.z)
+		cpb.z = box.max.z;
+	if (dot_product(cp - cpb, cp - cpb) < powf(cap.m_Radius, 2))
+	{
+		float3 v1(box.min.x, box.max.y, box.max.z);
+		float3 v7(box.max.x, box.min.y, box.min.z);
+		cpb = cp;
+		float3 y(0, 1, 0);
+		float3 ny(0, -1, 0);
+		float3 x(1, 0, 0);
+		float3 nx(-1, 0, 0);
+		float3 z(0, 0, 1);
+		float3 nz(0, 0, -1);
+
+		float3 testyznx = v1 - cp;
+		float3 testnynzx = v7 - cp;
+
+		float dx = dot_product(testnynzx, x);
+		float dnx = dot_product(testyznx, nx);
+		float dy = dot_product(testyznx, y);
+		float dny = dot_product(testnynzx, ny);
+		float dz = dot_product(testyznx, z);
+		float dnz = dot_product(testnynzx, nz);
+		float3 ref;
+		if (dx < dnx && dx < dy && dx < dny && dx < dz && dx < dnz)
+		{
+			cp.x = box.max.x + cap.m_Radius + 0.0001f;
+			ref = x;
+		}
+		else if (dnx < dx && dnx < dy && dnx < dny && dnx < dz && dnx < dnz)
+		{
+			cp.x = box.min.x - cap.m_Radius - 0.0001f;
+			ref = nx;
+		}
+		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
+		{
+			cp.y = box.max.y + cap.m_Radius + 0.0001f;
+			ref = y;
+		}
+		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
+		{
+			cp.y = box.min.y - cap.m_Radius - 0.0001f;
+			ref = ny;
+		}
+		else if (dz < dnx && dz < dy && dz < dny && dz < dx && dz < dnz)
+		{
+			cp.z = box.max.z + cap.m_Radius + 0.0001f;
+			ref = z;
+		}
+		else if (dnz < dnx && dnz < dy && dnz < dny && dnz < dz && dnz < dx)
+		{
+			cp.z = box.min.z - cap.m_Radius - 0.0001f;
+			ref = nz;
+		}
+		else
+		{
+			pos.y = box.max.y;
+		}
+		pos += cp - cpb;
+		vel = vel - ref * 2 * dot_product(vel, ref);
+		return true;
+	}
+	return false;
+}
+
+bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
+{
+	vec3f SE = capsule.m_Segment.m_End - capsule.m_Segment.m_Start;
+	float ratio = dot_product(SE, sphere.m_Center - capsule.m_Segment.m_Start) / dot_product(SE, SE);
+	ratio = max(0, min(ratio, 1));
+	SE = capsule.m_Segment.m_Start + SE * ratio;
+	if (dot_product(sphere.m_Center - SE, sphere.m_Center - SE) > powf(sphere.m_Radius + capsule.m_Radius, 2))
+		return false;
+	float3 cs = sphere.m_Center - SE;
+	float3 ref = cs.normalize();
+	float3 m = ref * (sphere.m_Radius + capsule.m_Radius);
+	sphere.m_Center += m;
+	vel = vel - ref * 2 * dot_product(vel, ref);
+	return true;
 }
 
 float3 XMtoF(DirectX::XMFLOAT3 m)

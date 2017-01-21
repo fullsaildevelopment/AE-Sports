@@ -1,8 +1,9 @@
 //#include "Animation.h"
 //#include "AnimationSet.h"
 //#include "BindPose.h"
+#include "Includes.h"
 #include <fstream>
-#include <Windows.h>
+//#include <Windows.h>
 #include "ForFBX.h"
 #include "ResourceManager.h"
 

@@ -116,7 +116,7 @@ int Client::run()
 		{
 			GetID();
 			printf("Please enter a name (8 characters max): ");
-			cin >> clientName;
+			memcpy(clientName, "Player", strlen("Player"));
 			registerName();
 			break;
 		}
