@@ -40,9 +40,16 @@ void BoxCollider::Update(float dt, InputManager* input)
 	GameObject* tg = GetGameObject();
 	vector<GameObject*>* Others = tg->GetGameObjects();
 	size_t size = (*Others).size();
+
 	for (int i = 0; i < size; ++i)
 	{
 		if ((*Others)[i] == tg) continue;
+		bool c = false;
+		for (int j = 0; j < checked.size(); ++j)
+		{
+			if ((*Others)[i]->GetComponent<Collider>() == checked[j]) c = true;
+		}
+		if (c) continue;
 		///////////////////////////////////////AABB vs AABB///////////////////////////////////////
 		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
 		if (box)
@@ -89,9 +96,13 @@ void BoxCollider::Update(float dt, InputManager* input)
 		CapsuleCollider* capsule = (*Others)[i]->GetComponent<CapsuleCollider>();
 		if (capsule)
 		{
-			if (AABBToCapsule(GetWorldAABB(), capsule->GetWorldCapsule()))
+			if (capsule->isTrigger() || isTrigger())
 			{
-
+				if (AABBToCapsule(GetWorldAABB(), capsule->GetWorldCapsule()))
+				{
+					OnTriggerEnter(capsule);
+					capsule->OnTriggerEnter(this);
+				}
 			}
 			continue;
 		}
@@ -99,9 +110,13 @@ void BoxCollider::Update(float dt, InputManager* input)
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (SphereToAABB(sphere->GetWorldSphere(), GetWorldAABB()))
+			if (sphere->isTrigger() || isTrigger())
 			{
-
+				if (SphereToAABB(sphere->GetWorldSphere(), GetWorldAABB()))
+				{
+					OnTriggerEnter(sphere);
+					sphere->OnTriggerEnter(this);
+				}
 			}
 		}
 		continue;
