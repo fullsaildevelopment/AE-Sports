@@ -275,7 +275,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	SphereCollider* gameBallCollider = new SphereCollider(0.05f, gameBall, false);
 	gameBall->AddComponent(gameBallCollider);
 	gameBallCollider->Init(gameBall);
-	BallController* ballController = new BallController();
+	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 
