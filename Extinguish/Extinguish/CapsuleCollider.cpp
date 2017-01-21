@@ -65,11 +65,18 @@ Capsule CapsuleCollider::GetWorldCapsule()
 void CapsuleCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
-
+	GameObject* tg = GetGameObject();
+	Transform* tgt = tg->GetTransform();
 	size_t size = (*Others).size();
 	for (int i = 0; i < size; ++i)
 	{
 		if ((*Others)[i] == GetGameObject()) continue;
+		bool c = false;
+		for (int j = 0; j < checked.size(); ++j)
+		{
+			if ((*Others)[i]->GetComponent<Collider>() == checked[j]) c = true;
+		}
+		if (c) continue;
 		///////////////////////////////////////Capsule vs AABB///////////////////////////////////////
 		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
 		if (box)
@@ -79,18 +86,18 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 				if (AABBToCapsule(box->GetWorldAABB(), GetWorldCapsule()))
 				{
 					box->GetGameObject()->OnTriggerEnter(this);
-					GetGameObject()->OnTriggerEnter(box);
+					tg->OnTriggerEnter(box);
 				}
 			}
 			else
 			{
 				Capsule c = GetWorldCapsule();
-				float3 pos = GetGameObject()->GetTransform()->GetPosition();
-				float3 vel = GetGameObject()->GetTransform()->GetVelocity();
+				float3 pos = tgt->GetPosition();
+				float3 vel = tgt->GetVelocity();
 				if (AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos))
 				{
-					GetGameObject()->GetTransform()->SetPosition(pos);
-					GetGameObject()->GetTransform()->SetVelocity(vel);
+					tgt->SetPosition(pos);
+					tgt->SetVelocity(vel);
 				}
 			}
 			continue;
@@ -104,25 +111,25 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 				if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
 				{
 					capsule->GetGameObject()->OnTriggerEnter(this);
-					GetGameObject()->OnTriggerEnter(capsule);
+					tg->OnTriggerEnter(capsule);
 				}
 			}
 			else
 			{
 				Capsule c = GetWorldCapsule();
 				Capsule o = capsule->GetWorldCapsule();
-				float3 pos = GetGameObject()->GetTransform()->GetPosition();
+				float3 pos = tgt->GetPosition();
 				float3 opos = capsule->GetGameObject()->GetTransform()->GetPosition();
-				float3 vel = GetGameObject()->GetTransform()->GetVelocity();
+				float3 vel = tgt->GetVelocity();
 				float3 ovel = capsule->GetGameObject()->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
-					GetGameObject()->GetTransform()->SetPosition(pos);
-					GetGameObject()->GetTransform()->SetVelocity(vel * 0.6f);
+					tgt->SetPosition(pos);
+					tgt->SetVelocity(vel * 0.6f);
 					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
 					capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
 					capsule->GetGameObject()->OnCollisionEnter(this);
-					GetGameObject()->OnCollisionEnter(capsule);
+					tg->OnCollisionEnter(capsule);
 					capsule->checked.push_back(this);
 				}
 			}
@@ -137,7 +144,7 @@ void CapsuleCollider::Update(float dt, InputManager* input)
 				if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
 				{
 					capsule->GetGameObject()->OnTriggerEnter(this);
-					GetGameObject()->OnTriggerEnter(sphere);
+					tg->OnTriggerEnter(sphere);
 				}
 			}
 		}

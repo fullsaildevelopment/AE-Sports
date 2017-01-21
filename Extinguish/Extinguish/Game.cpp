@@ -202,7 +202,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Ball2 = new GameObject();
 	basic->AddGameObject(Ball2);
 	Ball2->Init("Ball2");
-	Ball2->InitTransform(identity, { 3,2,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Ball2->InitTransform(identity, { 3,3,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer2 = new Renderer();
 	Ball2->AddComponent(ballrenderer2);
 	ballrenderer2->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
