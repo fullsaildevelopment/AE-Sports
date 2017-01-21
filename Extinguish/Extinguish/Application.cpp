@@ -15,7 +15,7 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	//input->ClearKeyboard();
 
 	//initialize sound engine
-	soundEngine.InitSoundEngine();
+	//soundEngine.InitSoundEngine();
 
 	//initalize game
 	game.Init(&devResources, input);
@@ -43,7 +43,7 @@ bool Application::Update(float dt)
 	{
 		//game.Update(input, dt);
 		input->Update();
-		soundEngine.ProcessAudio();
+		//soundEngine.ProcessAudio();
 		game.Update(dt);
 		game.Render();
 	}
@@ -60,7 +60,7 @@ bool Application::Update(float dt)
 void Application::Shutdown()
 {
 	//clean up any memory application dynamically allocated
-	soundEngine.Terminate();
+	//soundEngine.Terminate();
 	game.Shutdown();
 	devResources.Shutdown();
 	delete input;
