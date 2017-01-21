@@ -171,6 +171,7 @@ bool AI::RunTo(GameObject *target)
 
 	if (v.magnitude() < 3)
 		return true;
+	return false;
 }
 
 void AI::Score()

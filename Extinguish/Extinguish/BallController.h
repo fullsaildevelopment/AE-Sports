@@ -15,7 +15,7 @@ private:
 public:
 	BallController(GameObject* o);
 	void Init();
-	void Update(float dt);
+	void Update(float dt, InputManager* input) override;
 	void OnTriggerEnter(Collider *obj) override;
 
 	// actions
