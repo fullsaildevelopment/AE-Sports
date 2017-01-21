@@ -17,6 +17,8 @@
 #include "Client Wrapper.h"
 #include "Server Wrapper.h"
 
+class BallController;
+
 class Game
 {
 private:

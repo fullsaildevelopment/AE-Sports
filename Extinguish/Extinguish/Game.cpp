@@ -1,6 +1,7 @@
 #pragma once
 #include "Game.h"
 #include "Movement.h"
+#include "BallController.h"
 
 using namespace DirectX;
 
@@ -202,7 +203,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Ball2 = new GameObject();
 	basic->AddGameObject(Ball2);
 	Ball2->Init("Ball2");
-	Ball2->InitTransform(identity, { 3,1.5f,-3 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Ball2->InitTransform(identity, { 3,3,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer2 = new Renderer();
 	Ball2->AddComponent(ballrenderer2);
 	ballrenderer2->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
@@ -260,11 +261,29 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	plane->AddComponent(planeRenderer);
 	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
 
+
+	GameObject* gameBall = new GameObject();
+	basic->AddGameObject(gameBall);
 	GameObject* crosse = new GameObject();
 	basic->AddGameObject(crosse);
+
+	gameBall->Init("GameBall");
+	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, { 0.1f, 0.1f, 0.1f }, crosse->GetTransform(), nullptr, nullptr);
+	Renderer* gameBallRenderer = new Renderer();
+	gameBall->AddComponent(gameBallRenderer);
+	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	SphereCollider* gameBallCollider = new SphereCollider(0.05f, gameBall, false);
+	gameBall->AddComponent(gameBallCollider);
+	gameBallCollider->Init(gameBall);
+	BallController* ballController = new BallController(gameBall);
+	gameBall->AddComponent(ballController);
+	ballController->Init();
+
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	SphereCollider* crosseNetCollider = new SphereCollider(0.7f, Ball3, true);
+	crosseNetCollider->Init(crosse);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
