@@ -14,7 +14,7 @@ private:
 
 public:
 	void Init();
-	void Update();
+	void Update(float dt, InputManager* input) override;
 	void OnTriggerEnter(Collider *obj) override;
 
 	// actions

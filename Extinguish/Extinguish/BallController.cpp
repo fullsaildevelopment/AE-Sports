@@ -17,10 +17,14 @@ void BallController::Init()
 	
 }
 
-void BallController::Update()
+void BallController::Update(float dt, InputManager* input)
 {
 	if (!isHeld)
 		SetHolder(nullptr);
+
+	int a = 0;
+
+	a += 5;
 }
 
 void BallController::ThrowTo(GameObject *target)
