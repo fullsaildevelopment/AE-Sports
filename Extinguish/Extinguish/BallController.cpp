@@ -29,6 +29,10 @@ void BallController::Update(float dt, InputManager* input)
 		me->GetTransform()->SetVelocity(float3(0, 0, 0));
 	}
 	else me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
+
+	int a = 0;
+
+	a += 5;
 }
 
 void BallController::ThrowTo(GameObject *target)
@@ -60,9 +64,11 @@ bool  BallController::GetIsHeld()
 GameObject* BallController::GetHolder()
 {
 	return holder;
+
+	return nullptr;
 }
 
-void  BallController::SetIsHeld(bool ans)
+void BallController::SetIsHeld(bool ans)
 {
 	isHeld = ans;
 }

@@ -114,6 +114,18 @@ void Transform::AddChild(Transform* tempChild)
 	}
 }
 
+void Transform::RemoveChild(Transform* abortee)
+{
+	for (int i = 0; i < children.size(); ++i)
+	{
+		if (children[i] == abortee)
+		{
+			children.erase(children.begin() + i);
+			break;
+		}
+	}
+}
+
 void Transform::AddSibling(Transform* tempSibling)
 {
 	//if (!sibling)
