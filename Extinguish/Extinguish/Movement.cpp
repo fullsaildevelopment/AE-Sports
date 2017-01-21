@@ -1,6 +1,7 @@
 #include "Movement.h"
 #include "Transform.h"
 #include "GameObject.h"
+#include "InputDownEvent.h"
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -13,6 +14,31 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 
 void Movement::Update(float dt, InputManager* input)
 {
+	this->dt = dt;
+}
+
+void Movement::HandleEvent(Event* e)
+{
+	//filter events
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+	if (inputDownEvent)
+	{
+		HandleInput(inputDownEvent);
+	}
+}
+
+//getters
+bool Movement::IsMoving()
+{
+	return isMoving;
+}
+
+//private helper functions
+void Movement::HandleInput(InputDownEvent* e)
+{
+	InputManager* input = e->GetInput();
+
 	if (input->GetKey('I'))
 	{
 		XMFLOAT3 forward = transform->GetForward();
@@ -61,10 +87,4 @@ void Movement::Update(float dt, InputManager* input)
 		//transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
 		isMoving = true;
 	}
-}
-
-//getters
-bool Movement::IsMoving()
-{
-	return isMoving;
 }
