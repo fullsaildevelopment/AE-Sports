@@ -75,14 +75,14 @@
     <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\Program Files %28x86%29\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\Wwise;Bin\ShaderResources;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
+    <LibraryPath>$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\Program Files %28x86%29\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\Wwise;Bin\ShaderResources;$(IncludePath)</IncludePath>
+    <IncludePath>Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <LibraryPath>E:\Program Files %28x86%29\Visual Leak Detector\lib\Win64;$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,12 +98,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>AnimationLibrary.lib;ShaderStructures.lib;Wwise.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AnimationLibrary.lib;ShaderStructures.lib;Wwise.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -127,14 +127,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>AnimationLibrary.lib;ShaderStructures.lib;Wwise.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AnimationLibrary.lib;ShaderStructures.lib;Wwise.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BallController.h" />
+    <ClInclude Include="Client Wrapper.h" />
     <ClInclude Include="Crosse.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventDispatcher.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Server Wrapper.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="Transform.h" />
@@ -290,14 +292,20 @@
     <ProjectReference Include="..\Bin\AnimationLibrary\AnimationLibrary.vcxproj">
       <Project>{f0f4371e-7647-4d97-8d19-eb7bf8209cee}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Bin\Client\Client.vcxproj">
+      <Project>{691b0a42-97c2-4bfa-baac-57ee033cc540}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Bin\FBXLoader\FBXLoader.vcxproj">
       <Project>{d339c0ed-fd2f-402b-9237-f66af4ca125c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Bin\Server\Server.vcxproj">
+      <Project>{136f1f20-69b6-450b-ac39-59a84a160a36}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Bin\ShaderStructures\ShaderStructures.vcxproj">
       <Project>{179bba62-7114-4d1f-b7b6-2bedfa346dd7}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Bin\TWS Network\TWS Network.vcxproj">
-      <Project>{b8f7258a-20bc-4a18-9a0b-e7533a5a3c25}</Project>
+    <ProjectReference Include="..\Bin\Wwise\Wwise.vcxproj">
+      <Project>{b8b24032-dd77-4fb2-87e7-c205a265943d}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

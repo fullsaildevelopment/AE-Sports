@@ -2,13 +2,17 @@
 
 void AI::OnTriggerEnter(Collider *obj)
 {
-	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
 
-	if (col)
+	// if i bump into a player and they are intentionally attacking me
+	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
 	{
-		// set everything to them being the holder
-		//isHeld = true;
-		//holder = obj->GetGameObject();
+		// drop the ball and 'stumble' in the way they pushed me
+		ballClass->DropBall(me);
+
+		float num = 3;
+		float3 vel = float3(obj->GetGameObject()->GetTransform()->GetForward().x * num, obj->GetGameObject()->GetTransform()->GetForward().y * num, obj->GetGameObject()->GetTransform()->GetForward().z * num);
+		me->GetTransform()->AddVelocity(vel);
 	}
 }
 
@@ -119,17 +123,31 @@ void AI::GetBall()
 		}
 	}
 
+	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 	
+	// if im right next to the ball
+	if (RunTo(ball) && dist.magnitude() < 1)
+	{
+		// grab it
+
+		// the AI would need to have some way of 'hitting' the ball that way the ball could make them the holder
+		// for now, i'll do it here manually
+		ballClass->SetIsHeld(true);
+		ballClass->SetHolder(me);
+	}
 }
 
 void AI::Attack(GameObject *target)
 {
-	// better than looking through my list to see if he's in there ?? still assuming we name all the AI the same if they're on the same team
+	isAttacking = true;
+
 	if (target->GetName() != me->GetName()) 
 	{
 		// hit
 		// if they have the ball, make them drop it
 	}
+
+	isAttacking = false;
 }
 
 bool AI::RunTo(GameObject *target)
@@ -149,9 +167,9 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateX(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
+	me->GetTransform()->AddVelocity(float3(12, 12, 12));
 
-	if (v.magnitude() < 5)
+	if (v.magnitude() < 3)
 		return true;
 }
 
@@ -174,3 +192,5 @@ void AI::DropBall()
 }
 
 AI::State AI::GetCurrState() { return currState; }
+
+bool AI::GetIsAttacking() { return isAttacking; }

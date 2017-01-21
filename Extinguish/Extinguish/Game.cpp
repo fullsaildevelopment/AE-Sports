@@ -10,6 +10,16 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
+	if (isMultiplayer)
+	{
+		if (isServer)
+		{
+			server.init("127.0.0.1", 60000);
+		}
+
+		client.init("127.0.0.1", 60001);
+	}
+
 	currentScene = 0;
 
 	CreateScenes(devResources, inputManager);
@@ -18,6 +28,16 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 void Game::Update(float dt)
 {
 	//input = inputManager;
+
+	if (isMultiplayer)
+	{
+		if (isServer)
+		{
+			int serverState = server.run();
+		}
+
+		int clientState = client.run();
+	}
 
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);

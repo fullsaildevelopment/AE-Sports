@@ -233,16 +233,14 @@ void Transform::SetParent(Transform* pParent)
 	}
 }
 
-void Transform::SetVelocity(XMFLOAT3 v)
+void Transform::SetVelocity(float3 v)
 {
 	velocity = v;
 }
 
-void Transform::AddVelocity(XMFLOAT3 a)
+void Transform::AddVelocity(float3 a)
 {
-	velocity.x += a.x;
-	velocity.y += a.y;
-	velocity.z += a.z;
+	velocity += a;
 }
 
 //getters
@@ -353,7 +351,7 @@ DirectX::XMFLOAT3 Transform::GetRight()
 	return result;
 }
 
-XMFLOAT3 Transform::GetVelocity()
+float3 Transform::GetVelocity()
 {
 	return velocity;
 }

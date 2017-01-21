@@ -19,6 +19,7 @@ public:
 
 	// actions
 	void ThrowTo(GameObject *target);
+	void DropBall(GameObject *holder);
 
 	// accessors
 	bool GetIsHeld();

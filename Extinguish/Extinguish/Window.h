@@ -1,7 +1,7 @@
 #pragma once
-#include <windows.h>
-#include <windowsx.h>
 #include "Includes.h"
+//#include <windows.h>
+#include <windowsx.h>
 #include "InputManager.h"
 
 class Window
