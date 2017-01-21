@@ -19,7 +19,8 @@ void SphereCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 	//GetGameObject()->GetTransform()->AddVelocity({ 0, -9.8f * dt, 0 });
-
+	GameObject* tg = GetGameObject();
+	Transform* tgt = tg->GetTransform();
 	size_t size = (*Others).size();
 	for (int i = 0; i < size; ++i)
 	{
@@ -43,26 +44,26 @@ void SphereCollider::Update(float dt, InputManager* input)
 					if (box->isTrigger() || isTrigger())
 					{
 						box->GetGameObject()->OnTriggerEnter(this);
-						GetGameObject()->OnTriggerEnter(box);
+						tg->OnTriggerEnter(box);
 					}
 				}
 			}
 			else
 			{
 				Sphere s = GetWorldSphere();
-				float3 vel = GetGameObject()->GetTransform()->GetVelocity() * dt;
+				float3 vel = tgt->GetVelocity() * dt;
 				float3 bvel = vel;
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c.x == 1 || c.y == 1)
 				{
-					GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+					tgt->SetPosition(s.m_Center);
 					vel *= c;
-					GetGameObject()->GetTransform()->SetVelocity(vel / dt);
+					tgt->SetVelocity(vel / dt);
 					box->GetGameObject()->OnCollisionEnter(this);
-					GetGameObject()->OnCollisionEnter(box);
+					tg->OnCollisionEnter(box);
 				}
 				else if (!bvel.isEquil(vel))
-					GetGameObject()->GetTransform()->SetVelocity(vel / dt);
+					tgt->SetVelocity(vel / dt);
 			}
 			continue;
 		}
@@ -76,11 +77,20 @@ void SphereCollider::Update(float dt, InputManager* input)
 				{
 					capsule->GetGameObject()->OnTriggerEnter(this);
 
-					GetGameObject()->OnTriggerEnter(capsule);
+					tg->OnTriggerEnter(capsule);
 				}
 			}
 			else
 			{
+				Sphere s = GetWorldSphere();
+				float3 vel = tgt->GetVelocity();
+				if (CapsuleToSphereReact(capsule->GetWorldCapsule(), s, vel))
+				{
+					tgt->SetPosition(s.m_Center);
+					tgt->SetVelocity(vel);
+					capsule->GetGameObject()->OnCollisionEnter(this);
+					tg->OnCollisionEnter(capsule);
+				}
 
 			}
 			continue;
@@ -96,7 +106,7 @@ void SphereCollider::Update(float dt, InputManager* input)
 					if (sphere->isTrigger() || isTrigger())
 					{
 						sphere->GetGameObject()->OnTriggerEnter(this);
-						GetGameObject()->OnTriggerEnter(sphere);
+						tg->OnTriggerEnter(sphere);
 					}
 				}
 			}
@@ -104,8 +114,8 @@ void SphereCollider::Update(float dt, InputManager* input)
 			{
 				Sphere s = GetWorldSphere();
 				Sphere os = sphere->GetWorldSphere();
-				float3 vel = GetGameObject()->GetTransform()->GetVelocity() * dt;
-				float3 bvel = GetGameObject()->GetTransform()->GetVelocity() * dt;
+				float3 vel = tgt->GetVelocity() * dt;
+				float3 bvel = tgt->GetVelocity() * dt;
 				float3 svel = sphere->GetGameObject()->GetTransform()->GetVelocity() * dt;
 				float3 bsvel = sphere->GetGameObject()->GetTransform()->GetVelocity() * dt;
 				if (!vel.isEquil(float3(0, 0, 0)) && svel.isEquil(float3().make_zero()))
@@ -113,8 +123,10 @@ void SphereCollider::Update(float dt, InputManager* input)
 					float3 n = SweptSpheretoSphere(s, os, vel);
 					if (!n.isEquil(float3(0, 0, 0)))
 					{
-						GetGameObject()->GetTransform()->SetVelocity(vel / dt);
-						GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+						tgt->SetVelocity(vel / dt);
+						tgt->SetPosition(s.m_Center);
+						sphere->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(sphere);
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
@@ -123,12 +135,12 @@ void SphereCollider::Update(float dt, InputManager* input)
 					{
 						checked.push_back(sphere);
 						sphere->checked.push_back((Collider*)this);
-						GetGameObject()->GetTransform()->SetVelocity(vel / dt);
-						GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+						tgt->SetVelocity(vel / dt);
+						tgt->SetPosition(s.m_Center);
 						sphere->GetGameObject()->GetTransform()->SetVelocity(svel / dt);
 						sphere->GetGameObject()->GetTransform()->SetPosition(os.m_Center);
 						sphere->GetGameObject()->OnCollisionEnter(this);
-						GetGameObject()->OnCollisionEnter(sphere);
+						tg->OnCollisionEnter(sphere);
 					}
 				}
 			}

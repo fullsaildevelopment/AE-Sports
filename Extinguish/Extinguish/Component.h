@@ -25,6 +25,7 @@ private:
 	CompType type;
 public:
 	Component() {}
+	Component(GameObject* o) { Object = o; };
 	~Component() {}
 
 	//basic
@@ -44,7 +45,6 @@ public:
 	//getters
 	GameObject* const GetGameObject(void) { return Object; };
 	CompType GetCompType() { return type; };
-	Component(GameObject* o) { Object = o; };
 
 	//setters
 	void SetGameObject(GameObject* object) { Object = object; }
