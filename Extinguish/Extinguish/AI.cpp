@@ -7,7 +7,12 @@ void AI::OnTriggerEnter(Collider *obj)
 	// if i bump into a player and they are intentionally attacking me
 	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
 	{
-		// drop the ball and react??
+		// drop the ball and 'stumble' in the way they pushed me
+		ballClass->DropBall(me);
+
+		float num = 3;
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
+		me->GetTransform()->AddVelocity(vel);
 	}
 }
 
@@ -136,6 +141,7 @@ void AI::Attack(GameObject *target)
 {
 	isAttacking = true;
 
+	// if they're not on my team
 	if (target->GetName() != me->GetName()) 
 	{
 		// hit
@@ -151,7 +157,7 @@ bool AI::RunTo(GameObject *target)
 	// turn to them
 
 	//u - forward vector
-	float3 u(me->GetTransform()->GetForward().x, me->GetTransform()->GetForward().y, me->GetTransform()->GetForward().z);
+	float3 u = me->GetTransform()->GetForwardf3();
 
 	//v - vector between me and destination
 	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
@@ -162,10 +168,11 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateX(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(XMFLOAT3(12, 12, 12));
+	me->GetTransform()->AddVelocity(float3(12, 12, 12));
 
 	if (v.magnitude() < 3)
 		return true;
+	return false;
 }
 
 void AI::Score()
@@ -178,12 +185,6 @@ void AI::Score()
 
 	// if (tmp)
 		// run into the goal
-}
-
-void AI::DropBall()
-{
-	ballClass->SetIsHeld(false);
-	ballClass->SetHolder(nullptr);
 }
 
 AI::State AI::GetCurrState() { return currState; }

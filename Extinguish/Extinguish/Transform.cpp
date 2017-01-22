@@ -114,6 +114,18 @@ void Transform::AddChild(Transform* tempChild)
 	}
 }
 
+void Transform::RemoveChild(Transform* abortee)
+{
+	for (int i = 0; i < children.size(); ++i)
+	{
+		if (children[i] == abortee)
+		{
+			children.erase(children.begin() + i);
+			break;
+		}
+	}
+}
+
 void Transform::AddSibling(Transform* tempSibling)
 {
 	//if (!sibling)
@@ -221,16 +233,14 @@ void Transform::SetParent(Transform* pParent)
 	}
 }
 
-void Transform::SetVelocity(XMFLOAT3 v)
+void Transform::SetVelocity(float3 v)
 {
 	velocity = v;
 }
 
-void Transform::AddVelocity(XMFLOAT3 a)
+void Transform::AddVelocity(float3 a)
 {
-	velocity.x += a.x;
-	velocity.y += a.y;
-	velocity.z += a.z;
+	velocity += a;
 }
 
 //getters
@@ -308,6 +318,14 @@ Transform* Transform::GetChild(int index)
 //	return sibling;
 //}
 
+float3 Transform::GetForwardf3()
+{
+	float3 result(local._31, local._32, local._33);
+	result.normalize();
+
+	return result;
+}
+
 DirectX::XMFLOAT3 Transform::GetForward()
 {
 	XMFLOAT3 result;
@@ -341,7 +359,7 @@ DirectX::XMFLOAT3 Transform::GetRight()
 	return result;
 }
 
-XMFLOAT3 Transform::GetVelocity()
+float3 Transform::GetVelocity()
 {
 	return velocity;
 }
