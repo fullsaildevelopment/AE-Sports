@@ -2,6 +2,7 @@
 #define MAXBONES 100
 #include <DirectXMath.h>
 #include <vector>
+#include <stdio.h>
 using namespace DirectX;
 
 struct ModelViewProjectionConstantBuffer
@@ -88,4 +89,13 @@ struct Vertex
 
 		return (true);
 	}
+};
+
+struct GameState
+{
+	uint8_t clientID;
+	uint8_t nameLength;
+	char animationName[125];
+	bool hasBall = false;
+	XMFLOAT4X4 world;
 };

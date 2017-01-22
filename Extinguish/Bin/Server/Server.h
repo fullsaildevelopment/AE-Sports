@@ -38,7 +38,8 @@ private:
 		ID_CLIENT_REGISTER,
 		ID_REQUEST,
 		ID_INCOMING_PACKET,
-		ID_REMOVE_CLIENT
+		ID_REMOVE_CLIENT,
+		ID_INCOMING_INPUT
 	};
 
 #pragma pack(push, 1)
@@ -67,6 +68,7 @@ private:
 #pragma pack(pop)
 
 	static CLIENT_GAME_STATE * clientStates;
+	//static CLIENT_GAME_STATE * aiStates;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
@@ -81,6 +83,8 @@ public:
 	int update();
 	void stop();
 	bool Shutdown();
+	XMFLOAT4X4 getLocation(unsigned int index) { return clientStates[index].world; }
+
 
 private:
 	bool shutdown = false;
@@ -94,5 +98,6 @@ private:
 	void sendDisconnect();
 	void recievePacket();
 	void sendPackets();
+	void recieveInput();
 };
 

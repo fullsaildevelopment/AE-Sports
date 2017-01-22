@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[MAX_PLAYERS]();
+Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
 
 Server::Server()
 {
@@ -12,7 +12,7 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
-	//delete clientState;
+	delete[] clientStates;
 }
 
 int Server::init(uint16_t port)
@@ -23,8 +23,8 @@ int Server::init(uint16_t port)
 	sd.socketFamily = AF_INET;
 	StartupResult res = peer->Startup(MAX_PLAYERS, &sd, 1);
 
-	if (res == SOCKET_FAILED_TO_BIND)
-		float temp = 0;
+	if (res == SOCKET_PORT_ALREADY_IN_USE)
+		return 0;
 
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);
@@ -55,6 +55,7 @@ int  Server::update()
 			break;
 		case ID_NEW_INCOMING_CONNECTION:
 			printf("A connection is incoming.\n");
+
 			break;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 		{
@@ -107,6 +108,12 @@ int  Server::update()
 		{
 			recievePacket();
 			sendPackets(); // for testing purposes
+			break;
+		}
+		case ID_INCOMING_INPUT:
+		{
+			recieveInput();
+			// and do something with it
 			break;
 		}
 		}
@@ -237,74 +244,48 @@ void Server::recievePacket()
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
-	if (packet->data[1] != sizeof(KeyStates))
-	{
-		CLIENT_GAME_STATE tempState;
+	CLIENT_GAME_STATE tempState;
 
-		bIn.Read(tempState.timeStamp);
-		bIn.Read(tempState.clientID);
-		bIn.Read(tempState.nameLength);
-		bIn.Read(tempState.animationName, (unsigned int)tempState.nameLength);
-		bIn.Read(tempState.hasBall);
-		bIn.Read(tempState.world);
+	bIn.Read(tempState.timeStamp);
+	bIn.Read(tempState.clientID);
+	bIn.Read(tempState.nameLength);
+	bIn.Read(tempState.animationName, (unsigned int)tempState.nameLength);
+	bIn.Read(tempState.hasBall);
+	bIn.Read(tempState.world);
 
-		clientStates[tempState.clientID - 1] = tempState;
+	clientStates[tempState.clientID - 1] = tempState;
 
-		/*
-		printf("\n\nPACKET RECIEVED\nClient: %s\nClient ID: %i\n", names[tempState.clientID - 1], clientState->clientID);
+}
 
-		printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
-			clientState->world._11,
-			clientState->world._12,
-			clientState->world._13,
-			clientState->world._14,
-			clientState->world._21,
-			clientState->world._22,
-			clientState->world._23,
-			clientState->world._24,
-			clientState->world._31,
-			clientState->world._32,
-			clientState->world._33,
-			clientState->world._34,
-			clientState->world._41,
-			clientState->world._42,
-			clientState->world._43,
-			clientState->world._44);
+void Server::recieveInput()
+{
 
-		if (clientState->hasBall)
-			printf("hasBall: true\n");
-		else
-			printf("hasBall: false\n");
-			*/
-	}
-	else
-	{
-		KeyStates tempState;
-		UINT8 id;
-		bIn.IgnoreBytes(sizeof(UINT8));
-		bIn.Read(id);
-		bIn.EndianSwapBytes(3, sizeof(KeyStates));
-		bIn.Read(tempState);
-		//bIn.Read(tempState.up);
-		//bIn.Read(tempState.down);
-		//bIn.Read(tempState.left);
-		//bIn.Read(tempState.right);
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+	KeyStates tempState;
+	UINT8 id;
+	bIn.IgnoreBytes(sizeof(UINT8));
+	bIn.Read(id);
+	bIn.EndianSwapBytes(3, sizeof(KeyStates));
+	bIn.Read(tempState);
+	//bIn.Read(tempState.up);
+	//bIn.Read(tempState.down);
+	//bIn.Read(tempState.left);
+	//bIn.Read(tempState.right);
 
-		if (tempState.down == 1)
-			printf("down\n");
-		if (tempState.up == 1)
-			printf("up\n");
-		if (tempState.left == 1)
-			printf("left\n");
-		if (tempState.right == 1)
-			printf("right\n");
-	}
+	if (tempState.down == 1)
+		printf("down\n");
+	if (tempState.up == 1)
+		printf("up\n");
+	if (tempState.left == 1)
+		printf("left\n");
+	if (tempState.right == 1)
+		printf("right\n");
 }
 
 void Server::sendPackets()
 {
 	// send packet x8 to all clients
-	// presently only need a max of 4 until merged with engine
 
 
 	BitStream bOut;
@@ -312,8 +293,7 @@ void Server::sendPackets()
 
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
-		bOut.Write(GetTime());
-		// p1
+		//bOut.Write(GetTime());
 		bOut.Write(clientStates[i].clientID);
 		bOut.Write(clientStates[i].nameLength);
 		bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
