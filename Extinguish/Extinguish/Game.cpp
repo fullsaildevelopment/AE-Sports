@@ -11,24 +11,39 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		if (isServer)
+				if (server.init("127.0.0.1", 60000) == 1)
+				{
+					isMultiplayer = true;
+					isServer = true;
+
+					client.init("127.0.0.1", 60001);
+				}
+				else
+				{
+					isServer = false;
+					client.init("127.0.0.1", 60001);
+				}
+
+		/*if (isServer)
 		{
 			server.init("127.0.0.1", 60000);
 		}
 
-		client.init("127.0.0.1", 60001);
+		client.init("127.0.0.1", 60001);*/
 	}
 
 	currentScene = 0;
 
 	CreateScenes(devResources, inputManager);
+
+	gameStates.resize(scenes[currentScene]->GetNumObjects());
 }
 
 void Game::Update(float dt)
 {
 	//input = inputManager;
 
-	if (isMultiplayer)
+if (isMultiplayer)
 	{
 		if (isServer)
 		{
@@ -36,10 +51,20 @@ void Game::Update(float dt)
 		}
 
 		int clientState = client.run();
+
+		/*if (clientState == 2)
+		{
+			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+			for (unsigned int i = 0; i < numobjs; ++i)
+			{
+				gameStates[i].world = client.getLocation(i);
+			}
+		}*/
 	}
 
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
+
 }
 
 void Game::Render()

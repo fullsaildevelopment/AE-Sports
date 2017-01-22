@@ -6,18 +6,22 @@ Packet * Client::packet = nullptr;
 
 char * Client::address = nullptr;
 
-Client::CLIENT_GAME_STATE * Client::clientState = new CLIENT_GAME_STATE();
+Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
+Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[8];
+
+UINT8 Client::getID() { return clientID; }
 
 Client::Client()
 {
-	XMStoreFloat4x4(&clientState->world, XMMatrixIdentity());
-	memcpy(clientState->animationName, "name here", strlen("name here"));
-	clientState->nameLength = (UINT8)strlen("name here");
+	XMStoreFloat4x4(&myState->world, XMMatrixIdentity());
+	memcpy(myState->animationName, "name here", strlen("name here"));
+	myState->nameLength = (UINT8)strlen("name here");
 }
 
 Client::~Client()
 {
-	delete clientState;
+	delete myState;
+	delete[] clientStates;
 }
 
 int Client::init(char* _address, UINT16 port)
@@ -26,7 +30,19 @@ int Client::init(char* _address, UINT16 port)
 	peer = RakNet::RakPeerInterface::GetInstance();
 	sd.socketFamily = AF_INET;
 
-	peer->Startup(1, &sd, 1);
+	StartupResult res = peer->Startup(1, &sd, 1);
+
+		UINT16 newPort = port;
+	if (res == SOCKET_PORT_ALREADY_IN_USE)
+	{
+
+		while (res == SOCKET_PORT_ALREADY_IN_USE)
+		{
+			newPort += 1;
+			sd = SocketDescriptor(newPort, 0);
+			res = peer->Startup(1, &sd, 1);
+		}
+	}
 	address = _address;
 	
 	peer->Ping("255.255.255.255", 60000, true);
@@ -253,16 +269,16 @@ void Client::sendMessage(char * newMessage)
 void Client::sendPacket()
 {
 	BitStream bOut;
-	clientState->clientID = clientID;
-	clientState->timeStamp = RakNet::GetTime();
+	myState->clientID = clientID;
+	//clientState->timeStamp = RakNet::GetTime();
 	bOut.Write((MessageID)ID_INCOMING_PACKET);
-	bOut.Write(clientState->timeStamp);
+	//bOut.Write(clientState->timeStamp);
 	bOut.Write(clientID);
-	bOut.Write(clientState->nameLength);
-	bOut.Write(clientState->animationName, clientState->nameLength);
-	bOut.Write(clientState->hasBall);
+	bOut.Write(myState->nameLength);
+	bOut.Write(myState->animationName, myState->nameLength);
+	bOut.Write(myState->hasBall);
 
-	bOut.Write(clientState->world);
+	bOut.Write(myState->world);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
@@ -271,37 +287,23 @@ void Client::recievePackets()
 {
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
-	bIn.Read(clientState->timeStamp);
-	bIn.Read(clientState->clientID);
+	//bIn.Read(clientState->timeStamp);
 
-	bIn.Read(clientState->nameLength);
-	bIn.Read(clientState->animationName, (unsigned int)clientState->nameLength);
-	bIn.Read(clientState->hasBall);
-	bIn.Read(clientState->world);
+	// for each game object, read in the data of the object state
 
-	printf("\nClient ID: %i\n", clientState->clientID);
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		bIn.Read(clientStates[i].clientID);
+		bIn.Read(clientStates[i].nameLength);
+		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
+		bIn.Read(clientStates[i].hasBall);
+		bIn.Read(clientStates[i].world);
 
-	printf("Position:\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f,\n%f, %f, %f, %f\n",
-		clientState->world._11,
-		clientState->world._12,
-		clientState->world._13,
-		clientState->world._14,
-		clientState->world._21,
-		clientState->world._22,
-		clientState->world._23,
-		clientState->world._24,
-		clientState->world._31,
-		clientState->world._32,
-		clientState->world._33,
-		clientState->world._34,
-		clientState->world._41,
-		clientState->world._42,
-		clientState->world._43,
-		clientState->world._44);
+	}
+}
 
-	if (clientState->hasBall)
-		printf("hasBall: true\n");
-	else
-		printf("hasBall: false\n");
-
+Client::CLIENT_GAME_STATE Client::getState(unsigned int index)
+{
+	// return the state of the obj at index
+	return *myState;
 }

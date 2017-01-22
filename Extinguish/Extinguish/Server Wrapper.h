@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Server.h"
-
+#include "..\ShaderStructures\ShaderStructures.h"
 class ServerWrapper
 {
 private:
@@ -10,8 +10,6 @@ private:
 	bool noPeer = false;
 public:
 	~ServerWrapper() { 
-		//serverClient.stop();
-	//newServer.stop();
 	}
 	int init(char * address, UINT16 port)
 	{
@@ -27,5 +25,15 @@ public:
 	{
 		noPeer = newServer.Shutdown();
 		shutdown = true;
+	}
+
+	GameState * getStates()
+	{
+		return NULL;
+	}
+
+	XMFLOAT4X4 getLocation(unsigned int index)
+	{
+		return newServer.getLocation(index);
 	}
 };

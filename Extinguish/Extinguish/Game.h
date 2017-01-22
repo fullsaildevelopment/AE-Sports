@@ -27,11 +27,13 @@ private:
 	//InputManager* input;
 	ResourceManager resourceManager;
 
-	bool isServer = true;
+	bool isServer = false;
 	bool isMultiplayer = true;
 
 	ClientWrapper client;
 	ServerWrapper server;
+
+	std::vector<GameState> gameStates;
 
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
