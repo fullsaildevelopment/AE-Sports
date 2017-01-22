@@ -12,15 +12,27 @@ void BallController::OnTriggerEnter(Collider *obj)
 	}
 }
 
-void BallController::Init()
+BallController::BallController(GameObject* o) : Component(o)
 {
-	
+	me = o;
 }
 
-void BallController::Update()
+void BallController::Init()
 {
-	if (!isHeld)
-		SetHolder(nullptr);
+
+}
+
+void BallController::Update(float dt, InputManager* input)
+{
+	if (isHeld)
+	{
+		me->GetTransform()->SetVelocity(float3(0, 0, 0));
+	}
+	else me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
+
+	int a = 0;
+
+	a += 5;
 }
 
 void BallController::ThrowTo(GameObject *target)
@@ -28,14 +40,20 @@ void BallController::ThrowTo(GameObject *target)
 	isHeld = false;
 	holder = nullptr;
 
-	float num = 5;
-	XMFLOAT3 vel = XMFLOAT3(me->GetTransform()->GetForward().x * num, me->GetTransform()->GetForward().y * num, me->GetTransform()->GetForward().z * num);
+	float num = 15;
+	float3 vel = me->GetTransform()->GetForwardf3() * num;
 	me->GetTransform()->AddVelocity(vel);
 }
 
-void BallController::DropBall(GameObject *holder)
+void BallController::DropBall(GameObject *person)
 {
+	isHeld = false;
+	holder = nullptr;
 
+	// add some velocity to me in the holders forward vec
+	float num = 3;
+	float3 vel = person->GetTransform()->GetForwardf3() * num;
+	me->GetTransform()->AddVelocity(vel);
 }
 
 bool  BallController::GetIsHeld()
@@ -45,20 +63,17 @@ bool  BallController::GetIsHeld()
 
 GameObject* BallController::GetHolder()
 {
-	if (isHeld)
-		return holder;
+	return holder;
 }
 
-void  BallController::SetIsHeld(bool ans)
+void BallController::SetIsHeld(bool ans)
 {
 	isHeld = ans;
 }
 
 void BallController::SetHolder(GameObject *person)
 {
-	if (isHeld)
-	{
-		holder = person;
-		person->GetTransform()->AddChild(me->GetTransform());
-	}
+	isHeld = true;
+	holder = person;
+	person->GetTransform()->AddChild(me->GetTransform());
 }

@@ -19,7 +19,10 @@ private:
 	//const float maxY = 35.0f;
 	const float maxX = 43.0f;
 	const float maxY = 46.0f;
+	float minX, minY;
 	float dt;
+
+	int state; //0 = default... 1 = catch... 2 = default to catch... 3 = catch to default...
 
 	//private helper functions
 	void HandleInput(InputDownEvent* e);
@@ -31,6 +34,7 @@ public:
 	//basic
 	void Init();
 	void Update(float dt, InputManager* input) override;
+	void OnTriggerEnter(Collider* collider);
 
 	//misc
 	void Throw();

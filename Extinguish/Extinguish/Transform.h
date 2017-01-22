@@ -13,7 +13,7 @@ private:
 	float3 position;
 	float3 rotation;
 	float3 scale;
-	DirectX::XMFLOAT3 velocity;
+	float3 velocity;
 	DirectX::XMFLOAT4X4 local;
 	Transform* parent;
 	std::vector<Transform*> children;
@@ -37,6 +37,7 @@ public:
 	void RotateY(float degrees);
 	void RotateZ(float degrees);
 	void AddChild(Transform* tempChild);
+	void RemoveChild(Transform* abortee);
 	void AddSibling(Transform* tempSibling);
 	void Update(float dt);
 
@@ -48,20 +49,21 @@ public:
 	void SetWorld(DirectX::XMFLOAT4X4 matrix);
 	void SetLocal(DirectX::XMFLOAT4X4 matrix);
 	void SetParent(Transform* pParent);
-	void SetVelocity(DirectX::XMFLOAT3 v);
-	void AddVelocity(DirectX::XMFLOAT3 a);
+	void SetVelocity(float3 v);
+	void AddVelocity(float3 a);
 
 	//getters
 	DirectX::XMFLOAT4X4 GetWorld();
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
-	DirectX::XMFLOAT3 GetVelocity();
+	float3 GetVelocity();
 	float3 GetPosition();
 	float3 GetRotation();
 	float3 GetScale();
 	Transform* GetParent();
 	Transform* GetChild(int index);
 	//Transform* GetSibling();
+	float3 GetForwardf3();
 	DirectX::XMFLOAT3 GetForward();
 	DirectX::XMFLOAT3 GetUp();
 	DirectX::XMFLOAT3 GetRight();
