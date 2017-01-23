@@ -77,7 +77,6 @@ void Game::Update(float dt)
 
 		int clientState = client.run();
 
-
 		// get current game states
 		std::vector<GameState*> gameStates;
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -92,11 +91,13 @@ void Game::Update(float dt)
 
 			gameStates[i] = state;
 		}
+
 		// if server, set game states
 		if (isServer)
 		{
 			server.SetGameStates(gameStates);
 		}
+
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
 		if (clientState == 2)
@@ -104,7 +105,9 @@ void Game::Update(float dt)
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 			for (unsigned int i = 0; i < numobjs; ++i)
 			{
-				gameStates[i]->world = client.getLocation(i);
+				GameObject* gameObject = (*gameObjects)[i];
+				gameObject->GetTransform()->SetLocal(client.getLocation(i));
+				//gameStates[i]->world = client.getLocation(i);
 			}
 		}
 	}
@@ -123,6 +126,11 @@ void Game::Shutdown()
 	for (int i = 0; i < scenes.size(); ++i)
 	{
 		scenes[i]->Shutdown();
+	}
+
+	for (int i = 0; i < gameStates.size(); ++i)
+	{
+		delete gameStates[i];
 	}
 }
 
@@ -338,7 +346,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, { 0.1f, 0.1f, 0.1f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, {0.1f, 0.1f, 0.1f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);

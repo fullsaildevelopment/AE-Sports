@@ -17,7 +17,7 @@
 #include "CapsuleCollider.h"
 #include "Client Wrapper.h"
 #include "Server Wrapper.h"
-//#include "SoundEngine.h"
+#include "SoundEngine.h"
 
 class BallController;
 
@@ -30,7 +30,7 @@ private:
 
 	//InputManager* input;
 	ResourceManager resourceManager;
-	//SoundEngine soundEngine;
+	SoundEngine soundEngine;
 
 	bool isServer = false;
 	bool isMultiplayer = true;
