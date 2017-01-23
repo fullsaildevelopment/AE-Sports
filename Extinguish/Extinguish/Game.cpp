@@ -51,13 +51,6 @@ void Game::Update(float dt)
 
 	if (isMultiplayer)
 	{
-		if (isServer)
-		{
-			int serverState = server.run();
-		}
-
-		int clientState = client.run();
-
 
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -71,11 +64,30 @@ void Game::Update(float dt)
 
 			gameStates.push_back(state);
 		}
+
+
 		// if server, set game states
 		if (isServer)
 		{
 			server.SetGameStates(gameStates);
 		}
+		// get camera position
+		client.setLocation(gameStates[0]->world);
+		// send to server
+		client.sendPacket();
+
+		if (isServer)
+		{
+			int serverState = server.run();
+			if (serverState == 2)
+			{
+				gameStates = server.getStates();
+			}
+		}
+
+		int clientState = client.run();
+
+
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
 		if (clientState == 2)

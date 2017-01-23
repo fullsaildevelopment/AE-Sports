@@ -90,8 +90,11 @@ public:
 	void setStates(unsigned int index, CLIENT_GAME_STATE * state);
 	void sendPackets();
 	void setObjectCount(int count) { serverObjs = count; }
+	int getNewState() { return lastState; }
+	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[i]; }
 
 private:
+	int lastState = 0;
 	int packRec = 0;
 	int serverObjs = 0;
 	bool shutdown = false;

@@ -91,9 +91,11 @@ public:
 	CLIENT_GAME_STATE getState(unsigned int index);
 
 	XMFLOAT4X4 getLocation(unsigned int index) { return clientStates[index].world; }
+	int getNumPackets() { return numPackets; }
+	void setLocation(XMFLOAT4X4 loc) { myState->world = loc; }
 
 private:
-
+	int numPackets = 0;
 	bool disconnect = false;
 	UINT8 clientID;
 	char clientName[8];
