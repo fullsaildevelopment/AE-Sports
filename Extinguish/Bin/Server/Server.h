@@ -90,7 +90,7 @@ public:
 	bool Shutdown();
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
-	void setStates(unsigned int index, CLIENT_GAME_STATE * state);
+	void setStates(unsigned int index, UINT8 id, char * animationName, UINT8 length, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot);
 	void sendPackets();
 	void setObjectCount(int count) { serverObjs = count; }
 	int getNewState() { return lastState; }
