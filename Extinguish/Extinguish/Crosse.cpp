@@ -76,7 +76,6 @@ void Crosse::Throw()
 
 	// do animation on crosse
 	transform->RotateX(XMConvertToRadians(45));
-
 }
 
 void Crosse::HandleEvent(Event* e)
