@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "Server.h"
 #include "..\ShaderStructures\ShaderStructures.h"
 class ServerWrapper
@@ -8,6 +9,8 @@ private:
 	Server newServer;
 	bool shutdown = false;
 	bool noPeer = false;
+	std::vector<GameState*> states;
+
 public:
 	~ServerWrapper() { 
 	}
@@ -27,9 +30,14 @@ public:
 		shutdown = true;
 	}
 
-	GameState * getStates()
+	void SetGameStates(std::vector<GameState*> gameStates)
 	{
-		return NULL;
+		states = gameStates;
+	}
+
+	std::vector<GameState*> getStates()
+	{
+		return states;
 	}
 
 	XMFLOAT4X4 getLocation(unsigned int index)

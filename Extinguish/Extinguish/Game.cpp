@@ -44,7 +44,7 @@ void Game::Update(float dt)
 {
 	//input = inputManager;
 
-if (isMultiplayer)
+	if (isMultiplayer)
 	{
 		if (isServer)
 		{
@@ -61,6 +61,20 @@ if (isMultiplayer)
 				gameStates[i].world = client.getLocation(i);
 			}
 		}*/
+
+		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+		std::vector<GameState*> gameStates;
+
+		for (int i = 0; i < gameObjects->size(); ++i)
+		{
+			GameState* state = new GameState();
+			GameObject* gameObject = (*gameObjects)[i];
+			state->world = gameObject->GetTransform()->GetWorld();
+
+			gameStates.push_back(state);
+		}
+
+		server.SetGameStates(gameStates);
 	}
 
 	//scenes[currentScene].Update(*input, dt);
