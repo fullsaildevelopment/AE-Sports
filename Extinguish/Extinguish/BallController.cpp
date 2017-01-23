@@ -14,9 +14,9 @@ void BallController::OnTriggerEnter(Collider *obj)
 	}
 }
 
-BallController::BallController(GameObject* o) : Component(o)
+BallController::BallController(GameObject* obj) : Component(obj)
 {
-	me = o;
+	me = obj;
 }
 
 void BallController::Init()
@@ -32,11 +32,8 @@ void BallController::Update(float dt, InputManager* input)
 	}
 	else me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
 
-	//cout << me->GetTransform()->GetPosition().x << " " << me->GetTransform()->GetPosition().y << " " << me->GetTransform()->GetPosition().z << endl;
-
-	int a = 0;
-
-	a += 5;
+	else 
+		me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
 }
 
 void BallController::ThrowTo(GameObject *target)
