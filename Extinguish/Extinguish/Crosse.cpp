@@ -42,45 +42,47 @@ void Crosse::Update(float dt, InputManager* input)
 
 }
 
-void Crosse::OnCollisionEnter(Collider* collider)
+void Crosse::OnTriggerEnter(Collider* collider)
 {
 	if (collider->GetGameObject()->GetName() == "GameBall")
 	{
-		collider->GetGameObject()->GetTransform()->SetParent(transform);
-
 		BallController* ballController = collider->GetGameObject()->GetComponent<BallController>();
-		ballController->SetIsHeld(true);
+		if (!ballController->GetIsHeld())
+		{
+			collider->GetGameObject()->GetTransform()->SetPosition({ 0,0, 0 });
+			collider->GetGameObject()->GetTransform()->SetParent(transform);
 
+			ballController->SetHolder(GetGameObject());
+		}
 		cout << "Crosse collision with gameball" << endl;
-	}
-	else
-	{
-		cout << "Crosse collision with something else" << endl;
 	}
 }
 
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 100.0f;
+	const float throwSpeed = 20.0f;
+	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
+	if (ball->GetHolder() == GetGameObject())
+	{
+		//detach ball
+		ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 });
+		ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z });
+		ballTransform->SetParent(nullptr);
+		transform->RemoveChild(ballTransform);
+		ball->Throw();
 
-	//detach ball
-	ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 });
-	ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z });
-	ballTransform->SetParent(nullptr);
-	transform->RemoveChild(ballTransform);
-	ballTransform->GetGameObject()->GetComponent<BallController>()->SetIsHeld(false);
+		//update ball after set position
+		ballTransform->GetWorld();
 
-	//update ball after set position
-	ballTransform->GetWorld();
+		//add force to ball
+		XMFLOAT3 ballForward = ballTransform->GetForward();
+		//ballForward = { 0, 0, 1 };
+		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
-	//add force to ball
-	XMFLOAT3 ballForward = ballTransform->GetForward();
-	//ballForward = { 0, 0, 1 };
-	ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
-
-	// do animation on crosse
-	transform->RotateX(XMConvertToRadians(45));
+		// do animation on crosse
+		transform->RotateX(XMConvertToRadians(45));
+	}
 }
 
 void Crosse::HandleEvent(Event* e)

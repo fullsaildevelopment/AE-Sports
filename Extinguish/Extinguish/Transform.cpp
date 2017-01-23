@@ -141,9 +141,6 @@ void Transform::AddSibling(Transform* tempSibling)
 void Transform::Update(float dt)
 {
 	Translate({ velocity.x * dt, velocity.y * dt, velocity.z * dt });
-	velocity.x *= 0.8f;
-	velocity.y *= 0.8f;
-	velocity.z *= 0.8f;
 }
 
 //setters

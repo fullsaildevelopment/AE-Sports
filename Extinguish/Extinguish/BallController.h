@@ -3,13 +3,16 @@
 #include "GameObject.h"
 #include "vec3.h"
 #include "SphereCollider.h"
+#include "XTime.h"
 
 class BallController : public Component
 {
 private:
 	bool isHeld = false;
+	bool isThrown = false;
 	GameObject *me;
 	GameObject *holder;
+	XTime timer;
 
 
 public:
@@ -21,6 +24,7 @@ public:
 	// actions
 	void ThrowTo(GameObject *target);
 	void DropBall(GameObject *holder);
+	void Throw();
 
 	// accessors
 	bool GetIsHeld();
