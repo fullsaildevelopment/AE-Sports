@@ -14,25 +14,18 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-				if (server.init("127.0.0.1", 60000) == 1)
-				{
-					isMultiplayer = true;
-					isServer = true;
-
-					client.init("127.0.0.1", 60001);
-				}
-				else
-				{
-					isServer = false;
-					client.init("127.0.0.1", 60001);
-				}
-
-		/*if (isServer)
+		if (server.init("127.0.0.1", 60000) == 1)
 		{
-			server.init("127.0.0.1", 60000);
-		}
+			isMultiplayer = true;
+			isServer = true;
 
-		client.init("127.0.0.1", 60001);*/
+			client.init("127.0.0.1", 60001);
+		}
+		else
+		{
+			isServer = false;
+			client.init("127.0.0.1", 60001);
+		}
 	}
 
 	currentScene = 0;
@@ -57,7 +50,6 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	}
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	//soundEngine.InitSoundEngine(ids, names);
-
 
 	if (isServer)
 	{
@@ -115,13 +107,11 @@ void Game::Update(float dt)
 
 		int clientState = client.run();
 
-
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
 		{
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
-
 
 			int id = client.getID();
 			for (unsigned int i = 0; i < numobjs; ++i)
