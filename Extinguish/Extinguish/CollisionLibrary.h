@@ -45,7 +45,8 @@ struct Capsule
 struct Hexagon
 {
 	Segment seg;
-	float radius;
+	float v;
+	float h;
 };
 
 enum FrustumCorners{ FTL = 0, FBL, FBR, FTR, NTL, NTR, NBR, NBL };
