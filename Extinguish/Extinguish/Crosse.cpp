@@ -2,6 +2,7 @@
 #include "Crosse.h"
 #include "EventDispatcher.h"
 #include "SphereCollider.h"
+#include "BallController.h"
 
 using namespace std;
 
@@ -41,27 +42,40 @@ void Crosse::Update(float dt, InputManager* input)
 
 }
 
-void Crosse::OnTriggerEnter(Collider* collider)
+void Crosse::OnCollisionEnter(Collider* collider)
 {
-	
+	if (collider->GetGameObject()->GetName() == "GameBall")
+	{
+		collider->GetGameObject()->GetTransform()->SetParent(transform);
+
+		BallController* ballController = collider->GetGameObject()->GetComponent<BallController>();
+		ballController->SetIsHeld(true);
+
+		cout << "Crosse collision with gameball" << endl;
+	}
+	else
+	{
+		cout << "Crosse collision with something else" << endl;
+	}
 }
 
 //misc
 void Crosse::Throw()
 {
-	// do animation on crosse
-	transform->RotateX(XMConvertToRadians(45));
+	const float throwSpeed = 50.0f;
 
 	//detach ball
+	ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 });
 	ballTransform->SetParent(nullptr);
 	transform->RemoveChild(ballTransform);
 
-	//temp fix because of weird scaling issues
-	ballTransform->SetScale({ 0.1f, 0.1f, 0.1f });
+	// do animation on crosse
+	transform->RotateX(XMConvertToRadians(45));
 
 	//add force to ball
 	XMFLOAT3 ballForward = ballTransform->GetForward();
-	ballTransform->AddVelocity({ ballForward.x * 0.1f, ballForward.y * 0.1f, ballForward.z * 0.1f });
+	ballForward = { 0, 0, 1 };
+	ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 }
 
 void Crosse::HandleEvent(Event* e)
@@ -83,7 +97,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 	input = e->GetInput();
 	float3 position = transform->GetPosition();
 
-	cout << position.x << " " << position.y << " " << position.z << endl;
+	//cout << position.x << " " << position.y << " " << position.z << endl;
 
 	//rotate the crosse
 	if (input->GetMouseX() && input->GetMouseY())

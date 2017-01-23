@@ -127,6 +127,7 @@ void SphereCollider::Update(float dt, InputManager* input)
 						tgt->SetPosition(s.m_Center);
 						sphere->GetGameObject()->OnCollisionEnter(this);
 						tg->OnCollisionEnter(sphere);
+						printf("c");
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))

@@ -125,6 +125,8 @@ void Game::Update(float dt)
 
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
+
+	//soundEngine.ProcessAudio();
 }
 
 void Game::Render()
@@ -137,12 +139,15 @@ void Game::Shutdown()
 	for (int i = 0; i < scenes.size(); ++i)
 	{
 		scenes[i]->Shutdown();
+		delete scenes[i];
 	}
 
 	for (int i = 0; i < gameStates.size(); ++i)
 	{
 		delete gameStates[i];
 	}
+
+	//soundEngine.Terminate();
 }
 
 //if scenes are already all loaded, then this should be setscene instead
@@ -327,7 +332,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//playerController->Init();
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
-	bearMover->Init(100.0f, 0.75f);
+	bearMover->Init(1.0f, 0.75f);
 	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
 	bear->AddComponent(bearcol);
 	
@@ -357,11 +362,12 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, {0.1f, 0.1f, 0.1f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
+	//gameBall->InitTransform(identity, { -5, 0.5f, -2.5f }, { 0, 0, 0 }, {0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	SphereCollider* gameBallCollider = new SphereCollider(0.05f, gameBall, false);
+	SphereCollider* gameBallCollider = new SphereCollider(0.1, gameBall, false);
 	gameBall->AddComponent(gameBallCollider);
 	gameBallCollider->Init(gameBall);
 	BallController* ballController = new BallController(gameBall);
@@ -371,7 +377,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse->Init("Crosse");
 	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider = new SphereCollider(0.7f, Ball3, true);
+	SphereCollider* crosseNetCollider = new SphereCollider(0.7f, crosse, true);
+	//crosse->AddComponent(crosseNetCollider);
 	crosseNetCollider->Init(crosse);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);

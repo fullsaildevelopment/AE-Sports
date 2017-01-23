@@ -9,6 +9,7 @@ Renderer::Renderer() : Component(nullptr)
 Renderer::~Renderer()
 {
 	delete blender;
+	blender = nullptr;
 }
 
 //basic
