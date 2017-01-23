@@ -30,7 +30,12 @@ public:
 		{
 			for (unsigned int i = 0; i < states.size(); ++i)
 			{
-				states[i] = (GameState*)newServer.getState(i);
+			//	memcpy(&states[i]->animationName, newServer.getState(i)->animationName, newServer.getState(i)->nameLength);
+				states[i]->clientID = newServer.getState(i)->clientID;
+				states[i]->hasBall = newServer.getState(i)->hasBall;
+		//		states[i]->nameLength = newServer.getState(i)->nameLength;
+				states[i]->position = newServer.getState(i)->position;
+				states[i]->rotation = newServer.getState(i)->rotation;
 			}
 		}
 
@@ -48,7 +53,7 @@ public:
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-			newServer.setStates(i, gameStates[i]->clientID, gameStates[i]->animationName, gameStates[i]->nameLength, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation);
+			newServer.setStates(i, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation);
 		}
 	}
 
@@ -81,4 +86,9 @@ public:
 	{
 		return newServer.getNewState();
 	}
+
+	/*char * getInput()
+	{
+		return newServer.
+	}*/
 };

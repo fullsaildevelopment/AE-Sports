@@ -38,6 +38,7 @@ private:
 	ClientWrapper client;
 	ServerWrapper server;
 	std::vector<GameState*> gameStates;
+//	std::vector<GameObject*>* gameObjects;
 
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
