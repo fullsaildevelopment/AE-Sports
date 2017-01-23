@@ -318,6 +318,14 @@ Transform* Transform::GetChild(int index)
 //	return sibling;
 //}
 
+float3 Transform::GetForwardf3()
+{
+	float3 result(local._31, local._32, local._33);
+	result.normalize();
+
+	return result;
+}
+
 DirectX::XMFLOAT3 Transform::GetForward()
 {
 	XMFLOAT3 result;

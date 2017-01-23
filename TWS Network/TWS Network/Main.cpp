@@ -25,13 +25,26 @@ int main(void)
 	
 	char t = 0;
 
-	while (t == 0)
-		t = _getch();
-	
-	if (t == 'j' || t == 'J')
-	{
+	/*while (t == 0)
+		t = _getch();*/
+
+	bool isServer = true;
+	ServerWrapper newServer;
 		ClientWrapper newClient;
+	if (newServer.init("127.0.0.1", 60000) == 1)
+	{
+		isServer = true;
 		newClient.init("127.0.0.1", 60001);
+	}
+	else
+	{
+		
+		newClient.init("127.0.0.1", 60001);
+	}
+	
+	if (!isServer)
+	{
+		//newClient.init("127.0.0.1", 60001);
 	
 		while (true)
 		{
@@ -74,8 +87,7 @@ int main(void)
 	}
 	else
 	{
-		ServerWrapper newServer;
-		newServer.init("127.0.0.1", 60000);
+	//	newServer.init("127.0.0.1", 60000);
 	
 		while (true)
 		{
