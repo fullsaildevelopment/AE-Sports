@@ -2,8 +2,9 @@
 
 //#include <WinSock2.h>
 //#include <Windows.h>
-#include "Includes.h"
 #include <vector>
+#include <string>
+#include "Includes.h"
 #include "Scene.h"
 #include "InputManager.h"
 #include "HashString.h"
@@ -16,6 +17,7 @@
 #include "CapsuleCollider.h"
 #include "Client Wrapper.h"
 #include "Server Wrapper.h"
+//#include "SoundEngine.h"
 
 class BallController;
 
@@ -28,13 +30,13 @@ private:
 
 	//InputManager* input;
 	ResourceManager resourceManager;
+	//SoundEngine soundEngine;
 
 	bool isServer = false;
 	bool isMultiplayer = true;
 
 	ClientWrapper client;
 	ServerWrapper server;
-
 	std::vector<GameState*> gameStates;
 
 	//private helper functions

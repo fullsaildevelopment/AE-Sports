@@ -4,6 +4,7 @@
 #include "BallController.h"
 
 using namespace DirectX;
+using namespace std;
 
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
@@ -37,7 +38,25 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	CreateScenes(devResources, inputManager);
 
-	gameStates.resize(scenes[currentScene]->GetNumObjects());
+	//initialize sound engine
+	std::vector<unsigned int> ids;
+	std::vector<std::string> names;
+
+	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+
+	ids.resize(scenes[currentScene]->GetNumObjects());
+	names.resize(scenes[currentScene]->GetNumObjects());
+
+	for (int i = 0; i < gameObjects->size(); ++i)
+	{
+		GameObject* gameObject = (*gameObjects)[i];
+		
+		ids[i] = i;
+		names[i] = gameObject->GetName();
+	}
+
+	//soundEngine.InitSoundEngine(ids, names);
+
 }
 
 void Game::Update(float dt)
@@ -62,8 +81,10 @@ void Game::Update(float dt)
 			}
 		}*/
 
-		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 		std::vector<GameState*> gameStates;
+		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+
+		gameStates.resize(scenes[currentScene]->GetNumObjects());
 
 		for (int i = 0; i < gameObjects->size(); ++i)
 		{
@@ -71,7 +92,7 @@ void Game::Update(float dt)
 			GameObject* gameObject = (*gameObjects)[i];
 			state->world = gameObject->GetTransform()->GetWorld();
 
-			gameStates.push_back(state);
+			gameStates[i] = state;
 		}
 
 		server.SetGameStates(gameStates);
@@ -79,7 +100,6 @@ void Game::Update(float dt)
 
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
-
 }
 
 void Game::Render()
