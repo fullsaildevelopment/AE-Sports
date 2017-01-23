@@ -97,5 +97,5 @@ struct GameState
 	uint8_t nameLength;
 	char animationName[125];
 	bool hasBall = false;
-	XMFLOAT4X4 world;
+	XMFLOAT3 world;
 };
