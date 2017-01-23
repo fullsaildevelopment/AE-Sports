@@ -48,7 +48,7 @@ public:
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-			newServer.setStates(i, (Server::CLIENT_GAME_STATE*)gameStates[i]);
+			newServer.setStates(i, gameStates[i]->clientID, gameStates[i]->animationName, gameStates[i]->nameLength, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation);
 		}
 	}
 
