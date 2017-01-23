@@ -155,7 +155,6 @@ void AI::Attack(GameObject *target)
 bool AI::RunTo(GameObject *target)
 {
 	// change this later to running with turning*********************************
-	// turn to them
 
 	//u - forward vector
 	float3 u = me->GetTransform()->GetForwardf3();
@@ -173,6 +172,7 @@ bool AI::RunTo(GameObject *target)
 
 	if (v.magnitude() < 3)
 		return true;
+	
 	return false;
 }
 
