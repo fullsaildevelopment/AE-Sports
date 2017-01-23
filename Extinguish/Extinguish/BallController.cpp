@@ -1,4 +1,6 @@
+#include <iostream>
 #include "BallController.h"
+using namespace std;
 
 void BallController::OnTriggerEnter(Collider *obj)
 {
