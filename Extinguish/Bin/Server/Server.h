@@ -27,6 +27,22 @@ using namespace DirectX;
 
 class SERVERDLL_API Server
 {
+public: 
+
+#pragma pack(push, 1)
+	struct CLIENT_GAME_STATE
+	{
+		Time timeStamp;
+		UINT8 clientID;
+		UINT8 nameLength;
+		char animationName[125];
+		bool hasBall = false;
+		XMFLOAT4X4 world;
+
+		CLIENT_GAME_STATE() {}
+	};
+#pragma pack(pop)
+
 private:
 
 	enum GameMessages
@@ -42,19 +58,6 @@ private:
 		ID_INCOMING_INPUT
 	};
 
-#pragma pack(push, 1)
-	struct CLIENT_GAME_STATE
-	{
-		Time timeStamp;
-		UINT8 clientID;
-		UINT8 nameLength;
-		char animationName[125];
-		bool hasBall = false;
-		XMFLOAT4X4 world;
-
-		CLIENT_GAME_STATE() {}
-	};
-#pragma pack(pop)
 
 
 #pragma pack(push, 1)
@@ -84,9 +87,13 @@ public:
 	void stop();
 	bool Shutdown();
 	XMFLOAT4X4 getLocation(unsigned int index) { return clientStates[index].world; }
-
+	void setStates(unsigned int index, CLIENT_GAME_STATE * state);
+	void sendPackets();
+	void setObjectCount(int count) { serverObjs = count; }
 
 private:
+	int packRec = 0;
+	int serverObjs = 0;
 	bool shutdown = false;
 	int shutdowntimer = 0;
 	void sendMessage(char * message, GameMessages ID, bool broadcast);
@@ -97,7 +104,6 @@ private:
 	void unregisterClient();
 	void sendDisconnect();
 	void recievePacket();
-	void sendPackets();
 	void recieveInput();
 };
 

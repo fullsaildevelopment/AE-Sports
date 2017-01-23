@@ -57,6 +57,11 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	//soundEngine.InitSoundEngine(ids, names);
 
+
+	if (isServer)
+	{
+		server.setObjCount(scenes[currentScene]->GetNumObjects());
+	}
 }
 
 void Game::Update(float dt)
@@ -72,15 +77,8 @@ void Game::Update(float dt)
 
 		int clientState = client.run();
 
-		/*if (clientState == 2)
-		{
-			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
-			for (unsigned int i = 0; i < numobjs; ++i)
-			{
-				gameStates[i].world = client.getLocation(i);
-			}
-		}*/
 
+		// get current game states
 		std::vector<GameState*> gameStates;
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
@@ -94,8 +92,21 @@ void Game::Update(float dt)
 
 			gameStates[i] = state;
 		}
-
-		server.SetGameStates(gameStates);
+		// if server, set game states
+		if (isServer)
+		{
+			server.SetGameStates(gameStates);
+		}
+		// if client gets server's game states, get the state's location from the client
+		// so that it can be included in update
+		if (clientState == 2)
+		{
+			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+			for (unsigned int i = 0; i < numobjs; ++i)
+			{
+				gameStates[i]->world = client.getLocation(i);
+			}
+		}
 	}
 
 	//scenes[currentScene].Update(*input, dt);
