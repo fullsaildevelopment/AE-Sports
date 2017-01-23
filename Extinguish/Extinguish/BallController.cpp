@@ -1,4 +1,6 @@
+#include <iostream>
 #include "BallController.h"
+using namespace std;
 
 void BallController::OnTriggerEnter(Collider *obj)
 {
@@ -29,6 +31,8 @@ void BallController::Update(float dt, InputManager* input)
 	//	me->GetTransform()->SetVelocity(float3(0, 0, 0));
 	//}
 	//else me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
+
+	//cout << me->GetTransform()->GetPosition().x << " " << me->GetTransform()->GetPosition().y << " " << me->GetTransform()->GetPosition().z << endl;
 
 	int a = 0;
 
