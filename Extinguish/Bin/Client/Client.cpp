@@ -13,7 +13,7 @@ UINT8 Client::getID() { return clientID; }
 
 Client::Client()
 {
-	XMStoreFloat4x4(&myState->world, XMMatrixIdentity());
+	//XMStoreFloat4x4(&myState->world, XMMatrixIdentity());
 	memcpy(myState->animationName, "name here", strlen("name here"));
 	myState->nameLength = (UINT8)strlen("name here");
 }
@@ -280,7 +280,9 @@ void Client::sendPacket()
 	bOut.Write(myState->animationName, myState->nameLength);
 	bOut.Write(myState->hasBall);
 
-	bOut.Write(myState->world);
+	//bOut.Write(myState->world);
+	bOut.Write(myState->position);
+	bOut.Write(myState->rotation);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
@@ -303,7 +305,9 @@ void Client::recievePackets()
 		bIn.Read(clientStates[i].nameLength);
 		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
 		bIn.Read(clientStates[i].hasBall);
-		bIn.Read(clientStates[i].world);
+	//	bIn.Read(clientStates[i].world);
+		bIn.Read(clientStates[i].position);
+		bIn.Read(clientStates[i].rotation);
 	}
 }
 

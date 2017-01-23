@@ -62,9 +62,14 @@ public:
 		return states;
 	}
 
-	XMFLOAT4X4 getLocation(unsigned int index)
+	XMFLOAT3 getLocation(unsigned int index)
 	{
 		return newServer.getLocation(index);
+	}
+
+	XMFLOAT3 getRotation(unsigned int index)
+	{
+		return newServer.getRotation(index);
 	}
 
 	void setObjCount(int count)

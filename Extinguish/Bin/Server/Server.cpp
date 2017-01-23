@@ -254,7 +254,9 @@ void Server::recievePacket()
 	bIn.Read(tempState.nameLength);
 	bIn.Read(tempState.animationName, (unsigned int)tempState.nameLength);
 	bIn.Read(tempState.hasBall);
-	bIn.Read(tempState.world);
+//	bIn.Read(tempState.world);
+	bIn.Read(tempState.position);
+	bIn.Read(tempState.rotation);
 
 	clientStates[tempState.clientID - 1] = tempState;
 
@@ -305,7 +307,9 @@ void Server::sendPackets()
 			bOut.Write(clientStates[i].nameLength);
 			bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
 			bOut.Write(clientStates[i].hasBall);
-			bOut.Write(clientStates[i].world);
+	//		bOut.Write(clientStates[i].world);
+			bOut.Write(clientStates[i].position);
+			bOut.Write(clientStates[i].rotation);
 		}
 		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 	}
@@ -317,5 +321,7 @@ void Server::setStates(unsigned int index, CLIENT_GAME_STATE * state)
 	clientStates[index].nameLength = state->nameLength;
 	clientStates[index].clientID = state->clientID;
 	clientStates[index].hasBall = state->hasBall;
-	clientStates[index].world = state->world;
+//	clientStates[index].world = state->world;
+	clientStates[index].position = state->position;
+	clientStates[index].rotation = state->rotation;
 }
