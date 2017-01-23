@@ -13,7 +13,7 @@ private:
 
 
 public:
-	BallController(GameObject* o);
+	BallController(GameObject* obj);
 	void Init();
 	void Update(float dt, InputManager* input) override;
 	void OnTriggerEnter(Collider *obj) override;

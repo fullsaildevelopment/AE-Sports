@@ -1,5 +1,10 @@
 #include "AI.h"
 
+AI::AI(GameObject* obj) : Component(obj)
+{
+	me = obj;
+}
+
 void AI::OnTriggerEnter(Collider *obj)
 {
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
@@ -56,7 +61,7 @@ void AI::Init()
 			ball = tmp[i];
 
 		// if it's a goal
-		if (tmp[i]->GetTag() == "Goal")
+		else if (tmp[i]->GetTag() == "Goal")
 		{
 			// if it's my goal
 			if (tmp[i]->GetName() == myTeam)
@@ -67,15 +72,11 @@ void AI::Init()
 				enemyGoal = tmp[i];
 		}
 
-		// if it's AI
-		else if (tmp[i]->GetTag() == "AI" || tmp[i]->GetTag() == "Player")
-		{
-			if (tmp[i]->GetName() == myTeam) // if they're on my team
-				listOfMates.push_back(tmp[i]);// add them to my team list
+		else if (tmp[i]->GetTag() == "Team1")
+			listOfMates.push_back(tmp[i]); // add them to my team list
 
-			else // if they're not
-				listOfEnemies.push_back(tmp[i]);// put them in enemy list
-		}
+		else if (tmp[i]->GetTag() == "Team2")
+			listOfEnemies.push_back(tmp[i]); // put them in enemy list
 	}
 
 	ballClass = ball->GetComponent<BallController>();
