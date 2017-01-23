@@ -34,7 +34,7 @@ public:
 	//basic
 	void Init();
 	void Update(float dt, InputManager* input) override;
-	void OnCollisionEnter(Collider* collider) override;
+	void OnTriggerEnter(Collider* collider) override;
 
 	//misc
 	void Throw();

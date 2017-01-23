@@ -283,11 +283,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
-	meterbox6->InitTransform(identity, { 3,3, 3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddComponent(meterboxcol6);
 
 	GameObject* Ball = new GameObject();
@@ -371,25 +371,23 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { 0, 0.5f, -0.3f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	//gameBall->InitTransform(identity, { -5, 0.5f, -2.5f }, { 0, 0, 0 }, {0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	SphereCollider* gameBallCollider = new SphereCollider(0.1f, gameBall, false);
+	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
 	gameBall->AddComponent(gameBallCollider);
-	gameBallCollider->Init(gameBall);
 	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
-	ballController->SetIsHeld(true);
+	ballController->SetHolder(crosse);
 
 	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
+	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider = new SphereCollider(0.7f, crosse, true);
-	//crosse->AddComponent(crosseNetCollider);
-	crosseNetCollider->Init(crosse);
+	SphereCollider* crosseNetCollider = new SphereCollider(0.25f, crosse, true);
+	crosse->AddComponent(crosseNetCollider);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
