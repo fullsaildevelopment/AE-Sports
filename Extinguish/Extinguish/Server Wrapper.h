@@ -25,7 +25,16 @@ public:
 			noPeer = newServer.Shutdown();
 
 		newServer.sendPackets();
-		return newServer.update();
+		int result = newServer.update();
+		if (result == 2)
+		{
+			for (unsigned int i = 0; i < states.size(); ++i)
+			{
+				states[i] = (GameState*)newServer.getState(i);
+			}
+		}
+
+		return result;
 	}
 	void stop()
 	{
@@ -39,7 +48,6 @@ public:
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-
 			newServer.setStates(i, (Server::CLIENT_GAME_STATE*)gameStates[i]);
 		}
 	}
@@ -62,5 +70,10 @@ public:
 	void setObjCount(int count)
 	{
 		newServer.setObjectCount(count);
+	}
+
+	int getNewState()
+	{
+		return newServer.getNewState();
 	}
 };

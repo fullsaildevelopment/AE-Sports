@@ -52,6 +52,11 @@ public:
 		return (unsigned int)newClient.getID();
 	}
 
+	int getPacketCount()
+	{
+		return newClient.getNumPackets();
+	}
+
 	/*GameState getState(unsigned int index)
 	{
 		
@@ -61,4 +66,10 @@ public:
 	{
 		return newClient.getLocation(index);
 	}
+
+	void setLocation(XMFLOAT4X4 loc)
+	{
+		newClient.setLocation(loc);
+	}
+
 };
