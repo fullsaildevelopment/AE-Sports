@@ -21,12 +21,12 @@ void AI::OnTriggerEnter(Collider *obj)
 	}
 
 
-	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+	SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
 
 	// if i bump into the ball, i caught it
-	if (col)
+	if (scol)
 	{
-		if (col->GetGameObject()->GetTag() == "Ball")
+		if (scol->GetGameObject()->GetTag() == "Ball")
 		{
 			ballClass->SetIsHeld(true);
 			ballClass->SetHolder(me);
