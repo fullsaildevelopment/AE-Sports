@@ -15,7 +15,6 @@ private:
 	DeviceResources devResources;
 	Game game;
 	InputManager* input;
-	SoundEngine soundEngine;
 
 public:
 	void Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
