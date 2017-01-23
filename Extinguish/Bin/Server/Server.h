@@ -37,7 +37,9 @@ public:
 		UINT8 nameLength;
 		char animationName[125];
 		bool hasBall = false;
-		XMFLOAT4X4 world;
+		//XMFLOAT4X4 world;
+		XMFLOAT3 position;
+		XMFLOAT3 rotation;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -86,7 +88,8 @@ public:
 	int update();
 	void stop();
 	bool Shutdown();
-	XMFLOAT4X4 getLocation(unsigned int index) { return clientStates[index].world; }
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
 	void setStates(unsigned int index, CLIENT_GAME_STATE * state);
 	void sendPackets();
 	void setObjectCount(int count) { serverObjs = count; }
