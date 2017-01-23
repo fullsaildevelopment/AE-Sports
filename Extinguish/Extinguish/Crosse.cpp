@@ -69,13 +69,14 @@ void Crosse::Throw()
 	ballTransform->SetParent(nullptr);
 	transform->RemoveChild(ballTransform);
 
+	//add force to ball
+	XMFLOAT3 ballForward = transform->GetForward();
+	//ballForward = { 0, 0, 1 };
+	ballTransform->AddVelocity({ 0, 0, ballForward.z * throwSpeed });
+
 	// do animation on crosse
 	transform->RotateX(XMConvertToRadians(45));
 
-	//add force to ball
-	XMFLOAT3 ballForward = ballTransform->GetForward();
-	ballForward = { 0, 0, 1 };
-	ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 }
 
 void Crosse::HandleEvent(Event* e)
