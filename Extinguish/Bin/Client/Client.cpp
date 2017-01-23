@@ -55,6 +55,7 @@ int Client::init(char* _address, UINT16 port)
 
 int Client::run()
 {
+	int result = 1;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
 		switch (packet->data[0])
@@ -150,6 +151,7 @@ int Client::run()
 		case ID_INCOMING_PACKET:
 		{
 			recievePackets();
+			result = 2;
 			break;
 		}
 		case ID_SERVER_CLOSURE:
