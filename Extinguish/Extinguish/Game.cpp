@@ -81,7 +81,10 @@ void Game::Update(float dt)
 		{
 			GameState* state = new GameState();
 			GameObject* gameObject = (*gameObjects)[i];
-			state->world = gameObject->GetTransform()->GetWorld();
+			float3 position = gameObject->GetTransform()->GetPosition();
+			float3 rotation = gameObject->GetTransform()->GetRotation();
+			state->position = { position.x, position.y, position.z };
+			state->rotation = { rotation.x, rotation.y, rotation.z };
 
 			gameStates[i] = state;
 		}
@@ -93,7 +96,7 @@ void Game::Update(float dt)
 			server.SetGameStates(gameStates);
 		}
 		// get camera position
-		client.setLocation(gameStates[0]->world);
+		client.setLocation(gameStates[0]->position);
 		// send to server
 		client.sendPacket();
 
@@ -117,7 +120,12 @@ void Game::Update(float dt)
 			for (unsigned int i = 0; i < numobjs; ++i)
 			{
 				GameObject* gameObject = (*gameObjects)[i];
-				gameObject->GetTransform()->SetLocal(client.getLocation(i));
+				XMFLOAT3 position, rotation;
+				position = client.getLocation(i);
+				rotation = client.getRotation(i);
+				gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+				//gameObject->GetTransform()->SetLocal(client.getLocation(i));
 				//gameStates[i]->world = client.getLocation(i);
 			}
 		}
