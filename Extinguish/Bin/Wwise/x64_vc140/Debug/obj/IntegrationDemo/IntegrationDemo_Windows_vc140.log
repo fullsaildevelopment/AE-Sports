@@ -1,0 +1,47 @@
+﻿  stdafx.cpp
+  Helpers.cpp
+  IntegrationDemo.cpp
+  SoundInputBase.cpp
+  SoundInputMgrBase.cpp
+  BaseMenuPage.cpp
+  DemoBGM.cpp
+  DemoDialogueMenu.cpp
+  DemoDynamicDialogue.cpp
+  DemoExternalSources.cpp
+  DemoFootstepsManyVariables.cpp
+  DemoInteractiveMusic.cpp
+  DemoLocalization.cpp
+  DemoMarkers.cpp
+  DemoMicrophone.cpp
+  DemoMIDIMetronome.cpp
+  DemoMotion.cpp
+  DemoMusicCallbacks.cpp
+  DemoPositioning.cpp
+  DemoPositioningMenu.cpp
+  DemoRTPCCarEngine.cpp
+  Generating Code...
+  Compiling...
+  ButtonControl.cpp
+  Control.cpp
+  Menu.cpp
+  MessagePage.cpp
+  MovableChip.cpp
+  MultiplayerPage.cpp
+  NumericControl.cpp
+  Page.cpp
+  ToggleControl.cpp
+  UniversalInput.cpp
+  AkDefaultIOHookBlocking.cpp
+  AkFilePackage.cpp
+  AkFileLocationBase.cpp
+  AkFilePackageLUT.cpp
+  Drawing.cpp
+  InputMgr.cpp
+  Main.cpp
+  Platform.cpp
+  SoundInput.cpp
+  SoundInputMgr.cpp
+  Generating Code...
+     Creating library ..\..\..\x64_vc140\Debug\bin\IntegrationDemo.lib and object ..\..\..\x64_vc140\Debug\bin\IntegrationDemo.exp
+  IntegrationDemo_Windows_vc140.vcxproj -> E:\Program Files (x86)\Audiokinetic\Wwise 2016.2.1.5995\SDK\samples\IntegrationDemo\Windows\..\..\..\x64_vc140\Debug\bin\IntegrationDemo.exe
+  IntegrationDemo_Windows_vc140.vcxproj -> ..\..\..\x64_vc140\Debug\bin\IntegrationDemo.pdb (Full PDB)
