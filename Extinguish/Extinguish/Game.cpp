@@ -390,7 +390,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	SphereCollider* crosseNetCollider = new SphereCollider(0.7f, crosse, true);
-	//crosse->AddComponent(crosseNetCollider);
+	crosse->AddComponent(crosseNetCollider);
 	crosseNetCollider->Init(crosse);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
