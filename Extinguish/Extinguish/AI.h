@@ -22,11 +22,12 @@ private:
 	GameObject *enemyGoal;
 	GameObject *ball;
 	BallController *ballClass;
-	GameObject *me = GetGameObject(); // access to the gameObject stuff through me
+	GameObject *me; // access to the gameObject stuff through me
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
 	std::vector<GameObject*> listOfMates; // list of AI's teammates
 
 public:
+	AI(GameObject *obj);
 	void Init();
 	void Update();
 	void UpdateState(State newState);
