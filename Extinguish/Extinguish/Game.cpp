@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Movement.h"
 #include "BallController.h"
+#include "AI.h"
 
 using namespace DirectX;
 using namespace std;
@@ -87,7 +88,6 @@ void Game::Update(float dt)
 
 			gameStates[i] = state;
 		}
-
 
 		// if server, set game states
 		if (isServer)
@@ -291,7 +291,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer5->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol5 = new BoxCollider(meterbox5, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
 	meterbox5->AddComponent(meterboxcol5);
-
+	
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
@@ -325,7 +325,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover2 = new Movement();
 	Ball2->AddComponent(ballMover2);
 	ballMover2->Init(5.0f, 0.75f);
-	CapsuleCollider* ballcol2 = new CapsuleCollider(0.5f, { 0,0,0 }, { 0,3,0 }, Ball2, false);
+	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false);
 	Ball2->AddComponent(ballcol2);
 
 	GameObject* Ball3 = new GameObject();
@@ -338,7 +338,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover3 = new Movement();
 	//Ball3->AddComponent(ballMover3);
 	//ballMover3->Init(5.0f, 0.75f);
-	CapsuleCollider* ballcol3 = new CapsuleCollider(0.5f, { 0,0,0 }, { 0,1,0 }, Ball3, false);
+	SphereCollider* ballcol3 = new SphereCollider(0.5f, Ball3, false);
 	Ball3->AddComponent(ballcol3);
 
 	GameObject* bear = new GameObject();
@@ -394,6 +394,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
+	ballController->SetIsHeld(true);
 
 	crosse->Init("Crosse");
 	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
