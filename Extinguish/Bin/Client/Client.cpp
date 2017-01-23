@@ -289,16 +289,18 @@ void Client::recievePackets()
 	bIn.IgnoreBytes(sizeof(MessageID));
 	//bIn.Read(clientState->timeStamp);
 
+	UINT8 objects;
+	bIn.Read(objects);
+
 	// for each game object, read in the data of the object state
 
-	for (unsigned int i = 0; i < 2; ++i)
+	for (unsigned int i = 0; i < (unsigned int)objects; ++i)
 	{
 		bIn.Read(clientStates[i].clientID);
 		bIn.Read(clientStates[i].nameLength);
 		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
 		bIn.Read(clientStates[i].hasBall);
 		bIn.Read(clientStates[i].world);
-
 	}
 }
 
