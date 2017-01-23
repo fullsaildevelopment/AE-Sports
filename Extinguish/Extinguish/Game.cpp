@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Movement.h"
 #include "BallController.h"
+#include "AI.h"
 
 using namespace DirectX;
 using namespace std;
@@ -280,7 +281,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer5->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol5 = new BoxCollider(meterbox5, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
 	meterbox5->AddComponent(meterboxcol5);
-
+	
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
