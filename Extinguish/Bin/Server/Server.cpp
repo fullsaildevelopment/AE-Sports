@@ -129,6 +129,10 @@ int  Server::update()
 		}
 	}
 
+	if (result == 2)
+	{
+		sendPackets();
+	}
 
 	return result;
 }

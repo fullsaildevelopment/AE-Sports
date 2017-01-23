@@ -86,4 +86,9 @@ public:
 	{
 		return newServer.getNewState();
 	}
+
+	/*char * getInput()
+	{
+		return newServer.
+	}*/
 };
