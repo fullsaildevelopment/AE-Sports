@@ -54,7 +54,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		ids[i] = i;
 		names[i] = gameObject->GetName();
 	}
-
+	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	//soundEngine.InitSoundEngine(ids, names);
 
 
@@ -72,10 +72,9 @@ void Game::Update(float dt)
 	{
 
 		// get current game states
-		std::vector<GameState*> gameStates;
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
-		gameStates.resize(scenes[currentScene]->GetNumObjects());
+		/*gameStates.resize(scenes[currentScene]->GetNumObjects());*/
 
 		for (int i = 0; i < gameObjects->size(); ++i)
 		{
@@ -95,11 +94,15 @@ void Game::Update(float dt)
 		{
 			server.SetGameStates(gameStates);
 		}
-		// get camera position
-		//client.setLocation(gameStates[0]->position);
-		//client.setRotation(gameStates[0]->rotation);
-		// send to server
-		client.sendPacket();
+
+		//if (client.getID() > 0)
+		//{
+			// get camera position
+			client.setLocation(gameStates[0]->position);
+			client.setRotation(gameStates[0]->rotation);
+			// send to server
+			client.sendPacket();
+		//}
 
 		if (isServer)
 		{
@@ -115,19 +118,27 @@ void Game::Update(float dt)
 
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
-		if (clientState == 2)
+		if (clientState == 2 && client.getID() > 0)
 		{
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+
+
+			int id = client.getID();
 			for (unsigned int i = 0; i < numobjs; ++i)
 			{
-				GameObject* gameObject = (*gameObjects)[i];
-				XMFLOAT3 position, rotation;
-				position = client.getLocation(i);
-				rotation = client.getRotation(i);
-				gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
-				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
-				//gameObject->GetTransform()->SetLocal(client.getLocation(i));
-				//gameStates[i]->world = client.getLocation(i);
+				if (i == id)
+					float temp = 0;
+				if (i != 0)
+				{
+					GameObject* gameObject = (*gameObjects)[i];
+					XMFLOAT3 position, rotation;
+					position = client.getLocation(i);
+					rotation = client.getRotation(i);
+					gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+					gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+					//gameObject->GetTransform()->SetLocal(client.getLocation(i));
+					//gameStates[i]->world = client.getLocation(i);
+				}
 			}
 		}
 	}
@@ -136,6 +147,7 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	//soundEngine.ProcessAudio();
+
 }
 
 void Game::Render()
@@ -376,7 +388,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	SphereCollider* gameBallCollider = new SphereCollider(0.1, gameBall, false);
+	SphereCollider* gameBallCollider = new SphereCollider(0.1f, gameBall, false);
 	gameBall->AddComponent(gameBallCollider);
 	gameBallCollider->Init(gameBall);
 	BallController* ballController = new BallController(gameBall);
