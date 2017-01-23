@@ -18,10 +18,15 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Colli
 void SphereCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
-	//GetGameObject()->GetTransform()->AddVelocity({ 0, -9.8f * dt, 0 });
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	size_t size = (*Others).size();
+	if (tg->GetName() == "Crosse")
+	{
+		XMFLOAT4X4 m = tgt->GetWorld();
+		float3 pos = float3(m._41, m._42, m._43);
+		printf("%f , %f , %f", pos.x, pos.y, pos.z);
+	}
 	for (int i = 0; i < size; ++i)
 	{
 
@@ -157,7 +162,11 @@ Sphere SphereCollider::GetSphere()
 }
 Sphere SphereCollider::GetWorldSphere()
 {
-	float3 pos = GetGameObject()->GetTransform()->GetPosition();
+	XMFLOAT4X4 m = GetGameObject()->GetTransform()->GetWorld();
+	float3 pos;
+	pos.x = m._41;
+	pos.y = m._42;
+	pos.z = m._43;
 	Sphere s;
 	s.m_Center = float3(pos.x, pos.y, pos.z);
 	s.m_Radius = radius;
