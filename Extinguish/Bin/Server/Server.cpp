@@ -315,13 +315,13 @@ void Server::sendPackets()
 	}
 }
 
-void Server::setStates(unsigned int index, CLIENT_GAME_STATE * state)
+void Server::setStates(unsigned int index, UINT8 id, char * animationName, UINT8 length, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot)
 {
-	memcpy(clientStates[index].animationName, state->animationName, state->nameLength);
-	clientStates[index].nameLength = state->nameLength;
-	clientStates[index].clientID = state->clientID;
-	clientStates[index].hasBall = state->hasBall;
+	memcpy(clientStates[index].animationName, animationName, length);
+	clientStates[index].nameLength = length;
+	clientStates[index].clientID = id;
+	clientStates[index].hasBall = hasBall;
 //	clientStates[index].world = state->world;
-	clientStates[index].position = state->position;
-	clientStates[index].rotation = state->rotation;
+	clientStates[index].position = pos;
+	clientStates[index].rotation = rot;
 }
