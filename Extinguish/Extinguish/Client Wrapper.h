@@ -62,14 +62,24 @@ public:
 		
 	}*/
 
-	XMFLOAT4X4 getLocation(unsigned int index)
+	XMFLOAT3 getLocation(unsigned int index)
 	{
 		return newClient.getLocation(index);
 	}
 
-	void setLocation(XMFLOAT4X4 loc)
+	void setLocation(XMFLOAT3 loc)
 	{
 		newClient.setLocation(loc);
+	}
+
+	XMFLOAT3 getRotation(unsigned int index)
+	{
+		return newClient.getRotation(index);
+	}
+
+	void setRotation(XMFLOAT3 rot)
+	{
+		newClient.setRotation(rot);
 	}
 
 };

@@ -91,11 +91,17 @@ struct Vertex
 	}
 };
 
+
+#pragma pack(push, 1)
 struct GameState
 {
 	uint8_t clientID;
 	uint8_t nameLength;
 	char animationName[125];
 	bool hasBall = false;
-	XMFLOAT3 world;
+//	XMFLOAT4X4 world;
+
+	XMFLOAT3 position;
+	XMFLOAT3 rotation;
 };
+#pragma pack(pop)
