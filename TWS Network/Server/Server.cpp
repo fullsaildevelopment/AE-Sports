@@ -23,8 +23,10 @@ int Server::init(uint16_t port)
 	sd.socketFamily = AF_INET;
 	StartupResult res = peer->Startup(MAX_PLAYERS, &sd, 1);
 
-	if (res == SOCKET_FAILED_TO_BIND)
-		float temp = 0;
+	if (res == SOCKET_PORT_ALREADY_IN_USE)
+	{
+		return 0;
+	}
 
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);

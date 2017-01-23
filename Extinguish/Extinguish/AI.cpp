@@ -11,7 +11,7 @@ void AI::OnTriggerEnter(Collider *obj)
 		ballClass->DropBall(me);
 
 		float num = 3;
-		float3 vel = float3(obj->GetGameObject()->GetTransform()->GetForward().x * num, obj->GetGameObject()->GetTransform()->GetForward().y * num, obj->GetGameObject()->GetTransform()->GetForward().z * num);
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
 		me->GetTransform()->AddVelocity(vel);
 	}
 }
@@ -141,6 +141,7 @@ void AI::Attack(GameObject *target)
 {
 	isAttacking = true;
 
+	// if they're not on my team
 	if (target->GetName() != me->GetName()) 
 	{
 		// hit
@@ -156,7 +157,7 @@ bool AI::RunTo(GameObject *target)
 	// turn to them
 
 	//u - forward vector
-	float3 u(me->GetTransform()->GetForward().x, me->GetTransform()->GetForward().y, me->GetTransform()->GetForward().z);
+	float3 u = me->GetTransform()->GetForwardf3();
 
 	//v - vector between me and destination
 	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
@@ -184,12 +185,6 @@ void AI::Score()
 
 	// if (tmp)
 		// run into the goal
-}
-
-void AI::DropBall()
-{
-	ballClass->SetIsHeld(false);
-	ballClass->SetHolder(nullptr);
 }
 
 AI::State AI::GetCurrState() { return currState; }

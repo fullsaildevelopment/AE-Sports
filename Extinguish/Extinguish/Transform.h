@@ -63,6 +63,7 @@ public:
 	Transform* GetParent();
 	Transform* GetChild(int index);
 	//Transform* GetSibling();
+	float3 GetForwardf3();
 	DirectX::XMFLOAT3 GetForward();
 	DirectX::XMFLOAT3 GetUp();
 	DirectX::XMFLOAT3 GetRight();

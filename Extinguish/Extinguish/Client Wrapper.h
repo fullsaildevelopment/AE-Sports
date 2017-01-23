@@ -3,12 +3,12 @@
 #include <stdio.h>
 
 #include "Client.h"
+#include "..\ShaderStructures\ShaderStructures.h"
 
 class ClientWrapper
 {
 private:
 	Client newClient;
-
 public:
 	~ClientWrapper()
 	{
@@ -46,4 +46,40 @@ public:
 		newClient.sendInput(temp);
 		delete temp;
 	}
+
+	unsigned int getID()
+	{
+		return (unsigned int)newClient.getID();
+	}
+
+	int getPacketCount()
+	{
+		return newClient.getNumPackets();
+	}
+
+	/*GameState getState(unsigned int index)
+	{
+		
+	}*/
+
+	XMFLOAT3 getLocation(unsigned int index)
+	{
+		return newClient.getLocation(index);
+	}
+
+	void setLocation(XMFLOAT3 loc)
+	{
+		newClient.setLocation(loc);
+	}
+
+	XMFLOAT3 getRotation(unsigned int index)
+	{
+		return newClient.getRotation(index);
+	}
+
+	void setRotation(XMFLOAT3 rot)
+	{
+		newClient.setRotation(rot);
+	}
+
 };

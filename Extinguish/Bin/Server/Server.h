@@ -27,6 +27,24 @@ using namespace DirectX;
 
 class SERVERDLL_API Server
 {
+public: 
+
+#pragma pack(push, 1)
+	struct CLIENT_GAME_STATE
+	{
+		Time timeStamp;
+		UINT8 clientID;
+		UINT8 nameLength;
+		char animationName[125];
+		bool hasBall = false;
+		//XMFLOAT4X4 world;
+		XMFLOAT3 position;
+		XMFLOAT3 rotation;
+
+		CLIENT_GAME_STATE() {}
+	};
+#pragma pack(pop)
+
 private:
 
 	enum GameMessages
@@ -38,22 +56,10 @@ private:
 		ID_CLIENT_REGISTER,
 		ID_REQUEST,
 		ID_INCOMING_PACKET,
-		ID_REMOVE_CLIENT
+		ID_REMOVE_CLIENT,
+		ID_INCOMING_INPUT
 	};
 
-#pragma pack(push, 1)
-	struct CLIENT_GAME_STATE
-	{
-		Time timeStamp;
-		UINT8 clientID;
-		UINT8 nameLength;
-		char animationName[125];
-		bool hasBall = false;
-		XMFLOAT4X4 world;
-
-		CLIENT_GAME_STATE() {}
-	};
-#pragma pack(pop)
 
 
 #pragma pack(push, 1)
@@ -67,6 +73,7 @@ private:
 #pragma pack(pop)
 
 	static CLIENT_GAME_STATE * clientStates;
+	//static CLIENT_GAME_STATE * aiStates;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
@@ -81,8 +88,18 @@ public:
 	int update();
 	void stop();
 	bool Shutdown();
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
+	void setStates(unsigned int index, UINT8 id, char * animationName, UINT8 length, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot);
+	void sendPackets();
+	void setObjectCount(int count) { serverObjs = count; }
+	int getNewState() { return lastState; }
+	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[i]; }
 
 private:
+	int lastState = 0;
+	int packRec = 0;
+	int serverObjs = 0;
 	bool shutdown = false;
 	int shutdowntimer = 0;
 	void sendMessage(char * message, GameMessages ID, bool broadcast);
@@ -93,6 +110,6 @@ private:
 	void unregisterClient();
 	void sendDisconnect();
 	void recievePacket();
-	void sendPackets();
+	void recieveInput();
 };
 

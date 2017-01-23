@@ -12,17 +12,37 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		if (isServer)
+				if (server.init("127.0.0.1", 60000) == 1)
+				{
+					isMultiplayer = true;
+					isServer = true;
+
+					client.init("127.0.0.1", 60001);
+				}
+				else
+				{
+					isServer = false;
+					client.init("127.0.0.1", 60001);
+				}
+
+		/*if (isServer)
 		{
 			server.init("127.0.0.1", 60000);
 		}
 
-		client.init("127.0.0.1", 60001);
+		client.init("127.0.0.1", 60001);*/
 	}
 
 	currentScene = 0;
 
 	CreateScenes(devResources, inputManager);
+
+	gameStates.resize(scenes[currentScene]->GetNumObjects());
+
+	if (isServer)
+	{
+		server.setObjCount(scenes[currentScene]->GetNumObjects());
+	}
 }
 
 void Game::Update(float dt)
@@ -31,16 +51,58 @@ void Game::Update(float dt)
 
 	if (isMultiplayer)
 	{
+
+		// get current game states
+		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+		std::vector<GameState*> gameStates;
+
+		for (int i = 0; i < gameObjects->size(); ++i)
+		{
+			GameState* state = new GameState();
+			GameObject* gameObject = (*gameObjects)[i];
+			state->world = gameObject->GetTransform()->GetWorld();
+
+			gameStates.push_back(state);
+		}
+
+
+		// if server, set game states
+		if (isServer)
+		{
+			server.SetGameStates(gameStates);
+		}
+		// get camera position
+		client.setLocation(gameStates[0]->world);
+		// send to server
+		client.sendPacket();
+
 		if (isServer)
 		{
 			int serverState = server.run();
+			if (serverState == 2)
+			{
+				gameStates = server.getStates();
+			}
 		}
 
 		int clientState = client.run();
+
+
+		// if client gets server's game states, get the state's location from the client
+		// so that it can be included in update
+		if (clientState == 2)
+		{
+			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+			for (unsigned int i = 0; i < numobjs; ++i)
+			{
+				gameStates[i]->world = client.getLocation(i);
+			}
+		}
 	}
 
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
+
 }
 
 void Game::Render()
