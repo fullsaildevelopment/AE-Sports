@@ -14,9 +14,6 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 	//input = new InputManager();
 	//input->ClearKeyboard();
 
-	//initialize sound engine
-	//soundEngine.InitSoundEngine();
-
 	//initalize game
 	game.Init(&devResources, input);
 

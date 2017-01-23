@@ -164,7 +164,7 @@ int Client::run()
 
 
 
-	return 1;
+	return result;
 }
 
 void Client::stop()

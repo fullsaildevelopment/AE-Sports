@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "GameObject.h"
 #include "InputDownEvent.h"
+#include "EventDispatcher.h"
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -10,6 +11,9 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 
 	moveSpeed = moveVelocity;
 	rotateSpeed = rotateVelocity;
+
+	//register movement event handler
+	EventDispatcher::GetSingleton()->RegisterHandler(this);
 }
 
 void Movement::Update(float dt, InputManager* input)
@@ -43,7 +47,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		//transform->AddVelocity({ 0.0f, 0.0f, moveSpeed});
-		transform->AddVelocity({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
+		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
@@ -51,7 +55,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 		XMFLOAT3 forward = transform->GetForward();
-		transform->AddVelocity({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
+		transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, 0.0f, -moveSpeed});
 		isMoving = true;
 	}
@@ -59,7 +63,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	if (input->GetKey('J'))
 	{
 		XMFLOAT3 right = transform->GetRight();
-		transform->AddVelocity({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
+		transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		//transform->AddVelocity({ -moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
 	}
@@ -67,7 +71,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	if (input->GetKey('L'))
 	{
 		XMFLOAT3 right = transform->GetRight();
-		transform->AddVelocity({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
+		transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
 	}
@@ -75,7 +79,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	if (input->GetKey('U')) //up
 	{
 		XMFLOAT3 up = transform->GetUp();
-		transform->AddVelocity({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
+		transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, moveSpeed, 0.0f });
 		isMoving = true;
 	}
@@ -83,7 +87,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	if (input->GetKey('O')) //down
 	{
 		XMFLOAT3 up = transform->GetUp();
-		transform->AddVelocity({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
+		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
 		isMoving = true;
 	}

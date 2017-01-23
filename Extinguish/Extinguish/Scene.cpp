@@ -368,6 +368,7 @@ void Scene::Update(float dt)
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
 
+
 		if (renderer)
 		{
 			renderer->SetView(cameraCam);
@@ -376,6 +377,14 @@ void Scene::Update(float dt)
 
 			if (transform)
 			{
+				if (gameObjects[i]->GetName() == "GameBall")
+				{
+					int a = 0; 
+					a++;
+
+					cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
+				}
+
 				XMFLOAT4X4 world;
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
