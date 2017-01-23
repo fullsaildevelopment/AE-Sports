@@ -50,11 +50,15 @@ namespace AK
 #endif
 }
 
-bool SoundEngine::InitSoundEngine()
+bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std::string> names)
 {
 	bool result = true;
 
 	result = InitSettings();
+
+	InitBank();
+
+	InitGameObjects(ids, names);
 
 	return result;
 }
@@ -169,4 +173,13 @@ void SoundEngine::InitBank()
 	eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
 	eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
 
+}
+
+void SoundEngine::InitGameObjects(std::vector<unsigned int> ids, std::vector<std::string> names)
+{
+	for (int i = 0; i < ids.size(); ++i)
+	{
+		AkGameObjectID id = ids[i];
+		AK::SoundEngine::RegisterGameObj(id, names[i].c_str());
+	}
 }

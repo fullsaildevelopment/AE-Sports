@@ -55,6 +55,11 @@ void InputManager::Update()
 	//}
 }
 
+void InputManager::Shutdown()
+{
+	delete input;
+	input = nullptr;
+}
 
 //getters//
 

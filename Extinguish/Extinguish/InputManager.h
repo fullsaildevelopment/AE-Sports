@@ -35,6 +35,7 @@ public:
 	//basic
 	void ClearKeyboard();
 	void Update();
+	void Shutdown();
 
 	//getters
 	static InputManager* GetSingleton();
