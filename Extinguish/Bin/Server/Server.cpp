@@ -40,6 +40,7 @@ int Server::init(uint16_t port)
 
 int  Server::update()
 {
+	int result = 1;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
 		switch (packet->data[0])
@@ -109,7 +110,7 @@ int  Server::update()
 			recievePacket();
 			//sendPackets(); // for testing purposes
 			++packRec;
-
+			result = 2;
 			break;
 		}
 		case ID_INCOMING_INPUT:
@@ -122,7 +123,7 @@ int  Server::update()
 	}
 
 
-	return 1;
+	return result;
 }
 
 void Server::stop()
@@ -256,6 +257,8 @@ void Server::recievePacket()
 	bIn.Read(tempState.world);
 
 	clientStates[tempState.clientID - 1] = tempState;
+
+	lastState = (int)tempState.clientID;
 
 }
 

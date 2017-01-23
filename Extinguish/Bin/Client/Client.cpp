@@ -292,6 +292,7 @@ void Client::recievePackets()
 	UINT8 objects;
 	bIn.Read(objects);
 
+	numPackets = (int)objects;
 	// for each game object, read in the data of the object state
 
 	for (unsigned int i = 0; i < (unsigned int)objects; ++i)
