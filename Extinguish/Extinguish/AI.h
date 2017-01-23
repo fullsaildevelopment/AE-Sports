@@ -4,6 +4,7 @@
 #include "vec3.h"
 #include "BallController.h"
 #include "CapsuleCollider.h"
+#include "SphereCollider.h"
 
 class AI : public Component
 {
@@ -13,7 +14,7 @@ private:
 		idle,
 		getBall,
 		defensive,
-		offensive,
+		defendTeammate,
 	};
 
 	bool isAttacking = false; // 
@@ -36,6 +37,7 @@ public:
 	// States
 	void Idle();
 	void GetBall();
+	void DefendTeammate();
 
 	// Actions
 	void Attack(GameObject *target); // pass in the person you want to attack
