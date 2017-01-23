@@ -913,6 +913,16 @@ bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
 	return true;
 }
 
+bool HexagonToSphere()
+{
+
+}
+
+bool HexagonToCapsule()
+{
+
+}
+
 float3 XMtoF(DirectX::XMFLOAT3 m)
 {
 	float3 f;

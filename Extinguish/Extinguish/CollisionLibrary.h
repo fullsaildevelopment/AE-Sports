@@ -42,6 +42,12 @@ struct Capsule
 	float m_Radius;
 };
 
+struct Hexagon
+{
+	Segment seg;
+	float radius;
+};
+
 enum FrustumCorners{ FTL = 0, FBL, FBR, FTR, NTL, NTR, NBR, NBL };
 enum FrustumPlanes{ NEAR_PLANE = 0, FAR_PLANE, LEFT_PLANE, RIGHT_PLANE, TOP_PLANE, BOTTOM_PLANE };
 
