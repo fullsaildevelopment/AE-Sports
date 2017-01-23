@@ -26,11 +26,11 @@ void BallController::Init()
 
 void BallController::Update(float dt, InputManager* input)
 {
-	//if (isHeld)
-	//{
-	//	me->GetTransform()->SetVelocity(float3(0, 0, 0));
-	//}
-	//else me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
+	if (isHeld)
+	{
+		me->GetTransform()->SetVelocity(float3(0, 0, 0));
+	}
+	else me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
 
 	//cout << me->GetTransform()->GetPosition().x << " " << me->GetTransform()->GetPosition().y << " " << me->GetTransform()->GetPosition().z << endl;
 

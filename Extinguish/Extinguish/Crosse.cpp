@@ -62,17 +62,22 @@ void Crosse::OnCollisionEnter(Collider* collider)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 50.0f;
+	const float throwSpeed = 100.0f;
 
 	//detach ball
 	ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 });
+	ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z });
 	ballTransform->SetParent(nullptr);
 	transform->RemoveChild(ballTransform);
+	ballTransform->GetGameObject()->GetComponent<BallController>()->SetIsHeld(false);
+
+	//update ball after set position
+	ballTransform->GetWorld();
 
 	//add force to ball
-	XMFLOAT3 ballForward = transform->GetForward();
+	XMFLOAT3 ballForward = ballTransform->GetForward();
 	//ballForward = { 0, 0, 1 };
-	ballTransform->AddVelocity({ 0, 0, ballForward.z * throwSpeed });
+	ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 	// do animation on crosse
 	transform->RotateX(XMConvertToRadians(45));
