@@ -11,6 +11,7 @@ private:
 public:
 	~ServerWrapper() { 
 	}
+
 	int init(char * address, UINT16 port)
 	{
 		return newServer.init(port);

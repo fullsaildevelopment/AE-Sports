@@ -44,7 +44,7 @@ void Game::Update(float dt)
 {
 	//input = inputManager;
 
-if (isMultiplayer)
+	if (isMultiplayer)
 	{
 		if (isServer)
 		{
