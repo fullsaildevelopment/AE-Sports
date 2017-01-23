@@ -107,7 +107,9 @@ int  Server::update()
 		case ID_INCOMING_PACKET:
 		{
 			recievePacket();
-			sendPackets(); // for testing purposes
+			//sendPackets(); // for testing purposes
+			++packRec;
+
 			break;
 		}
 		case ID_INCOMING_INPUT:
@@ -286,19 +288,31 @@ void Server::recieveInput()
 void Server::sendPackets()
 {
 	// send packet x8 to all clients
-
-
-	BitStream bOut;
-	bOut.Write((MessageID)ID_INCOMING_PACKET);
-
-	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+	if (packRec >= numPlayers)
 	{
-		//bOut.Write(GetTime());
-		bOut.Write(clientStates[i].clientID);
-		bOut.Write(clientStates[i].nameLength);
-		bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
-		bOut.Write(clientStates[i].hasBall);
-		bOut.Write(clientStates[i].world);
+		packRec = 0;
+		BitStream bOut;
+		bOut.Write((MessageID)ID_INCOMING_PACKET);
+		bOut.Write((UINT8)serverObjs);
+
+		for (unsigned int i = 0; i < serverObjs; ++i)
+		{
+			//bOut.Write(GetTime());
+			bOut.Write(clientStates[i].clientID);
+			bOut.Write(clientStates[i].nameLength);
+			bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
+			bOut.Write(clientStates[i].hasBall);
+			bOut.Write(clientStates[i].world);
+		}
+		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 	}
-	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+}
+
+void Server::setStates(unsigned int index, CLIENT_GAME_STATE * state)
+{
+	memcpy(clientStates[index].animationName, state->animationName, state->nameLength);
+	clientStates[index].nameLength = state->nameLength;
+	clientStates[index].clientID = state->clientID;
+	clientStates[index].hasBall = state->hasBall;
+	clientStates[index].world = state->world;
 }

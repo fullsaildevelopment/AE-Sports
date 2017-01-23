@@ -23,6 +23,8 @@ public:
 	{
 		if (shutdown && !noPeer)
 			noPeer = newServer.Shutdown();
+
+		newServer.sendPackets();
 		return newServer.update();
 	}
 	void stop()
@@ -34,6 +36,17 @@ public:
 	void SetGameStates(std::vector<GameState*> gameStates)
 	{
 		states = gameStates;
+
+		for (unsigned int i = 0; i < states.size(); ++i)
+		{
+
+			newServer.setStates(i, (Server::CLIENT_GAME_STATE*)gameStates[i]);
+		}
+	}
+
+	void sendStates()
+	{
+		newServer.sendPackets();
 	}
 
 	std::vector<GameState*> getStates()
@@ -44,5 +57,10 @@ public:
 	XMFLOAT4X4 getLocation(unsigned int index)
 	{
 		return newServer.getLocation(index);
+	}
+
+	void setObjCount(int count)
+	{
+		newServer.setObjectCount(count);
 	}
 };
