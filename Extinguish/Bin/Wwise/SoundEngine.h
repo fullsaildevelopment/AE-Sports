@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <string>
 
 class CAkFilePackageLowLevelIOBlocking;
 
@@ -10,8 +12,9 @@ private:
 	//private helper functions
 	bool InitSettings();
 	void InitBank();
+	void InitGameObjects(std::vector<unsigned int> ids, std::vector<std::string> names);
 public:
-	bool InitSoundEngine();
+	bool InitSoundEngine(std::vector<unsigned int> ids, std::vector<std::string> names);
 	void ProcessAudio();
 	void Terminate();
 };

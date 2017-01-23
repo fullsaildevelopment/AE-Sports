@@ -71,11 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\samples\SoundEngine\Win32;E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\samples\SoundEngine\Common;E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\samples\SoundEngine\Win32;E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\samples\SoundEngine\Common;E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -102,7 +102,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;Dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\x64_vc140\$(Configuration)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -139,7 +139,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;Dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>E:\Program Files %28x86%29\Audiokinetic\Wwise 2016.2.1.5995\SDK\x64_vc140\$(Configuration)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
