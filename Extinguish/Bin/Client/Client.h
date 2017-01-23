@@ -44,17 +44,19 @@ private:
 		ID_CLIENT_REGISTER,
 		ID_REQUEST,
 		ID_INCOMING_PACKET,
-		ID_REMOVE_CLIENT
+		ID_REMOVE_CLIENT,
+		ID_INCOMING_INPUT
 	};
 #pragma pack(push, 1)
 	struct CLIENT_GAME_STATE
 	{
-		Time timeStamp;
 		UINT8 clientID;
 		UINT8 nameLength;
 		char animationName[125];
 		bool hasBall = false;
-		XMFLOAT4X4 world;
+	//	XMFLOAT4X4 world;
+		XMFLOAT3 position;
+		XMFLOAT3 rotation;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -63,7 +65,8 @@ private:
 	static RakPeerInterface * peer;
 	static Packet * packet;
 	static char * address;
-	static CLIENT_GAME_STATE * clientState;
+	static CLIENT_GAME_STATE * myState;
+	static CLIENT_GAME_STATE * clientStates;
 public:
 
 #pragma pack(push, 1)
@@ -86,9 +89,17 @@ public:
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendPacket();
+	UINT8 getID();
+	CLIENT_GAME_STATE getState(unsigned int index);
+
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
+	int getNumPackets() { return numPackets; }
+	void setLocation(XMFLOAT3 loc) { myState->position = loc; }
+	void setRotation(XMFLOAT3 rot) { myState->rotation = rot; }
 
 private:
-
+	int numPackets = 0;
 	bool disconnect = false;
 	UINT8 clientID;
 	char clientName[8];
