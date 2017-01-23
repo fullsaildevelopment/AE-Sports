@@ -95,14 +95,14 @@ void Game::Update(float dt)
 			server.SetGameStates(gameStates);
 		}
 
-		//if (client.getID() > 0)
-		//{
+		if (client.getID() > 0)
+		{
 			// get camera position
 			client.setLocation(gameStates[0]->position);
 			client.setRotation(gameStates[0]->rotation);
 			// send to server
 			client.sendPacket();
-		//}
+		}
 
 		if (isServer)
 		{
@@ -126,9 +126,7 @@ void Game::Update(float dt)
 			int id = client.getID();
 			for (unsigned int i = 0; i < numobjs; ++i)
 			{
-				if (i == id)
-					float temp = 0;
-				if (i != 0)
+				if (i != 0 && i != id)
 				{
 					GameObject* gameObject = (*gameObjects)[i];
 					XMFLOAT3 position, rotation;
