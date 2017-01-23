@@ -90,15 +90,16 @@ void Game::Update(float dt)
 			gameStates[i] = state;
 		}
 
-
 		// if server, set game states
 		if (isServer)
 		{
 			server.SetGameStates(gameStates);
 		}
+
 		// get camera position
-		//client.setLocation(gameStates[0]->position);
-		//client.setRotation(gameStates[0]->rotation);
+		client.setLocation(gameStates[0]->position);
+		client.setRotation(gameStates[0]->rotation);
+
 		// send to server
 		client.sendPacket();
 
@@ -314,7 +315,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover2 = new Movement();
 	Ball2->AddComponent(ballMover2);
 	ballMover2->Init(5.0f, 0.75f);
-	CapsuleCollider* ballcol2 = new CapsuleCollider(0.5f, { 0,0,0 }, { 0,3,0 }, Ball2, false);
+	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false);
 	Ball2->AddComponent(ballcol2);
 
 	GameObject* Ball3 = new GameObject();
@@ -327,7 +328,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover3 = new Movement();
 	//Ball3->AddComponent(ballMover3);
 	//ballMover3->Init(5.0f, 0.75f);
-	CapsuleCollider* ballcol3 = new CapsuleCollider(0.5f, { 0,0,0 }, { 0,1,0 }, Ball3, false);
+	SphereCollider* ballcol3 = new SphereCollider(0.5f, Ball3, false);
 	Ball3->AddComponent(ballcol3);
 
 	GameObject* bear = new GameObject();
@@ -377,12 +378,13 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	SphereCollider* gameBallCollider = new SphereCollider(0.1, gameBall, false);
+	SphereCollider* gameBallCollider = new SphereCollider(0.1f, gameBall, false);
 	gameBall->AddComponent(gameBallCollider);
 	gameBallCollider->Init(gameBall);
 	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
+	ballController->SetIsHeld(true);
 
 	crosse->Init("Crosse");
 	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 1 * XM_PI / 2, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
