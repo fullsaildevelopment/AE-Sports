@@ -137,6 +137,7 @@ int Client::run()
 		case ID_CLIENT_REGISTER:
 		{
 			GetID();
+			result = 3;
 			printf("Please enter a name (8 characters max): ");
 			memcpy(clientName, "Player", strlen("Player"));
 			registerName();
@@ -166,8 +167,6 @@ int Client::run()
 		}
 		}
 	}
-
-
 
 	return result;
 }
