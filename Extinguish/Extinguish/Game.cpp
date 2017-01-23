@@ -96,7 +96,8 @@ void Game::Update(float dt)
 			server.SetGameStates(gameStates);
 		}
 		// get camera position
-		client.setLocation(gameStates[0]->position);
+		//client.setLocation(gameStates[0]->position);
+		//client.setRotation(gameStates[0]->rotation);
 		// send to server
 		client.sendPacket();
 
