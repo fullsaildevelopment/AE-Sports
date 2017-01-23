@@ -99,17 +99,16 @@ void SphereCollider::Update(float dt, InputManager* input)
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (sphere->isTrigger() && isTrigger())
+			if (sphere->isTrigger() || isTrigger())
 			{
 				if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
 				{
-					if (sphere->isTrigger() || isTrigger())
-					{
-						sphere->GetGameObject()->OnTriggerEnter(this);
-						tg->OnTriggerEnter(sphere);
-					}
+
+					sphere->GetGameObject()->OnTriggerEnter(this);
+					tg->OnTriggerEnter(sphere);
 				}
 			}
+
 			else
 			{
 				Sphere s = GetWorldSphere();
@@ -127,7 +126,6 @@ void SphereCollider::Update(float dt, InputManager* input)
 						tgt->SetPosition(s.m_Center);
 						sphere->GetGameObject()->OnCollisionEnter(this);
 						tg->OnCollisionEnter(sphere);
-						printf("c");
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
