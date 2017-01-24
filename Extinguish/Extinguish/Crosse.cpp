@@ -54,7 +54,6 @@ void Crosse::OnTriggerEnter(Collider* collider)
 
 			ballController->SetHolder(GetGameObject());
 		}
-		cout << "Crosse collision with gameball" << endl;
 	}
 }
 
