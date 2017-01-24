@@ -42,38 +42,34 @@ void Crosse::Update(float dt, InputManager* input)
 
 }
 
-void Crosse::OnCollisionEnter(Collider* collider)
+void Crosse::OnTriggerEnter(Collider* collider)
 {
 	if (collider->GetGameObject()->GetName() == "GameBall")
 	{
-		collider->GetGameObject()->GetTransform()->SetParent(transform);
-
 		BallController* ballController = collider->GetGameObject()->GetComponent<BallController>();
-		ballController->SetIsHeld(true);
+		if (!ballController->GetIsHeld())
+		{
+			collider->GetGameObject()->GetTransform()->SetPosition({ 0,0, 0 });
+			collider->GetGameObject()->GetTransform()->SetParent(transform);
 
-		cout << "Crosse collision with gameball" << endl;
-	}
-	else
-	{
-		cout << "Crosse collision with something else" << endl;
+			ballController->SetHolder(GetGameObject());
+		}
 	}
 }
 
 //misc
 void Crosse::Throw()
 {
-	BallController* ballController = ballTransform->GetGameObject()->GetComponent<BallController>();
-
-	if (ballController->GetIsHeld())
+	const float throwSpeed = 10.0f;
+	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
+	if (ball->GetHolder() == GetGameObject())
 	{
-		const float throwSpeed = 250;
-
 		//detach ball
 		ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 });
 		ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z });
 		ballTransform->SetParent(nullptr);
 		transform->RemoveChild(ballTransform);
-		ballController->SetIsHeld(false);
+		ball->Throw();
 
 		//update ball after set position
 		ballTransform->GetWorld();
@@ -160,7 +156,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 						//transform->Translate({ -up.x, -up.y, -up.z });
 					}
 
-					cout << position.x << " " << position.y << " " << position.z << endl;
+					
 
 					//cout << up.x << " " << up.y << endl;
 				}
@@ -212,6 +208,5 @@ void Crosse::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 up = transform->GetUp();
 		transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
-		cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
 	}
 }

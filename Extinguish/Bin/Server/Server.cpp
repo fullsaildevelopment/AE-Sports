@@ -1,6 +1,13 @@
 #include "Server.h"
 
-Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
+//Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
+Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[16];
+
+
+void Server::setObjectCount(int count) { 
+	serverObjs = count;
+//	clientStates = new CLIENT_GAME_STATE[serverObjs]();
+}
 
 Server::Server()
 {
@@ -122,6 +129,10 @@ int  Server::update()
 		}
 	}
 
+	if (result == 2)
+	{
+		sendPackets();
+	}
 
 	return result;
 }
@@ -214,8 +225,9 @@ void Server::sendNew()
 	}
 
 	bsOut.Write(newID);
+	bsOut.Write(serverObjs);
 
-	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 
 void Server::unregisterClient()
@@ -249,16 +261,16 @@ void Server::recievePacket()
 
 	CLIENT_GAME_STATE tempState;
 
-	bIn.Read(tempState.timeStamp);
+//	bIn.Read(tempState.timeStamp);
 	bIn.Read(tempState.clientID);
-	bIn.Read(tempState.nameLength);
-	bIn.Read(tempState.animationName, (unsigned int)tempState.nameLength);
+//	bIn.Read(tempState.nameLength);
+//	bIn.Read(tempState.animationName, (unsigned int)tempState.nameLength);
 	bIn.Read(tempState.hasBall);
 //	bIn.Read(tempState.world);
 	bIn.Read(tempState.position);
 	bIn.Read(tempState.rotation);
 
-	clientStates[tempState.clientID - 1] = tempState;
+	clientStates[tempState.clientID] = tempState;
 
 	lastState = (int)tempState.clientID;
 
@@ -300,12 +312,12 @@ void Server::sendPackets()
 		bOut.Write((MessageID)ID_INCOMING_PACKET);
 		bOut.Write((UINT8)serverObjs);
 
-		for (unsigned int i = 0; i < serverObjs; ++i)
+		for (unsigned int i = 0; i < (unsigned int)serverObjs; ++i)
 		{
 			//bOut.Write(GetTime());
 			bOut.Write(clientStates[i].clientID);
-			bOut.Write(clientStates[i].nameLength);
-			bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
+//			bOut.Write(clientStates[i].nameLength);
+//			bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
 			bOut.Write(clientStates[i].hasBall);
 	//		bOut.Write(clientStates[i].world);
 			bOut.Write(clientStates[i].position);
@@ -315,13 +327,15 @@ void Server::sendPackets()
 	}
 }
 
-void Server::setStates(unsigned int index, UINT8 id, char * animationName, UINT8 length, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot)
+void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot)
 {
-	memcpy(clientStates[index].animationName, animationName, length);
-	clientStates[index].nameLength = length;
-	clientStates[index].clientID = id;
-	clientStates[index].hasBall = hasBall;
-//	clientStates[index].world = state->world;
-	clientStates[index].position = pos;
-	clientStates[index].rotation = rot;
+	//if (serverObjs > 0) {
+		//	memcpy(clientStates[index].animationName, animationName, length);
+		//	clientStates[index].nameLength = length;
+		clientStates[index].clientID = index;
+		clientStates[index].hasBall = hasBall;
+		//	clientStates[index].world = state->world;
+		clientStates[index].position = pos;
+		clientStates[index].rotation = rot;
+	//}
 }

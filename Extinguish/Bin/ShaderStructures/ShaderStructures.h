@@ -5,6 +5,7 @@
 #include <stdio.h>
 using namespace DirectX;
 
+
 struct ModelViewProjectionConstantBuffer
 {
 	XMFLOAT4X4 model;
