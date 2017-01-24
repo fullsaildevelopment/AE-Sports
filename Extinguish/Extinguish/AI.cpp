@@ -5,35 +5,6 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
-void AI::OnTriggerEnter(Collider *obj)
-{
-	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
-
-	// if i bump into a player and they are intentionally attacking me
-	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
-	{
-		// drop the ball and 'stumble' in the way they pushed me
-		ballClass->DropBall(me);
-
-		float num = 3;
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
-		me->GetTransform()->AddVelocity(vel);
-	}
-
-
-	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
-
-	// if i bump into the ball, i caught it
-	if (col)
-	{
-		if (col->GetGameObject()->GetTag() == "Ball")
-		{
-			ballClass->SetIsHeld(true);
-			ballClass->SetHolder(me);
-		}
-	}
-}
-
 void AI::UpdateState(State newState)
 {
 	switch (currState)
@@ -50,6 +21,22 @@ void AI::UpdateState(State newState)
 
 	default: break;
 
+	}
+}
+
+void AI::OnTriggerEnter(Collider *obj)
+{
+	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
+
+	// if i bump into a player and they are intentionally attacking me
+	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+	{
+		// drop the ball and 'stumble' in the way they pushed me
+		ballClass->DropBall(me);
+
+		float num = 3;
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
+		me->GetTransform()->AddVelocity(vel);
 	}
 }
 

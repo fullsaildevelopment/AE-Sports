@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "vec3.h"
 #include "SphereCollider.h"
+#include "CapsuleCollider.h"
 
 class BallController : public Component
 {
