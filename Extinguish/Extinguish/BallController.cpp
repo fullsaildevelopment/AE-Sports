@@ -39,10 +39,31 @@ void BallController::Init()
 
 void BallController::Update(float dt, InputManager* input)
 {
-	if (isHeld)
+	timer.Signal();
+	if (isHeld && !isThrown)
 	{
 		me->GetTransform()->SetVelocity(float3(0, 0, 0));
 	}
+
+	else 
+		me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
+
+	if (isThrown)
+	{
+		if (timer.TotalTime() > 0.09f)
+		{
+			isHeld = false;
+			isThrown = false;
+			holder = nullptr;
+		}
+	}
+}
+
+void BallController::Throw()
+{
+	timer.Restart();
+	isThrown = true;
+	holder = nullptr;
 }
 
 void BallController::ThrowTo(GameObject *target)
