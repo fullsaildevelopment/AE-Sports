@@ -18,10 +18,11 @@
 #include "Client Wrapper.h"
 #include "Server Wrapper.h"
 #include "SoundEngine.h"
+#include "EventHandler.h"
 
 class BallController;
 
-class Game
+class Game : public EventHandler
 {
 private:
 	std::vector<Scene*> scenes;
@@ -39,12 +40,21 @@ private:
 	ServerWrapper server;
 	std::vector<GameState*> gameStates;
 
+	static int clientID;
+
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
 public:
+	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);
 	void Update(float dt);
 	void Render();
 	void Shutdown();
+
+	//misc
 	void LoadScene(unsigned int index);
+	void HandleEvent(Event* e);
+
+	//getters
+	static int GetClientID();
 };

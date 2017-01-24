@@ -54,6 +54,8 @@ bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std
 {
 	bool result = true;
 
+	lowLevelIO = new CAkFilePackageLowLevelIOBlocking();
+
 	result = InitSettings();
 
 	InitBank();
@@ -172,7 +174,6 @@ void SoundEngine::InitBank()
 	eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
 	eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
 	eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
-
 }
 
 void SoundEngine::InitGameObjects(std::vector<unsigned int> ids, std::vector<std::string> names)
