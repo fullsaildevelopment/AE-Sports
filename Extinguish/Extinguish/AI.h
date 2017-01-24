@@ -4,7 +4,6 @@
 #include "vec3.h"
 #include "BallController.h"
 #include "CapsuleCollider.h"
-#include "SphereCollider.h"
 
 class AI : public Component
 {
