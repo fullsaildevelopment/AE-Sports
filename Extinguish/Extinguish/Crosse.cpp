@@ -156,7 +156,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 						//transform->Translate({ -up.x, -up.y, -up.z });
 					}
 
-					cout << position.x << " " << position.y << " " << position.z << endl;
+					
 
 					//cout << up.x << " " << up.y << endl;
 				}
@@ -208,6 +208,5 @@ void Crosse::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 up = transform->GetUp();
 		transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
-		cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
 	}
 }

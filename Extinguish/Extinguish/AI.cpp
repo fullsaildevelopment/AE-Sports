@@ -81,15 +81,16 @@ void AI::Init()
 	currState = idle;
 }
 
-void AI::Update()
+void AI::Update(float dt, InputManager* input)
 {
 	// check events and UpdateState accordingly
+	printf("%f", me->GetTransform()->GetPosition().x);
 
 	// if i have the ball
 	if (ballClass->GetIsHeld())
 	{
-		if (ballClass->GetHolder() == me)
-			Score();
+		//if (ballClass->GetHolder() == me)
+			//Score();
 	}
 
 	else
@@ -132,6 +133,7 @@ void AI::GetBall()
 	// if im right next to the ball
 	if (RunTo(ball) && dist.magnitude() < 1)
 	{
+		int i = 0;
 		// running into the ball should pick it up
 	}
 }
@@ -165,18 +167,18 @@ bool AI::RunTo(GameObject *target)
 	// change this later to running with turning*********************************
 
 	//u - forward vector
-	float3 u = me->GetTransform()->GetForwardf3();
+	float3 u = (me->GetTransform()->GetForwardf3() * float3(1,0,1)).normalize();
 
 	//v - vector between me and destination
-	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+	float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
-	float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
+	float degRad = dot_product(u, v);// / (u.magnitude() * v.magnitude());
 
-	me->GetTransform()->RotateX(degRad);
+	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(float3(12, 12, 12));
+	me->GetTransform()->SetVelocity(u);
 
 	if (v.magnitude() < 3)
 		return true;

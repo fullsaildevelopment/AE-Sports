@@ -4,10 +4,10 @@ using namespace std;
 
 void BallController::OnTriggerEnter(Collider *obj)
 {
-	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+	SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
 
 	// if i collide with a crosse
-	if (col)
+	if (scol)
 	{
 		// set everything to them being the holder
 		isHeld = true;
