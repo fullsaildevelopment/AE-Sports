@@ -300,6 +300,12 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddComponent(meterboxcol6);
 
+	meterbox6->SetTag("Team1");
+	AI *mbox6AI = new AI(meterbox6);
+	meterbox6->AddComponent(mbox6AI);
+
+
+
 	GameObject* Ball = new GameObject();
 	basic->AddGameObject(Ball);
 	Ball->Init("Ball");
@@ -392,6 +398,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 	ballController->SetHolder(crosse);
+
+	gameBall->SetTag("Ball");
+	mbox6AI->Init();
+
 
 	crosse->Init("Crosse");
 	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
