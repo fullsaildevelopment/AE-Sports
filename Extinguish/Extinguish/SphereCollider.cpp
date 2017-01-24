@@ -18,7 +18,6 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Colli
 void SphereCollider::Update(float dt, InputManager* input)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
-	//GetGameObject()->GetTransform()->AddVelocity({ 0, -9.8f * dt, 0 });
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	size_t size = (*Others).size();
@@ -99,17 +98,16 @@ void SphereCollider::Update(float dt, InputManager* input)
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (sphere->isTrigger() && isTrigger())
+			if (sphere->isTrigger() || isTrigger())
 			{
 				if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
 				{
-					if (sphere->isTrigger() || isTrigger())
-					{
-						sphere->GetGameObject()->OnTriggerEnter(this);
-						tg->OnTriggerEnter(sphere);
-					}
+
+					sphere->GetGameObject()->OnTriggerEnter(this);
+					tg->OnTriggerEnter(sphere);
 				}
 			}
+
 			else
 			{
 				Sphere s = GetWorldSphere();
@@ -127,7 +125,6 @@ void SphereCollider::Update(float dt, InputManager* input)
 						tgt->SetPosition(s.m_Center);
 						sphere->GetGameObject()->OnCollisionEnter(this);
 						tg->OnCollisionEnter(sphere);
-						printf("c");
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
@@ -159,7 +156,11 @@ Sphere SphereCollider::GetSphere()
 }
 Sphere SphereCollider::GetWorldSphere()
 {
-	float3 pos = GetGameObject()->GetTransform()->GetPosition();
+	XMFLOAT4X4 m = GetGameObject()->GetTransform()->GetWorld();
+	float3 pos;
+	pos.x = m._41;
+	pos.y = m._42;
+	pos.z = m._43;
 	Sphere s;
 	s.m_Center = float3(pos.x, pos.y, pos.z);
 	s.m_Radius = radius;
