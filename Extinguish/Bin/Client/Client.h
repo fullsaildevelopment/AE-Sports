@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
+#include <vector>
 
 #include "..\RakNet\Gets.h"
 #include "..\RakNet\RakPeerInterface.h"
@@ -33,6 +34,23 @@ using namespace DirectX;
 
 class CLIENTDLL_API Client
 {
+public:
+
+#pragma pack(push, 1)
+	struct CLIENT_GAME_STATE
+	{
+		UINT8 clientID;
+		UINT8 nameLength;
+		char animationName[125];
+		bool hasBall = false;
+		//	XMFLOAT4X4 world;
+		XMFLOAT3 position;
+		XMFLOAT3 rotation;
+
+		CLIENT_GAME_STATE() {}
+	};
+#pragma pack(pop)
+
 private:
 
 	enum GameMessages
@@ -47,26 +65,13 @@ private:
 		ID_REMOVE_CLIENT,
 		ID_INCOMING_INPUT
 	};
-#pragma pack(push, 1)
-	struct CLIENT_GAME_STATE
-	{
-		UINT8 clientID;
-		UINT8 nameLength;
-		char animationName[125];
-		bool hasBall = false;
-	//	XMFLOAT4X4 world;
-		XMFLOAT3 position;
-		XMFLOAT3 rotation;
-
-		CLIENT_GAME_STATE() {}
-	};
-#pragma pack(pop)
 
 	static RakPeerInterface * peer;
 	static Packet * packet;
 	static char * address;
 	static CLIENT_GAME_STATE * myState;
 	static CLIENT_GAME_STATE * clientStates;
+//	static std::vector<CLIENT_GAME_STATE> * states;
 public:
 
 #pragma pack(push, 1)
@@ -94,16 +99,18 @@ public:
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendPacket();
-	UINT8 getID();
+	UINT8 getID() { return clientID; }
 	CLIENT_GAME_STATE getState(unsigned int index);
 
-	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
+	XMFLOAT3 getLocation(unsigned int index) { 
+		return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
 	int getNumPackets() { return numPackets; }
 	void setLocation(XMFLOAT3 loc) { myState->position = loc; }
 	void setRotation(XMFLOAT3 rot) { myState->rotation = rot; }
 
 private:
+	UINT8 objects;
 	int numPackets = 0;
 	bool disconnect = false;
 	UINT8 clientID;

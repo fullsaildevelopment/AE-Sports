@@ -5,6 +5,25 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
+void AI::UpdateState(State newState)
+{
+	switch (currState)
+	{
+	case idle: Idle(); break;
+
+	case getBall: GetBall(); break;
+
+	case defensive: 
+		// do something
+		break;
+
+	case defendTeammate: DefendTeammate(); break;
+
+	default: break;
+
+	}
+}
+
 void AI::OnTriggerEnter(Collider *obj)
 {
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
@@ -18,27 +37,6 @@ void AI::OnTriggerEnter(Collider *obj)
 		float num = 3;
 		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
 		me->GetTransform()->AddVelocity(vel);
-	}
-}
-
-void AI::UpdateState(State newState)
-{
-	switch (currState)
-	{
-	case idle: Idle(); break;
-
-	case getBall: GetBall(); break;
-
-	case defensive: 
-		// do something
-		break;
-
-	case offensive:
-		// do something
-		break;
-
-	default: break;
-
 	}
 }
 
@@ -83,19 +81,25 @@ void AI::Init()
 	currState = idle;
 }
 
-void AI::Update()
+void AI::Update(float dt, InputManager* input)
 {
 	// check events and UpdateState accordingly
+	printf("%f", me->GetTransform()->GetPosition().x);
 
 	// if i have the ball
 	if (ballClass->GetIsHeld())
-		if (ballClass->GetHolder() == me)
-			Score();
-	
+	{
+		//if (ballClass->GetHolder() == me)
+			//Score();
+	}
+
+	else
+		GetBall();
 
 	// for each enemy
 		// if they're coming closer to me
 			// pass the ball to a teammate
+
 }
 
 void AI::Idle()
@@ -120,7 +124,7 @@ void AI::GetBall()
 
 		else // he's my teammate
 		{
-			// help him?
+			UpdateState(defendTeammate);
 		}
 	}
 
@@ -129,12 +133,18 @@ void AI::GetBall()
 	// if im right next to the ball
 	if (RunTo(ball) && dist.magnitude() < 1)
 	{
-		// grab it
+		int i = 0;
+		// running into the ball should pick it up
+	}
+}
 
-		// the AI would need to have some way of 'hitting' the ball that way the ball could make them the holder
-		// for now, i'll do it here manually
-		ballClass->SetIsHeld(true);
-		ballClass->SetHolder(me);
+void AI::DefendTeammate()
+{
+	// double check that my teammate has the ball
+	if (ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() == me->GetTag())
+	{
+		// find the guy closest to my teammate
+		// attack him
 	}
 }
 
@@ -143,10 +153,10 @@ void AI::Attack(GameObject *target)
 	isAttacking = true;
 
 	// if they're not on my team
-	if (target->GetName() != me->GetName()) 
+	if (target->GetName() != me->GetName() && RunTo(target)) 
 	{
-		// hit
-		// if they have the ball, make them drop it
+		// run into target
+		me->GetTransform()->AddVelocity(float3(20, 20, 20));
 	}
 
 	isAttacking = false;
@@ -157,18 +167,18 @@ bool AI::RunTo(GameObject *target)
 	// change this later to running with turning*********************************
 
 	//u - forward vector
-	float3 u = me->GetTransform()->GetForwardf3();
+	float3 u = (me->GetTransform()->GetForwardf3() * float3(1,0,1)).normalize();
 
 	//v - vector between me and destination
-	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+	float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
-	float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
+	float degRad = dot_product(u, v);// / (u.magnitude() * v.magnitude());
 
-	me->GetTransform()->RotateX(degRad);
+	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(float3(12, 12, 12));
+	me->GetTransform()->SetVelocity(u);
 
 	if (v.magnitude() < 3)
 		return true;

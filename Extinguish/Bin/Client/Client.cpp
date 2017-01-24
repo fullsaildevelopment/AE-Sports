@@ -7,21 +7,26 @@ Packet * Client::packet = nullptr;
 char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
-Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[8];
+Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[16];
+//std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
-UINT8 Client::getID() { return clientID; }
 
 Client::Client()
 {
 	//XMStoreFloat4x4(&myState->world, XMMatrixIdentity());
 	memcpy(myState->animationName, "name here", strlen("name here"));
 	myState->nameLength = (UINT8)strlen("name here");
+	//states->resize(16);
 }
 
 Client::~Client()
 {
 	delete myState;
-	delete[] clientStates;
+	/*for (unsigned int i = 0; i < objects; ++i)
+	{
+		delete &clientStates[i];
+	}*/
+	//delete[] clientStates;
 }
 
 int Client::init(char* _address, UINT16 port)
@@ -238,10 +243,14 @@ void Client::readMessage()
 
 void Client::GetID()
 {
+	//UINT8 objs;
 	RakString rs;
 	BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
 	bsIn.Read(clientID);
+	bsIn.Read(objects);
+
+//	clientStates = new CLIENT_GAME_STATE[objects]();
 }
 
 void Client::registerName()
@@ -282,8 +291,8 @@ void Client::sendPacket()
 	bOut.Write((MessageID)ID_INCOMING_PACKET);
 	//bOut.Write(clientState->timeStamp);
 	bOut.Write(clientID);
-	bOut.Write(myState->nameLength);
-	bOut.Write(myState->animationName, myState->nameLength);
+//	bOut.Write(myState->nameLength);
+//	bOut.Write(myState->animationName, myState->nameLength);
 	bOut.Write(myState->hasBall);
 
 	//bOut.Write(myState->world);
@@ -295,25 +304,28 @@ void Client::sendPacket()
 
 void Client::recievePackets()
 {
-	BitStream bIn(packet->data, packet->length, false);
-	bIn.IgnoreBytes(sizeof(MessageID));
-	//bIn.Read(clientState->timeStamp);
-
-	UINT8 objects;
-	bIn.Read(objects);
-
-	numPackets = (int)objects;
-	// for each game object, read in the data of the object state
-
-	for (unsigned int i = 0; i < (unsigned int)objects; ++i)
+	if (clientStates)
 	{
-		bIn.Read(clientStates[i].clientID);
-		bIn.Read(clientStates[i].nameLength);
-		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
-		bIn.Read(clientStates[i].hasBall);
-	//	bIn.Read(clientStates[i].world);
-		bIn.Read(clientStates[i].position);
-		bIn.Read(clientStates[i].rotation);
+		BitStream bIn(packet->data, packet->length, false);
+		bIn.IgnoreBytes(sizeof(MessageID));
+		//bIn.Read(clientState->timeStamp);
+
+
+		bIn.Read(objects);
+
+		numPackets = (int)objects;
+		// for each game object, read in the data of the object state
+
+		for (unsigned int i = 0; i < (unsigned int)objects; ++i)
+		{
+			bIn.Read(clientStates[i].clientID);
+			//		bIn.Read(clientStates[i].nameLength);
+			//		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
+			bIn.Read(clientStates[i].hasBall);
+			//	bIn.Read(clientStates[i].world);
+			bIn.Read(clientStates[i].position);
+			bIn.Read(clientStates[i].rotation);
+		}
 	}
 }
 

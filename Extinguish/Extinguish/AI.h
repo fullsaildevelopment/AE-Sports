@@ -13,7 +13,7 @@ private:
 		idle,
 		getBall,
 		defensive,
-		offensive,
+		defendTeammate,
 	};
 
 	bool isAttacking = false; // 
@@ -29,13 +29,14 @@ private:
 public:
 	AI(GameObject *obj);
 	void Init();
-	void Update();
+	void Update(float dt, InputManager* input) override;
 	void UpdateState(State newState);
 	void OnTriggerEnter(Collider *obj) override;
 
 	// States
 	void Idle();
 	void GetBall();
+	void DefendTeammate();
 
 	// Actions
 	void Attack(GameObject *target); // pass in the person you want to attack
