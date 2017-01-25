@@ -1,11 +1,16 @@
 #include "InputDownEvent.h"
 
 //InputDownEvent::InputDownEvent(int key, int mouse)
-InputDownEvent::InputDownEvent(InputManager* inputManager)
+//InputDownEvent::InputDownEvent(InputManager* inputManager, bool isServer)
+//{
+//	input = inputManager;
+//	this->isServer = isServer;
+//}
+
+InputDownEvent::InputDownEvent(InputManager* inputManager, int id)
 {
 	input = inputManager;
-	//keyPressed = key;
-	//mouseButton = mouse;
+	clientID = id;
 }
 
 InputDownEvent::~InputDownEvent()
@@ -19,28 +24,29 @@ void InputDownEvent::Init()
 
 }
 
-//getters
+//getters//
 InputManager* InputDownEvent::GetInput()
 {
 	return input;
 }
 
-//int InputDownEvent::GetKey()
+int InputDownEvent::GetID()
+{
+	return clientID;
+}
+
+//bool InputDownEvent::IsServer()
 //{
-//	return keyPressed;
+//	return isServer;
 //}
-//
-//int InputDownEvent::GetMouse()
+
+//setters//
+//void InputDownEvent::SetIsServer(bool toggle)
 //{
-//	return mouseButton;
+//	isServer = toggle;
 //}
-//
-//int InputDownEvent::GetX()
-//{
-//	return x;
-//}
-//
-//int InputDownEvent::GetY()
-//{
-//	return y;
-//}
+
+void InputDownEvent::SetID(int id)
+{
+	clientID = id;
+}

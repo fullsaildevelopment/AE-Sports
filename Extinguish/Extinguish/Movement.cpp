@@ -28,7 +28,10 @@ void Movement::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		HandleInput(inputDownEvent);
+		if (inputDownEvent->GetID() == 1)
+		{
+			HandleInput(inputDownEvent);
+		}
 	}
 }
 

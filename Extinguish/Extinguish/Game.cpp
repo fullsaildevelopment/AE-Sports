@@ -3,36 +3,36 @@
 #include "Movement.h"
 #include "BallController.h"
 #include "AI.h"
+#include "EventDispatcher.h"
 
 using namespace DirectX;
 using namespace std;
 
+//initialize static member
+int Game::clientID = 1;
+
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
+	//register to event dispatcher
+	EventDispatcher::GetSingleton()->RegisterHandler(this);
+
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
 	if (isMultiplayer)
 	{
-				if (server.init("127.0.0.1", 60000) == 1)
-				{
-					isMultiplayer = true;
-					isServer = true;
-
-					client.init("127.0.0.1", 60001);
-				}
-				else
-				{
-					isServer = false;
-					client.init("127.0.0.1", 60001);
-				}
-
-		/*if (isServer)
+		if (server.init("127.0.0.1", 60000) == 1)
 		{
-			server.init("127.0.0.1", 60000);
-		}
+			isMultiplayer = true;
+			isServer = true;
 
-		client.init("127.0.0.1", 60001);*/
+			client.init("127.0.0.1", 60001);
+		}
+		else
+		{
+			isServer = false;
+			client.init("127.0.0.1", 60001);
+		}
 	}
 
 	currentScene = 0;
@@ -56,8 +56,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		names[i] = gameObject->GetName();
 	}
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
-	//soundEngine.InitSoundEngine(ids, names);
-
+	soundEngine.InitSoundEngine(ids, names);
 
 	if (isServer)
 	{
@@ -71,6 +70,8 @@ void Game::Update(float dt)
 
 	if (isMultiplayer)
 	{
+		//set client id
+		Game::clientID = client.getID();
 
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -115,13 +116,11 @@ void Game::Update(float dt)
 
 		int clientState = client.run();
 
-
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
 		{
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
-
 
 			int id = client.getID();
 			for (unsigned int i = 0; i < numobjs; ++i)
@@ -144,7 +143,7 @@ void Game::Update(float dt)
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
 
-	//soundEngine.ProcessAudio();
+	soundEngine.ProcessAudio();
 
 }
 
@@ -166,13 +165,35 @@ void Game::Shutdown()
 		delete gameStates[i];
 	}
 
-	//soundEngine.Terminate();
+	soundEngine.Terminate();
 }
+
+//misc
 
 //if scenes are already all loaded, then this should be setscene instead
 void Game::LoadScene(unsigned int index)
 {
 
+}
+
+void Game::HandleEvent(Event* e)
+{
+	//filter throw events to find right one
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+	if (inputDownEvent)
+	{
+		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input
+		if (isServer && inputDownEvent->GetID() != 1)
+		{
+			inputDownEvent->SetID(clientID);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+		}
+		else if (inputDownEvent->GetID() > 1) //if not server
+		{
+			client.sendInput(inputDownEvent);
+		}
+	}
 }
 
 //getters//
@@ -428,4 +449,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
+}
+
+//getters
+int Game::GetClientID()
+{
+	return clientID;
 }

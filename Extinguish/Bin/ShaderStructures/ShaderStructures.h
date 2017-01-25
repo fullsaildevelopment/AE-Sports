@@ -106,3 +106,17 @@ struct GameState
 	XMFLOAT3 rotation;
 };
 #pragma pack(pop)
+
+#pragma pack(push, 1)
+struct InputEventStruct
+{
+	bool keyboard[256];
+	bool keyboardDown[256];
+	bool keyboardUp[256];
+	bool mouse[3];
+	bool mouseDown[3];
+	bool mouseUp[3];
+	int mouseX, mouseY;
+	int clientID;
+};
+#pragma pack(pop)

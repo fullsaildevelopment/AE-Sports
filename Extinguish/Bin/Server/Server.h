@@ -72,7 +72,24 @@ private:
 	};
 #pragma pack(pop)
 
+
+#pragma pack(push, 1)
+	struct InputEventStruct
+	{
+		bool keyboard[256];
+		bool keyboardDown[256];
+		bool keyboardUp[256];
+		bool mouse[3];
+		bool mouseDown[3];
+		bool mouseUp[3];
+		int mouseX, mouseY;
+		int clientID;
+	};
+
+#pragma pack(pop)
+
 	static CLIENT_GAME_STATE * clientStates;
+	InputEventStruct clientInput[4];
 	//static CLIENT_GAME_STATE * aiStates;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
@@ -94,6 +111,7 @@ public:
 	void sendPackets();
 	void setObjectCount(int count);
 	int getNewState() { return lastState; }
+	InputEventStruct * getInputEvent(unsigned int index) { return &clientInput[index]; }
 	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[i]; }
 
 private:
