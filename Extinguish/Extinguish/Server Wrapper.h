@@ -135,6 +135,11 @@ public:
 		return newServer.getNewState();
 	}
 
+	unsigned int getTotalPlayers()
+	{
+		return newServer.getPlayerCount();
+	}
+
 	/*char * getInput()
 	{
 		return newServer.

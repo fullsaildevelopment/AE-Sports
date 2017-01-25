@@ -123,6 +123,8 @@ public:
 		newInput[3] = false;
 	}
 
+	unsigned int getPlayerCount() { return numPlayers; }
+
 	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
 		clientStates[index].position = position;
 	clientStates[index].rotation = rotation;

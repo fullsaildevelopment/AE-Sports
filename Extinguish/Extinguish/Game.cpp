@@ -123,19 +123,41 @@ void Game::Update(float dt)
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 
 			int id = client.getID();
-			for (unsigned int i = 0; i < numobjs; ++i)
+
+			if (id != 1)
 			{
-				//if (i != 0 && i != id)
-				if (i != id)
+				for (unsigned int i = 0; i < numobjs; ++i)
 				{
-					GameObject* gameObject = (*gameObjects)[i];
-					XMFLOAT3 position, rotation;
-					position = client.getLocation(i);
-					rotation = client.getRotation(i);
-					gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
-					gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
-					//gameObject->GetTransform()->SetLocal(client.getLocation(i));
-					//gameStates[i]->world = client.getLocation(i);
+					//if (i != 0 && i != id)
+					if (i != id)
+					{
+						GameObject* gameObject = (*gameObjects)[i];
+						XMFLOAT3 position, rotation;
+						position = client.getLocation(i);
+						rotation = client.getRotation(i);
+						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
+						//gameStates[i]->world = client.getLocation(i);
+					}
+				}
+			}
+			else
+			{
+				for (unsigned int i = 1; i < server.getTotalPlayers(); ++i)
+				{
+					//if (i != 0 && i != id)
+					if (i != id)
+					{
+						GameObject* gameObject = (*gameObjects)[i];
+						XMFLOAT3 position, rotation;
+						position = client.getLocation(i);
+						rotation = client.getRotation(i);
+						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
+						//gameStates[i]->world = client.getLocation(i);
+					}
 				}
 			}
 		}
