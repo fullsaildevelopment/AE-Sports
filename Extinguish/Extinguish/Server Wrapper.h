@@ -49,7 +49,6 @@ public:
 			{
 				InputEventStruct * tempEvent = (InputEventStruct*)newServer.getInputEvent(i);
 
-
 				EventDispatcher::GetSingleton()->Dispatch(inputEvent);
 			}
 

@@ -396,7 +396,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* plane = new GameObject();
 	basic->AddGameObject(plane);
 	plane->Init("Plane");
-	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { .01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* planeRenderer = new Renderer();
 	plane->AddComponent(planeRenderer);
 	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
