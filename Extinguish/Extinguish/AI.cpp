@@ -140,8 +140,25 @@ void AI::DefendTeammate()
 	// double check that my teammate has the ball
 	if (ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() == me->GetTag())
 	{
-		// find the guy closest to my teammate
-		// attack him
+		float dist = 785; // random high number
+		GameObject *target;
+
+		// for each enemy
+		for (int i = 0; i < listOfEnemies.size(); ++i)
+		{
+			// dist between enemy and my guy
+			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition();
+
+			// if this dist is less than last
+			if (tmp.magnitude() < dist)
+			{
+				// make them my target
+				dist = tmp.magnitude();
+				target = listOfEnemies[i];
+			}
+		}
+
+		Attack(target);
 	}
 }
 
