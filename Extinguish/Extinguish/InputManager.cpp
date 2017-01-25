@@ -332,6 +332,6 @@ void InputManager::SetMousePosition(LPARAM lparam)
 void InputManager::SendEvent()
 {
 	//this will send input to game and anything else that handles input
-	InputDownEvent* inputEvent = new InputDownEvent(this, Game::GetClientID());
+	InputDownEvent* inputEvent = new InputDownEvent(this, Game::GetClientID(), false);
 	EventDispatcher::GetSingleton()->Dispatch(inputEvent);
 }

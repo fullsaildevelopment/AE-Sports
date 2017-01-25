@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Networking", "Networking", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wwise", "Bin\Wwise\Wwise.vcxproj", "{B8B24032-DD77-4FB2-87E7-C205A265943D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EventManager", "Bin\EventManager\EventManager.vcxproj", "{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -99,6 +101,16 @@ Global
 		{B8B24032-DD77-4FB2-87E7-C205A265943D}.Release|x64.Build.0 = Release|x64
 		{B8B24032-DD77-4FB2-87E7-C205A265943D}.Release|x86.ActiveCfg = Release|Win32
 		{B8B24032-DD77-4FB2-87E7-C205A265943D}.Release|x86.Build.0 = Release|Win32
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Debug|ARM.ActiveCfg = Debug|Win32
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Debug|x64.ActiveCfg = Debug|x64
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Debug|x64.Build.0 = Debug|x64
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Debug|x86.ActiveCfg = Debug|Win32
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Debug|x86.Build.0 = Debug|Win32
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Release|ARM.ActiveCfg = Release|Win32
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Release|x64.ActiveCfg = Release|x64
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Release|x64.Build.0 = Release|x64
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Release|x86.ActiveCfg = Release|Win32
+		{C6D1A26D-4369-4E23-B6F0-FAE06B07F890}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
