@@ -221,6 +221,9 @@
     <ClInclude Include="Server Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
+    <ClInclude Include="MathStuff.h">
+      <Filter>CollisionLibrary\Structs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
