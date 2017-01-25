@@ -256,7 +256,10 @@ XMFLOAT4X4 Camera::GetView()
 	XMFLOAT4X4 view;
 
 	//XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up )));
+	XMFLOAT3 translation = { 0, 5, 0 };
+	transform->Translate({ translation.x, translation.y, translation.z });
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMLoadFloat4x4(&transform->GetWorld())));
+	transform->Translate({ translation.x, -translation.y, translation.z });
 
 	return view;
 }
