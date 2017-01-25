@@ -3,12 +3,19 @@
 #include "Movement.h"
 #include "BallController.h"
 #include "AI.h"
+#include "EventDispatcher.h"
 
 using namespace DirectX;
 using namespace std;
 
+//initialize static member
+int Game::clientID = 1;
+
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
+	//register to event dispatcher
+	EventDispatcher::GetSingleton()->RegisterHandler(this);
+
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
@@ -56,7 +63,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		names[i] = gameObject->GetName();
 	}
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
-	//soundEngine.InitSoundEngine(ids, names);
+	soundEngine.InitSoundEngine(ids, names);
 
 
 	if (isServer)
@@ -71,6 +78,8 @@ void Game::Update(float dt)
 
 	if (isMultiplayer)
 	{
+		//set client id
+		Game::clientID = client.getID();
 
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -144,7 +153,7 @@ void Game::Update(float dt)
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
 
-	//soundEngine.ProcessAudio();
+	soundEngine.ProcessAudio();
 
 }
 
@@ -166,13 +175,35 @@ void Game::Shutdown()
 		delete gameStates[i];
 	}
 
-	//soundEngine.Terminate();
+	soundEngine.Terminate();
 }
+
+//misc
 
 //if scenes are already all loaded, then this should be setscene instead
 void Game::LoadScene(unsigned int index)
 {
 
+}
+
+void Game::HandleEvent(Event* e)
+{
+	//filter throw events to find right one
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+	if (inputDownEvent)
+	{
+		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input
+		if (isServer && inputDownEvent->GetID() != 1)
+		{
+			inputDownEvent->SetID(clientID);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+		}
+		else if (inputDownEvent->GetID() > 1) //if not server
+		{
+			client.sendInput(inputDownEvent);
+		}
+	}
 }
 
 //getters//
@@ -428,4 +459,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
+}
+
+//getters
+int Game::GetClientID()
+{
+	return clientID;
 }

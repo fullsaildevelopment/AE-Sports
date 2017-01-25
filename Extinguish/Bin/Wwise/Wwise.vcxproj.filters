@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="AK Files">
+      <UniqueIdentifier>{eec5ac79-05ca-4997-b610-489f8b8e17a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -21,10 +24,66 @@
     <ClInclude Include="SoundEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SoundEngine\Win32\AkDefaultIOHookBlocking.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Win32\AkDefaultIOHookDeferred.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Common\AkDefaultLowLevelIODispatcher.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Win32\AkFileHelpers.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Common\AkFileLocationBase.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Common\AkFilePackage.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Win32\AkFilePackageLowLevelIOBlocking.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Win32\AkFilePackageLowLevelIODeferred.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundEngine\Common\AkFilePackageLUT.h">
+      <Filter>AK Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Wwise_IDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SoundEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SoundEngine\Win32\AkDefaultIOHookBlocking.cpp">
+      <Filter>AK Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine\Win32\AkDefaultIOHookDeferred.cpp">
+      <Filter>AK Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine\Common\AkDefaultLowLevelIODispatcher.cpp">
+      <Filter>AK Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine\Common\AkFileLocationBase.cpp">
+      <Filter>AK Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine\Common\AkFilePackage.cpp">
+      <Filter>AK Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundEngine\Common\AkFilePackageLUT.cpp">
+      <Filter>AK Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SoundEngine\Common\AkFilePackageLowLevelIO.inl">
+      <Filter>AK Files</Filter>
+    </None>
+    <None Include="SoundEngine\Common\AkMultipleFileLocation.inl">
+      <Filter>AK Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
