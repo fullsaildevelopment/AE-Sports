@@ -137,6 +137,7 @@ int Client::run()
 		case ID_CLIENT_REGISTER:
 		{
 			GetID();
+			result = 3;
 			printf("Please enter a name (8 characters max): ");
 			memcpy(clientName, "Player", strlen("Player"));
 			registerName();
@@ -167,8 +168,6 @@ int Client::run()
 		}
 	}
 
-
-
 	return result;
 }
 
@@ -183,8 +182,8 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_PACKET);
 	bsOut.Write((UINT8)sizeof(InputEventStruct));
-	//bsOut.Write(clientID);
 	//bsOut.Write(states);
+	bsOut.Write(clientID);
 	bsOut.Write(keyboard);
 	bsOut.Write(keyboardDown);
 	bsOut.Write(keyboardUp);
@@ -193,7 +192,6 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	bsOut.Write(mouseUp);
 	bsOut.Write(mouseX);
 	bsOut.Write(mouseY);
-	bsOut.Write(clientID);
 
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;
