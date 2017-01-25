@@ -141,7 +141,7 @@ void AI::DefendTeammate()
 	if (ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() == me->GetTag())
 	{
 		float dist = 785; // random high number
-		GameObject *target;
+		GameObject *target = nullptr;
 
 		// for each enemy
 		for (int i = 0; i < listOfEnemies.size(); ++i)
@@ -158,7 +158,8 @@ void AI::DefendTeammate()
 			}
 		}
 
-		Attack(target);
+		if (target)
+			Attack(target);
 	}
 }
 
