@@ -3,6 +3,9 @@
 #include <vector>
 #include "Server.h"
 #include "..\ShaderStructures\ShaderStructures.h"
+#include "EventDispatcher.h"
+#include "InputDownEvent.h"
+
 class ServerWrapper
 {
 private:
@@ -40,11 +43,17 @@ public:
 		}
 		if (result == 3)
 		{
+			InputDownEvent* inputEvent = new InputDownEvent();
+
 			for (unsigned int i = 0; i < 4; ++i)
 			{
 				InputEventStruct * tempEvent = (InputEventStruct*)newServer.getInputEvent(i);
 
+
+				EventDispatcher::GetSingleton()->Dispatch(inputEvent);
 			}
+
+			delete inputEvent;
 		}
 
 		return result;
