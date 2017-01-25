@@ -178,7 +178,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	HRESULT clampSampleResult = device->CreateSamplerState(&samplerClampDesc, &clampSamplerState);
 
 	devContext->PSSetSamplers(0, 1, wrapSamplerState.GetAddressOf());
-	devContext->PSSetSamplers(1, 1, wrapSamplerState.GetAddressOf());
+	devContext->PSSetSamplers(1, 1, clampSamplerState.GetAddressOf());
 
 	//create lighting buffers and set them
 
