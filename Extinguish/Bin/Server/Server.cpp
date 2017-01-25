@@ -298,7 +298,7 @@ void Server::recieveInput()
 	bIn.Read((UINT8)tempState.mouseY);
 	bIn.Read(tempState.isServer);
 
-	tempState.keyboard[4] = true;
+	newInput[tempState.clientID - 1] = true;
 
 	clientInput[tempState.clientID - 1] = tempState;
 }
