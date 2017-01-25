@@ -915,9 +915,9 @@ bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
 
 bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 {
-	//float3 p2 = 
+	float3 p2 = float3(hex.h, 0, -hex.v);
 
-
+	float3 p3 = float3(0, 0, hex.v * 2);
 
 	float q2x = abs(s.m_Center.x - hex.seg.m_Start.x);
 	float q2y = abs(s.m_Center.y - hex.seg.m_Start.y);
