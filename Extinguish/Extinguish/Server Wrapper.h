@@ -36,24 +36,27 @@ public:
 
 			for (unsigned int i = 0; i < 4; ++i)
 			{
-				InputEventStruct * tempEvent = new InputEventStruct;
-				tempEvent->clientID = newServer.getInputEvent(i)->clientID;
-				memcpy(tempEvent->keyboard, newServer.getInputEvent(i)->keyboard, 256);
-				memcpy(tempEvent->keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
-				memcpy(tempEvent->keyboardDown, newServer.getInputEvent(i)->keyboardDown, 256);
-				memcpy(tempEvent->mouse, newServer.getInputEvent(i)->mouse, 3);
-				memcpy(tempEvent->mouseDown, newServer.getInputEvent(i)->mouseDown, 3);
-				memcpy(tempEvent->mouseUp, newServer.getInputEvent(i)->mouseUp, 3);
-				tempEvent->mouseX = newServer.getInputEvent(i)->mouseX;
-				tempEvent->mouseY = newServer.getInputEvent(i)->mouseY;
-				
-				
-				
-				if (tempEvent)
+				if (newServer.isInput(i))
+				{
+					InputEventStruct tempEvent;// = new InputEventStruct;
+					tempEvent.clientID = newServer.getInputEvent(i)->clientID;
+					memcpy(tempEvent.keyboard, newServer.getInputEvent(i)->keyboard, 256);
+					memcpy(tempEvent.keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
+					memcpy(tempEvent.keyboardDown, newServer.getInputEvent(i)->keyboardDown, 256);
+					memcpy(tempEvent.mouse, newServer.getInputEvent(i)->mouse, 3);
+					memcpy(tempEvent.mouseDown, newServer.getInputEvent(i)->mouseDown, 3);
+					memcpy(tempEvent.mouseUp, newServer.getInputEvent(i)->mouseUp, 3);
+					tempEvent.mouseX = newServer.getInputEvent(i)->mouseX;
+					tempEvent.mouseY = newServer.getInputEvent(i)->mouseY;
+
+
+
 					EventDispatcher::GetSingleton()->Dispatch(inputEvent);
 
-				delete tempEvent;
+					//delete tempEvent;
+				}
 			}
+			newServer.resetInput();
 			
 			delete inputEvent;
 			result = 2;
