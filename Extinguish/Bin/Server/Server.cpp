@@ -296,6 +296,7 @@ void Server::recieveInput()
 	bIn.Read((char*)tempState.mouseUp, 3);
 	bIn.Read((UINT8)tempState.mouseX);
 	bIn.Read((UINT8)tempState.mouseY);
+	bIn.Read(tempState.isServer);
 
 	tempState.keyboard[4] = true;
 
