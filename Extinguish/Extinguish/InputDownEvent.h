@@ -6,22 +6,23 @@ class InputDownEvent : public Event
 {
 private:
 	InputManager* input;
+	int clientID;
+	//bool isServer;
 
-	//int keyPressed;
-	//int mouseButton; //-1 = left... 0 = middle... 1 = right
-	//int x, y;
 
 public:
-	InputDownEvent(InputManager* inputManager);
-	//InputDownEvent(int key, int mouse);
+	//InputDownEvent(InputManager* inputManager, bool isServer);
+	InputDownEvent(InputManager* inputManager, int id);
 	~InputDownEvent();
 
 	void Init() override;
 
 	//getters
 	InputManager* GetInput();
-	//int GetKey();
-	//int GetMouse();
-	//int GetX();
-	//int GetY();
+	int GetID();
+	//bool IsServer();
+
+	//setters
+	//void SetIsServer(bool toggle);
+	void SetID(int id);
 };

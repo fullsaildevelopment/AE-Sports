@@ -75,13 +75,18 @@ private:
 public:
 
 #pragma pack(push, 1)
-	struct KeyStates
+	struct InputEventStruct
 	{
-		UINT8 up;
-		UINT8 down;
-		UINT8 left;
-		UINT8 right;
+		bool keyboard[256];
+		bool keyboardDown[256];
+		bool keyboardUp[256];
+		bool mouse[3];
+		bool mouseDown[3];
+		bool mouseUp[3];
+		int mouseX, mouseY;
+		int clientID;
 	};
+
 #pragma pack(pop)
 	Client();
 	~Client();
@@ -90,7 +95,7 @@ public:
 	int run();
 	void stop();
 
-	int sendInput(KeyStates * states);
+	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID);
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendPacket();

@@ -102,7 +102,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;Dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;CommunicationCentral.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>x64_vc140\$(Configuration)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -139,7 +139,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;Dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;CommunicationCentral.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>x64_vc140\$(Configuration)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -148,9 +148,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SoundEngine.h" />
+    <ClInclude Include="SoundEngine\Common\AkDefaultLowLevelIODispatcher.h" />
+    <ClInclude Include="SoundEngine\Common\AkFileLocationBase.h" />
+    <ClInclude Include="SoundEngine\Common\AkFilePackage.h" />
+    <ClInclude Include="SoundEngine\Common\AkFilePackageLUT.h" />
+    <ClInclude Include="SoundEngine\Win32\AkDefaultIOHookBlocking.h" />
+    <ClInclude Include="SoundEngine\Win32\AkDefaultIOHookDeferred.h" />
+    <ClInclude Include="SoundEngine\Win32\AkFileHelpers.h" />
+    <ClInclude Include="SoundEngine\Win32\AkFilePackageLowLevelIOBlocking.h" />
+    <ClInclude Include="SoundEngine\Win32\AkFilePackageLowLevelIODeferred.h" />
+    <ClInclude Include="Wwise_IDs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SoundEngine.cpp" />
+    <ClCompile Include="SoundEngine\Common\AkDefaultLowLevelIODispatcher.cpp" />
+    <ClCompile Include="SoundEngine\Common\AkFileLocationBase.cpp" />
+    <ClCompile Include="SoundEngine\Common\AkFilePackage.cpp" />
+    <ClCompile Include="SoundEngine\Common\AkFilePackageLUT.cpp" />
+    <ClCompile Include="SoundEngine\Win32\AkDefaultIOHookBlocking.cpp" />
+    <ClCompile Include="SoundEngine\Win32\AkDefaultIOHookDeferred.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SoundEngine\Common\AkFilePackageLowLevelIO.inl" />
+    <None Include="SoundEngine\Common\AkMultipleFileLocation.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
