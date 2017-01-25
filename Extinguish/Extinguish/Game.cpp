@@ -142,24 +142,6 @@ void Game::Update(float dt)
 					}
 				}
 			}
-			else
-			{
-				for (unsigned int i = 1; i < server.getTotalPlayers(); ++i)
-				{
-					//if (i != 0 && i != id)
-					if (i != id)
-					{
-						GameObject* gameObject = (*gameObjects)[i];
-						XMFLOAT3 position, rotation;
-						position = client.getLocation(i);
-						rotation = client.getRotation(i);
-						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
-						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
-						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
-						//gameStates[i]->world = client.getLocation(i);
-					}
-				}
-			}
 		}
 	}
 
