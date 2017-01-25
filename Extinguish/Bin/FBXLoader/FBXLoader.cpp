@@ -1148,7 +1148,7 @@ namespace FBXLoader
 
 						int iCtrlPoint = mesh->GetPolygonVertex(j, k);
 						vert.normal = ReadNormal(mesh, ctrlPointIndex, j * 3 + k);
-						vert.uv = ReadUV(mesh, ctrlPointIndex, mesh->GetTextureUVIndex(i, j), 0);
+						vert.uv = ReadUV(mesh, ctrlPointIndex, mesh->GetTextureUVIndex(j, k), 0);
 						//if the requested vertex does not exists or the indices arguments have an invalid range
 						if (iCtrlPoint < 0) return false;
 
