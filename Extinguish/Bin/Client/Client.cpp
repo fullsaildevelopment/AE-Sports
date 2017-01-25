@@ -180,8 +180,8 @@ void Client::stop()
 int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID)
 {
 	BitStream bsOut;
-	bsOut.Write((RakNet::MessageID)ID_INCOMING_PACKET);
-	bsOut.Write((UINT8)sizeof(InputEventStruct));
+	bsOut.Write((RakNet::MessageID)ID_INCOMING_INPUT);
+	//bsOut.Write((UINT8)sizeof(InputEventStruct));
 	//bsOut.Write(states);
 	bsOut.Write(clientID);
 	bsOut.Write(keyboard);

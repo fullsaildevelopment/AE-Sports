@@ -7,6 +7,13 @@
 //	this->isServer = isServer;
 //}
 
+InputDownEvent::InputDownEvent()
+{
+	input = nullptr;
+	clientID = -1;
+	isServer = false;
+}
+
 InputDownEvent::InputDownEvent(InputManager* inputManager, int id, bool server)
 {
 	input = inputManager;

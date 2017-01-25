@@ -14,6 +14,7 @@ private:
 
 public:
 	//InputDownEvent(InputManager* inputManager, bool isServer);
+	InputDownEvent();
 	InputDownEvent(InputManager* inputManager, int id, bool server);
 	~InputDownEvent();
 
