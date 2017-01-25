@@ -5,35 +5,6 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
-void AI::OnTriggerEnter(Collider *obj)
-{
-	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
-
-	// if i bump into a player and they are intentionally attacking me
-	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
-	{
-		// drop the ball and 'stumble' in the way they pushed me
-		ballClass->DropBall(me);
-
-		float num = 3;
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
-		me->GetTransform()->AddVelocity(vel);
-	}
-
-
-	SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
-
-	// if i bump into the ball, i caught it
-	if (scol)
-	{
-		if (scol->GetGameObject()->GetTag() == "Ball")
-		{
-			ballClass->SetIsHeld(true);
-			ballClass->SetHolder(me);
-		}
-	}
-}
-
 void AI::UpdateState(State newState)
 {
 	switch (currState)
@@ -50,6 +21,22 @@ void AI::UpdateState(State newState)
 
 	default: break;
 
+	}
+}
+
+void AI::OnTriggerEnter(Collider *obj)
+{
+	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
+
+	// if i bump into a player and they are intentionally attacking me
+	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+	{
+		// drop the ball and 'stumble' in the way they pushed me
+		ballClass->DropBall(me);
+
+		float num = 3;
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
+		me->GetTransform()->AddVelocity(vel);
 	}
 }
 
@@ -94,15 +81,16 @@ void AI::Init()
 	currState = idle;
 }
 
-void AI::Update()
+void AI::Update(float dt, InputManager* input)
 {
 	// check events and UpdateState accordingly
+	printf("%f", me->GetTransform()->GetPosition().x);
 
 	// if i have the ball
 	if (ballClass->GetIsHeld())
 	{
-		if (ballClass->GetHolder() == me)
-			Score();
+		//if (ballClass->GetHolder() == me)
+			//Score();
 	}
 
 	else
@@ -145,6 +133,7 @@ void AI::GetBall()
 	// if im right next to the ball
 	if (RunTo(ball) && dist.magnitude() < 1)
 	{
+		int i = 0;
 		// running into the ball should pick it up
 	}
 }
@@ -178,18 +167,18 @@ bool AI::RunTo(GameObject *target)
 	// change this later to running with turning*********************************
 
 	//u - forward vector
-	float3 u = me->GetTransform()->GetForwardf3();
+	float3 u = (me->GetTransform()->GetForwardf3() * float3(1,0,1)).normalize();
 
 	//v - vector between me and destination
-	float3 v = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+	float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
-	float degRad = (dot_product(u, u) / (u.magnitude() * v.magnitude()));
+	float degRad = dot_product(u, v);// / (u.magnitude() * v.magnitude());
 
-	me->GetTransform()->RotateX(degRad);
+	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->AddVelocity(float3(12, 12, 12));
+	me->GetTransform()->SetVelocity(u);
 
 	if (v.magnitude() < 3)
 		return true;
