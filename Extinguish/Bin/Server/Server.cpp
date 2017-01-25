@@ -123,6 +123,7 @@ int  Server::update()
 		case ID_INCOMING_INPUT:
 		{
 			recieveInput();
+			result = 3;
 			// and do something with it
 			break;
 		}
@@ -278,28 +279,24 @@ void Server::recievePacket()
 
 void Server::recieveInput()
 {
-
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
-	KeyStates tempState;
-	UINT8 id;
-	bIn.IgnoreBytes(sizeof(UINT8));
-	bIn.Read(id);
-	bIn.EndianSwapBytes(3, sizeof(KeyStates));
-	bIn.Read(tempState);
-	//bIn.Read(tempState.up);
-	//bIn.Read(tempState.down);
-	//bIn.Read(tempState.left);
-	//bIn.Read(tempState.right);
+	InputEventStruct tempState;
+	//bIn.IgnoreBytes(sizeof(UINT8));
+	//bIn.EndianSwapBytes(3, sizeof(KeyStates));
+	//bIn.Read(tempState);
 
-	if (tempState.down == 1)
-		printf("down\n");
-	if (tempState.up == 1)
-		printf("up\n");
-	if (tempState.left == 1)
-		printf("left\n");
-	if (tempState.right == 1)
-		printf("right\n");
+	bIn.Read(tempState.clientID);
+	bIn.Read(tempState.keyboard);
+	bIn.Read(tempState.keyboardDown);
+	bIn.Read(tempState.keyboardUp);
+	bIn.Read(tempState.mouse);
+	bIn.Read(tempState.mouseDown);
+	bIn.Read(tempState.mouseUp);
+	bIn.Read(tempState.mouseX);
+	bIn.Read(tempState.mouseY);
+
+	clientInput[tempState.clientID - 1] = tempState;
 }
 
 void Server::sendPackets()
