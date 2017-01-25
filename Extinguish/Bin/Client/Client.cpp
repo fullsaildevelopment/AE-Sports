@@ -181,17 +181,17 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_PACKET);
-	bsOut.Write((UINT8)sizeof(InputEventStruct));
+//	bsOut.Write((UINT8)sizeof(InputEventStruct));
 	//bsOut.Write(states);
-	bsOut.Write(clientID);
-	bsOut.Write(keyboard);
-	bsOut.Write(keyboardDown);
-	bsOut.Write(keyboardUp);
-	bsOut.Write(mouse);
-	bsOut.Write(mouseDown);
-	bsOut.Write(mouseUp);
-	bsOut.Write(mouseX);
-	bsOut.Write(mouseY);
+	bsOut.Write((UINT8)clientID);
+	bsOut.Write((char*)keyboard, 256);
+	bsOut.Write((char*)keyboardDown, 256);
+	bsOut.Write((char*)keyboardUp, 256);
+	bsOut.Write((char*)mouse, 3);
+	bsOut.Write((char*)mouseDown, 3);
+	bsOut.Write((char*)mouseUp, 3);
+	bsOut.Write((UINT8)mouseX);
+	bsOut.Write((UINT8)mouseY);
 
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;

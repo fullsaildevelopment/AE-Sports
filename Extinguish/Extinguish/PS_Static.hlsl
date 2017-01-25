@@ -1,4 +1,4 @@
-#define NUMOFPOINTLIGHTS 1
+#define NUMOFPOINTLIGHTS 4
 //#define NUMOFSPOTLIGHTS 2
 
 struct PS_BasicInput
@@ -16,11 +16,19 @@ cbuffer DirectionalLightCB : register(b0)
 	float4 ambientLight;
 };
 
+struct PointLight
+{
+	float4 pointLightPosition;
+	float4 pointLightColor;
+	float4 lightRadius; //treat as float
+};
+
 cbuffer PointLightCB : register(b1)
 {
-	float4 pointLightPosition[NUMOFPOINTLIGHTS];
-	float4 pointLightColor[NUMOFPOINTLIGHTS];
-	float4 lightRadius[NUMOFPOINTLIGHTS]; //treat as float
+	PointLight pLights[NUMOFPOINTLIGHTS];
+	//float4 pointLightPosition[NUMOFPOINTLIGHTS];
+	//float4 pointLightColor[NUMOFPOINTLIGHTS];
+	//float4 lightRadius[NUMOFPOINTLIGHTS]; //treat as float
 };
 
 //cbuffer SpotLightCB : register(b2)
@@ -31,12 +39,6 @@ cbuffer PointLightCB : register(b1)
 //	float4 coneDirection[NUMOFSPOTLIGHTS];
 //}
 
-struct PointLight
-{
-	float4 pointLightPosition;
-	float4 pointLightColor;
-	float4 lightRadius; //treat as float
-};
 
 //StructuredBuffer<PointLight> pointLights : register(u0);
 
@@ -58,23 +60,23 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	//calculate dircolor
 	float lightRatio;
-	float3 black = { 0.2f, 0.2f, 0.2f };
+	float3 black = { 0.4f, 0.4f, 0.4f };
 
 	lightRatio = saturate(dot((float3)normalize(dirLightNorm), normalize(input.normal)));
 	dirColor = (lightRatio + (float3)ambientLight) * (float3)dirLightColor * black;
 
 	//calculate pointlight colors
-	//for (int i = 0; i < NUMOFPOINTLIGHTS; ++i)
+	for (int i = 0; i < NUMOFPOINTLIGHTS; ++i)
 	{
 		float pointRatio;
 		float4 pointDir;
 		float pointAttenuation;
 
-		pointDir = pointLightPosition[0] - input.worldPosition;
-		pointAttenuation = 1 - saturate(length(pointDir) / lightRadius[0].x);
+		pointDir = pLights[i].pointLightPosition - input.worldPosition;
+		pointAttenuation = 1 - saturate(length(pointDir) / pLights[i].lightRadius.x);
 		pointRatio = saturate(dot((float3)normalize(pointDir), normalize(input.normal)));
 
-		pointColor += (float3)pointLightColor[0] * saturate(pointRatio * pointAttenuation) * black;
+		pointColor += (float3)pLights[i].pointLightColor * saturate(pointRatio * pointAttenuation) * black;
 	}
 
 	//calculate spotlight colors
