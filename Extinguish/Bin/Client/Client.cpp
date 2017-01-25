@@ -193,7 +193,7 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	bsOut.Write((UINT8)mouseX);
 	bsOut.Write((UINT8)mouseY);
 
-	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;
 }
 
