@@ -723,6 +723,9 @@ void ResourceManager::DoFBXExporting()
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Hexagon\\Hexagon.fbx", "Hexagon");
 
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Axis\\Axis.fbx", "Axis");
+
+
 
 #endif
 }

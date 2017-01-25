@@ -173,6 +173,7 @@
     <ClInclude Include="BallController.h" />
     <ClInclude Include="Client Wrapper.h" />
     <ClInclude Include="Crosse.h" />
+    <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="Movement.h" />
     <ClInclude Include="PlayerController.h" />

@@ -1,6 +1,7 @@
 #ifndef VEC3_CLASS_H
 #define VEC3_CLASS_H
 
+
 // This macro is used by the vec3 class to generate
 // the code for overloaded operators. You will not be
 // calling this directly yourself.
@@ -65,6 +66,18 @@
 template <typename T>
 struct vec3
 {
+private:
+	float FInvSqrt(float x)
+	{
+		float xhalf = 0.5f * x;
+		int i = *(int*)&x;              // get bits for floating value
+		i = 0x5f375a86 - (i >> 1);      // gives initial guess y0
+		x = *(float*)&i;                // convert bits back to float
+		x = x * (1.5f - xhalf * x * x); // Newton step, repeating increases accuracy
+		return x;
+	}
+public:
+
    //typedef to create an alias for vec3& named reference
    typedef vec3 &reference;
   
@@ -150,7 +163,7 @@ struct vec3
    // Normalize the vector
    reference normalize(void)
    {
-      element_type rsqrt = 1 / magnitude();
+      element_type rsqrt = fmagnitude();
       x *= rsqrt;
       y *= rsqrt;
       z *= rsqrt;
@@ -178,6 +191,14 @@ struct vec3
       element_type fMagnitude;
       fMagnitude = (T)sqrt(x*x + y*y + z*z);
       return fMagnitude;
+   }
+
+   //Like magnitude but it returns the invsqrt so 1/sqrt
+   element_type fmagnitude(void)
+   {
+	   element_type fMagnitude;
+	   fMagnitude = (T)FInvSqrt(x*x + y*y + z*z);
+	   return fMagnitude;
    }
 
    // dot_product
