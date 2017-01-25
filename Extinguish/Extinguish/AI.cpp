@@ -83,7 +83,6 @@ void AI::Init()
 void AI::Update(float dt, InputManager* input)
 {
 	// check events and UpdateState accordingly
-	printf("%f", me->GetTransform()->GetPosition().x);
 
 	// if i have the ball
 	if (ballClass->GetIsHeld())
@@ -176,7 +175,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->SetVelocity(v * 10); // ***************************************************************************************
+	me->GetTransform()->SetVelocity(v * 25); // ***************************************************************************************
 
 	if (v.magnitude() < 3)
 		return true;
