@@ -72,7 +72,7 @@ void BallController::ThrowTo(GameObject *target)
 	holder = nullptr;
 
 	float num = 15;
-	float3 vel = me->GetTransform()->GetForwardf3() * num;
+	float3 vel = me->GetTransform()->GetForwardf3() * num; // ***************************************************************************************
 	me->GetTransform()->AddVelocity(vel);
 }
 

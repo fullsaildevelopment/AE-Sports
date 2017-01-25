@@ -34,8 +34,8 @@ void AI::OnTriggerEnter(Collider *obj)
 		// drop the ball and 'stumble' in the way they pushed me
 		ballClass->DropBall(me);
 
-		float num = 3;
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
+		float num = 5;
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num; // ***************************************************************************************
 		me->GetTransform()->AddVelocity(vel);
 	}
 }
@@ -48,8 +48,7 @@ void AI::Init()
 	// grabbing all of the game objects
 	std::vector<GameObject*> tmp = *me->GetGameObjects();
 
-	// assuming we name the individual AI&&Player as their team number***************************************
-	string myTeam = me->GetName();
+	string myTeam = me->GetTag();
 
 	// for each game object
 	for (int i = 0; i < tmp.size(); ++i)
@@ -116,7 +115,7 @@ void AI::GetBall()
 	// if someone has the ball
 	if (ballClass->GetIsHeld())
 	{
-		if (ballClass->GetHolder()->GetName() != me->GetName()) // if they're not on my team********
+		if (ballClass->GetHolder()->GetTag() != me->GetTag()) // if they're not on my team********
 		{
 			if (RunTo(ballClass->GetHolder()))
 				Attack(ballClass->GetHolder());
@@ -133,7 +132,6 @@ void AI::GetBall()
 	// if im right next to the ball
 	if (RunTo(ball) && dist.magnitude() < 1)
 	{
-		int i = 0;
 		// running into the ball should pick it up
 	}
 }
@@ -153,10 +151,10 @@ void AI::Attack(GameObject *target)
 	isAttacking = true;
 
 	// if they're not on my team
-	if (target->GetName() != me->GetName() && RunTo(target)) 
+	if (target->GetTag() != me->GetTag() && RunTo(target))
 	{
 		// run into target
-		me->GetTransform()->AddVelocity(float3(20, 20, 20));
+		me->GetTransform()->AddVelocity(float3(20, 20, 20)); // ***************************************************************************************
 	}
 
 	isAttacking = false;
@@ -178,7 +176,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->SetVelocity(u);
+	me->GetTransform()->SetVelocity(v * 10); // ***************************************************************************************
 
 	if (v.magnitude() < 3)
 		return true;
