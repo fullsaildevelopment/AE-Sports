@@ -194,13 +194,21 @@ void Scene::CreateLights()
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -3.0f, 0.5f, 2.0f, 0 }, { 1, 0, 0, 0 }, 8.0f);
+	pointLight0.Create({ -2.0f, 0.5f, 2.0f, 0 }, { 1, 0, 0, 1.0f }, 8.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ 0, 1.0f, 2.0f, 0 }, { 0, 1.0f, 0, 0 }, 7.0f);
+	pointLight1.Create({ -7.f, 1.0f, -7.0f, 0 }, { 0, 1.0f, 0, 1.0f }, 10.0f);
+
+	PointLight pointLight2;
+	pointLight2.Create({ 1.0f, 1.5f, -2.0f, 0 }, { 1, 0.0f, 1.0f, 1.0f }, 10.0f);
+
+	PointLight pointLight3;
+	pointLight3.Create({ 5.0f, 0.5f, 2.0f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, 7.0f);
 
 	pointLights.push_back(pointLight0);
 	pointLights.push_back(pointLight1);
+	pointLights.push_back(pointLight2);
+	pointLights.push_back(pointLight3);
 
 	//create spot lights
 	//Light spotLight;
@@ -220,7 +228,6 @@ void Scene::CreateLights()
 	//create point light constant buffer
 	if (pointLights.size())
 	{
-
 		CD3D11_BUFFER_DESC pointLightConstantBufferDesc(sizeof(PointLightConstantBuffer) * (UINT)pointLights.size(), D3D11_BIND_CONSTANT_BUFFER);
 		device->CreateBuffer(&pointLightConstantBufferDesc, nullptr, &pointLightConstantBuffer);
 

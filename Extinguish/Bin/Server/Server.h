@@ -82,8 +82,8 @@ private:
 		bool mouse[3];
 		bool mouseDown[3];
 		bool mouseUp[3];
-		int mouseX, mouseY;
-		int clientID;
+		UINT8 mouseX, mouseY;
+		UINT8 clientID;
 	};
 
 #pragma pack(pop)
