@@ -34,7 +34,7 @@ private:
 	SoundEngine soundEngine;
 
 	bool isServer = false;
-	bool isMultiplayer = false;
+	bool isMultiplayer = true;
 
 	ClientWrapper client;
 	ServerWrapper server;

@@ -51,7 +51,7 @@ void Camera::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		if (inputDownEvent->GetID() == 1)
+		if (inputDownEvent->IsServer())
 		{
 			MoveCamera(inputDownEvent);
 		}
