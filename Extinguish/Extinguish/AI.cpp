@@ -34,8 +34,8 @@ void AI::OnTriggerEnter(Collider *obj)
 		// drop the ball and 'stumble' in the way they pushed me
 		ballClass->DropBall(me);
 
-		float num = 3;
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num;
+		float num = 5;
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num; // ***************************************************************************************
 		me->GetTransform()->AddVelocity(vel);
 	}
 }
@@ -48,8 +48,7 @@ void AI::Init()
 	// grabbing all of the game objects
 	std::vector<GameObject*> tmp = *me->GetGameObjects();
 
-	// assuming we name the individual AI&&Player as their team number***************************************
-	string myTeam = me->GetName();
+	string myTeam = me->GetTag();
 
 	// for each game object
 	for (int i = 0; i < tmp.size(); ++i)
@@ -84,7 +83,6 @@ void AI::Init()
 void AI::Update(float dt, InputManager* input)
 {
 	// check events and UpdateState accordingly
-	printf("%f", me->GetTransform()->GetPosition().x);
 
 	// if i have the ball
 	if (ballClass->GetIsHeld())
@@ -116,7 +114,7 @@ void AI::GetBall()
 	// if someone has the ball
 	if (ballClass->GetIsHeld())
 	{
-		if (ballClass->GetHolder()->GetName() != me->GetName()) // if they're not on my team********
+		if (ballClass->GetHolder()->GetTag() != me->GetTag()) // if they're not on my team********
 		{
 			if (RunTo(ballClass->GetHolder()))
 				Attack(ballClass->GetHolder());
@@ -133,7 +131,6 @@ void AI::GetBall()
 	// if im right next to the ball
 	if (RunTo(ball) && dist.magnitude() < 1)
 	{
-		int i = 0;
 		// running into the ball should pick it up
 	}
 }
@@ -143,8 +140,26 @@ void AI::DefendTeammate()
 	// double check that my teammate has the ball
 	if (ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() == me->GetTag())
 	{
-		// find the guy closest to my teammate
-		// attack him
+		float dist = 785; // random high number
+		GameObject *target = nullptr;
+
+		// for each enemy
+		for (int i = 0; i < listOfEnemies.size(); ++i)
+		{
+			// dist between enemy and my guy
+			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition();
+
+			// if this dist is less than last
+			if (tmp.magnitude() < dist)
+			{
+				// make them my target
+				dist = tmp.magnitude();
+				target = listOfEnemies[i];
+			}
+		}
+
+		if (target)
+			Attack(target);
 	}
 }
 
@@ -153,10 +168,10 @@ void AI::Attack(GameObject *target)
 	isAttacking = true;
 
 	// if they're not on my team
-	if (target->GetName() != me->GetName() && RunTo(target)) 
+	if (target->GetTag() != me->GetTag() && RunTo(target))
 	{
 		// run into target
-		me->GetTransform()->AddVelocity(float3(20, 20, 20));
+		me->GetTransform()->AddVelocity(float3(20, 20, 20)); // ***************************************************************************************
 	}
 
 	isAttacking = false;
@@ -178,7 +193,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->SetVelocity(u);
+	me->GetTransform()->SetVelocity(v * 25); // ***************************************************************************************
 
 	if (v.magnitude() < 3)
 		return true;

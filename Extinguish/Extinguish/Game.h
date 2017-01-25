@@ -33,13 +33,12 @@ private:
 	ResourceManager resourceManager;
 	SoundEngine soundEngine;
 
-	bool isServer = true;
-	bool isMultiplayer = false;
+	bool isServer = false;
+	bool isMultiplayer = true;
 
 	ClientWrapper client;
 	ServerWrapper server;
 	std::vector<GameState*> gameStates;
-//	std::vector<GameObject*>* gameObjects;
 
 	static int clientID;
 

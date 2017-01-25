@@ -712,7 +712,7 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
 
 	//load in plane
-	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
 
 	//load in crosse
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Crosse\\Crosse.fbx", "Crosse");
@@ -722,6 +722,9 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Ball\\Ball.fbx", "Ball");
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Hexagon\\Hexagon.fbx", "Hexagon");
+
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Axis\\Axis.fbx", "Axis");
+
 
 
 #endif

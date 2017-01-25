@@ -144,7 +144,6 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	soundEngine.ProcessAudio();
-
 }
 
 void Game::Render()
@@ -183,13 +182,14 @@ void Game::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input
-		if (isServer && inputDownEvent->GetID() != 1)
+		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input... or messenger is server, but not marked as one
+		if ((isServer && inputDownEvent->GetID() != 1) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
-			inputDownEvent->SetID(clientID);
+			//inputDownEvent->SetID(clientID);
+			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
 		}
-		else if (inputDownEvent->GetID() > 1) //if not server
+		else if (inputDownEvent->GetID() > 1) //if not server, give server your input to handle it
 		{
 			client.sendInput(inputDownEvent);
 		}
@@ -277,7 +277,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox2->InitTransform(identity, { 3,6, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer2 = new Renderer();
 	meterbox2->AddComponent(meterboxRenderer2);
-	meterboxRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	meterboxRenderer2->Init("Axis", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol2 = new BoxCollider(meterbox2, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
 	meterbox2->AddComponent(meterboxcol2);
 
@@ -396,7 +396,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* plane = new GameObject();
 	basic->AddGameObject(plane);
 	plane->Init("Plane");
-	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 10, 0.1f, 10 }, nullptr, nullptr, nullptr);
+	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* planeRenderer = new Renderer();
 	plane->AddComponent(planeRenderer);
 	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
