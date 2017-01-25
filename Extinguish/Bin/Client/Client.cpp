@@ -177,7 +177,7 @@ void Client::stop()
 	RakPeerInterface::DestroyInstance(peer);
 }
 
-int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID)
+int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_INPUT);
@@ -192,6 +192,7 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	bsOut.Write((char*)mouseUp, 3);
 	bsOut.Write((UINT8)mouseX);
 	bsOut.Write((UINT8)mouseY);
+	bsOut.Write(isServer);
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;

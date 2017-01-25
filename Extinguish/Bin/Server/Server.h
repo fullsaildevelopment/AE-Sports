@@ -84,6 +84,7 @@ private:
 		bool mouseUp[3];
 		UINT8 mouseX, mouseY;
 		UINT8 clientID;
+		bool isServer;
 	};
 
 #pragma pack(pop)

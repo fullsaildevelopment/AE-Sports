@@ -5,6 +5,7 @@
 #include "..\ShaderStructures\ShaderStructures.h"
 #include "EventDispatcher.h"
 #include "InputDownEvent.h"
+#include "InputManager.h"
 
 class ServerWrapper
 {
@@ -37,6 +38,7 @@ public:
 			for (unsigned int i = 0; i < 4; ++i)
 			{
 				InputEventStruct * tempEvent = new InputEventStruct;
+
 				tempEvent->clientID = newServer.getInputEvent(i)->clientID;
 				memcpy(tempEvent->keyboard, newServer.getInputEvent(i)->keyboard, 256);
 				memcpy(tempEvent->keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
@@ -46,11 +48,13 @@ public:
 				memcpy(tempEvent->mouseUp, newServer.getInputEvent(i)->mouseUp, 3);
 				tempEvent->mouseX = newServer.getInputEvent(i)->mouseX;
 				tempEvent->mouseY = newServer.getInputEvent(i)->mouseY;
-				
-				
-				
-				if (tempEvent)
-					EventDispatcher::GetSingleton()->Dispatch(inputEvent);
+				tempEvent->isServer = newServer.getInputEvent(i)->isServer;
+
+				inputEvent->GetInput()->Init(tempEvent->keyboard, tempEvent->keyboardDown, tempEvent->keyboardUp, tempEvent->mouse, tempEvent->mouseDown, tempEvent->mouseUp, tempEvent->mouseX, tempEvent->mouseY);
+				inputEvent->SetID(tempEvent->clientID);
+				inputEvent->SetIsServer(tempEvent->isServer);
+
+				EventDispatcher::GetSingleton()->Dispatch(inputEvent);
 
 				delete tempEvent;
 			}

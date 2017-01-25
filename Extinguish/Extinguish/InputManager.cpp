@@ -33,6 +33,27 @@ void InputManager::ClearKeyboard()
 	sendEvent = false;
 }
 
+//only to be used to help with event
+void InputManager::Init(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY)
+{
+	for (int i = 0; i < 256; ++i)
+	{
+		this->keyboard[i] = keyboard[i];
+		this->keyboardDown[i] = keyboardDown[i];
+		this->keyboardUp[i] = keyboardUp[i];
+	}
+
+	for (int i = 0; i < 3; ++i)
+	{
+		this->mouse[i] = mouse[i];
+		this->mouseDown[i] = mouseDown[i];
+		this->mouseUp[i] = mouseUp[i];
+	}
+
+	this->mouseX = mouseX;
+	this->mouseY = mouseY;
+}
+
 void InputManager::Update()
 {
 	bool sendEvent = false;
