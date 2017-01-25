@@ -183,7 +183,7 @@ void Game::HandleEvent(Event* e)
 	if (inputDownEvent)
 	{
 		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input... or messenger is server, but not marked as one
-		if ((isServer && inputDownEvent->GetID() != 1) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if ((isServer && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
@@ -435,6 +435,20 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
 	crosseController->Init();
+
+	GameObject* crosse2 = new GameObject();
+	basic->AddGameObject(crosse2);
+	crosse2->Init("Crosse2");
+	crosse2->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	SphereCollider* crosseNetCollider2 = new SphereCollider(0.25f, crosse2, true);
+	crosse2->AddComponent(crosseNetCollider2);
+	Renderer* crosseRenderer2 = new Renderer();
+	crosse2->AddComponent(crosseRenderer);
+	crosseRenderer2->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Crosse* crosseController2 = new Crosse();
+	crosse2->AddComponent(crosseController2);
+	crosseController2->Init();
 	
 	GameObject* mage = new GameObject();
 	basic->AddGameObject(mage);

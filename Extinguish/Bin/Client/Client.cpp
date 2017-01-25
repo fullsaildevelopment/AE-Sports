@@ -7,7 +7,7 @@ Packet * Client::packet = nullptr;
 char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
-Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[16];
+Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[17];
 //std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
 

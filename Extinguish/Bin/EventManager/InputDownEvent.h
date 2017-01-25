@@ -30,4 +30,5 @@ public:
 	//setters
 	void SetIsServer(bool toggle);
 	void SetID(int id);
+	void SetInput(InputManager* inputManager);
 };
