@@ -804,8 +804,6 @@ namespace FBXLoader
 		for (int i = 0; i < inNode->GetChildCount(); ++i)
 			ProcessGeometry(inNode->GetChild(i));
 
-
-
 	}
 
 	void CleanupFBX()
@@ -1143,12 +1141,17 @@ namespace FBXLoader
 
 					for (int k = 0; k < numVerts; ++k)
 					{
-						int iCtrlPoint = mesh->GetPolygonVertex(j, k);
+						VS_BasicInput vert;
 
+						int ctrlPointIndex = mesh->GetPolygonVertex(j, k);
+						//CtrlPoint* currCtrlPoint = mControlPoints[ctrlPointIndex];
+
+						int iCtrlPoint = mesh->GetPolygonVertex(j, k);
+						vert.normal = ReadNormal(mesh, ctrlPointIndex, j * 3 + k);
+						vert.uv = ReadUV(mesh, ctrlPointIndex, mesh->GetTextureUVIndex(i, j), 0);
 						//if the requested vertex does not exists or the indices arguments have an invalid range
 						if (iCtrlPoint < 0) return false;
 
-						VS_BasicInput vert;
 
 						//position
 						vert.position.x = (float)verts[iCtrlPoint].mData[0];
@@ -1157,7 +1160,6 @@ namespace FBXLoader
 
 
 						mBasicVerts.push_back(vert);
-
 					}
 				}
 			}
