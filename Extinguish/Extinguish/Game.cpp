@@ -9,7 +9,7 @@ using namespace DirectX;
 using namespace std;
 
 //initialize static member
-int Game::clientID = 0;
+int Game::clientID = 1;
 
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
