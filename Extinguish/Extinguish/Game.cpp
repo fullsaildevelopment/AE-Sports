@@ -379,8 +379,13 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
 	bearMover->Init(1.0f, 0.75f);
-	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
+	BoxCollider* bearcol = new BoxCollider(bear, false, { 1,2,1 }, { -1,0,-1 });
 	bear->AddComponent(bearcol);
+	
+	bear->SetTag("Team1");
+	AI *bearAI = new AI(bear);
+	bear->AddComponent(bearAI);
+
 	
 
 	//Camera* cameraController = new Camera();
@@ -422,6 +427,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	gameBall->SetTag("Ball");
 	mbox6AI->Init();
+	bearAI->Init();
 
 
 	crosse->Init("Crosse");
