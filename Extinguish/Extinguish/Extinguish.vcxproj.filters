@@ -111,12 +111,6 @@
     <ClCompile Include="Movement.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="EventDispatcher.cpp">
-      <Filter>Event Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="InputDownEvent.cpp">
-      <Filter>Event Manager\Events</Filter>
-    </ClCompile>
     <ClCompile Include="BallController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -221,18 +215,6 @@
     <ClInclude Include="BallController.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="EventHandler.h">
-      <Filter>Event Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="EventDispatcher.h">
-      <Filter>Event Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Event.h">
-      <Filter>Event Manager\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="InputDownEvent.h">
-      <Filter>Event Manager\Events</Filter>
-    </ClInclude>
     <ClInclude Include="Client Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
@@ -286,12 +268,6 @@
     </Filter>
     <Filter Include="Components\Scripts">
       <UniqueIdentifier>{7bfdbc4c-e776-4654-8fee-21c2dc060658}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Event Manager">
-      <UniqueIdentifier>{22096eb5-fe67-47e9-88d8-5d6f5090a51b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Event Manager\Events">
-      <UniqueIdentifier>{d02a6e4c-7032-48c5-afc1-3d3487929227}</UniqueIdentifier>
     </Filter>
     <Filter Include="Network Wrappers">
       <UniqueIdentifier>{7883d501-1961-42ce-a698-f4d0fd022a71}</UniqueIdentifier>

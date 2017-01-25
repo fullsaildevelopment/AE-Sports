@@ -7,10 +7,18 @@
 //	this->isServer = isServer;
 //}
 
-InputDownEvent::InputDownEvent(InputManager* inputManager, int id)
+InputDownEvent::InputDownEvent()
+{
+	input = nullptr;
+	clientID = -1;
+	isServer = false;
+}
+
+InputDownEvent::InputDownEvent(InputManager* inputManager, int id, bool server)
 {
 	input = inputManager;
 	clientID = id;
+	isServer = server;
 }
 
 InputDownEvent::~InputDownEvent()
@@ -35,18 +43,18 @@ int InputDownEvent::GetID()
 	return clientID;
 }
 
-//bool InputDownEvent::IsServer()
-//{
-//	return isServer;
-//}
+bool InputDownEvent::IsServer()
+{
+	return isServer;
+}
 
 //setters//
-//void InputDownEvent::SetIsServer(bool toggle)
-//{
-//	isServer = toggle;
-//}
-
 void InputDownEvent::SetID(int id)
 {
 	clientID = id;
+}
+
+void InputDownEvent::SetIsServer(bool toggle)
+{
+	isServer = toggle;
 }

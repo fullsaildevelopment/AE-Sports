@@ -91,7 +91,7 @@ void Crosse::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		if (inputDownEvent->GetID() == 1)
+		if (inputDownEvent->IsServer())
 		{
 			HandleInput(inputDownEvent);
 		}

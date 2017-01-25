@@ -3,6 +3,9 @@
 #include <vector>
 #include "Server.h"
 #include "..\ShaderStructures\ShaderStructures.h"
+#include "EventDispatcher.h"
+#include "InputDownEvent.h"
+
 class ServerWrapper
 {
 private:
@@ -26,6 +29,22 @@ public:
 
 		newServer.sendPackets();
 		int result = newServer.update();
+
+		if (result == 3)
+		{
+			InputDownEvent* inputEvent = new InputDownEvent();
+
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				InputEventStruct * tempEvent = (InputEventStruct*)newServer.getInputEvent(i);
+				if (tempEvent)
+					EventDispatcher::GetSingleton()->Dispatch(inputEvent);
+			}
+
+			delete inputEvent;
+			result = 2;
+		}
+
 		if (result == 2)
 		{
 			for (unsigned int i = 0; i < states.size(); ++i)
@@ -36,14 +55,6 @@ public:
 		//		states[i]->nameLength = newServer.getState(i)->nameLength;
 				states[i]->position = newServer.getState(i)->position;
 				states[i]->rotation = newServer.getState(i)->rotation;
-			}
-		}
-		if (result == 3)
-		{
-			for (unsigned int i = 0; i < 4; ++i)
-			{
-				InputEventStruct * tempEvent = (InputEventStruct*)newServer.getInputEvent(i);
-
 			}
 		}
 
