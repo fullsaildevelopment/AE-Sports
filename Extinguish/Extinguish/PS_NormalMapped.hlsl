@@ -1,4 +1,4 @@
-#define NUMOFPOINTLIGHTS 1
+#define NUMOFPOINTLIGHTS 4
 
 struct PS_BasicInput
 {
@@ -16,24 +16,26 @@ cbuffer DirectionalLightCB : register(b0)
 	float4 ambientLight;
 };
 
-cbuffer PointLightCB : register(b1)
-{
-	float4 pointLightPosition[NUMOFPOINTLIGHTS];
-	float4 pointLightColor[NUMOFPOINTLIGHTS];
-	float4 lightRadius[NUMOFPOINTLIGHTS]; //treat as float
-};
-
-cbuffer CameraPosition : register(b2)
-{
-	float4 cameraposW;
-}
-
 struct PointLight
 {
 	float4 pointLightPosition;
 	float4 pointLightColor;
 	float4 lightRadius; //treat as float
 };
+
+cbuffer PointLightCB : register(b1)
+{
+
+	PointLight pLights[NUMOFPOINTLIGHTS];
+	//float4 pointLightPosition[NUMOFPOINTLIGHTS];
+	//float4 pointLightColor[NUMOFPOINTLIGHTS];
+	//float4 lightRadius[NUMOFPOINTLIGHTS]; //treat as float
+};
+
+cbuffer CameraPosition : register(b2)
+{
+	float4 cameraposW;
+}
 
 
 texture2D baseTexture : register(t0);
@@ -90,17 +92,19 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	float specDirScale = pow(dirRdotV, 32);
 	float3 dirSpecColor = saturate( specMap *  specDirScale * dirColor);
 
-	float pointRatio;
-	float4 pointDir;
-	float pointAttenuation;
 
-	pointDir = pointLightPosition[0] - input.worldPosition;
-	//pointDir.xyz = mul(pointDir.xyz, TBNMatrix);
-	pointAttenuation = 1 - saturate(length(pointDir.xyz) / lightRadius[0].x);
-	pointRatio = saturate(dot(normalize(pointDir.xyz), bumpNormal));
+		float4 pointDir;
+	for (int i = 0; i < NUMOFPOINTLIGHTS; ++i) {
+		float pointRatio;
+		float pointAttenuation;
 
-	pointColor += pointLightColor[0].xyz * saturate(pointRatio * pointAttenuation) * black;
+		pointDir = pLights[i].pointLightPosition - input.worldPosition;
+		//pointDir.xyz = mul(pointDir.xyz, TBNMatrix);
+		pointAttenuation = 1 - saturate(length(pointDir.xyz) / pLights[i].lightRadius.x);
+		pointRatio = saturate(dot(normalize(pointDir.xyz), bumpNormal));
 
+		pointColor += pLights[i].pointLightColor.xyz * saturate(pointRatio * pointAttenuation) * black;
+	}
 	//Specular point
 	float3 pointRefelection = normalize(reflect(-pointDir.xyz, bumpNormal));
 	float pointRdotV = max(0, dot(pointRefelection, ViewVector));

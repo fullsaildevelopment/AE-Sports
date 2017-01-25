@@ -287,12 +287,12 @@ void Server::recieveInput()
 	//bIn.Read(tempState);
 
 	bIn.Read(tempState.clientID);
-	bIn.Read(tempState.keyboard);
-	bIn.Read(tempState.keyboardDown);
-	bIn.Read(tempState.keyboardUp);
-	bIn.Read(tempState.mouse);
-	bIn.Read(tempState.mouseDown);
-	bIn.Read(tempState.mouseUp);
+	bIn.Read((char*)tempState.keyboard, 256);
+	bIn.Read((char*)tempState.keyboardDown, 256);
+	bIn.Read((char*)tempState.keyboardUp, 256);
+	bIn.Read((char*)tempState.mouse, 3);
+	bIn.Read((char*)tempState.mouseDown, 3);
+	bIn.Read((char*)tempState.mouseUp, 3);
 	bIn.Read(tempState.mouseX);
 	bIn.Read(tempState.mouseY);
 
