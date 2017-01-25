@@ -137,6 +137,7 @@ int Client::run()
 		case ID_CLIENT_REGISTER:
 		{
 			GetID();
+			result = 3;
 			printf("Please enter a name (8 characters max): ");
 			memcpy(clientName, "Player", strlen("Player"));
 			registerName();
@@ -167,8 +168,6 @@ int Client::run()
 		}
 	}
 
-
-
 	return result;
 }
 
@@ -178,17 +177,22 @@ void Client::stop()
 	RakPeerInterface::DestroyInstance(peer);
 }
 
-int Client::sendInput(KeyStates * states)
+int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_PACKET);
-	bsOut.Write((UINT8)sizeof(KeyStates));
-	bsOut.Write(clientID);
+	bsOut.Write((UINT8)sizeof(InputEventStruct));
 	//bsOut.Write(states);
-	bsOut.Write(states->up);
-	bsOut.Write(states->down);
-	bsOut.Write(states->left);
-	bsOut.Write(states->right);
+	bsOut.Write(clientID);
+	bsOut.Write(keyboard);
+	bsOut.Write(keyboardDown);
+	bsOut.Write(keyboardUp);
+	bsOut.Write(mouse);
+	bsOut.Write(mouseDown);
+	bsOut.Write(mouseUp);
+	bsOut.Write(mouseX);
+	bsOut.Write(mouseY);
+
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;
 }

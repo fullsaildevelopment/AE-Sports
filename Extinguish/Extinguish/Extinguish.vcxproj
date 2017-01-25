@@ -22,6 +22,7 @@
     <ProjectGuid>{BF52244D-EBE2-4A96-8061-1584285526E9}</ProjectGuid>
     <RootNamespace>Ubihard_Project</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Extinguish</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -98,11 +99,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\Program Files (x86)\Visual Leak Detector\lib\Win64%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>AnimationLibrary.lib;ShaderStructures.lib;Wwise.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -127,13 +128,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\Program Files (x86)\Visual Leak Detector\lib\Win64%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>AnimationLibrary.lib;ShaderStructures.lib;Wwise.lib;ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
