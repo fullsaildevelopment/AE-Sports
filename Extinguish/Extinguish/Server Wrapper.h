@@ -38,6 +38,14 @@ public:
 				states[i]->rotation = newServer.getState(i)->rotation;
 			}
 		}
+		if (result == 3)
+		{
+			for (unsigned int i = 0; i < 4; ++i)
+			{
+				InputEventStruct * tempEvent = (InputEventStruct*)newServer.getInputEvent(i);
+
+			}
+		}
 
 		return result;
 	}
