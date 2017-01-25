@@ -33,7 +33,7 @@ private:
 	ResourceManager resourceManager;
 	SoundEngine soundEngine;
 
-	bool isServer = true;
+	bool isServer = false;
 	bool isMultiplayer = false;
 
 	ClientWrapper client;
