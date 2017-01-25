@@ -1,5 +1,6 @@
 #pragma once
 
+//Thanks to Chris Lomont
 float InvSqrt(float x)
 {
 	float xhalf = 0.5f * x;
