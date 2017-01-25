@@ -34,13 +34,14 @@ public:
 		if (result == 3)
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();
+			InputManager* input = new InputManager();
 
 			for (unsigned int i = 0; i < 4; ++i)
 			{
 				if (newServer.isInput(i))
 				{
 					InputEventStruct * tempEvent = new InputEventStruct;
-
+					
 					tempEvent->clientID = newServer.getInputEvent(i)->clientID;
 					memcpy(tempEvent->keyboard, newServer.getInputEvent(i)->keyboard, 256);
 					memcpy(tempEvent->keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
@@ -52,7 +53,8 @@ public:
 					tempEvent->mouseY = newServer.getInputEvent(i)->mouseY;
 					tempEvent->isServer = newServer.getInputEvent(i)->isServer;
 
-					inputEvent->GetInput()->Init(tempEvent->keyboard, tempEvent->keyboardDown, tempEvent->keyboardUp, tempEvent->mouse, tempEvent->mouseDown, tempEvent->mouseUp, tempEvent->mouseX, tempEvent->mouseY);
+					input->Init(tempEvent->keyboard, tempEvent->keyboardDown, tempEvent->keyboardUp, tempEvent->mouse, tempEvent->mouseDown, tempEvent->mouseUp, tempEvent->mouseX, tempEvent->mouseY);
+					inputEvent->SetInput(input);
 					inputEvent->SetID(tempEvent->clientID);
 					inputEvent->SetIsServer(tempEvent->isServer);
 
@@ -65,6 +67,7 @@ public:
 			newServer.resetInput();
 			
 			delete inputEvent;
+			delete input;
 			result = 2;
 		}
 
