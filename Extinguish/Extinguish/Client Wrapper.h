@@ -4,6 +4,7 @@
 
 #include "Client.h"
 #include "..\ShaderStructures\ShaderStructures.h"
+#include "InputManager.h"
 
 class ClientWrapper
 {
@@ -34,17 +35,19 @@ public:
 	{
 		newClient.sendPacket();
 	}
-	void sendInput()
+	void sendInput(InputDownEvent* inputEvent)
 	{
 		
-		Client::KeyStates * temp = new Client::KeyStates;
+		//Client::InputEventStruct * temp = new Client::InputEventStruct;
 		
-		temp->up = 1;
-		temp->down = 2;
-		temp->left = 3;
-		temp->right = 4;
-		newClient.sendInput(temp);
-		delete temp;
+		//temp->up = 1;
+		//temp->down = 2;
+		//temp->left = 3;
+		//temp->right = 4;
+		InputManager* input = inputEvent->GetInput();
+
+		newClient.sendInput(input->GetKeyboard(), input->GetKeyboardDown(), input->GetKeyboardUp(), input->GetMouse(), input->GetMouseDown(), input->GetMouseUp(), input->GetMouseX(), input->GetMouseY(), inputEvent->GetID());
+		//delete temp;
 	}
 
 	unsigned int getID()

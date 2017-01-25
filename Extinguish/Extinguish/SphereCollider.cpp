@@ -21,12 +21,6 @@ void SphereCollider::Update(float dt, InputManager* input)
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	size_t size = (*Others).size();
-	if (tg->GetName() == "Crosse")
-	{
-		XMFLOAT4X4 m = tgt->GetWorld();
-		float3 pos = float3(m._41, m._42, m._43);
-		printf("%f , %f , %f", pos.x, pos.y, pos.z);
-	}
 	for (int i = 0; i < size; ++i)
 	{
 

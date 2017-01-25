@@ -51,7 +51,10 @@ void Camera::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		MoveCamera(inputDownEvent);
+		if (inputDownEvent->GetID() == 1)
+		{
+			MoveCamera(inputDownEvent);
+		}
 	}
 }
 

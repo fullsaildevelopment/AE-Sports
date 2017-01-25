@@ -54,14 +54,13 @@ void Crosse::OnTriggerEnter(Collider* collider)
 
 			ballController->SetHolder(GetGameObject());
 		}
-		cout << "Crosse collision with gameball" << endl;
 	}
 }
 
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 20.0f;
+	const float throwSpeed = 10.0f;
 	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
 	if (ball->GetHolder() == GetGameObject())
 	{
@@ -92,7 +91,10 @@ void Crosse::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		HandleInput(inputDownEvent);
+		if (inputDownEvent->GetID() == 1)
+		{
+			HandleInput(inputDownEvent);
+		}
 	}
 }
 
@@ -157,7 +159,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 						//transform->Translate({ -up.x, -up.y, -up.z });
 					}
 
-					cout << position.x << " " << position.y << " " << position.z << endl;
+					
 
 					//cout << up.x << " " << up.y << endl;
 				}
@@ -209,6 +211,5 @@ void Crosse::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 up = transform->GetUp();
 		transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
-		cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
 	}
 }

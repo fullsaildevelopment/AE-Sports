@@ -4,6 +4,7 @@
 #include "vec3.h"
 #include "SphereCollider.h"
 #include "XTime.h"
+#include "CapsuleCollider.h"
 
 class BallController : public Component
 {
