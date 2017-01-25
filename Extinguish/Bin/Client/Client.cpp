@@ -184,12 +184,19 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	//bsOut.Write((UINT8)sizeof(InputEventStruct));
 	//bsOut.Write(states);
 	bsOut.Write((UINT8)clientID);
-	bsOut.Write((char*)keyboard, 256);
-	bsOut.Write((char*)keyboardDown, 256);
-	bsOut.Write((char*)keyboardUp, 256);
-	bsOut.Write((char*)mouse, 3);
-	bsOut.Write((char*)mouseDown, 3);
-	bsOut.Write((char*)mouseUp, 3);
+	for (unsigned int i = 0; i < 256; ++i)
+		bsOut.Write(keyboard[i]);
+	for (unsigned int i = 0; i < 256; ++i)
+		bsOut.Write(keyboardDown[i]);
+	for (unsigned int i = 0; i < 256; ++i)
+		bsOut.Write(keyboardUp[i]);
+
+	for (unsigned int i = 0; i < 3; ++i)
+		bsOut.Write(mouse[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		bsOut.Write(mouseDown[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		bsOut.Write(mouseUp[i]);
 	bsOut.Write((UINT8)mouseX);
 	bsOut.Write((UINT8)mouseY);
 	bsOut.Write(isServer);
