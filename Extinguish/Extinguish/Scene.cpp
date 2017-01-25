@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "Camera.h"
+#include "Game.h"
 
 Scene::Scene()
 {
@@ -367,14 +368,25 @@ void Scene::Update(float dt)
 	gameObjects[0]->Update(dt, input);
 
 	XMFLOAT4X4 cameraCam;
-	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject("Camera")->GetComponent<Camera>()->GetView())));;
+
+	string playerName = "Mage";
+
+	if (Game::GetClientID() == 0)
+	{
+		playerName += "1";
+	}
+	else
+	{
+		playerName += to_string(Game::GetClientID());
+	}
+
+	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject(playerName)->GetComponent<Camera>()->GetView())));;
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		gameObjects[i]->Update(dt, input);
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
-
 
 		if (renderer)
 		{
@@ -384,14 +396,6 @@ void Scene::Update(float dt)
 
 			if (transform)
 			{
-				//if (gameObjects[i]->GetName() == "GameBall")
-				//{
-				//	int a = 0; 
-				//	a++;
-
-				//	cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
-				//}
-
 				XMFLOAT4X4 world;
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);

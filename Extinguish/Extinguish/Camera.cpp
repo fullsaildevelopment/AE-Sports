@@ -53,7 +53,14 @@ void Camera::HandleEvent(Event* e)
 	{
 		if (inputDownEvent->IsServer())
 		{
-			MoveCamera(inputDownEvent);
+			string name;
+			name = "Mage";
+			name += to_string(inputDownEvent->GetID());
+
+			if (GetGameObject()->GetName() == name)
+			{
+				MoveCamera(inputDownEvent);
+			}
 		}
 	}
 }

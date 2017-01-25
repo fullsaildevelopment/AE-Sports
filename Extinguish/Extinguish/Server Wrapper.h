@@ -68,7 +68,8 @@ public:
 			
 			delete inputEvent;
 			delete input;
-			result = 2;
+			//result = 2;
+			newServer.sendPackets();
 		}
 
 		if (result == 2)

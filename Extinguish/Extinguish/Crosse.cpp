@@ -93,13 +93,13 @@ void Crosse::HandleEvent(Event* e)
 	{
 		if (inputDownEvent->IsServer())
 		{
-			if (inputDownEvent->GetID() == 1)
+			string name;
+			name = "Crosse";
+			name += to_string(inputDownEvent->GetID());
+
+			if (GetGameObject()->GetName() == name)
 			{
-				GetGameObject()->FindGameObject("Crosse")->GetComponent<Crosse>()->HandleInput(inputDownEvent);
-			}
-			else if (inputDownEvent->GetID() == 2)
-			{
-				GetGameObject()->FindGameObject("Crosse2")->GetComponent<Crosse>()->HandleInput(inputDownEvent);
+				HandleInput(inputDownEvent);
 			}
 
 			//HandleInput(inputDownEvent);
