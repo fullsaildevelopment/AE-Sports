@@ -179,6 +179,7 @@
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="InputDownEvent.h" />
+    <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="Movement.h" />
     <ClInclude Include="PlayerController.h" />
