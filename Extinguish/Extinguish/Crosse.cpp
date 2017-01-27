@@ -58,7 +58,8 @@ void Crosse::OnTriggerEnter(Collider* collider)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 1.0f;
+	const float throwSpeed = 2.0f;
+
 	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
 	if (ball->GetHolder() == GetGameObject())
 	{
@@ -222,5 +223,15 @@ void Crosse::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 up = transform->GetUp();
 		transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
+	}
+}
+
+void Crosse::SetHolder(GameObject* object)
+{
+	BallController* ballController = GetGameObject()->FindGameObject("GameBall")->GetComponent<BallController>();
+
+	if (ballController)
+	{
+		ballController->SetHolder(object);
 	}
 }

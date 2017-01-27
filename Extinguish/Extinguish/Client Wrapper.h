@@ -60,7 +60,7 @@ public:
 		return newClient.getNumPackets();
 	}
 
-	UINT8 hasBall(unsigned int index)
+	bool hasBall(unsigned int index)
 	{
 		return newClient.hasBall(index);
 	}

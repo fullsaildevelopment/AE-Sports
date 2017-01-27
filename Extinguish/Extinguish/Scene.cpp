@@ -400,6 +400,15 @@ void Scene::Update(float dt)
 				XMFLOAT4X4 world;
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
+
+				if (i == 16)
+				{
+					float3 test = transform->GetPosition();
+
+					////printf("%f %f %f \n", transform->GetWorld()._41, transform->GetWorld()._42, transform->GetWorld()._43);
+
+					//cout << gameObjects[i]->GetTransform()->GetParent()->GetGameObject()->GetName() << endl;
+				}
 			}
 		}
 	}
