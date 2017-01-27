@@ -3,6 +3,7 @@
 #include "EventDispatcher.h"
 #include "SphereCollider.h"
 #include "BallController.h"
+#include "SoundEngine.h"
 
 using namespace std;
 
@@ -76,11 +77,15 @@ void Crosse::Throw()
 
 		//add force to ball
 		XMFLOAT3 ballForward = ballTransform->GetForward();
+		ballForward = { -ballForward.x, -ballForward.y, -ballForward.z };
 		//ballForward = { 0, 0, 1 };
 		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 		// do animation on crosse
 		transform->RotateX(XMConvertToRadians(45));
+
+		//play sound
+		SoundEngine::GetSingleton()->PlaySpearSound();
 	}
 }
 
