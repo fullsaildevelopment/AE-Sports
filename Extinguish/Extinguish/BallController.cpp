@@ -40,12 +40,12 @@ void BallController::Init()
 void BallController::Update(float dt, InputManager* input)
 {
 	timer.Signal();
+
 	if (isHeld && !isThrown)
 	{
 		me->GetTransform()->SetVelocity(float3(0, 0, 0));
 	}
-
-	else 
+	else
 		me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
 
 	if (isThrown)
@@ -57,6 +57,9 @@ void BallController::Update(float dt, InputManager* input)
 			holder = nullptr;
 		}
 	}
+
+	//printf("%f %f %f \n", me->GetTransform()->GetVelocity().x, me->GetTransform()->GetVelocity().y, me->GetTransform()->GetVelocity().z);
+
 }
 
 void BallController::Throw()
