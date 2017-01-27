@@ -120,6 +120,10 @@ void Game::Update(float dt)
 
 		int clientState = client.run();
 
+		XMFLOAT3 test = client.getLocation(16);
+
+		printf("%f %f %f \n", test.x, test.y, test.z);
+		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
