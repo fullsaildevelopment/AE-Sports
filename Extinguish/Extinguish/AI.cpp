@@ -81,7 +81,7 @@ void AI::Init()
 				enemyGoal = tmp[i];
 		}
 
-		else if (tmp[i]->GetTag() == "Team1")
+		else if (tmp[i]->GetTag() == "Team1") // *******************************************************************8
 			listOfMates.push_back(tmp[i]); // add them to my team list
 
 		else if (tmp[i]->GetTag() == "Team2")
@@ -101,8 +101,8 @@ void AI::Update(float dt, InputManager* input)
 	{
 		if (ballClass->GetHolder() == me)
 		{
-			//Score();
-			me->GetTransform()->SetVelocity(float3(0, 0, 0));
+			Score();
+			//me->GetTransform()->SetVelocity(float3(0, 0, 0));
 		}
 			
 	}
