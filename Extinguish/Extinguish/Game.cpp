@@ -439,7 +439,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
-	Hex->Init("Hex");
+	Hex->Init("Team2");
 	Hex->InitTransform(identity, { 1,0,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
 	Hex->AddComponent(ballrenderer3);
@@ -449,6 +449,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//ballMover3->Init(5.0f, 0.75f);
 	HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
 	Hex->AddComponent(ballcol3);
+
+	Hex->SetTag("Goal");
+	
+
 
 	GameObject* bear = new GameObject();
 	basic->AddGameObject(bear);
