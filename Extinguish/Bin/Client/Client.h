@@ -42,7 +42,8 @@ public:
 		UINT8 clientID;
 		UINT8 nameLength;
 		char animationName[125];
-		bool hasBall = false;
+		bool hasBall;
+		//UINT8 hasBall;
 		//	XMFLOAT4X4 world;
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
@@ -102,6 +103,8 @@ public:
 	void sendPacket();
 	UINT8 getID() { return clientID; }
 	CLIENT_GAME_STATE getState(unsigned int index);
+	UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
+	//bool hasBall(unsigned int index) { return clientStates[index].hasBall; }
 
 	XMFLOAT3 getLocation(unsigned int index) { 
 		return clientStates[index].position; }

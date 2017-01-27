@@ -36,7 +36,8 @@ public:
 		UINT8 clientID;
 		UINT8 nameLength;
 		char animationName[125];
-		bool hasBall = false;
+		bool hasBall;
+		//UINT8 hasBall;
 		//XMFLOAT4X4 world;
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
