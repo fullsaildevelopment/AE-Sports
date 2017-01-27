@@ -45,7 +45,8 @@ struct Capsule
 struct Hexagon
 {
 	Segment seg;
-	float v;
+	float d;
+	float s;
 	float h;
 };
 
@@ -95,6 +96,8 @@ bool SweptCaptoSweptCap(Capsule& cl, Capsule& cr, float3& vell, float3& velr, fl
 bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos);
 
 bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel);
+
+bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel);
 
 float3 XMtoF(DirectX::XMFLOAT3 m);
 
