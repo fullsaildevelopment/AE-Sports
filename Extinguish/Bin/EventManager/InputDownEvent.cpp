@@ -58,3 +58,8 @@ void InputDownEvent::SetIsServer(bool toggle)
 {
 	isServer = toggle;
 }
+
+void InputDownEvent::SetInput(InputManager* inputManager)
+{
+	input = inputManager;
+}

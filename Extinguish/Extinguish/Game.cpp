@@ -13,6 +13,9 @@ int Game::clientID = 1;
 
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
+	//cache
+	soundEngine = SoundEngine::GetSingleton();
+
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this);
 
@@ -56,7 +59,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		names[i] = gameObject->GetName();
 	}
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
-	soundEngine.InitSoundEngine(ids, names);
+	soundEngine->InitSoundEngine(ids, names);
 
 	if (isServer)
 	{
@@ -99,8 +102,9 @@ void Game::Update(float dt)
 		if (client.getID() > 0)
 		{
 			// get camera position
-			client.setLocation(gameStates[0]->position);
-			client.setRotation(gameStates[0]->rotation);
+			client.setLocation(gameStates[clientID]->position); 	 // + 2 because of 2 players initialized before cams
+			client.setRotation(gameStates[clientID]->rotation);		 // + 2 because of 2 players initialized before cams
+
 			// send to server
 			client.sendPacket();
 		}
@@ -123,18 +127,23 @@ void Game::Update(float dt)
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 
 			int id = client.getID();
-			for (unsigned int i = 0; i < numobjs; ++i)
+
+			if (id != 1)
 			{
-				if (i != 0 && i != id)
+				for (unsigned int i = 0; i < numobjs; ++i)
 				{
-					GameObject* gameObject = (*gameObjects)[i];
-					XMFLOAT3 position, rotation;
-					position = client.getLocation(i);
-					rotation = client.getRotation(i);
-					gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
-					gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
-					//gameObject->GetTransform()->SetLocal(client.getLocation(i));
-					//gameStates[i]->world = client.getLocation(i);
+					//if (i != 0 && i != id)
+					if (i != id)
+					{
+						GameObject* gameObject = (*gameObjects)[i];
+						XMFLOAT3 position, rotation;
+						position = client.getLocation(i);
+						rotation = client.getRotation(i);
+						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
+						//gameStates[i]->world = client.getLocation(i);
+					}
 				}
 			}
 		}
@@ -143,7 +152,7 @@ void Game::Update(float dt)
 	//scenes[currentScene].Update(*input, dt);
 	scenes[currentScene]->Update(dt);
 
-	soundEngine.ProcessAudio();
+	soundEngine->ProcessAudio();
 }
 
 void Game::Render()
@@ -164,7 +173,7 @@ void Game::Shutdown()
 		delete gameStates[i];
 	}
 
-	soundEngine.Terminate();
+	soundEngine->Terminate();
 }
 
 //misc
@@ -183,7 +192,7 @@ void Game::HandleEvent(Event* e)
 	if (inputDownEvent)
 	{
 		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input... or messenger is server, but not marked as one
-		if ((isServer && inputDownEvent->GetID() != 1) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if ((isServer && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
@@ -232,14 +241,69 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
-	GameObject* camera = new GameObject();
-	basic->AddGameObject(camera);
-	camera->Init("Camera");
-	camera->InitTransform(identity, { 0, 1.5f, -3.0f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Camera* cameraController = new Camera();
-	camera->AddComponent(cameraController);
+
+
+	GameObject* mage1 = new GameObject();
+	basic->AddGameObject(mage1);
+	mage1->Init("Mage1");
+	mage1->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* mageRenderer1 = new Renderer();
+	mage1->AddComponent(mageRenderer1);
+	mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
+	Movement* mageMover = new Movement();
+	mage1->AddComponent(mageMover);
+	mageMover->Init(5.0f, 0.75f);//Camera* cameraController = new Camera();
+	//mage1->AddComponent(cameraController);
+	//cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	//PlayerController* bplayerController = new PlayerController();
+	//mage->AddComponent(bplayerController);
+	//bplayerController->Init(5.0f, 0.75f);
+	//Camera* cameraController1 = new Camera();
+	//mage1->AddComponent(cameraController1);
+	////cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	//cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+	GameObject* mage2 = new GameObject();
+	basic->AddGameObject(mage2);
+	mage2->Init("Mage2");
+	mage2->InitTransform(identity, { 5, 0, 3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* mageRenderer2 = new Renderer();
+	mage2->AddComponent(mageRenderer2);
+	mageRenderer2->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
+	Movement* mageMover2 = new Movement();
+	mage2->AddComponent(mageMover2);
+	mageMover2->Init(5.0f, 0.75f);
+	//Camera* cameraController2 = new Camera();
+	//mage2->AddComponent(cameraController2);
+	////cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	//cameraController2->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+	//Camera* cameraController2 = new Camera();
+	//mage2->AddComponent(cameraController2);
+	//cameraController2->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
-	cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	//PlayerController* bplayerController = new PlayerController();
+	//mage->AddComponent(bplayerController);
+	//bplayerController->Init(5.0f, 0.75f);
+
+	GameObject* camera1 = new GameObject();
+	basic->AddGameObject(camera1);
+	camera1->Init("Camera1");
+	camera1->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+	Camera* cameraController1 = new Camera();
+	camera1->AddComponent(cameraController1);
+	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+	GameObject* camera2 = new GameObject();
+	basic->AddGameObject(camera2);
+	camera2->Init("Camera2");
+	camera2->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage2->GetTransform(), nullptr, nullptr);
+	//camera2->InitTransform(identity, { 0, 1.5f, -3.0f }, { 0, 0, 0 }, { 1, 1, 1 }, mage2->GetTransform(), nullptr, nullptr);
+	Camera* cameraController2 = new Camera();
+	camera2->AddComponent(cameraController2);
+	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	cameraController2->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
 	GameObject* box = new GameObject();
 	basic->AddGameObject(box);
@@ -373,14 +437,20 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* bearRenderer = new Renderer();
 	bear->AddComponent(bearRenderer);
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
+	//bearRenderer->SetNextAnimation("Run");
 	//PlayerController* playerController = new PlayerController();
 	//bear->AddComponent(playerController);
 	//playerController->Init();
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
 	bearMover->Init(1.0f, 0.75f);
-	BoxCollider* bearcol = new BoxCollider(bear, true, { 1,2,1 }, { -1,0,-1 });
+	BoxCollider* bearcol = new BoxCollider(bear, false, { 1,2,1 }, { -1,0,-1 });
 	bear->AddComponent(bearcol);
+	
+	bear->SetTag("Team1");
+	AI *bearAI = new AI(bear);
+	bear->AddComponent(bearAI);
+
 	
 
 	//Camera* cameraController = new Camera();
@@ -422,10 +492,12 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	gameBall->SetTag("Ball");
 	mbox6AI->Init();
+	bearAI->Init();
 
 
-	crosse->Init("Crosse");
-	crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, camera->GetTransform(), nullptr, nullptr);
+	crosse->Init("Crosse1");
+	crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+	//crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	SphereCollider* crosseNetCollider = new SphereCollider(0.25f, crosse, true);
 	crosse->AddComponent(crosseNetCollider);
@@ -435,17 +507,20 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
 	crosseController->Init();
-	
-	GameObject* mage = new GameObject();
-	basic->AddGameObject(mage);
-	mage->Init("Mage");
-	mage->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0}, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* mageRenderer = new Renderer();
-	mage->AddComponent(mageRenderer);
-	mageRenderer->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	//PlayerController* bplayerController = new PlayerController();
-	//mage->AddComponent(bplayerController);
-	//bplayerController->Init(5.0f, 0.75f);
+
+	GameObject* crosse2 = new GameObject();
+	basic->AddGameObject(crosse2);
+	crosse2->Init("Crosse2");
+	crosse2->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage2->GetTransform(), nullptr, nullptr);
+	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
+	SphereCollider* crosseNetCollider2 = new SphereCollider(0.25f, crosse2, true);
+	crosse2->AddComponent(crosseNetCollider2);
+	Renderer* crosseRenderer2 = new Renderer();
+	crosse2->AddComponent(crosseRenderer);
+	crosseRenderer2->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Crosse* crosseController2 = new Crosse();
+	crosse2->AddComponent(crosseController2);
+	crosseController2->Init();
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

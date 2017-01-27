@@ -32,10 +32,10 @@ private:
 
 	//InputManager* input;
 	ResourceManager resourceManager;
-	SoundEngine soundEngine;
+	SoundEngine* soundEngine;
 
-	bool isServer = false;
-	bool isMultiplayer = false;
+	bool isServer = true;
+	bool isMultiplayer = true;
 
 	ClientWrapper client;
 	ServerWrapper server;

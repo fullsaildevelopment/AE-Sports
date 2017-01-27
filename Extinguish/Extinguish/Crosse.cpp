@@ -3,6 +3,7 @@
 #include "EventDispatcher.h"
 #include "SphereCollider.h"
 #include "BallController.h"
+#include "SoundEngine.h"
 
 using namespace std;
 
@@ -60,7 +61,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 10.0f;
+	const float throwSpeed = 1.0f;
 	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
 	if (ball->GetHolder() == GetGameObject())
 	{
@@ -76,11 +77,15 @@ void Crosse::Throw()
 
 		//add force to ball
 		XMFLOAT3 ballForward = ballTransform->GetForward();
+		ballForward = { -ballForward.x, -ballForward.y, -ballForward.z };
 		//ballForward = { 0, 0, 1 };
 		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 		// do animation on crosse
 		transform->RotateX(XMConvertToRadians(45));
+
+		//play sound
+		SoundEngine::GetSingleton()->PlaySpearSound();
 	}
 }
 
@@ -93,7 +98,16 @@ void Crosse::HandleEvent(Event* e)
 	{
 		if (inputDownEvent->IsServer())
 		{
-			HandleInput(inputDownEvent);
+			string name;
+			name = "Crosse";
+			name += to_string(inputDownEvent->GetID());
+
+			if (GetGameObject()->GetName() == name)
+			{
+				HandleInput(inputDownEvent);
+			}
+
+			//HandleInput(inputDownEvent);
 		}
 	}
 }

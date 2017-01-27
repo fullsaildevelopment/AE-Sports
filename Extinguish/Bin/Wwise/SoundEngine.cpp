@@ -8,6 +8,7 @@
 #include "AK/Tools/Common/AkPlatformFuncs.h"
 #include "AK/MusicEngine/Common/AkMusicEngine.h"
 #include "AkFilePackageLowLevelIOBlocking.h"
+#include "Wwise_IDs.h"
 
 #ifndef AK_OPTIMIZED
 	#include <AK/Comm/AkCommunication.h>
@@ -48,6 +49,18 @@ namespace AK
 		VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
 	}
 #endif
+}
+
+SoundEngine* SoundEngine::singleton = 0;
+
+SoundEngine::SoundEngine()
+{
+
+}
+
+SoundEngine::~SoundEngine()
+{
+	delete singleton;
 }
 
 bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std::string> names)
@@ -96,7 +109,55 @@ void SoundEngine::Terminate()
 	AK::MemoryMgr::Term();
 }
 
-//private helper functions
+//misc//
+SoundEngine* SoundEngine::GetSingleton()
+{
+	if (!singleton)
+	{
+		singleton = new SoundEngine();
+	}
+
+	return singleton;
+}
+
+//bool SoundEngine::PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID)
+//{
+//	bool result = true;
+//
+//	AK::SoundEngine::PostEvent(eventID, gameObjectID);
+//
+//	return result;
+//}
+
+//bool SoundEngine::PlaySpearSound(AkGameObjectID gameObjectID)
+bool SoundEngine::PlaySpearSound()
+{
+	bool result = true;
+
+	AkPlayingID playId =  AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
+
+	return result;
+}
+
+bool SoundEngine::PlayWalkingSound()
+{
+	bool result = true;
+
+	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, 1);
+
+	return result;
+}
+
+bool SoundEngine::StopWalkingSound()
+{
+	bool result = true;
+
+	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, 1);
+
+	return result;
+}
+
+//private helper functions//
 bool SoundEngine::InitSettings()
 {
 	bool result = true;
@@ -164,16 +225,17 @@ bool SoundEngine::InitSettings()
 
 void SoundEngine::InitBank()
 {
-	lowLevelIO->SetBasePath(AKTEXT("../../../samples/IntegrationDemo/WwiseProject/GeneratedSoundBanks/Windows/"));
+	lowLevelIO->SetBasePath(L"../Assets/Soundbanks/");
 	AK::StreamMgr::SetCurrentLanguage(AKTEXT("English(US)"));
 
 	AkBankID bankID;
 	
 	//init bank must be loaded first before anything!
 	AKRESULT eResult = AK::SoundEngine::LoadBank(L"Init.bnk", AK_DEFAULT_POOL_ID, bankID);
-	eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
-	eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
-	eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
+	eResult = AK::SoundEngine::LoadBank(L"SoundBank.bnk", AK_DEFAULT_POOL_ID, bankID);
+	//eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
+	//eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
+	//eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
 }
 
 void SoundEngine::InitGameObjects(std::vector<unsigned int> ids, std::vector<std::string> names)

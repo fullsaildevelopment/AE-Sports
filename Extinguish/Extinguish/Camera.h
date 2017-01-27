@@ -9,8 +9,10 @@
 class Camera : public Component
 {
 private:
+	//Transform* camTransform;
 	InputManager* input;
 	Transform* transform;
+	Transform* playerTransform;
 	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT3 clampPos;
 

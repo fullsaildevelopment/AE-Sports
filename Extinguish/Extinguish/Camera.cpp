@@ -7,12 +7,12 @@ using namespace std;
 
 Camera::Camera() : maxRotX(1.5f), maxRotY(2.0f)
 {
-
+	//camTransform = new Transform();
 }
 
 Camera::~Camera()
 {
-
+	//delete camTransform;
 }
 
 //basic//
@@ -31,7 +31,6 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 
 	moveSpeed = moveVel;
 	rotateSpeed = rotateVel;
-
 }
 
 void Camera::Update(float dt, InputManager* input)
@@ -53,7 +52,18 @@ void Camera::HandleEvent(Event* e)
 	{
 		if (inputDownEvent->IsServer())
 		{
-			MoveCamera(inputDownEvent);
+			string name;
+			name = "Camera";
+			name += to_string(inputDownEvent->GetID());
+
+			if (GetGameObject()->GetName() == name)
+			{
+				string playerName = "Mage";
+				playerName += to_string(inputDownEvent->GetID());
+
+				playerTransform = GetGameObject()->FindGameObject(playerName)->GetTransform();
+				MoveCamera(inputDownEvent);
+			}
 		}
 	}
 }
@@ -90,42 +100,48 @@ void Camera::MoveCamera(InputDownEvent* e)
 
 	//cout << "Input!" << endl;
 
-	if (input->GetKey('W'))
-	{
-		XMFLOAT3 forward = transform->GetForward();
-		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
-	//	cout << "Forward!" << endl;
-	}
+	//if (input->GetKey('W'))
+	//{
+	//	XMFLOAT3 forward = transform->GetForward();
+	//	//forward = { -forward.x, -forward.y, -forward.z };
+	//	transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
+	////	cout << "Forward!" << endl;
+	//}
 
-	if (input->GetKey('S'))
-	{
-		XMFLOAT3 forward = transform->GetForward();
-		transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
-	}
+	//if (input->GetKey('S'))
+	//{
+	//	XMFLOAT3 forward = transform->GetForward();
+	//	//forward = { -forward.x, -forward.y, -forward.z };
+	//	transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
+	//}
 
-	if (input->GetKey('A'))
-	{
-		XMFLOAT3 right = transform->GetRight();
-		transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
-	}
+	//if (input->GetKey('A'))
+	//{
+	//	XMFLOAT3 right = transform->GetRight();
+	//	//right = { -right.x, -right.y, -right.z };
+	//	transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
+	//}
 
-	if (input->GetKey('D'))
-	{
-		XMFLOAT3 right = transform->GetRight();
-		transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
-	}
+	//if (input->GetKey('D'))
+	//{
+	//	XMFLOAT3 right = transform->GetRight();
+	//	//right = { -right.x, -right.y, -right.z };
+	//	transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
+	//}
 
-	if (input->GetKey('Q')) //up
-	{
-		XMFLOAT3 up = transform->GetUp();
-		transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
-	}
+	//if (input->GetKey('Q')) //up
+	//{
+	//	XMFLOAT3 up = transform->GetUp();
+	//	//up = { -up.x, -up.y, -up.z };
+	//	transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
+	//}
 
-	if (input->GetKey('E')) //down
-	{
-		XMFLOAT3 up = transform->GetUp();
-		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
-	}
+	//if (input->GetKey('E')) //down
+	//{
+	//	XMFLOAT3 up = transform->GetUp();
+	//	//up = { -up.x, -up.y, -up.z };
+	//	transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
+	//}
 
 #if _DEBUG
 	if (input->GetMouseX() && input->GetMouseY())
@@ -138,12 +154,6 @@ void Camera::MoveCamera(InputDownEvent* e)
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
 			//store old cam position
-			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
-
-			camera._41 = 0;
-			camera._42 = 0;
-			camera._43 = 0;
-
 			float degX = dy * rotateSpeed * dt;
 			float degY = dx * rotateSpeed * dt;
 
@@ -167,8 +177,9 @@ void Camera::MoveCamera(InputDownEvent* e)
 
 			//cout << curRotX << " " << curRotY << endl;
 
-			transform->RotateX(degX);
+			//transform->RotateX(degX);
 			transform->RotateY(degY);
+			playerTransform->RotateY(degY);
 		}
 	}
 
@@ -249,7 +260,12 @@ XMFLOAT4X4 Camera::GetView()
 	XMFLOAT4X4 view;
 
 	//XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up )));
+	XMFLOAT3 translation = { 0, 5, 1 };
+	transform->Translate({ translation.x, translation.y, translation.z });
+	//transform->RotateY(XM_PI);
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMLoadFloat4x4(&transform->GetWorld())));
+	transform->Translate({ -translation.x, -translation.y, -translation.z });
+	//transform->RotateY(-XM_PI);
 
 	return view;
 }

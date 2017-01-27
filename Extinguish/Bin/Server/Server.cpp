@@ -1,7 +1,7 @@
 #include "Server.h"
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
-Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[16];
+Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[19];
 
 
 void Server::setObjectCount(int count) { 
@@ -131,10 +131,10 @@ int  Server::update()
 		}
 	}
 
-	if (result == 2)
+	/*if (result == 2)
 	{
 		sendPackets();
-	}
+	}*/
 
 	return result;
 }
@@ -288,14 +288,24 @@ void Server::recieveInput()
 	//bIn.Read(tempState);
 
 	bIn.Read(tempState.clientID);
-	bIn.Read((char*)tempState.keyboard, 256);
-	bIn.Read((char*)tempState.keyboardDown, 256);
-	bIn.Read((char*)tempState.keyboardUp, 256);
-	bIn.Read((char*)tempState.mouse, 3);
-	bIn.Read((char*)tempState.mouseDown, 3);
-	bIn.Read((char*)tempState.mouseUp, 3);
+	for (unsigned int i = 0; i < 256; ++i)
+		bIn.Read(tempState.keyboard[i]);
+	for (unsigned int i = 0; i < 256; ++i)
+	bIn.Read(tempState.keyboardDown[i]);
+	for (unsigned int i = 0; i < 256; ++i)
+	bIn.Read(tempState.keyboardUp[i]);
+
+	for (unsigned int i = 0; i < 3; ++i)
+	bIn.Read(tempState.mouse[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+	bIn.Read(tempState.mouseDown[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+	bIn.Read(tempState.mouseUp[i]);
 	bIn.Read((UINT8)tempState.mouseX);
 	bIn.Read((UINT8)tempState.mouseY);
+	bIn.Read(tempState.isServer);
+
+	newInput[tempState.clientID - 1] = true;
 
 	clientInput[tempState.clientID - 1] = tempState;
 }

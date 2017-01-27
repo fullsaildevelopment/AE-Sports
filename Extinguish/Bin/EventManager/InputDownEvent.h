@@ -18,6 +18,7 @@ public:
 	InputDownEvent(InputManager* inputManager, int id, bool server);
 	~InputDownEvent();
 
+	//just to make it polymorphic
 	void Init() override;
 
 	//getters
@@ -29,4 +30,5 @@ public:
 	//setters
 	void SetIsServer(bool toggle);
 	void SetID(int id);
+	void SetInput(InputManager* inputManager);
 };
