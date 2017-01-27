@@ -76,14 +76,16 @@
     <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
-    <LibraryPath>$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <IncludePath>E:\Program Files (x86)\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
+    <LibraryPath>E:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
+    <ExecutablePath>E:\Program Files %28x86%29\Visual Leak Detector\bin\Win64;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
+    <IncludePath>E:\Program Files (x86)\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
-    <LibraryPath>$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
+    <LibraryPath>E:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <ExecutablePath>E:\Program Files %28x86%29\Visual Leak Detector\bin\Win64;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
