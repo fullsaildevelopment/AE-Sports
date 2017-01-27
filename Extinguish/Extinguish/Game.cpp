@@ -81,6 +81,8 @@ void Game::Update(float dt)
 
 		/*gameStates.resize(scenes[currentScene]->GetNumObjects());*/
 
+		int whoHasBall = -1;
+
 		for (int i = 0; i < gameObjects->size(); ++i)
 		{
 			GameState* state = new GameState();
@@ -89,6 +91,25 @@ void Game::Update(float dt)
 			float3 rotation = gameObject->GetTransform()->GetRotation();
 			state->position = { position.x, position.y, position.z };
 			state->rotation = { rotation.x, rotation.y, rotation.z };
+
+			BallController* ball = gameObject->GetComponent<BallController>();
+
+			if (ball)
+			{
+				if (ball->GetHolder()->GetName() == "Crosse1")
+				{
+					whoHasBall = 17;
+				}
+				else if (ball->GetHolder()->GetName() == "Crosse2")
+				{
+					whoHasBall = 18;
+				}
+			}
+
+			if (i == whoHasBall)
+			{
+				state->hasBall = true;
+			}
 
 			gameStates[i] = state;
 		}
@@ -122,7 +143,7 @@ void Game::Update(float dt)
 
 		XMFLOAT3 test = client.getLocation(16);
 
-		printf("%f %f %f \n", test.x, test.y, test.z);
+		//printf("%f %f %f \n", test.x, test.y, test.z);
 		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
@@ -145,6 +166,7 @@ void Game::Update(float dt)
 						rotation = client.getRotation(i);
 						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+
 						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
 						//gameStates[i]->world = client.getLocation(i);
 					}
@@ -476,7 +498,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	//gameBall->InitTransform(identity, { -5, 0.5f, -2.5f }, { 0, 0, 0 }, {0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
@@ -513,7 +535,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	SphereCollider* crosseNetCollider2 = new SphereCollider(0.25f, crosse2, true);
 	crosse2->AddComponent(crosseNetCollider2);
 	Renderer* crosseRenderer2 = new Renderer();
-	crosse2->AddComponent(crosseRenderer);
+	crosse2->AddComponent(crosseRenderer2);
 	crosseRenderer2->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Crosse* crosseController2 = new Crosse();
 	crosse2->AddComponent(crosseController2);
