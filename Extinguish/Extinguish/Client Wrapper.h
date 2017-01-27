@@ -60,10 +60,10 @@ public:
 		return newClient.getNumPackets();
 	}
 
-	/*GameState getState(unsigned int index)
+	UINT8 hasBall(unsigned int index)
 	{
-		
-	}*/
+		return newClient.hasBall(index);
+	}
 
 	XMFLOAT3 getLocation(unsigned int index)
 	{
