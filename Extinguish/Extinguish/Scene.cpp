@@ -369,18 +369,19 @@ void Scene::Update(float dt)
 
 	XMFLOAT4X4 cameraCam;
 
-	string playerName = "Mage";
+	string cameraName = "Camera";
 
+	//error case... just in case client id isn't initialized
 	if (Game::GetClientID() == 0)
 	{
-		playerName += "1";
+		cameraName += "1";
 	}
 	else
 	{
-		playerName += to_string(Game::GetClientID());
+		cameraName += to_string(Game::GetClientID());
 	}
 
-	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject(playerName)->GetComponent<Camera>()->GetView())));;
+	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject(cameraName)->GetComponent<Camera>()->GetView())));;
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
