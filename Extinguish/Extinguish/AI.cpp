@@ -40,6 +40,15 @@ void AI::OnTriggerEnter(Collider *obj)
 	}
 }
 
+void AI::OnCollisionEnter(Collider *obj)
+{
+	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
+
+	// if i bump into a player, they caught me
+	if (col && !ballClass->GetIsHeld())
+		ballClass->SetHolder(me);
+}
+
 void AI::Init()
 {
 	listOfEnemies.reserve(4);
@@ -87,8 +96,13 @@ void AI::Update(float dt, InputManager* input)
 	// if i have the ball
 	if (ballClass->GetIsHeld())
 	{
-		//if (ballClass->GetHolder() == me)
+		if (ballClass->GetHolder() == me)
+		{
 			//Score();
+			printf("Ball Caught");
+			me->GetTransform()->SetVelocity(float3(0, 0, 0));
+		}
+			
 	}
 
 	else
@@ -193,7 +207,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->SetVelocity(v * 5); // ***************************************************************************************
+	me->GetTransform()->SetVelocity(v * 10); // ***************************************************************************************
 
 	if (v.magnitude() < 3)
 		return true;

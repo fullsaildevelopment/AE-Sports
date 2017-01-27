@@ -32,6 +32,7 @@ public:
 	void Update(float dt, InputManager* input) override;
 	void UpdateState(State newState);
 	void OnTriggerEnter(Collider *obj) override;
+	void OnCollisionEnter(Collider *obj) override;
 
 	// States
 	void Idle();

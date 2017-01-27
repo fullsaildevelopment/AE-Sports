@@ -385,12 +385,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddComponent(meterboxcol6);
 
-	meterbox6->SetTag("Team1");
-	AI *mbox6AI = new AI(meterbox6);
-	meterbox6->AddComponent(mbox6AI);
-
-
-
 	GameObject* Ball = new GameObject();
 	basic->AddGameObject(Ball);
 	Ball->Init("Ball");
@@ -444,7 +438,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
 	bearMover->Init(1.0f, 0.75f);
-	BoxCollider* bearcol = new BoxCollider(bear, false, { 1,2,1 }, { -1,0,-1 });
+	CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
 	bear->AddComponent(bearcol);
 	
 	bear->SetTag("Team1");
@@ -491,7 +485,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	ballController->SetHolder(crosse);
 
 	gameBall->SetTag("Ball");
-	mbox6AI->Init();
 	bearAI->Init();
 
 
