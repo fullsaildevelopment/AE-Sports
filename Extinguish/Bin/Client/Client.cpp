@@ -7,7 +7,7 @@ Packet * Client::packet = nullptr;
 char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
-Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[16];
+Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[19];
 //std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
 
@@ -177,21 +177,29 @@ void Client::stop()
 	RakPeerInterface::DestroyInstance(peer);
 }
 
-int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID)
+int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_INPUT);
 	//bsOut.Write((UINT8)sizeof(InputEventStruct));
 	//bsOut.Write(states);
 	bsOut.Write((UINT8)clientID);
-	bsOut.Write((char*)keyboard, 256);
-	bsOut.Write((char*)keyboardDown, 256);
-	bsOut.Write((char*)keyboardUp, 256);
-	bsOut.Write((char*)mouse, 3);
-	bsOut.Write((char*)mouseDown, 3);
-	bsOut.Write((char*)mouseUp, 3);
+	for (unsigned int i = 0; i < 256; ++i)
+		bsOut.Write(keyboard[i]);
+	for (unsigned int i = 0; i < 256; ++i)
+		bsOut.Write(keyboardDown[i]);
+	for (unsigned int i = 0; i < 256; ++i)
+		bsOut.Write(keyboardUp[i]);
+
+	for (unsigned int i = 0; i < 3; ++i)
+		bsOut.Write(mouse[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		bsOut.Write(mouseDown[i]);
+	for (unsigned int i = 0; i < 3; ++i)
+		bsOut.Write(mouseUp[i]);
 	bsOut.Write((UINT8)mouseX);
 	bsOut.Write((UINT8)mouseY);
+	bsOut.Write(isServer);
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;

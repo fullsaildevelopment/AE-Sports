@@ -5,6 +5,7 @@
 #include "..\ShaderStructures\ShaderStructures.h"
 #include "EventDispatcher.h"
 #include "InputDownEvent.h"
+#include "InputManager.h"
 
 class ServerWrapper
 {
@@ -33,16 +34,42 @@ public:
 		if (result == 3)
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();
+			InputManager* input = new InputManager();
 
 			for (unsigned int i = 0; i < 4; ++i)
 			{
-				InputEventStruct * tempEvent = (InputEventStruct*)newServer.getInputEvent(i);
-				if (tempEvent)
+				if (newServer.isInput(i))
+				{
+					InputEventStruct * tempEvent = new InputEventStruct;
+					
+					tempEvent->clientID = newServer.getInputEvent(i)->clientID;
+					memcpy(tempEvent->keyboard, newServer.getInputEvent(i)->keyboard, 256);
+					memcpy(tempEvent->keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
+					memcpy(tempEvent->keyboardDown, newServer.getInputEvent(i)->keyboardDown, 256);
+					memcpy(tempEvent->mouse, newServer.getInputEvent(i)->mouse, 3);
+					memcpy(tempEvent->mouseDown, newServer.getInputEvent(i)->mouseDown, 3);
+					memcpy(tempEvent->mouseUp, newServer.getInputEvent(i)->mouseUp, 3);
+					tempEvent->mouseX = newServer.getInputEvent(i)->mouseX;
+					tempEvent->mouseY = newServer.getInputEvent(i)->mouseY;
+					tempEvent->isServer = newServer.getInputEvent(i)->isServer;
+
+					input->Init(tempEvent->keyboard, tempEvent->keyboardDown, tempEvent->keyboardUp, tempEvent->mouse, tempEvent->mouseDown, tempEvent->mouseUp, tempEvent->mouseX, tempEvent->mouseY);
+					inputEvent->SetInput(input);
+					inputEvent->SetID(tempEvent->clientID);
+					inputEvent->SetIsServer(tempEvent->isServer);
+
 					EventDispatcher::GetSingleton()->Dispatch(inputEvent);
+
+					delete tempEvent;
+				}
 			}
 
+			newServer.resetInput();
+			
 			delete inputEvent;
-			result = 2;
+			delete input;
+			//result = 2;
+			newServer.sendPackets();
 		}
 
 		if (result == 2)
@@ -56,6 +83,8 @@ public:
 				states[i]->position = newServer.getState(i)->position;
 				states[i]->rotation = newServer.getState(i)->rotation;
 			}
+
+			newServer.sendPackets();
 		}
 
 		return result;
@@ -104,6 +133,11 @@ public:
 	int getNewState()
 	{
 		return newServer.getNewState();
+	}
+
+	unsigned int getTotalPlayers()
+	{
+		return newServer.getPlayerCount();
 	}
 
 	/*char * getInput()

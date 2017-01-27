@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "Camera.h"
+#include "Game.h"
 
 Scene::Scene()
 {
@@ -178,7 +179,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	HRESULT clampSampleResult = device->CreateSamplerState(&samplerClampDesc, &clampSamplerState);
 
 	devContext->PSSetSamplers(0, 1, wrapSamplerState.GetAddressOf());
-	devContext->PSSetSamplers(1, 1, wrapSamplerState.GetAddressOf());
+	devContext->PSSetSamplers(1, 1, clampSamplerState.GetAddressOf());
 
 	//create lighting buffers and set them
 
@@ -190,7 +191,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 1, 1, 1, 1 });
+	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 0.6f, 0.6f, 0.6f, 0.6f });
 
 	//create point lights
 	PointLight pointLight0;
@@ -367,14 +368,26 @@ void Scene::Update(float dt)
 	gameObjects[0]->Update(dt, input);
 
 	XMFLOAT4X4 cameraCam;
-	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject("Camera")->GetComponent<Camera>()->GetView())));;
+
+	string cameraName = "Camera";
+
+	//error case... just in case client id isn't initialized
+	if (Game::GetClientID() == 0)
+	{
+		cameraName += "1";
+	}
+	else
+	{
+		cameraName += to_string(Game::GetClientID());
+	}
+
+	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject(cameraName)->GetComponent<Camera>()->GetView())));;
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		gameObjects[i]->Update(dt, input);
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
-
 
 		if (renderer)
 		{
@@ -384,14 +397,6 @@ void Scene::Update(float dt)
 
 			if (transform)
 			{
-				//if (gameObjects[i]->GetName() == "GameBall")
-				//{
-				//	int a = 0; 
-				//	a++;
-
-				//	cout << transform->GetPosition().x << " " << transform->GetPosition().y << " " << transform->GetPosition().z << endl;
-				//}
-
 				XMFLOAT4X4 world;
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);

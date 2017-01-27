@@ -193,7 +193,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->SetVelocity(v * 25); // ***************************************************************************************
+	me->GetTransform()->SetVelocity(v * 5); // ***************************************************************************************
 
 	if (v.magnitude() < 3)
 		return true;

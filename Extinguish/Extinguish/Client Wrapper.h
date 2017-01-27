@@ -46,7 +46,7 @@ public:
 		//temp->right = 4;
 		InputManager* input = inputEvent->GetInput();
 
-		newClient.sendInput(input->GetKeyboard(), input->GetKeyboardDown(), input->GetKeyboardUp(), input->GetMouse(), input->GetMouseDown(), input->GetMouseUp(), input->GetMouseX(), input->GetMouseY(), inputEvent->GetID());
+		newClient.sendInput(input->GetKeyboard(), input->GetKeyboardDown(), input->GetKeyboardUp(), input->GetMouse(), input->GetMouseDown(), input->GetMouseUp(), input->GetMouseX(), input->GetMouseY(), inputEvent->GetID(), inputEvent->IsServer());
 		//delete temp;
 	}
 

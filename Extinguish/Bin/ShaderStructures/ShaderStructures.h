@@ -118,5 +118,6 @@ struct InputEventStruct
 	bool mouseUp[3];
 	int mouseX, mouseY;
 	int clientID;
+	bool isServer;
 };
 #pragma pack(pop)

@@ -27,7 +27,7 @@ using namespace DirectX;
 
 class SERVERDLL_API Server
 {
-public: 
+public:
 
 #pragma pack(push, 1)
 	struct CLIENT_GAME_STATE
@@ -84,6 +84,7 @@ private:
 		bool mouseUp[3];
 		UINT8 mouseX, mouseY;
 		UINT8 clientID;
+		bool isServer;
 	};
 
 #pragma pack(pop)
@@ -97,6 +98,7 @@ private:
 	char * names[MAX_PLAYERS];
 	UINT8  nameSizes[MAX_PLAYERS];
 	UINT8  openIDs[MAX_PLAYERS];
+	bool newInput[MAX_PLAYERS];
 public:
 	Server();
 	~Server();
@@ -113,7 +115,20 @@ public:
 	int getNewState() { return lastState; }
 	InputEventStruct * getInputEvent(unsigned int index) { return &clientInput[index]; }
 	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[i]; }
+	bool isInput(unsigned int index) { return newInput[index]; }
+	void resetInput() {
+		newInput[0] = false;
+		newInput[1] = false;
+		newInput[2] = false;
+		newInput[3] = false;
+	}
 
+	unsigned int getPlayerCount() { return numPlayers; }
+
+	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
+		clientStates[index].position = position;
+	clientStates[index].rotation = rotation;
+	}
 private:
 	int lastState = 0;
 	int packRec = 0;

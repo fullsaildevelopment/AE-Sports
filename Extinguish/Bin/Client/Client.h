@@ -85,6 +85,7 @@ public:
 		bool mouseUp[3];
 		int mouseX, mouseY;
 		int clientID;
+		bool isServer;
 	};
 
 #pragma pack(pop)
@@ -95,7 +96,7 @@ public:
 	int run();
 	void stop();
 
-	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID);
+	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer);
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendPacket();

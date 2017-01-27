@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "InputDownEvent.h"
 #include "EventDispatcher.h"
+#include "SoundEngine.h"
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -12,13 +13,28 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 	moveSpeed = moveVelocity;
 	rotateSpeed = rotateVelocity;
 
+	//set keys to default values
+	//SetKeys('I', 'K', 'J', 'L', 'U', 'P');
+	SetKeys('W', 'S', 'A', 'D', 'Q', 'E');
+
 	//register movement event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this);
+
+	timeSincePlayed = 0.0f;
 }
 
 void Movement::Update(float dt, InputManager* input)
 {
 	this->dt = dt;
+
+	if (isMoving)
+	{
+		timeSincePlayed += dt;
+	}
+	else
+	{
+		timeSincePlayed = 0;
+	}
 }
 
 void Movement::HandleEvent(Event* e)
@@ -30,7 +46,17 @@ void Movement::HandleEvent(Event* e)
 	{
 		if (inputDownEvent->IsServer())
 		{
-			HandleInput(inputDownEvent);
+			string name;
+			name = "Mage";
+			name += to_string(inputDownEvent->GetID());
+
+			if (GetGameObject()->GetName() == name)
+			{
+				//if (name == "Mage2")
+				{
+					HandleInput(inputDownEvent);
+				}
+			}
 		}
 	}
 }
@@ -46,52 +72,81 @@ void Movement::HandleInput(InputDownEvent* e)
 {
 	InputManager* input = e->GetInput();
 
-	if (input->GetKey('I'))
+	isMoving = false;
+
+	if (input->GetKey(forward))
 	{
 		XMFLOAT3 forward = transform->GetForward();
+		forward = { -forward.x, -forward.y, -forward.z };
 		//transform->AddVelocity({ 0.0f, 0.0f, moveSpeed});
 		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (input->GetKey('K'))
+	if (input->GetKey(back))
 	{
 		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 		XMFLOAT3 forward = transform->GetForward();
+		forward = { -forward.x, -forward.y, -forward.z };
 		transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, 0.0f, -moveSpeed});
 		isMoving = true;
 	}
 
-	if (input->GetKey('J'))
+	if (input->GetKey(left))
 	{
 		XMFLOAT3 right = transform->GetRight();
+		right = { -right.x, -right.y, -right.z };
 		transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		//transform->AddVelocity({ -moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
 	}
 
-	if (input->GetKey('L'))
+	if (input->GetKey(right))
 	{
 		XMFLOAT3 right = transform->GetRight();
+		right = { -right.x, -right.y, -right.z };
 		transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
 	}
 
-	if (input->GetKey('U')) //up
+	if (input->GetKey(up)) //up
 	{
 		XMFLOAT3 up = transform->GetUp();
+		up = { -up.x, -up.y, -up.z };
 		transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, moveSpeed, 0.0f });
 		isMoving = true;
 	}
 
-	if (input->GetKey('O')) //down
+	if (input->GetKey(down)) //down
 	{
 		XMFLOAT3 up = transform->GetUp();
+		up = { -up.x, -up.y, -up.z };
 		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
 		isMoving = true;
 	}
+
+	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f )
+	{
+		SoundEngine::GetSingleton()->PlayWalkingSound();
+		timeSincePlayed = 0;
+	}
+	else if (!isMoving)
+	{
+		SoundEngine::GetSingleton()->StopWalkingSound();
+	}
+}
+
+//setters//
+void Movement::SetKeys(char forward, char back, char left, char right, char up, char down)
+{
+	this->forward = forward;
+	this->back = back;
+	this->left = left;
+	this->right = right;
+	this->up = up;
+	this->down = down;
 }

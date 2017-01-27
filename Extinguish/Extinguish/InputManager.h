@@ -37,6 +37,7 @@ public:
 
 	//basic
 	void ClearKeyboard();
+	void Init(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY); //only to be used for events
 	void Update();
 	void Shutdown();
 
