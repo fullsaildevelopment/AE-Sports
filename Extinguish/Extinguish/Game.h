@@ -19,6 +19,7 @@
 #include "Server Wrapper.h"
 #include "SoundEngine.h"
 #include "EventHandler.h"
+#include "HexagonCollider.h"
 
 class BallController;
 
@@ -33,8 +34,8 @@ private:
 	ResourceManager resourceManager;
 	SoundEngine* soundEngine;
 
-	bool isServer = true;
-	bool isMultiplayer = true;
+	bool isServer = false;
+	bool isMultiplayer = false;
 
 	ClientWrapper client;
 	ServerWrapper server;

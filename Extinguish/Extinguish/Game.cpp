@@ -389,12 +389,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddComponent(meterboxcol6);
 
-	meterbox6->SetTag("Team1");
-	AI *mbox6AI = new AI(meterbox6);
-	meterbox6->AddComponent(mbox6AI);
-
-
-
 	GameObject* Ball = new GameObject();
 	basic->AddGameObject(Ball);
 	Ball->Init("Ball");
@@ -405,7 +399,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover = new Movement();
 	Ball->AddComponent(ballMover);
 	ballMover->Init(5.0f, 0.75f);
-	SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false, float3(1,1,0).normalize() * 1.5f);
+	SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false, float3(1,1,0).normalize() * 0.5f);
 	Ball->AddComponent(ballcol);
 
 	GameObject* Ball2 = new GameObject();
@@ -421,18 +415,18 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false);
 	Ball2->AddComponent(ballcol2);
 
-	GameObject* Ball3 = new GameObject();
-	basic->AddGameObject(Ball3);
-	Ball3->Init("Ball3");
-	Ball3->InitTransform(identity, { 3,3,2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	GameObject* Hex = new GameObject();
+	basic->AddGameObject(Hex);
+	Hex->Init("Hex");
+	Hex->InitTransform(identity, { 1,0,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
-	Ball3->AddComponent(ballrenderer3);
-	ballrenderer3->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	Hex->AddComponent(ballrenderer3);
+	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover3 = new Movement();
-	//Ball3->AddComponent(ballMover3);
+	//Hex->AddComponent(ballMover3);
 	//ballMover3->Init(5.0f, 0.75f);
-	SphereCollider* ballcol3 = new SphereCollider(0.5f, Ball3, false);
-	Ball3->AddComponent(ballcol3);
+	HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
+	Hex->AddComponent(ballcol3);
 
 	GameObject* bear = new GameObject();
 	basic->AddGameObject(bear);
@@ -448,7 +442,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* bearMover = new Movement();
 	bear->AddComponent(bearMover);
 	bearMover->Init(1.0f, 0.75f);
-	BoxCollider* bearcol = new BoxCollider(bear, false, { 1,2,1 }, { -1,0,-1 });
+	CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
 	bear->AddComponent(bearcol);
 	
 	bear->SetTag("Team1");
@@ -495,7 +489,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	ballController->SetHolder(crosse);
 
 	gameBall->SetTag("Ball");
-	mbox6AI->Init();
 	bearAI->Init();
 
 
