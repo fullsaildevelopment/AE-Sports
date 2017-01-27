@@ -211,7 +211,7 @@ bool SphereToAABB(const Sphere& lhs, const AABB& rhs)
 	if (lhs.m_Center.z > rhs.max.z)
 		cp.z = rhs.max.z;
 
-	if (dot_product(lhs.m_Center - cp, lhs.m_Center - cp) < powf(lhs.m_Radius, 2))
+	if (dot_product(lhs.m_Center - cp, lhs.m_Center - cp) > powf(lhs.m_Radius, 2))
 		return false;
 	return true;
 }
@@ -915,14 +915,61 @@ bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
 
 bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 {
-	float3 p2 = float3(hex.h, 0, -hex.v);
+	AABB bounding;
+	bounding.min = float3(hex.seg.m_Start.x - 2, hex.seg.m_Start.y - 1, hex.seg.m_Start.z - 3);
+	bounding.max = float3(hex.seg.m_End.x + 2, hex.seg.m_End.y + 1, hex.seg.m_End.z + 3);
 
-	float3 p3 = float3(0, 0, hex.v * 2);
+	if (!SphereToAABB(s, bounding)) 
+		return false;
 
-	float q2x = abs(s.m_Center.x - hex.seg.m_Start.x);
-	float q2y = abs(s.m_Center.y - hex.seg.m_Start.y);
-	if (q2x > hex.h || q2y > hex.v * 2) return false;
-	return 2 * hex.v * hex.h - hex.v * q2x - hex.h * q2y >= 0;
+	vec3f SE = hex.seg.m_End - hex.seg.m_Start;
+	float ratio = dot_product(SE, s.m_Center - hex.seg.m_Start) / dot_product(SE, SE);
+	ratio = max(0, min(ratio, 1));
+	SE = hex.seg.m_Start + SE * ratio;
+
+
+	float3 sc = SE - float3(abs(s.m_Center.x), s.m_Center.y, abs(s.m_Center.z));
+	sc = sc.normalize();
+	sc = s.m_Center + sc * s.m_Radius;
+
+	float hh = hex.h * 0.5f;
+
+	AABB top;
+	AABB bottom;
+	top.min = float3(hex.seg.m_End.x - hh * 0.9f, hex.seg.m_End.y - 0.33f, hex.seg.m_End.z - hex.s * 0.4f);
+	top.max = float3(hex.seg.m_End.x + hh * 0.9f, hex.seg.m_End.y + 0.001f, hex.seg.m_End.z + hex.s * 0.4f);
+
+	bottom.min = float3(hex.seg.m_Start.x - hh * 0.9f, hex.seg.m_Start.y - 0.001f, hex.seg.m_Start.z - hex.s * 0.4f);
+	bottom.max = float3(hex.seg.m_Start.x + hh * 0.9f, hex.seg.m_Start.y + 0.33f, hex.seg.m_Start.z + hex.s * 0.4f);
+
+	float3 tc = SweptSpheretoAABB(s, top, vel);
+	if (!tc.isEquil(float3(0,0,0)))
+	{
+		vel *= tc;
+		return true;
+	}
+	float3 bc = SweptSpheretoAABB(s, bottom, vel);
+	if (!bc.isEquil(float3(0, 0, 0)))
+	{
+		vel *= bc;
+		return true;
+	}
+
+	float q2x = abs(sc.x - SE.x);
+	float q2z = abs(sc.z - SE.z);
+	if (q2x > hh || q2z > hex.s) return false;
+	if (sc.y > hex.seg.m_End.y || sc.y < hex.seg.m_Start.y) return false;
+
+	float3 velc = vel;
+	vel = float3(abs(vel.x), abs(vel.y), abs(vel.z));
+
+	float3 n = (sc - SE).normalize();
+	vel = vel - n * 2 * dot_product(vel, n);
+
+	if (velc.x < 0) vel.x *= -1;
+	if (velc.y < 0) vel.y *= -1;
+	if (velc.z < 0) vel.z *= -1;
+	return hex.s * hh - (hex.s * 0.5f) * q2x - hh * q2z >= 0;
 }
 
 bool HexagonToCapsule(const Hexagon& hex, Capsule& s, float3& vel)

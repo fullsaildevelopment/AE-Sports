@@ -19,6 +19,7 @@
 #include "Server Wrapper.h"
 #include "SoundEngine.h"
 #include "EventHandler.h"
+#include "HexagonCollider.h"
 
 class BallController;
 
