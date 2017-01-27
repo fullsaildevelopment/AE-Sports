@@ -405,7 +405,9 @@ void Scene::Update(float dt)
 				{
 					float3 test = transform->GetPosition();
 
-					printf("%f %f %f \n", transform->GetWorld()._41, transform->GetWorld()._42, transform->GetWorld()._43);
+					//printf("%f %f %f \n", transform->GetWorld()._41, transform->GetWorld()._42, transform->GetWorld()._43);
+
+					cout << gameObjects[i]->GetTransform()->GetParent()->GetGameObject()->GetName() << endl;
 				}
 			}
 		}
