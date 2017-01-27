@@ -63,13 +63,17 @@ void BallController::Throw()
 {
 	timer.Restart();
 	isThrown = true;
+	holder->GetTransform()->RemoveChild(me->GetTransform());
 	holder = nullptr;
+	me->GetTransform()->SetParent(nullptr);
 }
 
 void BallController::ThrowTo(GameObject *target)
 {
 	isHeld = false;
+	holder->GetTransform()->RemoveChild(me->GetTransform());
 	holder = nullptr;
+	me->GetTransform()->SetParent(nullptr);
 
 	float num = 15;
 	float3 vel = me->GetTransform()->GetForwardf3() * num; // ***************************************************************************************
@@ -106,5 +110,7 @@ void BallController::SetHolder(GameObject *person)
 {
 	isHeld = true;
 	holder = person;
+	me->GetTransform()->SetPosition(float3(0, 0, 0));
 	person->GetTransform()->AddChild(me->GetTransform());
+	me->GetTransform()->SetParent(person->GetTransform());
 }

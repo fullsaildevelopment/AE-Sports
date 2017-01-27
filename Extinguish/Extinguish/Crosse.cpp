@@ -50,9 +50,6 @@ void Crosse::OnTriggerEnter(Collider* collider)
 		BallController* ballController = collider->GetGameObject()->GetComponent<BallController>();
 		if (!ballController->GetIsHeld())
 		{
-			collider->GetGameObject()->GetTransform()->SetPosition({ 0,0, 0 });
-			collider->GetGameObject()->GetTransform()->SetParent(transform);
-
 			ballController->SetHolder(GetGameObject());
 		}
 	}

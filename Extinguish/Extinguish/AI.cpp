@@ -46,7 +46,10 @@ void AI::OnCollisionEnter(Collider *obj)
 
 	// if i bump into a player, they caught me
 	if (col && !ballClass->GetIsHeld())
+	{
 		ballClass->SetHolder(me);
+		printf("Ball Caught");
+	}
 }
 
 void AI::Init()
@@ -99,7 +102,6 @@ void AI::Update(float dt, InputManager* input)
 		if (ballClass->GetHolder() == me)
 		{
 			//Score();
-			printf("Ball Caught");
 			me->GetTransform()->SetVelocity(float3(0, 0, 0));
 		}
 			
