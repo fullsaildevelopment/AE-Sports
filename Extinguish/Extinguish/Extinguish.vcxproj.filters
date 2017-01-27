@@ -114,6 +114,9 @@
     <ClCompile Include="BallController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="HexagonCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="MathStuff.h">
       <Filter>CollisionLibrary\Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="HexagonCollider.h">
+      <Filter>Components\Colliders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
