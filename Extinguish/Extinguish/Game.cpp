@@ -94,22 +94,22 @@ void Game::Update(float dt)
 
 			BallController* ball = gameObject->GetComponent<BallController>();
 
-			if (ball)
-			{
-				if (ball->GetHolder()->GetName() == "Crosse1")
-				{
-					whoHasBall = 17;
-				}
-				else if (ball->GetHolder()->GetName() == "Crosse2")
-				{
-					whoHasBall = 18;
-				}
-			}
+			//if (ball)
+			//{
+			//	if (ball->GetHolder()->GetName() == "Crosse1")
+			//	{
+			//		whoHasBall = 17;
+			//	}
+			//	else if (ball->GetHolder()->GetName() == "Crosse2")
+			//	{
+			//		whoHasBall = 18;
+			//	}
+			//}
 
-			if (i == whoHasBall)
-			{
-				state->hasBall = true;
-			}
+			//if (i == whoHasBall)
+			//{
+			//	state->hasBall = true;
+			//}
 
 			gameStates[i] = state;
 		}
@@ -166,6 +166,11 @@ void Game::Update(float dt)
 						rotation = client.getRotation(i);
 						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+
+			/*			if (client.hasBall(i))
+						{
+							gameObject->GetComponent<Crosse>()->
+						}*/
 
 						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
 						//gameStates[i]->world = client.getLocation(i);
