@@ -31,7 +31,7 @@ private:
 
 	//InputManager* input;
 	ResourceManager resourceManager;
-	SoundEngine soundEngine;
+	SoundEngine* soundEngine;
 
 	bool isServer = false;
 	bool isMultiplayer = false;
