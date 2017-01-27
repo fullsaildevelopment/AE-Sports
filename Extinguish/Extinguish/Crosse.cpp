@@ -225,3 +225,13 @@ void Crosse::HandleInput(InputDownEvent* e)
 		transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
 	}
 }
+
+void Crosse::SetHolder(GameObject* object)
+{
+	BallController* ballController = GetGameObject()->FindGameObject("GameBall")->GetComponent<BallController>();
+
+	if (ballController)
+	{
+		ballController->SetHolder(object);
+	}
+}
