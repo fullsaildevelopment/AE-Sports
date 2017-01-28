@@ -3,7 +3,7 @@
 
 Collider::Collider(GameObject* o, bool trigger) : Component(o)
 {
-	o->GetTransform()->AddChild(&transform);
+	//o->GetTransform()->AddChild(&transform);
 	IsTrigger = trigger;
 }
 
@@ -17,10 +17,10 @@ bool Collider::isColliding(Collider* c)
 }
 
 
-void OnCollisionEnter(Collider* c)
-{
-	if (c->GetGameObject()->GetName() == "Bob")
-	{
-
-	}
-}
+//void OnCollisionEnter(Collider* c)
+//{
+//	if (c->GetGameObject()->GetName() == "Bob")
+//	{
+//
+//	}
+//}

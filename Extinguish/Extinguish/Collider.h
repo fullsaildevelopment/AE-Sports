@@ -2,8 +2,8 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
-#include "Component.h"
 #include "GameObject.h"
+#include "Component.h"
 #include "Transform.h"
 #include "CollisionLibrary.h"
 
