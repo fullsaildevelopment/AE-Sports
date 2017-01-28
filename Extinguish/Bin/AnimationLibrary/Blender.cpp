@@ -81,7 +81,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 	boneOffsets.clear();
 	bonesWorlds.clear();
 
-	for (unsigned int i = 0; i < animationSet->GetSkeleton().GetNumBones(); ++i)
+	for (unsigned int i = 0; i < animationSet->GetSkeleton()->GetNumBones(); ++i)
 	{
 		DirectX::XMFLOAT4X4 boneOffset;
 		DirectX::XMMATRIX boneWorld;
@@ -90,7 +90,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 
 		boneWorld = DirectX::XMLoadFloat4x4(&bones[i].GetWorld());
 
-		inverseBindPose = DirectX::XMLoadFloat4x4(&animationSet->GetSkeleton().GetInverseBindPose(i));
+		inverseBindPose = DirectX::XMLoadFloat4x4(&animationSet->GetSkeleton()->GetInverseBindPose(i));
 
 		DirectX::XMStoreFloat4x4(&boneOffset, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(inverseBindPose, boneWorld)));
 		DirectX::XMStoreFloat4x4(&boneWorldFloat, boneWorld);
