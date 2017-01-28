@@ -3,8 +3,6 @@
 
 Collider::Collider(GameObject* o, bool trigger) : Component(o)
 {
-	SetCompType(Component::CTBoxCollider);
-	Type = ColliderType::aabb;
 	o->GetTransform()->AddChild(&transform);
 	IsTrigger = trigger;
 }

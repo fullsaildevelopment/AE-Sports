@@ -9,26 +9,15 @@
 
 class Collider : public Component
 {
-public:
-	enum ColliderType
-	{
-		sphere,
-		aabb,
-		capsule,
-		mesh
-	};
 private:
 	bool IsTrigger;
-	ColliderType Type;
 	Transform transform;
 	bool IsStatic;
 protected:
-	void SetType(ColliderType type) { Type = type; };
 	std::vector<Collider*> checked;
 public:
 	Collider(GameObject* o, bool trigger);
 	Transform GetTransform() { return transform; };
-	ColliderType GetType() { return Type; };
 	bool isTrigger(void) { return IsTrigger; };
 	virtual void Update(float dt, InputManager* input) {};
 	void SetTransform(Transform t) { transform = t; };
