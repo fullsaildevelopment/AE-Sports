@@ -42,5 +42,5 @@ public:
 	void SetNextAnimation(std::string animName);
 	void SetAnimationSet(AnimationSet* set) { animationSet = set; }
 	void SetBlendInfo(BlendInfo info) { blendInfo = info; }
-	Skeleton GetSkeleton() { return animationSet->GetSkeleton(); }
+	Skeleton* GetSkeleton() { return animationSet->GetSkeleton(); }
 };

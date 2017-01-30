@@ -53,9 +53,9 @@ struct VS_BasicInput
 	bool operator==(const VS_BasicInput& rhs) const
 	{
 
-		if (!(uv.x == rhs.uv.x && uv.y == rhs.uv.y)) { return false; }
-		if (!(position.x == rhs.position.x && position.y == rhs.position.y && position.z == rhs.position.z)) { return false; }
-		if (!(normal.x == rhs.normal.x && normal.y == rhs.normal.y && normal.z == rhs.normal.z)) { return false; }
+		if (uv.x != rhs.uv.x || uv.y != rhs.uv.y) { return false; }
+		if (position.x != rhs.position.x || position.y != rhs.position.y || position.z != rhs.position.z) { return false; }
+		if (normal.x != rhs.normal.x || normal.y != rhs.normal.y || normal.z != rhs.normal.z) { return false; }
 
 		return true;
 	}

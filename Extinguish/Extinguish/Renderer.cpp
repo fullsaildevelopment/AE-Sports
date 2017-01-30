@@ -42,7 +42,7 @@ void Renderer::Update(float dt, InputManager* input)
 	//update blender
 	if (blender)
 	{
-		blender->Update(1.0f / 60.0f / 2, 0);
+		blender->Update(dt * 0.5f, 0);
 	}
 
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();

@@ -34,8 +34,8 @@ private:
 	ResourceManager resourceManager;
 	SoundEngine* soundEngine;
 
-	bool isServer = false;
-	bool isMultiplayer = false;
+	bool isServer = true;
+	bool isMultiplayer = true;
 
 	ClientWrapper client;
 	ServerWrapper server;

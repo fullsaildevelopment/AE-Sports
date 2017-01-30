@@ -9,20 +9,8 @@ class GameObject;
 //This class will be used to make future components such as renderer, AI, etc.
 class Component : public EventHandler
 {
-public:
-	enum CompType
-	{
-		CTRenderer,
-		CTBoxCollider,
-		CTSphereCollider,
-		CTCapsuleCollider,
-		CTPhysics,
-		CTAI,
-		CTBall,
-	};
 private:
 	GameObject* Object;
-	CompType type;
 public:
 	Component() {}
 	Component(GameObject* o) { Object = o; };
@@ -44,12 +32,10 @@ public:
 
 	//getters
 	GameObject* const GetGameObject(void) { return Object; };
-	CompType GetCompType() { return type; };
 
 	//setters
 	void SetGameObject(GameObject* object) { Object = object; }
 	//Component(GameObject* o) { Object = o; };
 protected:
-	void SetCompType(CompType t) { type = t; };
 	//void SetGameObject(GameObject* g) { Object = g; };
 };

@@ -81,7 +81,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 	boneOffsets.clear();
 	bonesWorlds.clear();
 
-	for (unsigned int i = 0; i < animationSet->GetSkeleton().GetNumBones(); ++i)
+	for (unsigned int i = 0; i < animationSet->GetSkeleton()->GetNumBones(); ++i)
 	{
 		DirectX::XMFLOAT4X4 boneOffset;
 		DirectX::XMMATRIX boneWorld;
@@ -90,7 +90,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 
 		boneWorld = DirectX::XMLoadFloat4x4(&bones[i].GetWorld());
 
-		inverseBindPose = DirectX::XMLoadFloat4x4(&animationSet->GetSkeleton().GetInverseBindPose(i));
+		inverseBindPose = DirectX::XMLoadFloat4x4(&animationSet->GetSkeleton()->GetInverseBindPose(i));
 
 		DirectX::XMStoreFloat4x4(&boneOffset, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(inverseBindPose, boneWorld)));
 		DirectX::XMStoreFloat4x4(&boneWorldFloat, boneWorld);
@@ -133,19 +133,19 @@ void Blender::Interpolate(KeyFrame* previous, KeyFrame* next, float ratio)
 		XMFLOAT4X4 newWorld;
 		Bone newBone;
 
-		XMVECTOR quarternion = XMQuaternionSlerp(XMQuaternionRotationMatrix(XMLoadFloat4x4(&previous->GetBone(i).GetWorld())), XMQuaternionRotationMatrix(XMLoadFloat4x4(&next->GetBone(i).GetWorld())), ratio);
+		XMVECTOR quarternion = XMQuaternionSlerp(XMQuaternionRotationMatrix(XMLoadFloat4x4(&previous->GetBone(i)->GetWorld())), XMQuaternionRotationMatrix(XMLoadFloat4x4(&next->GetBone(i)->GetWorld())), ratio);
 
-		XMFLOAT4X4 prevBone = previous->GetBone(i).GetWorld();
+		XMFLOAT4X4 prevBone = previous->GetBone(i)->GetWorld();
 		XMVECTOR prevTranslation = XMVectorSet(prevBone._41, prevBone._42, prevBone._43, prevBone._44);
 
-		XMFLOAT4X4 nextBone = next->GetBone(i).GetWorld();
+		XMFLOAT4X4 nextBone = next->GetBone(i)->GetWorld();
 		XMVECTOR nextTranslation = XMVectorSet(nextBone._41, nextBone._42, nextBone._43, nextBone._44);
 
 		XMVECTOR newTranslation = XMVectorLerp(prevTranslation, nextTranslation, ratio);
 
 		XMMATRIX resultMatrix = XMMatrixAffineTransformation({ 1, 1, 1, 1 }, { 0, 0, 0, 0 }, quarternion, newTranslation);
 
-		newBone = previous->GetBone(i);
+		newBone = *previous->GetBone(i);
 		XMStoreFloat4x4(&newWorld, resultMatrix);
 		newBone.SetWorld(newWorld);
 
