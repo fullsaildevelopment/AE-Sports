@@ -304,6 +304,7 @@ void Client::sendPacket()
 	//bOut.Write(myState->world);
 	bOut.Write(myState->position);
 	bOut.Write(myState->rotation);
+	bOut.Write(myState->parentIndex);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
@@ -331,6 +332,7 @@ void Client::recievePackets()
 			//	bIn.Read(clientStates[i].world);
 			bIn.Read(clientStates[i].position);
 			bIn.Read(clientStates[i].rotation);
+			bIn.Read(clientStates[i].parentIndex);
 		}
 	}
 }

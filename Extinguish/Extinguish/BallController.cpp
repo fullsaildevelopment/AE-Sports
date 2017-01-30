@@ -34,12 +34,19 @@ BallController::BallController(GameObject* obj) : Component(obj)
 
 void BallController::Init()
 {
-
+	transform = GetGameObject()->GetTransform();
 }
 
 void BallController::Update(float dt)
 {
 	timer.Signal();
+
+	cout << isHeld;
+
+	if (!isHeld && transform->GetParent())
+	{
+		SetHolder(transform->GetParent()->GetGameObject());
+	}
 
 	if (isHeld && !isThrown)
 	{

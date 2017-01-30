@@ -14,7 +14,7 @@ private:
 	GameObject *me;
 	GameObject *holder;
 	XTime timer;
-
+	Transform* transform;
 
 public:
 	BallController(GameObject* obj);

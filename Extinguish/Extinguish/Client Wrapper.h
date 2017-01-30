@@ -65,6 +65,11 @@ public:
 		return newClient.hasBall(index);
 	}
 
+	INT8 GetParentIndex(unsigned int index)
+	{
+		return newClient.GetParentIndex(index);
+	}
+
 	XMFLOAT3 getLocation(unsigned int index)
 	{
 		return newClient.getLocation(index);

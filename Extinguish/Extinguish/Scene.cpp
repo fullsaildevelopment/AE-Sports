@@ -367,21 +367,19 @@ void Scene::Update(float dt)
 	//update camera first because we need an accurate camera
 	//gameObjects[0]->Update(dt, input);
 
-	XMFLOAT4X4 cameraCam;
-
+	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
+	int id = Game::GetClientID();
 
-	//error case... just in case client id isn't initialized
-	if (Game::GetClientID() == 0)
+	if (id == 0)
 	{
-		cameraName += "1";
-	}
-	else
-	{
-		cameraName += to_string(Game::GetClientID());
+		id = 1;
 	}
 
-	//update cam to 
+	cameraName += to_string(id);
+
+	//update cam to get accurate view
+	XMFLOAT4X4 cameraCam;
 	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
 	camObject->Update(dt);
 
@@ -389,13 +387,6 @@ void Scene::Update(float dt)
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
-		int id = Game::GetClientID();
-
-		if (id == 0)
-		{
-			id = 1;
-		}
-
 		if (id == 1)
 		{
 			gameObjects[i]->Update(dt);
@@ -419,11 +410,6 @@ void Scene::Update(float dt)
 				XMFLOAT4X4 world;
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
-
-				if (i == 16)
-				{
-					float3 test = transform->GetPosition();
-				}
 			}
 
 			renderer->Render();
