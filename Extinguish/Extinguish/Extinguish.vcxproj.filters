@@ -28,6 +28,9 @@
     <FxCompile Include="CS_ForwardPlus.hlsl">
       <Filter>Shaders\Compute Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="VS_InstancedStatic.hlsl">
+      <Filter>Shaders\VertexShaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
