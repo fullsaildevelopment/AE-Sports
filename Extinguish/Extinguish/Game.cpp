@@ -24,18 +24,18 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		if (server.init("127.0.0.1", 60000) == 1)
-		{
-			isMultiplayer = true;
-			isServer = true;
-
-			client.init("127.0.0.1", 60001);
-		}
-		else
-		{
+		//if (server.init("127.0.0.1", 60000) == 1)
+		//{
+		//	isMultiplayer = true;
+		//	isServer = true;
+		//
+		//	client.init("127.0.0.1", 60001);
+		//}
+		//else
+		
 			isServer = false;
 			client.init("127.0.0.1", 60001);
-		}
+		
 	}
 
 	currentScene = 0;

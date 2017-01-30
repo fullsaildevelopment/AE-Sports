@@ -1209,8 +1209,6 @@ namespace FBXLoader
 						else
 							mIndices.push_back(NtempPntr->p);
 					}
-				if (j == PC - 1)
-					int jkl = 2;
 				}
 			}
 
