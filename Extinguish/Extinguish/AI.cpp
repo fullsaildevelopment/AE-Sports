@@ -123,12 +123,42 @@ void AI::Update(float dt, InputManager* input)
 	// if i have the ball
 	if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
 	{
+		float edist = 789; // distance to enemies
+		float mdist = 0; // distance to friends
+		GameObject *target = nullptr; // the friend i'll throw to
+
 		Score();
 
+		// for each enemy
 		for (int i = 0; i < listOfEnemies.size(); ++i)
 		{
-			// if they're too close to me
-			// pass ball
+			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+			
+			// if their distance is closer, switch to them
+			if (tmp.magnitude() < edist)
+				edist = tmp.magnitude();
+		}
+
+		// if the enemy is close enough to hit me
+		if (edist < 10)
+		{
+			// for each friend
+			for (int i = 0; i < listOfMates.size(); ++i)
+			{
+				float3 tmp2 = listOfMates[i]->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+				// if their disctance is further away
+				if (tmp2.magnitude() > mdist)
+				{
+					// switch to them
+					mdist = tmp2.magnitude();
+					target = listOfMates[i];
+				}
+			}
+
+			// pass the ball to the furthest friend
+			ballClass->ThrowTo(target);
+			UpdateState(defendTeammate);
 		}
 	}
 
@@ -139,10 +169,6 @@ void AI::Update(float dt, InputManager* input)
 
 void AI::Idle()
 {
-	// maybe something with power-ups
-	// or tracking
-
-	// do idle pose/anim?
 	me->GetTransform()->SetVelocity(float3(0, 0, 0));
 }
 
@@ -239,7 +265,7 @@ bool AI::RunTo(GameObject *target)
 
 void AI::Score()
 {
-	//bool tmp = RunTo(enemyGoal);
+	bool tmp = RunTo(enemyGoal);
 
 	ballClass->ThrowTo(enemyGoal);
 
