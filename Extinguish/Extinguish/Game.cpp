@@ -40,13 +40,27 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	currentScene = 0;
 
+	//create scenes
 	CreateScenes(devResources, inputManager);
 
-	//initialize sound engine
+	//set up server stuff
+	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+
+	gameStates.resize(scenes[currentScene]->GetNumObjects());
+	for (int i = 0; i < gameObjects->size(); ++i)
+	{
+		GameState* state = new GameState();
+		gameStates[i] = state;
+	}
+
+	if (isServer)
+	{
+		server.setObjCount(scenes[currentScene]->GetNumObjects());
+	}
+	
+	//init sound engine
 	std::vector<unsigned int> ids;
 	std::vector<std::string> names;
-
-	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
 	ids.resize(scenes[currentScene]->GetNumObjects());
 	names.resize(scenes[currentScene]->GetNumObjects());
@@ -58,19 +72,12 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		ids[i] = i;
 		names[i] = gameObject->GetName();
 	}
-	gameStates.resize(scenes[currentScene]->GetNumObjects());
-	soundEngine->InitSoundEngine(ids, names);
 
-	if (isServer)
-	{
-		server.setObjCount(scenes[currentScene]->GetNumObjects());
-	}
+	soundEngine->InitSoundEngine(ids, names);
 }
 
 void Game::Update(float dt)
 {
-	//input = inputManager;
-
 	if (isMultiplayer)
 	{
 		//set client id
@@ -79,39 +86,33 @@ void Game::Update(float dt)
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
-		/*gameStates.resize(scenes[currentScene]->GetNumObjects());*/
-
-		int whoHasBall = -1;
-
-		for (int i = 0; i < gameObjects->size(); ++i)
+		for (int i = 0; i < gameStates.size(); ++i)
 		{
-			GameState* state = new GameState();
+			GameState* state = gameStates[i];
 			GameObject* gameObject = (*gameObjects)[i];
+
 			float3 position = gameObject->GetTransform()->GetPosition();
 			float3 rotation = gameObject->GetTransform()->GetRotation();
 			state->position = { position.x, position.y, position.z };
 			state->rotation = { rotation.x, rotation.y, rotation.z };
 
-			BallController* ball = gameObject->GetComponent<BallController>();
+			int parentIndex = -1;
+			Transform* parent = gameObject->GetTransform()->GetParent();
 
-			//if (ball)
-			//{
-			//	if (ball->GetHolder()->GetName() == "Crosse1")
-			//	{
-			//		whoHasBall = 17;
-			//	}
-			//	else if (ball->GetHolder()->GetName() == "Crosse2")
-			//	{
-			//		whoHasBall = 18;
-			//	}
-			//}
+			if (parent)
+			{
+				for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
+				{
+					GameObject* gameObject2 = (*gameObjects)[parentIndex];
 
-			//if (i == whoHasBall)
-			//{
-			//	state->hasBall = true;
-			//}
+					if (parent == gameObject2->GetTransform())
+					{
+						break;
+					}
+				}
+			}
 
-			gameStates[i] = state;
+			state->parentIndex = parentIndex;
 		}
 
 		// if server, set game states
@@ -120,30 +121,29 @@ void Game::Update(float dt)
 			server.SetGameStates(gameStates);
 		}
 
-		if (client.getID() > 0)
-		{
-			// get camera position
-			client.setLocation(gameStates[clientID]->position); 	 // + 2 because of 2 players initialized before cams
-			client.setRotation(gameStates[clientID]->rotation);		 // + 2 because of 2 players initialized before cams
+		//if (client.getID() > 0)
+		//{
+		//	// get camera position
+		//	client.setLocation(gameStates[clientID]->position);
+		//	client.setRotation(gameStates[clientID]->rotation);
 
-			// send to server
-			client.sendPacket();
-		}
+		//	// send to server
+		//	client.sendPacket();
+		//}
 
+		//run server
 		if (isServer)
 		{
 			int serverState = server.run();
+
 			if (serverState == 2)
 			{
 				gameStates = server.getStates();
 			}
 		}
 
+		//run client
 		int clientState = client.run();
-
-		XMFLOAT3 test = client.getLocation(16);
-
-		//printf("%f %f %f \n", test.x, test.y, test.z);
 		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
@@ -155,10 +155,17 @@ void Game::Update(float dt)
 
 			if (id != 1)
 			{
+				//remove children of every object
+				for (int i = 0; i < numobjs; ++i)
+				{
+					GameObject* gameObject = (*gameObjects)[i];
+					gameObject->GetTransform()->RemoveChildren();
+				}
+
 				for (unsigned int i = 0; i < numobjs; ++i)
 				{
 					//if (i != 0 && i != id)
-					if (i != id)
+					//if (i != id)
 					{
 						GameObject* gameObject = (*gameObjects)[i];
 						XMFLOAT3 position, rotation;
@@ -167,22 +174,21 @@ void Game::Update(float dt)
 						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
-			/*			if (client.hasBall(i))
+						INT8 parentIndex = client.GetParentIndex(i);
+						if (parentIndex != -1)
 						{
-							gameObject->GetComponent<Crosse>()->
-						}*/
-
-						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
-						//gameStates[i]->world = client.getLocation(i);
+							gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
+						}
 					}
 				}
 			}
 		}
 	}
 
-	//scenes[currentScene].Update(*input, dt);
+	//update current scene
 	scenes[currentScene]->Update(dt);
 
+	//render audio
 	soundEngine->ProcessAudio();
 }
 
@@ -271,7 +277,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Scene* basic = new Scene();
 
 	basic->Init(devResources, input);
-
 
 
 	GameObject* mage1 = new GameObject();
@@ -478,7 +483,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	
 	bear->SetTag("Team1");
 	AI *bearAI = new AI(bear);
-	bear->AddComponent(bearAI);
+	//bear->AddComponent(bearAI);
 
 	
 

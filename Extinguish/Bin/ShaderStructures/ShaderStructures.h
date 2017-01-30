@@ -104,6 +104,7 @@ struct GameState
 
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
+	int8_t parentIndex;
 };
 #pragma pack(pop)
 
