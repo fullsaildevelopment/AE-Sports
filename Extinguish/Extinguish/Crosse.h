@@ -40,4 +40,7 @@ public:
 	void Throw();
 	void HandleEvent(Event* e) override;
 
+	//setters//
+	void SetHolder(GameObject* object);
+
 };

@@ -81,6 +81,8 @@ void Game::Update(float dt)
 
 		/*gameStates.resize(scenes[currentScene]->GetNumObjects());*/
 
+		int whoHasBall = -1;
+
 		for (int i = 0; i < gameObjects->size(); ++i)
 		{
 			GameState* state = new GameState();
@@ -89,6 +91,25 @@ void Game::Update(float dt)
 			float3 rotation = gameObject->GetTransform()->GetRotation();
 			state->position = { position.x, position.y, position.z };
 			state->rotation = { rotation.x, rotation.y, rotation.z };
+
+			BallController* ball = gameObject->GetComponent<BallController>();
+
+			//if (ball)
+			//{
+			//	if (ball->GetHolder()->GetName() == "Crosse1")
+			//	{
+			//		whoHasBall = 17;
+			//	}
+			//	else if (ball->GetHolder()->GetName() == "Crosse2")
+			//	{
+			//		whoHasBall = 18;
+			//	}
+			//}
+
+			//if (i == whoHasBall)
+			//{
+			//	state->hasBall = true;
+			//}
 
 			gameStates[i] = state;
 		}
@@ -120,6 +141,10 @@ void Game::Update(float dt)
 
 		int clientState = client.run();
 
+		XMFLOAT3 test = client.getLocation(16);
+
+		//printf("%f %f %f \n", test.x, test.y, test.z);
+		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
@@ -141,6 +166,12 @@ void Game::Update(float dt)
 						rotation = client.getRotation(i);
 						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+
+			/*			if (client.hasBall(i))
+						{
+							gameObject->GetComponent<Crosse>()->
+						}*/
+
 						//gameObject->GetTransform()->SetLocal(client.getLocation(i));
 						//gameStates[i]->world = client.getLocation(i);
 					}
@@ -315,7 +346,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//CapsuleCollider* boxcap = new CapsuleCollider(1, { 0,0,0 }, { 0,2.7f,0 }, box, true);
 	//box->AddComponent(boxcap);
 	BoxCollider* boxcol = new BoxCollider(box, false, {1,1,1 }, { -1,0,-1 });
-	box->AddComponent(boxcol);
+	box->AddBoxCollider(boxcol);
 
 	GameObject* meterbox = new GameObject();
 	basic->AddGameObject(meterbox);
@@ -330,7 +361,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//CapsuleCollider* meterboxcap = new CapsuleCollider(1, { 0,-0.5f,0 }, { 0,0.5f,0 }, meterbox, true);
 	//meterbox->AddComponent(meterboxcap);
 	BoxCollider* meterboxcol = new BoxCollider(meterbox, false , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox->AddComponent(meterboxcol);
+	meterbox->AddBoxCollider(meterboxcol);
 	//PlayerController* bplayerController = new PlayerController();
 	//box->AddComponent(bplayerController);
 	//bplayerController->Init(5.0f, 0.75f);
@@ -343,7 +374,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox2->AddComponent(meterboxRenderer2);
 	meterboxRenderer2->Init("Axis", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol2 = new BoxCollider(meterbox2, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox2->AddComponent(meterboxcol2);
+	meterbox2->AddBoxCollider(meterboxcol2);
 
 	GameObject* meterbox3 = new GameObject();
 	basic->AddGameObject(meterbox3);
@@ -353,7 +384,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox3->AddComponent(meterboxRenderer3);
 	meterboxRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol3 = new BoxCollider(meterbox3, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox3->AddComponent(meterboxcol3);
+	meterbox3->AddBoxCollider(meterboxcol3);
 
 	GameObject* meterbox4 = new GameObject();
 	basic->AddGameObject(meterbox4);
@@ -363,7 +394,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox4->AddComponent(meterboxRenderer4);
 	meterboxRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol4 = new BoxCollider(meterbox4, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox4->AddComponent(meterboxcol4);
+	meterbox4->AddBoxCollider(meterboxcol4);
 
 	GameObject* meterbox5 = new GameObject();
 	basic->AddGameObject(meterbox5);
@@ -373,7 +404,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox5->AddComponent(meterboxRenderer5);
 	meterboxRenderer5->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol5 = new BoxCollider(meterbox5, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox5->AddComponent(meterboxcol5);
+	meterbox5->AddBoxCollider(meterboxcol5);
 	
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
@@ -383,7 +414,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
-	meterbox6->AddComponent(meterboxcol6);
+	meterbox6->AddBoxCollider(meterboxcol6);
 
 	GameObject* Ball = new GameObject();
 	basic->AddGameObject(Ball);
@@ -396,7 +427,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Ball->AddComponent(ballMover);
 	ballMover->Init(5.0f, 0.75f);
 	SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false, float3(1,1,0).normalize() * 0.5f);
-	Ball->AddComponent(ballcol);
+	Ball->AddSphereCollider(ballcol);
 
 	GameObject* Ball2 = new GameObject();
 	basic->AddGameObject(Ball2);
@@ -409,7 +440,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Ball2->AddComponent(ballMover2);
 	ballMover2->Init(5.0f, 0.75f);
 	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false);
-	Ball2->AddComponent(ballcol2);
+	Ball2->AddSphereCollider(ballcol2);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
@@ -443,7 +474,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	bear->AddComponent(bearMover);
 	bearMover->Init(1.0f, 0.75f);
 	CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
-	bear->AddComponent(bearcol);
+	bear->AddCapsuleCollider(bearcol);
 	
 	bear->SetTag("Team1");
 	AI *bearAI = new AI(bear);
@@ -476,13 +507,13 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	//gameBall->InitTransform(identity, { -5, 0.5f, -2.5f }, { 0, 0, 0 }, {0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
-	gameBall->AddComponent(gameBallCollider);
+	gameBall->AddSphereCollider(gameBallCollider);
 	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
@@ -497,7 +528,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//crosse->InitTransform(identity, { 0, 0.20f, 0.9f }, { 0, 0, 0}, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	SphereCollider* crosseNetCollider = new SphereCollider(0.25f, crosse, true);
-	crosse->AddComponent(crosseNetCollider);
+	crosse->AddSphereCollider(crosseNetCollider);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
 	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
@@ -511,9 +542,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse2->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage2->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
 	SphereCollider* crosseNetCollider2 = new SphereCollider(0.25f, crosse2, true);
-	crosse2->AddComponent(crosseNetCollider2);
+	crosse2->AddSphereCollider(crosseNetCollider2);
 	Renderer* crosseRenderer2 = new Renderer();
-	crosse2->AddComponent(crosseRenderer);
+	crosse2->AddComponent(crosseRenderer2);
 	crosseRenderer2->Init("Crosse", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Crosse* crosseController2 = new Crosse();
 	crosse2->AddComponent(crosseController2);

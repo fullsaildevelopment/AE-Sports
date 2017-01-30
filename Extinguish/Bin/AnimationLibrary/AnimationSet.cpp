@@ -37,7 +37,7 @@ const Animation* AnimationSet::GetDefaultAnimation()
 	return &animations[defaultAnimation];
 }
 
-Skeleton AnimationSet::GetSkeleton()
+Skeleton* AnimationSet::GetSkeleton()
 {
-	return skeleton;
+	return &skeleton;
 }
