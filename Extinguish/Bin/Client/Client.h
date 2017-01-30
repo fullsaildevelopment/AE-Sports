@@ -103,8 +103,8 @@ public:
 	void sendPacket();
 	UINT8 getID() { return clientID; }
 	CLIENT_GAME_STATE getState(unsigned int index);
-	UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
-	//bool hasBall(unsigned int index) { return clientStates[index].hasBall; }
+	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
+	bool hasBall(unsigned int index) { return clientStates[index].hasBall; }
 
 	XMFLOAT3 getLocation(unsigned int index) { 
 		return clientStates[index].position; }
