@@ -32,10 +32,10 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		//	client.init("127.0.0.1", 60001);
 		//}
 		//else
-		{
+		
 			isServer = false;
 			client.init("127.0.0.1", 60001);
-		}
+		
 	}
 
 	currentScene = 0;
