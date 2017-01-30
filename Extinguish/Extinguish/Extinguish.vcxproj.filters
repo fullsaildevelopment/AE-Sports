@@ -230,6 +230,9 @@
     <ClInclude Include="HexagonCollider.h">
       <Filter>Components\Colliders</Filter>
     </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />

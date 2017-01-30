@@ -3,6 +3,8 @@
 //#pragma comment(lib,"ws2_32")
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 //includes
 #include <WinSock2.h>
@@ -16,6 +18,8 @@
 #include <string>
 #include <d3dcompiler.h> //needed to compile shaders
 #include <time.h>
+#include <d2d1.h>
+#include <dwrite.h>
 //#include <vld.h> 
 #include "DDSTextureLoader.h"	 
 #include "../ShaderStructures/ShaderStructures.h"

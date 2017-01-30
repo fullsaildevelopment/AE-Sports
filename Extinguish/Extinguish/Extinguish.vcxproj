@@ -172,6 +172,7 @@
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BallController.h" />
     <ClInclude Include="Client Wrapper.h" />

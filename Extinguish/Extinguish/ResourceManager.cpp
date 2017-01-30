@@ -30,7 +30,7 @@ void ResourceManager::Init(DeviceResources const * devResources)
 {
 	device = devResources->GetDevice();
 	devContext = devResources->GetDeviceContext();
-
+	
 	DoFBXExporting();
 
 	//load in shaders
@@ -41,6 +41,10 @@ void ResourceManager::Init(DeviceResources const * devResources)
 
 	//load in textures
 	LoadInTextures();
+
+	DXGI_SWAP_CHAIN_DESC tempDesc;
+	devResources->GetSwapChain()->GetDesc(&tempDesc);
+	LoadButtonResources(tempDesc.OutputWindow);
 }
 
 void ResourceManager::LoadInAnimationSetsAndMeshes()
@@ -786,4 +790,67 @@ void ResourceManager::LoadInTextures()
 
 		FindClose(hFileFind);
 	}
+}
+
+void ResourceManager::LoadButtonResources(HWND hwnd_)
+{
+	HRESULT result;
+	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, pD2DFactory.GetAddressOf());
+
+	if (SUCCEEDED(result))
+	{
+		result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
+			__uuidof(IDWriteFactory), 
+			reinterpret_cast<IUnknown**>(pDWriteFactory.GetAddressOf()));
+	}
+
+	if (SUCCEEDED(result))
+	{
+		result = pDWriteFactory->CreateTextFormat(L"Times New Roman",
+			NULL,
+			DWRITE_FONT_WEIGHT_REGULAR,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			72.0f,
+			L"en-us",
+			pTextFormat.GetAddressOf()
+		);
+	}
+
+	if (SUCCEEDED(result))
+	{
+		result = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		result = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+	}
+
+	// device dependent
+
+	RECT rc;
+	GetClientRect(hwnd_, &rc);
+
+	D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
+	
+	if (!pRT)
+	{
+		result = pD2DFactory->CreateHwndRenderTarget(
+			D2D1::RenderTargetProperties(),
+			D2D1::HwndRenderTargetProperties(hwnd_, size),
+			pRT.GetAddressOf()
+		);
+
+		if (SUCCEEDED(result))
+		{
+			result = pRT->CreateSolidColorBrush(
+				D2D1::ColorF(D2D1::ColorF::Black),
+				pBrush.GetAddressOf()
+			);
+		}
+	}
+
+	layoutRect = D2D1::RectF(
+		static_cast<FLOAT>(rc.left) / 2.0f,
+		static_cast<FLOAT>(rc.top) / 2.0f,
+		static_cast<FLOAT>(rc.right - rc.left) / 2.0f,
+		static_cast<FLOAT>(rc.bottom - rc.top) / 2.0f
+	);
 }

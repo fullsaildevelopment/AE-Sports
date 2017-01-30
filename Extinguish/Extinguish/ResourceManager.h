@@ -45,6 +45,15 @@ private:
 	std::vector<unsigned int> numVertices;
 	std::vector<unsigned int> numIndices;
 
+	// menu functions; text
+
+	Microsoft::WRL::ComPtr<IDWriteFactory> pDWriteFactory;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
+	Microsoft::WRL::ComPtr<ID2D1Factory> pD2DFactory;
+	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> pRT;
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush;
+	D2D1_RECT_F layoutRect;
+
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
 	Animation LoadInAnimation(std::string path);
@@ -55,6 +64,7 @@ private:
 	void DoFBXExporting();
 	void CreateInputLayouts();
 	void LoadInTextures();
+	void LoadButtonResources(HWND hwnd_);
 public:
 	ResourceManager();
 	~ResourceManager();
