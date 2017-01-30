@@ -34,12 +34,13 @@ void GameObject::InitTransform(DirectX::XMFLOAT4X4 localMatrix, float3 position,
 	transform->Init(localMatrix, position, rotation, scale, parent, child, sibling);
 }
 
-void GameObject::Update(float deltaTime, InputManager* input)
+void GameObject::Update(float deltaTime)
 {
 	for (int i = 0; i < components.size(); ++i)
 	{
-		components[i]->Update(deltaTime, input);
+		components[i]->Update(deltaTime);
 	}
+
 	transform->Update(deltaTime);
 }
 

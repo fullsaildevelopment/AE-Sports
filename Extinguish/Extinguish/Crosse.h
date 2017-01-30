@@ -33,7 +33,7 @@ public:
 
 	//basic
 	void Init();
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
 	void OnTriggerEnter(Collider* collider) override;
 
 	//misc

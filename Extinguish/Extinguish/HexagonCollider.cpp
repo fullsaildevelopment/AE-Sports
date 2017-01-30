@@ -21,7 +21,7 @@ Hexagon HexagonCollider::GetWorldHex()
 }
 
 
-void HexagonCollider::Update(float dt, InputManager* input)
+void HexagonCollider::Update(float dt)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 	GameObject* tg = GetGameObject();

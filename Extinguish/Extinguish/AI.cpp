@@ -92,7 +92,7 @@ void AI::Init()
 	currState = idle;
 }
 
-void AI::Update(float dt, InputManager* input)
+void AI::Update(float dt)
 {
 	// check events and UpdateState accordingly
 

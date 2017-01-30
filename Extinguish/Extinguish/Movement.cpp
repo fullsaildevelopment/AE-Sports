@@ -23,7 +23,7 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 	timeSincePlayed = 0.0f;
 }
 
-void Movement::Update(float dt, InputManager* input)
+void Movement::Update(float dt)
 {
 	this->dt = dt;
 
@@ -52,10 +52,7 @@ void Movement::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				//if (name == "Mage2")
-				{
-					HandleInput(inputDownEvent);
-				}
+				HandleInput(inputDownEvent);
 			}
 		}
 	}
@@ -129,7 +126,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		isMoving = true;
 	}
 
-	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f )
+	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f)
 	{
 		SoundEngine::GetSingleton()->PlayWalkingSound();
 		timeSincePlayed = 0;
