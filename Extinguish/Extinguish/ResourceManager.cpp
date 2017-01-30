@@ -726,7 +726,6 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Axis\\Axis.fbx", "Axis");
 
 
-
 #endif
 }
 
