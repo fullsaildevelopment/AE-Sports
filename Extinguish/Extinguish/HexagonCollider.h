@@ -12,6 +12,6 @@ private:
 public:
 	HexagonCollider(GameObject* o, float v, float height);
 	Hexagon GetWorldHex();
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
 
 };

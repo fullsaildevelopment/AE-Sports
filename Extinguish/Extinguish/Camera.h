@@ -33,7 +33,7 @@ public:
 
 	//basic
 	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel);
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
 	void HandleEvent(Event* e);
 	void UpdateCamsRotation(float x, float y);
 

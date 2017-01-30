@@ -33,7 +33,7 @@ public:
 	//basic
 	void Init(std::string name);
 	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, float3 position, float3 rotation, float3 scale, Transform* parent, Transform* child, Transform* sibling);
-	void Update(float deltaTime, InputManager* input);
+	void Update(float deltaTime);
 
 	//misc
 	void AddComponent(Component* component);

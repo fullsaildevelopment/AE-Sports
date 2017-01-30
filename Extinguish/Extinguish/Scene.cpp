@@ -365,7 +365,7 @@ void Scene::Update(float dt)
 	//XMStoreFloat4x4(&sceneCam, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
 
 	//update camera first because we need an accurate camera
-	gameObjects[0]->Update(dt, input);
+	//gameObjects[0]->Update(dt, input);
 
 	XMFLOAT4X4 cameraCam;
 
@@ -381,16 +381,35 @@ void Scene::Update(float dt)
 		cameraName += to_string(Game::GetClientID());
 	}
 
-	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&gameObjects[0]->FindGameObject(cameraName)->GetComponent<Camera>()->GetView())));;
+	//update cam to 
+	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
+	camObject->Update(dt);
+
+	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
-		gameObjects[i]->Update(dt, input);
+		int id = Game::GetClientID();
+
+		if (id == 0)
+		{
+			id = 1;
+		}
+
+		if (id == 1)
+		{
+			gameObjects[i]->Update(dt);
+		}
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
 
 		if (renderer)
 		{
+			if (id != 1)
+			{
+				renderer->Update(dt);
+			}
+
 			renderer->SetView(cameraCam);
 			
 			Transform* transform = gameObjects[i]->GetTransform();
@@ -404,12 +423,10 @@ void Scene::Update(float dt)
 				if (i == 16)
 				{
 					float3 test = transform->GetPosition();
-
-					////printf("%f %f %f \n", transform->GetWorld()._41, transform->GetWorld()._42, transform->GetWorld()._43);
-
-					//cout << gameObjects[i]->GetTransform()->GetParent()->GetGameObject()->GetName() << endl;
 				}
 			}
+
+			renderer->Render();
 		}
 	}
 }

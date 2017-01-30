@@ -29,7 +29,7 @@ private:
 public:
 	AI(GameObject *obj);
 	void Init();
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
 	void UpdateState(State newState);
 	void OnTriggerEnter(Collider *obj) override;
 	void OnCollisionEnter(Collider *obj) override;

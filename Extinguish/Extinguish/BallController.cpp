@@ -37,7 +37,7 @@ void BallController::Init()
 
 }
 
-void BallController::Update(float dt, InputManager* input)
+void BallController::Update(float dt)
 {
 	timer.Signal();
 

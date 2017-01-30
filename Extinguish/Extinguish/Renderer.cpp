@@ -37,7 +37,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	}
 }
 
-void Renderer::Update(float dt, InputManager* input)
+void Renderer::Update(float dt)
 {
 	//update blender
 	if (blender)
@@ -91,6 +91,11 @@ void Renderer::Update(float dt, InputManager* input)
 	//devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
+}
+
+void Renderer::Render()
+{
+	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	//Draw!
 	if (indexBuffer)

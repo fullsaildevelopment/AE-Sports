@@ -30,7 +30,7 @@ public:
 	Transform GetTransform() { return transform; };
 	ColliderType GetType() { return Type; };
 	bool isTrigger(void) { return IsTrigger; };
-	virtual void Update(float dt, InputManager* input) {};
+	virtual void Update(float dt) {};
 	void SetTransform(Transform t) { transform = t; };
 	void SetTrigger(bool trigger) { IsTrigger = trigger; };
 	bool isColliding(Collider* c);
