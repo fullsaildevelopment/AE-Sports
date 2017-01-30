@@ -46,7 +46,7 @@ void Renderer::Update(float dt, InputManager* input)
 	}
 
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
-
+	
 	////set shaders
 	devContext->VSSetShader(vertexShader, NULL, NULL);
 	devContext->PSSetShader(pixelShader, NULL, NULL);

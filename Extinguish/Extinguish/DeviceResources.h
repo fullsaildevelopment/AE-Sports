@@ -21,6 +21,7 @@ private:
 	D3D11_VIEWPORT viewPort;
 
 
+
 public:
 	void Init(HWND hwnd);
 	void Present();

@@ -581,6 +581,7 @@ void Scene::Render()
 	//		models[i].Render();
 	//	}
 	//}
+
 }
 
 void Scene::Shutdown()
