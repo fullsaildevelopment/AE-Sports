@@ -15,7 +15,7 @@ void BallController::OnTriggerEnter(Collider *obj)
 	}
 
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
-
+	
 	// if i bump into a player, they caught me
 	if (col)
 	{

@@ -1,5 +1,10 @@
 #include "AI.h"
 
+#define RunSpeed 10
+#define AttackSpeed 20
+#define StumbleSpeed 5
+
+
 AI::AI(GameObject* obj) : Component(obj)
 {
 	me = obj;
@@ -34,13 +39,12 @@ void AI::OnTriggerEnter(Collider *obj)
 		// drop the ball and 'stumble' in the way they pushed me
 		ballClass->DropBall(me);
 
-		float num = 5;
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * num; // ***************************************************************************************
+		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
 		me->GetTransform()->AddVelocity(vel);
 	}
 }
 
-void AI::OnCollisionEnter(Collider *obj)
+void AI::OnCollisionEnter(Collider *obj) // ***************************************************************************************
 {
 	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
 
@@ -55,12 +59,10 @@ void AI::OnCollisionEnter(Collider *obj)
 void AI::Init()
 {
 	listOfEnemies.reserve(4);
-	listOfMates.reserve(4); // I'll include myself for now*************************************
+	//listOfMates.reserve(4); // I'll include myself for now*************************************
 	
 	// grabbing all of the game objects
 	std::vector<GameObject*> tmp = *me->GetGameObjects();
-
-	string myTeam = me->GetTag();
 
 	// for each game object
 	for (int i = 0; i < tmp.size(); ++i)
@@ -69,23 +71,21 @@ void AI::Init()
 		if (tmp[i]->GetTag() == "Ball")
 			ball = tmp[i];
 
-		// if it's a goal
-		else if (tmp[i]->GetTag() == "Goal")
-		{
-			// if it's my goal
-			if (tmp[i]->GetName() == myTeam)
-				myGoal = tmp[i];
+		// if it's my goal
+		else if (tmp[i]->GetTag() == "Team1Goal")
+			myGoal = tmp[i];
 
-			// if it's enemy's goal
-			else
-				enemyGoal = tmp[i];
-		}
+		// if it's the enemy goal
+		else if (tmp[i]->GetTag() == "Team2Goal")
+			myGoal = tmp[i];
 
-		else if (tmp[i]->GetTag() == "Team1") // *******************************************************************8
-			listOfMates.push_back(tmp[i]); // add them to my team list
+		// if they're on my team
+		//else if (tmp[i]->GetTag() == "Team1")
+		//	listOfMates.push_back(tmp[i]);
 
+		// if they're enemy team
 		else if (tmp[i]->GetTag() == "Team2")
-			listOfEnemies.push_back(tmp[i]); // put them in enemy list
+			listOfEnemies.push_back(tmp[i]);
 	}
 
 	ballClass = ball->GetComponent<BallController>();
@@ -100,19 +100,17 @@ void AI::Update(float dt, InputManager* input)
 	if (ballClass->GetIsHeld())
 	{
 		if (ballClass->GetHolder() == me)
-		{
 			Score();
-			//me->GetTransform()->SetVelocity(float3(0, 0, 0));
+
+		for (int i = 0; i < listOfEnemies.size(); ++i)
+		{
+			// if they're too close to me
+				// pass ball
 		}
-			
 	}
 
 	else
 		GetBall();
-
-	// for each enemy
-		// if they're coming closer to me
-			// pass the ball to a teammate
 
 }
 
@@ -130,7 +128,8 @@ void AI::GetBall()
 	// if someone has the ball
 	if (ballClass->GetIsHeld())
 	{
-		if (ballClass->GetHolder()->GetTag() != me->GetTag()) // if they're not on my team********
+		// if they're not on my team
+		if (ballClass->GetHolder()->GetTag() != me->GetTag()) 
 		{
 			if (RunTo(ballClass->GetHolder()))
 				Attack(ballClass->GetHolder());
@@ -187,7 +186,7 @@ void AI::Attack(GameObject *target)
 	if (target->GetTag() != me->GetTag() && RunTo(target))
 	{
 		// run into target
-		me->GetTransform()->AddVelocity(float3(20, 20, 20)); // ***************************************************************************************
+		me->GetTransform()->AddVelocity(float3(AttackSpeed, AttackSpeed, AttackSpeed));
 	}
 
 	isAttacking = false;
@@ -195,8 +194,6 @@ void AI::Attack(GameObject *target)
 
 bool AI::RunTo(GameObject *target)
 {
-	// change this later to running with turning*********************************
-
 	//u - forward vector
 	float3 u = (me->GetTransform()->GetForwardf3() * float3(1,0,1)).normalize();
 
@@ -209,7 +206,7 @@ bool AI::RunTo(GameObject *target)
 	me->GetTransform()->RotateY(degRad);
 
 	// run to them
-	me->GetTransform()->SetVelocity(v * 10); // ***************************************************************************************
+	me->GetTransform()->SetVelocity(v * RunSpeed);
 
 	if (v.magnitude() < 3)
 		return true;
