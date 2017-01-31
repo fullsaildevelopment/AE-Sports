@@ -29,6 +29,7 @@ public:
 
 	// accessors
 	bool GetIsHeld();
+	bool GetIsThrown();
 	GameObject* GetHolder();
 
 	// mutators
