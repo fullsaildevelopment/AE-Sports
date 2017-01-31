@@ -20,7 +20,7 @@ void PlayerController::Init()
 	//camera->GetGameObject()->GetTransform()->SetPosition(transform->GetPosition());
 }
 
-void PlayerController::Update(float dt, InputManager* input)
+void PlayerController::Update(float dt)
 {
 	this->input = input;
 

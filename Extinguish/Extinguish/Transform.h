@@ -17,12 +17,7 @@ private:
 	DirectX::XMFLOAT4X4 local;
 	Transform* parent;
 	std::vector<Transform*> children;
-	bool bDirty; //if you	 change the world of the parent, make all of its children dirty. This means their world needs to be updated. This is beneficial because you could make your children dirty multiple times before you actually update world, thus, saving processing
-
-	//private helper functions
-	//void AddSibling(TransformNode2* tempSibling);
-
-	//void AddChild(TransformNode2* tempChild);
+	bool bDirty; //if you change the world of the parent, make all of its children dirty. This means their world needs to be updated. This is beneficial because you could make your children dirty multiple times before you actually update world, thus, saving processing
 public:
 	Transform();
 	Transform(GameObject* o);
@@ -30,6 +25,7 @@ public:
 
 	//basic
 	void Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, float3 tempScale, Transform* parent, Transform* child, Transform* sibling);
+	void Update(float dt);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);
@@ -38,8 +34,8 @@ public:
 	void RotateZ(float degrees);
 	void AddChild(Transform* tempChild);
 	void RemoveChild(Transform* abortee);
+	void RemoveChildren();
 	void AddSibling(Transform* tempSibling);
-	void Update(float dt);
 
 	//setters
 	void BDirty();

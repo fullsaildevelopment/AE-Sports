@@ -65,7 +65,7 @@ void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::
 	}
 }
 
-void Renderer::Update(float dt, InputManager* input)
+void Renderer::Update(float dt)
 {
 	//update blender
 	if (blender)
@@ -119,6 +119,11 @@ void Renderer::Update(float dt, InputManager* input)
 	//devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
+}
+
+void Renderer::Render()
+{
+	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	//Draw!
 	if (numIns > 0)
@@ -207,9 +212,19 @@ void Renderer::SetProjection(XMFLOAT4X4 projection)
 	mvpData.projection = projection;
 }
 
+void Renderer::SetCurAnimation(int animIndex)
+{
+	blender->SetCurAnimation(animIndex);
+}
+
 void Renderer::SetNextAnimation(std::string animName)
 {
 	blender->SetNextAnimation(animName);
+}
+
+void Renderer::SetNextAnimation(int animIndex)
+{
+	blender->SetNextAnimation(animIndex);
 }
 
 void Renderer::SetBlendInfo(BlendInfo info)

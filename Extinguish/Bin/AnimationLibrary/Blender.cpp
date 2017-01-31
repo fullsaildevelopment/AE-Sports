@@ -32,8 +32,8 @@ void Blender::Init(bool timeBased, std::string curAnimName, std::string nextAnim
 
 void Blender::Update(float time, unsigned int frameIndex) // i just use frameIndex for bear, so if its 0 and time isn't 0, don't update
 {
-	//std::vector<Bone>* bones;
-	Bone* bones;
+	std::vector<Bone>* bones;
+	//Bone* bones;
 
 	if (!nextInterpolator->HasAnimation())
 	{
@@ -44,7 +44,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 
 		curInterpolator->Update(time);
 
-		bones = curInterpolator->GetBones()->data();
+		bones = curInterpolator->GetBones();
 	}
 	else
 	{
@@ -75,20 +75,20 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 			nextInterpolator->SetAnimation(nullptr); //set next animation to null
 		}
 		
-		bones = blendedKeyFrame.GetBones().data();
+		bones = &blendedKeyFrame.GetBones();
 	}
 
 	boneOffsets.clear();
 	bonesWorlds.clear();
 
-	for (unsigned int i = 0; i < animationSet->GetSkeleton()->GetNumBones(); ++i)
+	for (unsigned int i = 0; i < (*bones).size(); ++i)
 	{
 		DirectX::XMFLOAT4X4 boneOffset;
 		DirectX::XMMATRIX boneWorld;
 		DirectX::XMFLOAT4X4 boneWorldFloat;
 		DirectX::XMMATRIX inverseBindPose;
 
-		boneWorld = DirectX::XMLoadFloat4x4(&bones[i].GetWorld());
+		boneWorld = DirectX::XMLoadFloat4x4(&(*bones)[i].GetWorld());
 
 		inverseBindPose = DirectX::XMLoadFloat4x4(&animationSet->GetSkeleton()->GetInverseBindPose(i));
 
@@ -108,6 +108,11 @@ void Blender::SetCurAnimation(std::string animName)
 	curInterpolator->SetAnimation(animationSet->GetAnimation(animName));
 }
 
+void Blender::SetCurAnimation(int animIndex)
+{
+	curInterpolator->SetAnimation(animationSet->GetAnimation(animIndex));
+}
+
 void Blender::SetNextAnimation(std::string animName)
 {
 	//nextAnimationIndex = nextIndex;
@@ -119,10 +124,29 @@ void Blender::SetNextAnimation(std::string animName)
 	}
 }
 
+void Blender::SetNextAnimation(int animIndex)
+{
+	if (!nextInterpolator->HasAnimation())
+	{
+		nextInterpolator->SetAnimation(animationSet->GetAnimation(animIndex));
+		nextInterpolator->SetIsTimeBased(true);
+	}
+}
+
 //getters//
+Interpolator* Blender::GetCurInterpolator()
+{
+	return curInterpolator;
+}
+
 Interpolator* Blender::GetNextInterpolator()
 {
 	return nextInterpolator;
+}
+
+AnimationSet* Blender::GetAnimationSet()
+{
+	return animationSet;
 }
 
 //private helper functions

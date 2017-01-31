@@ -126,6 +126,16 @@ void Transform::RemoveChild(Transform* abortee)
 	}
 }
 
+void Transform::RemoveChildren()
+{
+	for (int i = 0; i < children.size(); ++i)
+	{
+		children[i]->SetParent(nullptr);
+	}
+
+	children.clear();
+}
+
 void Transform::AddSibling(Transform* tempSibling)
 {
 	//if (!sibling)
