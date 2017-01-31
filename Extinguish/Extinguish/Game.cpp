@@ -24,17 +24,18 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		//if (server.init("127.0.0.1", 60000) == 1)
-		//{
-		//	isMultiplayer = true;
-		//	isServer = true;
-		//
-		//	client.init("127.0.0.1", 60001);
-		//}
-		//else
+		if (server.init("127.0.0.1", 60000) == 1)
+		{
+			isMultiplayer = true;
+			isServer = true;
 		
+			client.init("127.0.0.1", 60001);
+		}
+		else
+		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
+		}
 		
 	}
 
@@ -86,54 +87,62 @@ void Game::Update(float dt)
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
-		for (int i = 0; i < gameStates.size(); ++i)
-		{
-			GameState* state = gameStates[i];
-			GameObject* gameObject = (*gameObjects)[i];
-
-			float3 position = gameObject->GetTransform()->GetPosition();
-			float3 rotation = gameObject->GetTransform()->GetRotation();
-			state->position = { position.x, position.y, position.z };
-			state->rotation = { rotation.x, rotation.y, rotation.z };
-
-			int parentIndex = -1;
-			Transform* parent = gameObject->GetTransform()->GetParent();
-
-			if (parent)
-			{
-				for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
-				{
-					GameObject* gameObject2 = (*gameObjects)[parentIndex];
-
-					if (parent == gameObject2->GetTransform())
-					{
-						break;
-					}
-				}
-			}
-
-			state->parentIndex = parentIndex;
-			
-			int animIndex = -1;
-			Renderer* renderer = gameObject->GetComponent<Renderer>();
-
-			if (renderer)
-			{
-				Blender* blender = renderer->GetBlender();
-
-				if (blender)
-				{
-					if (blender->GetNextInterpolator()->HasAnimation())
-					{
-						animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
-					}
-				}
-			}
-		}
-
 		// if server, set game states
 		if (isServer)
 		{
+			for (int i = 0; i < gameStates.size(); ++i)
+			{
+				GameState* state = gameStates[i];
+				GameObject* gameObject = (*gameObjects)[i];
+
+				float3 position = gameObject->GetTransform()->GetPosition();
+				float3 rotation = gameObject->GetTransform()->GetRotation();
+				state->position = { position.x, position.y, position.z };
+				state->rotation = { rotation.x, rotation.y, rotation.z };
+
+				int parentIndex = -1;
+				Transform* parent = gameObject->GetTransform()->GetParent();
+
+				if (parent)
+				{
+					for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
+					{
+						GameObject* gameObject2 = (*gameObjects)[parentIndex];
+
+						if (parent == gameObject2->GetTransform())
+						{
+							break;
+						}
+					}
+				}
+
+				state->parentIndex = parentIndex;
+
+				int animIndex = -1;
+				Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+				if (renderer)
+				{
+					Blender* blender = renderer->GetBlender();
+
+					if (blender)
+					{
+						if (blender->GetNextInterpolator()->HasAnimation())
+						{
+							animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
+						}
+					}
+				}
+
+				if (animIndex == 1)
+				{
+					int breakpoint = 0;
+					breakpoint += 69;
+				}
+
+				state->animationIndex = animIndex;
+			}
+
 			server.SetGameStates(gameStates);
 		}
 
@@ -152,10 +161,10 @@ void Game::Update(float dt)
 		{
 			int serverState = server.run();
 
-			if (serverState == 2)
-			{
-				gameStates = server.getStates();
-			}
+			//if (serverState == 2)
+			//{
+			//	gameStates = server.getStates();
+			//}
 		}
 
 		//run client
@@ -196,24 +205,33 @@ void Game::Update(float dt)
 							gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
 						}
 
-						Renderer* renderer = gameObject->GetComponent<Renderer>();
+						INT8 animIndex = client.GetAnimationIndex(i);
 
-						if (renderer)
+						if (animIndex != -1)
 						{
-							Blender* blender = renderer->GetBlender();
-							if (blender)
+							Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+							if (renderer)
 							{
-								//if (renderer->GetBlender()->Get
-								//int animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetCurInterpolator()->GetAnimation()->GetAnimationName());
+								Blender* blender = renderer->GetBlender();
 
-								//if (animIndex != client.GetAnimationIndex(i))
-								if (!blender->GetNextInterpolator()->HasAnimation())
+								if (blender)
 								{
-									BlendInfo info;
-									info.totalBlendTime = 0.01f;
+									if (animIndex == 1)
+									{
+										int breakpoint = 0;
+										breakpoint += 69;
+									}
 
-									renderer->SetNextAnimation(client.GetAnimationIndex(i));
-									renderer->SetBlendInfo(info);
+									//if (!blender->GetNextInterpolator()->HasAnimation())
+									if ((blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != blender->GetAnimationSet()->GetAnimation(animIndex)->GetAnimationName()))
+									{
+										BlendInfo info;
+										info.totalBlendTime = 0.01f;
+
+										renderer->SetNextAnimation(animIndex);
+										renderer->SetBlendInfo(info);
+									}
 								}
 							}
 						}
@@ -387,8 +405,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage4->AddComponent(mageRenderer4);
 	mageRenderer4->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	Movement* mageMover4 = new Movement();
-	mage4->AddComponent(mageMover2);
-	mageMover2->Init(5.0f, 0.75f);
+	mage4->AddComponent(mageMover4);
+	mageMover4->Init(5.0f, 0.75f);
 
 	GameObject* mage5 = new GameObject();
 	basic->AddGameObject(mage5);
