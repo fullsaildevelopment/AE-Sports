@@ -27,6 +27,12 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	numIndices = resources->GetNumIndices(mesh);
 	devResources = deviceResources;
 
+	pDWriteFactory = resources->GetWriteFactory();
+	pTextFormat = resources->GetTextFormat();
+	pD2DFactory = resources->GetID2D1Factory();
+	pRT = resources->GetRenderTarget();
+	pBrush = resources->GetBrush();
+
 	SetProjection(projection);
 
 	if (!curAnimName.empty())
@@ -46,6 +52,7 @@ void Renderer::Update(float dt, InputManager* input)
 	}
 
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+
 	
 	////set shaders
 	devContext->VSSetShader(vertexShader, NULL, NULL);
@@ -93,16 +100,36 @@ void Renderer::Update(float dt, InputManager* input)
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 
 	//Draw!
-	if (indexBuffer)
-	{
-		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	if (!isButton) {
+		if (indexBuffer)
+		{
+			devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-		//and finally... draw model
-		devContext->DrawIndexed(numIndices, 0, 0);
+			//and finally... draw model
+			devContext->DrawIndexed(numIndices, 0, 0);
+		}
+		else
+		{
+			devContext->Draw(numVerts, 0);
+		}
 	}
 	else
 	{
-		devContext->Draw(numVerts, 0);
+		pRT->BeginDraw();
+		pRT->SetTransform(D2D1::IdentityMatrix());
+		pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
+		GameObject * temp = GetGameObject();
+
+		Button * theButton = temp->GetComponent<Button>();
+		pRT->DrawTextA(
+			(WCHAR*)theButton->getText().c_str(),
+			theButton->getLength(),
+			pTextFormat,
+			layoutRect,
+			pBrush
+		);
+
+		pRT->EndDraw();
 	}
 }
 

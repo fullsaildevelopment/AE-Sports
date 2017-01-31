@@ -84,6 +84,14 @@ public:
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
 
+	IDWriteFactory * GetWriteFactory() { return pDWriteFactory.Get(); }
+	IDWriteTextFormat * GetTextFormat() { return pTextFormat.Get(); }
+	ID2D1Factory * GetID2D1Factory() { return pD2DFactory.Get(); }
+	ID2D1HwndRenderTarget * GetRenderTarget() { return pRT.Get(); }
+	ID2D1SolidColorBrush * GetBrush() { return pBrush.Get(); }
+	D2D1_RECT_F * GetRect() { return &layoutRect; }
+
+
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);

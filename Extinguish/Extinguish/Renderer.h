@@ -7,6 +7,8 @@
 #include "ResourceManager.h"
 #include "DeviceResources.h"
 #include "../ShaderStructures/ShaderStructures.h"
+#include "Button.h"
+#include "GameObject.h"
 class Renderer : public Component
 {
 private:
@@ -21,9 +23,17 @@ private:
 	ID3D11ShaderResourceView* diffuseSRV;
 	DeviceResources* devResources;
 	ModelViewProjectionConstantBuffer mvpData;
+	IDWriteFactory * pDWriteFactory;
+	IDWriteTextFormat * pTextFormat;
+	ID2D1Factory * pD2DFactory;
+	ID2D1HwndRenderTarget * pRT;
+	ID2D1SolidColorBrush * pBrush;
 	unsigned int vertexStride;
 	unsigned int numVerts;
 	unsigned int numIndices;
+
+	bool isButton = false;
+	D2D1_RECT_F * layoutRect;
 
 public:
 	Renderer();
@@ -44,6 +54,7 @@ public:
 	void SetView(XMFLOAT4X4 view);
 	void SetProjection(XMFLOAT4X4 projection);
 	void SetBlendInfo(BlendInfo info);
+	void SetIsButton(bool tf) { isButton = tf; }
 	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
 	//void SetBonesWorlds(std::vector<DirectX::XMFLOAT4X4> worlds) { bonesWorlds = worlds; }
 };

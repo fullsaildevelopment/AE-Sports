@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "Transform.h"
 #include "InputManager.h"
+#include "Button.h"
 
 class BoxCollider;
 class SphereCollider;
@@ -70,6 +71,8 @@ public:
 	SphereCollider* GameObject::GetComponent<SphereCollider>();
 	template < >
 	CapsuleCollider* GameObject::GetComponent<CapsuleCollider>();
+	template < >
+	Button* GameObject::GetComponent<Button>();
 	template <class T>
 	vector<T*> GetComponents();
 	Component* GetComponent(unsigned int index) { return components[index]; }
