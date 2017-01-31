@@ -18,7 +18,7 @@ public:
 
 	//basic
 	virtual void Init(GameObject* obj) { Object = obj; };
-	virtual void Update(float dt, InputManager* input) {};
+	virtual void Update(float dt) {};
 	virtual void Shutdown() {};
 	virtual void HandleEvent(Event* e) {};
 

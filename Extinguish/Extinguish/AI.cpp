@@ -37,7 +37,7 @@ void AI::OnCollisionEnter(Collider *obj)
 {
 	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
 
-	// if i bump into a player, they caught me
+	// if i bump into the ball, i have it
 	if (col && !ballClass->GetIsHeld())
 	{
 		ballClass->SetHolder(me);
@@ -166,7 +166,7 @@ void AI::Init()
 	Idle();
 }
 
-void AI::Update(float dt, InputManager* input)
+void AI::Update(float dt)
 {
 	// if I'm the goalie
 	if (currState == goalie)
