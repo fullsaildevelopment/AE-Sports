@@ -164,6 +164,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FBXLoader.h" />
+    <ClInclude Include="HTable.h" />
+    <ClInclude Include="SLList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FBXLoader.cpp" />

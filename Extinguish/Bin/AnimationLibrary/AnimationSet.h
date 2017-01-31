@@ -26,6 +26,6 @@ public:
 	Animation* GetAnimation(int animationIndex);
 	const BlendInfo* GetBlendInfo(unsigned int animationFrom, unsigned int animationTo); // TODO: good chance this is wrong
 	const Animation* GetDefaultAnimation();
-	Skeleton GetSkeleton();
+	Skeleton* GetSkeleton();
 	int GetAnimationIndex(std::string animationName);
 };

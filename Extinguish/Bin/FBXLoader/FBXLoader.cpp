@@ -9,6 +9,7 @@
 #include "KeyFrame.h"
 #include "FriendlyIOTransformNode.h"
 #include <map>
+#include "HTable.h"
 
 //DEFINES
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -55,13 +56,45 @@ namespace FBXLoader
 		}
 	};
 
+	unsigned int NUMBUCKETS = 2000;
+
+	struct NVert
+	{
+		VS_BasicInput b;
+		unsigned int p;
+		bool operator==(const NVert& rhs) const
+		{
+			if (b.normal.x != rhs.b.normal.x) return false;
+			if (b.normal.y != rhs.b.normal.y) return false;
+			if (b.normal.z != rhs.b.normal.z) return false;
+			if (b.uv.x != rhs.b.uv.x) return false;
+			if (b.uv.y != rhs.b.uv.y) return false;
+			if (b.position.x != rhs.b.position.x) return false;
+			if (b.position.y != rhs.b.position.y) return false;
+			if (b.position.z != rhs.b.position.z) return false;
+
+			return true;
+		}
+	};
+
+	//hash function for verts
+	unsigned int VertHash(const NVert& v)
+	{
+		float x = v.b.position.x;
+		float y = v.b.position.y;
+		float z = v.b.position.z;
+
+		x = x * (y * 0.5379f + 35.2149f) * NUMBUCKETS * 321.6548f * z * z * (y + x);
+
+		return (unsigned int)x % NUMBUCKETS;
+	}
+
 	FbxScene* mFBXScene = nullptr;
 	FbxManager* mFBXManager = nullptr;
 
 	bool mHasAnimation = true;
 	bool isBasic = false;
 	unsigned int transformNodeindex = 0;
-
 	std::vector<Vertex> mVerts;
 	std::vector<VS_BasicInput> mBasicVerts;
 	std::vector<unsigned int> mIndices;
@@ -389,8 +422,9 @@ namespace FBXLoader
 					case FbxGeometryElement::eDirect:
 					case FbxGeometryElement::eIndexToDirect:
 					{
-						outUV.x = (float)(vertexUV->GetDirectArray().GetAt(inTextureUVIndex).mData[0]);
-						outUV.y = (float)(vertexUV->GetDirectArray().GetAt(inTextureUVIndex).mData[1]);
+						FbxDouble* md = vertexUV->GetDirectArray().GetAt(inTextureUVIndex).mData;
+						outUV.x = (float)(md[0]);
+						outUV.y = (float)(md[1]);
 						break;
 					}
 
@@ -458,9 +492,10 @@ namespace FBXLoader
 				{
 					case FbxGeometryElement::eDirect:
 					{
-						outNormal.x = (float)(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[0]);
-						outNormal.y = (float)(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[1]);
-						outNormal.z = (float)(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+						FbxDouble* md = vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData;
+						outNormal.x = (float)(md[0]);
+						outNormal.y = (float)(md[1]);
+						outNormal.z = (float)(md[2]);
 					}
 					break;
 
@@ -1109,6 +1144,9 @@ namespace FBXLoader
 		//Create the root node as a handle for the rest of the FBX mesh
 		FbxNode* rootNode = fbxScene->GetRootNode();
 
+		NVert Ntemp;
+		NVert* NtempPntr;
+
 		//if the root node is not null
 		if (rootNode)
 		{
@@ -1128,10 +1166,12 @@ namespace FBXLoader
 					continue;
 
 				mesh = (FbxMesh*)node->GetNodeAttribute();
-
+				int PC = mesh->GetPolygonCount();
+				NUMBUCKETS = PC;
+				HTable<NVert> NTable(NUMBUCKETS, VertHash);
 				FbxVector4* verts = mesh->GetControlPoints();
 
-				for (int j = 0; j < mesh->GetPolygonCount(); ++j)
+				for (int j = 0; j < PC; ++j)
 				{
 
 					int numVerts = mesh->GetPolygonSize(j);
@@ -1146,27 +1186,35 @@ namespace FBXLoader
 						int ctrlPointIndex = mesh->GetPolygonVertex(j, k);
 						//CtrlPoint* currCtrlPoint = mControlPoints[ctrlPointIndex];
 
-						int iCtrlPoint = mesh->GetPolygonVertex(j, k);
 						vert.normal = ReadNormal(mesh, ctrlPointIndex, j * 3 + k);
 						vert.uv = ReadUV(mesh, ctrlPointIndex, mesh->GetTextureUVIndex(j, k), 0);
 						//if the requested vertex does not exists or the indices arguments have an invalid range
-						if (iCtrlPoint < 0) return false;
+						if (ctrlPointIndex < 0) return false;
 
 
 						//position
-						vert.position.x = (float)verts[iCtrlPoint].mData[0];
-						vert.position.y = (float)verts[iCtrlPoint].mData[1];
-						vert.position.z = -(float)verts[iCtrlPoint].mData[2];
+						vert.position.x = (float)verts[ctrlPointIndex].mData[0];
+						vert.position.y = (float)verts[ctrlPointIndex].mData[1];
+						vert.position.z = -(float)verts[ctrlPointIndex].mData[2];
 
-
-						mBasicVerts.push_back(vert);
+						Ntemp.b = vert;
+						NtempPntr = NTable.findReturn(Ntemp);
+						if (!NtempPntr)
+						{
+							mBasicVerts.push_back(vert);
+							Ntemp.p = (int)mBasicVerts.size() - 1;
+							NTable.insert(Ntemp);
+							mIndices.push_back(Ntemp.p);
+						}
+						else
+							mIndices.push_back(NtempPntr->p);
 					}
 				}
 			}
 
-			mIndices.clear();
-			mIndices.resize(mBasicVerts.size());
-			ElimanateDuplicates(mBasicVerts, mIndices);
+			//mIndices.clear();
+			//mIndices.resize(mBasicVerts.size());
+			//ElimanateDuplicates(mBasicVerts, mIndices);
 
 			//swap indices for correct texture
 			for (unsigned int i = 0; i < mIndices.size(); i += 3)
@@ -1179,7 +1227,8 @@ namespace FBXLoader
 
 
 			ExportBasicMesh(name);
-
+			mBasicVerts.clear();
+			mIndices.clear();
 			return true;
 		}
 		return false;

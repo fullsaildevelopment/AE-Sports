@@ -1,10 +1,10 @@
 #pragma once
-#include "Component.h"
 #include "GameObject.h"
-#include "vec3.h"
-#include "SphereCollider.h"
-#include "XTime.h"
+#include "Component.h"
 #include "CapsuleCollider.h"
+#include "SphereCollider.h"
+#include "vec3.h"
+#include "XTime.h"
 
 class BallController : public Component
 {
@@ -29,6 +29,7 @@ public:
 
 	// accessors
 	bool GetIsHeld();
+	bool GetIsThrown();
 	GameObject* GetHolder();
 
 	// mutators

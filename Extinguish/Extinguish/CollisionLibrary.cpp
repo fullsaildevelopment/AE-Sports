@@ -937,9 +937,9 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	AABB top;
 	AABB bottom;
 	top.min = float3(hex.seg.m_End.x - hh * 0.9f, hex.seg.m_End.y - 0.33f, hex.seg.m_End.z - hex.s * 0.4f);
-	top.max = float3(hex.seg.m_End.x + hh * 0.9f, hex.seg.m_End.y + 0.001f, hex.seg.m_End.z + hex.s * 0.4f);
+	top.max = float3(hex.seg.m_End.x + hh * 0.9f, hex.seg.m_End.y + 0.0001f, hex.seg.m_End.z + hex.s * 0.4f);
 
-	bottom.min = float3(hex.seg.m_Start.x - hh * 0.9f, hex.seg.m_Start.y - 0.001f, hex.seg.m_Start.z - hex.s * 0.4f);
+	bottom.min = float3(hex.seg.m_Start.x - hh * 0.9f, hex.seg.m_Start.y - 0.0001f, hex.seg.m_Start.z - hex.s * 0.4f);
 	bottom.max = float3(hex.seg.m_Start.x + hh * 0.9f, hex.seg.m_Start.y + 0.33f, hex.seg.m_Start.z + hex.s * 0.4f);
 
 	float3 tc = SweptSpheretoAABB(s, top, vel);

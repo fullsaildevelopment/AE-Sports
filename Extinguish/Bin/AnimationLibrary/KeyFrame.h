@@ -17,7 +17,7 @@ public:
 	void ClearBones() { bones.clear(); }
 
 	//getters
-	Bone GetBone(unsigned int index) { return bones[index]; }
+	Bone* GetBone(unsigned int index) { return &bones[index]; }
 	std::vector<Bone>& GetBones() { return bones; }
 	float GetTime() { return time; }
 	float GetTweenTime() { return tweenTime; }
