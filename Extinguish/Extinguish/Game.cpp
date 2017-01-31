@@ -240,7 +240,30 @@ void Game::HandleEvent(Event* e)
 
 
 //setters//
-
+float3* CreateFloor(float d, int r, int c, float3 p)
+{
+	float3* poses = new float3[r * c];
+	float s = d * 0.5f;
+	float h = (float)sqrt(3.0)*s;
+	for (int i = 0; i < r; ++i)
+	{
+		for (int j = 0; j < c; ++j)
+		{
+			if (i % 2 == 0)
+			{
+				poses[i * c + j].x = p.x + (j * h);
+				poses[i * c + j].z = p.z + ((d + s) * (i * 0.5f));
+			}
+			else
+			{
+				poses[i * c + j].x = p.x + (j * h) + (0.5f*h);
+				poses[i * c + j].z = p.z + ((d + s) * (i * 0.5f));
+			}
+			poses[i * c + j].y = 0;
+		}
+	}
+	return poses;
+}
 
 //private helper functions//
 
@@ -336,76 +359,76 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 	cameraController2->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
-	GameObject* box = new GameObject();
-	basic->AddGameObject(box);
-	box->Init("Box");
-	box->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* boxRenderer = new Renderer();
-	box->AddComponent(boxRenderer);
-	boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
-	//CapsuleCollider* boxcap = new CapsuleCollider(1, { 0,0,0 }, { 0,2.7f,0 }, box, true);
-	//box->AddComponent(boxcap);
-	BoxCollider* boxcol = new BoxCollider(box, false, {1,1,1 }, { -1,0,-1 });
-	box->AddBoxCollider(boxcol);
+	//GameObject* box = new GameObject();
+	//basic->AddGameObject(box);
+	//box->Init("Box");
+	//box->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* boxRenderer = new Renderer();
+	//box->AddComponent(boxRenderer);
+	//boxRenderer->Init("Box", "NormalMapped", "Bind", "", "Attack", projection, &resourceManager, devResources);
+	////CapsuleCollider* boxcap = new CapsuleCollider(1, { 0,0,0 }, { 0,2.7f,0 }, box, true);
+	////box->AddComponent(boxcap);
+	//BoxCollider* boxcol = new BoxCollider(box, false, {1,1,1 }, { -1,0,-1 });
+	//box->AddBoxCollider(boxcol);
 
-	GameObject* meterbox = new GameObject();
-	basic->AddGameObject(meterbox);
-	meterbox->Init("MeterBox");
-	meterbox->InitTransform(identity, { 3,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer = new Renderer();
-	meterbox->AddComponent(meterboxRenderer);
-	meterboxRenderer->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	//Movement* meterboxplayerController = new Movement();
-	//meterbox->AddComponent(meterboxplayerController);
-	//meterboxplayerController->Init(5.0f, 0.75f);
-	//CapsuleCollider* meterboxcap = new CapsuleCollider(1, { 0,-0.5f,0 }, { 0,0.5f,0 }, meterbox, true);
-	//meterbox->AddComponent(meterboxcap);
-	BoxCollider* meterboxcol = new BoxCollider(meterbox, false , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox->AddBoxCollider(meterboxcol);
-	//PlayerController* bplayerController = new PlayerController();
-	//box->AddComponent(bplayerController);
-	//bplayerController->Init(5.0f, 0.75f);
+	//GameObject* meterbox = new GameObject();
+	//basic->AddGameObject(meterbox);
+	//meterbox->Init("MeterBox");
+	//meterbox->InitTransform(identity, { 3,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* meterboxRenderer = new Renderer();
+	//meterbox->AddComponent(meterboxRenderer);
+	//meterboxRenderer->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	////Movement* meterboxplayerController = new Movement();
+	////meterbox->AddComponent(meterboxplayerController);
+	////meterboxplayerController->Init(5.0f, 0.75f);
+	////CapsuleCollider* meterboxcap = new CapsuleCollider(1, { 0,-0.5f,0 }, { 0,0.5f,0 }, meterbox, true);
+	////meterbox->AddComponent(meterboxcap);
+	//BoxCollider* meterboxcol = new BoxCollider(meterbox, false , { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	//meterbox->AddBoxCollider(meterboxcol);
+	////PlayerController* bplayerController = new PlayerController();
+	////box->AddComponent(bplayerController);
+	////bplayerController->Init(5.0f, 0.75f);
 
-	GameObject* meterbox2 = new GameObject();
-	basic->AddGameObject(meterbox2);
-	meterbox2->Init("MeterBox2");
-	meterbox2->InitTransform(identity, { 3,6, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer2 = new Renderer();
-	meterbox2->AddComponent(meterboxRenderer2);
-	meterboxRenderer2->Init("Axis", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	BoxCollider* meterboxcol2 = new BoxCollider(meterbox2, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox2->AddBoxCollider(meterboxcol2);
+	//GameObject* meterbox2 = new GameObject();
+	//basic->AddGameObject(meterbox2);
+	//meterbox2->Init("MeterBox2");
+	//meterbox2->InitTransform(identity, { 3,6, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* meterboxRenderer2 = new Renderer();
+	//meterbox2->AddComponent(meterboxRenderer2);
+	//meterboxRenderer2->Init("Axis", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//BoxCollider* meterboxcol2 = new BoxCollider(meterbox2, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	//meterbox2->AddBoxCollider(meterboxcol2);
 
-	GameObject* meterbox3 = new GameObject();
-	basic->AddGameObject(meterbox3);
-	meterbox3->Init("MeterBox3");
-	meterbox3->InitTransform(identity, { 0,3, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer3 = new Renderer();
-	meterbox3->AddComponent(meterboxRenderer3);
-	meterboxRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	BoxCollider* meterboxcol3 = new BoxCollider(meterbox3, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox3->AddBoxCollider(meterboxcol3);
+	//GameObject* meterbox3 = new GameObject();
+	//basic->AddGameObject(meterbox3);
+	//meterbox3->Init("MeterBox3");
+	//meterbox3->InitTransform(identity, { 0,3, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* meterboxRenderer3 = new Renderer();
+	//meterbox3->AddComponent(meterboxRenderer3);
+	//meterboxRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//BoxCollider* meterboxcol3 = new BoxCollider(meterbox3, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	//meterbox3->AddBoxCollider(meterboxcol3);
 
-	GameObject* meterbox4 = new GameObject();
-	basic->AddGameObject(meterbox4);
-	meterbox4->Init("MeterBox4");
-	meterbox4->InitTransform(identity, { 6,3, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer4 = new Renderer();
-	meterbox4->AddComponent(meterboxRenderer4);
-	meterboxRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	BoxCollider* meterboxcol4 = new BoxCollider(meterbox4, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox4->AddBoxCollider(meterboxcol4);
+	//GameObject* meterbox4 = new GameObject();
+	//basic->AddGameObject(meterbox4);
+	//meterbox4->Init("MeterBox4");
+	//meterbox4->InitTransform(identity, { 6,3, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* meterboxRenderer4 = new Renderer();
+	//meterbox4->AddComponent(meterboxRenderer4);
+	//meterboxRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//BoxCollider* meterboxcol4 = new BoxCollider(meterbox4, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	//meterbox4->AddBoxCollider(meterboxcol4);
 
-	GameObject* meterbox5 = new GameObject();
-	basic->AddGameObject(meterbox5);
-	meterbox5->Init("MeterBox5");
-	meterbox5->InitTransform(identity, { 3,3, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer5 = new Renderer();
-	meterbox5->AddComponent(meterboxRenderer5);
-	meterboxRenderer5->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	BoxCollider* meterboxcol5 = new BoxCollider(meterbox5, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
-	meterbox5->AddBoxCollider(meterboxcol5);
-	
+	//GameObject* meterbox5 = new GameObject();
+	//basic->AddGameObject(meterbox5);
+	//meterbox5->Init("MeterBox5");
+	//meterbox5->InitTransform(identity, { 3,3, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* meterboxRenderer5 = new Renderer();
+	//meterbox5->AddComponent(meterboxRenderer5);
+	//meterboxRenderer5->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//BoxCollider* meterboxcol5 = new BoxCollider(meterbox5, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
+	//meterbox5->AddBoxCollider(meterboxcol5);
+	//
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
@@ -415,90 +438,101 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
+	int row = 100;
+	int col = 100;
+	float3* floor = CreateFloor(2, row, col, float3(0, 0, 0));
 
-	GameObject* Ball = new GameObject();
-	basic->AddGameObject(Ball);
-	Ball->Init("Ball");
-	Ball->InitTransform(identity, { 3,1,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
-	Renderer* ballrenderer = new Renderer();
-	Ball->AddComponent(ballrenderer);
-	ballrenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	Movement* ballMover = new Movement();
-	Ball->AddComponent(ballMover);
-	ballMover->Init(5.0f, 0.75f);
-	SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false, float3(1,1,0).normalize() * 0.5f);
-	Ball->AddSphereCollider(ballcol);
+	GameObject* HexFloor = new GameObject();
+	basic->AddGameObject(HexFloor);
+	HexFloor->Init("HexFloor");
+	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* HexFloorRenderer = new Renderer();
+	HexFloor->AddComponent(HexFloorRenderer);
+	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
 
-	GameObject* Ball2 = new GameObject();
-	basic->AddGameObject(Ball2);
-	Ball2->Init("Ball2");
-	Ball2->InitTransform(identity, { 3,3,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
-	Renderer* ballrenderer2 = new Renderer();
-	Ball2->AddComponent(ballrenderer2);
-	ballrenderer2->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
-	Movement* ballMover2 = new Movement();
-	Ball2->AddComponent(ballMover2);
-	ballMover2->Init(5.0f, 0.75f);
-	SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false);
-	Ball2->AddSphereCollider(ballcol2);
+	//GameObject* Ball = new GameObject();
+	//basic->AddGameObject(Ball);
+	//Ball->Init("Ball");
+	//Ball->InitTransform(identity, { 3,1,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	//Renderer* ballrenderer = new Renderer();
+	//Ball->AddComponent(ballrenderer);
+	//ballrenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//Movement* ballMover = new Movement();
+	//Ball->AddComponent(ballMover);
+	//ballMover->Init(5.0f, 0.75f);
+	//SphereCollider* ballcol = new SphereCollider(0.5f, Ball, false, float3(1,1,0).normalize() * 0.5f);
+	//Ball->AddSphereCollider(ballcol);
+
+	//GameObject* Ball2 = new GameObject();
+	//basic->AddGameObject(Ball2);
+	//Ball2->Init("Ball2");
+	//Ball2->InitTransform(identity, { 3,3,-2 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	//Renderer* ballrenderer2 = new Renderer();
+	//Ball2->AddComponent(ballrenderer2);
+	//ballrenderer2->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//Movement* ballMover2 = new Movement();
+	//Ball2->AddComponent(ballMover2);
+	//ballMover2->Init(5.0f, 0.75f);
+	//SphereCollider* ballcol2 = new SphereCollider(0.5f, Ball2, false);
+	//Ball2->AddSphereCollider(ballcol2);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
 	Hex->Init("Team2");
-	Hex->InitTransform(identity, { 1,0,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Hex->InitTransform(identity, { 1,0,-5 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
 	Hex->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover3 = new Movement();
 	//Hex->AddComponent(ballMover3);
 	//ballMover3->Init(5.0f, 0.75f);
-	HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
-	Hex->AddComponent(ballcol3);
+	//HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
+	//Hex->AddComponent(ballcol3);
 
-	Hex->SetTag("Goal");
-	
+	//Hex->SetTag("Goal");
+	//
 
 
-	GameObject* bear = new GameObject();
-	basic->AddGameObject(bear);
-	bear->Init("Bear");
-	bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
-	Renderer* bearRenderer = new Renderer();
-	bear->AddComponent(bearRenderer);
-	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	//bearRenderer->SetNextAnimation("Run");
-	//PlayerController* playerController = new PlayerController();
-	//bear->AddComponent(playerController);
-	//playerController->Init();
-	Movement* bearMover = new Movement();
-	bear->AddComponent(bearMover);
-	bearMover->Init(1.0f, 0.75f);
-	CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
-	bear->AddCapsuleCollider(bearcol);
-	
-	bear->SetTag("Team1");
-	AI *bearAI = new AI(bear);
-	bear->AddComponent(bearAI);
+	//GameObject* bear = new GameObject();
+	//basic->AddGameObject(bear);
+	//bear->Init("Bear");
+	//bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
+	//Renderer* bearRenderer = new Renderer();
+	//bear->AddComponent(bearRenderer);
+	//bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
+	////bearRenderer->SetNextAnimation("Run");
+	////PlayerController* playerController = new PlayerController();
+	////bear->AddComponent(playerController);
+	////playerController->Init();
+	//Movement* bearMover = new Movement();
+	//bear->AddComponent(bearMover);
+	//bearMover->Init(1.0f, 0.75f);
+	//CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
+	//bear->AddCapsuleCollider(bearcol);
+	//
+	//bear->SetTag("Team1");
+	//AI *bearAI = new AI(bear);
+	//bear->AddComponent(bearAI);
 
-	
+	//
 
-	//Camera* cameraController = new Camera();
-	//bear->AddComponent(cameraController);
-	//cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+	////Camera* cameraController = new Camera();
+	////bear->AddComponent(cameraController);
+	////cameraController->Init({ 0.0f, 0.7f, -1.5f, 0.0f }, { 0.0f, -0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
-	//Transform* bearHead = new Transform();
-	//bearHead->SetLocal(bearRenderer->GetBlender()->GetSkeleton().GetBones()[5].world);
-	//bearHead->Init(bearRenderer->GetBlender()->GetSkeleton().GetBones()[5].world, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, nullptr, nullptr, nullptr);
+	////Transform* bearHead = new Transform();
+	////bearHead->SetLocal(bearRenderer->GetBlender()->GetSkeleton().GetBones()[5].world);
+	////bearHead->Init(bearRenderer->GetBlender()->GetSkeleton().GetBones()[5].world, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, nullptr, nullptr, nullptr);
 
-	//bearHead->Init(
+	////bearHead->Init(
 
-	GameObject* plane = new GameObject();
-	basic->AddGameObject(plane);
-	plane->Init("Plane");
-	plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* planeRenderer = new Renderer();
-	plane->AddComponent(planeRenderer);
-	planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	//GameObject* plane = new GameObject();
+	//basic->AddGameObject(plane);
+	//plane->Init("Plane");
+	//plane->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* planeRenderer = new Renderer();
+	//plane->AddComponent(planeRenderer);
+	//planeRenderer->Init("Plane", "Static", "Static", "", "", projection, &resourceManager, devResources);
 
 
 	GameObject* gameBall = new GameObject();
@@ -520,7 +554,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	ballController->SetHolder(crosse);
 
 	gameBall->SetTag("Ball");
-	bearAI->Init();
+	//bearAI->Init();
 
 
 	crosse->Init("Crosse1");

@@ -8,6 +8,7 @@
 #include <string>
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "FriendlyIOTransformNode.h"
+#include "vec3.h"
 
 //class Animation;
 //class BindPose;
@@ -73,7 +74,7 @@ public:
 	int GetVertexStride(std::string name);
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
-
+	ID3D11Buffer* ResourceManager::CreateInstancedBuffer(int num, float3* instanced);
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);
