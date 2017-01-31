@@ -9,9 +9,13 @@ class HexagonCollider : public Collider
 private:
 	Hexagon hex;
 	float height;
+	float3* poses;
+	int instanced;
 public:
 	HexagonCollider(GameObject* o, float v, float height);
-	Hexagon GetWorldHex();
+	HexagonCollider(int instanced,float3* posistions, float height, float v, GameObject* o);
+	Hexagon* GetWorldHex();
+	Hexagon* GetWorldHex(int i);
 	void Update(float dt, InputManager* input) override;
 
 };

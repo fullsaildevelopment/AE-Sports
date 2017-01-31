@@ -26,6 +26,34 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	numVerts = resources->GetNumVertices(mesh);
 	numIndices = resources->GetNumIndices(mesh);
 	devResources = deviceResources;
+	m_instanced = nullptr;
+	numIns = 0;
+	SetProjection(projection);
+
+	if (!curAnimName.empty())
+	{
+		blender = new Blender();
+		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
+		blender->Init(true, curAnimName, "");
+	}
+}
+
+void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
+{
+	indexBuffer = resources->GetIndexBuffer(mesh);
+	vertexBuffer = resources->GetVertexBuffer(mesh);
+	inputLayout = resources->GetInputLayout(vsName);
+	pixelShader = resources->GetPixelShader(psName);
+	vertexShader = resources->GetVertexShader(vsName);
+	computeShader = resources->GetComputeShader(csName);
+	diffuseSRV = resources->GetShaderResourceView(mesh);
+	vertexStride = resources->GetVertexStride(mesh);
+	numVerts = resources->GetNumVertices(mesh);
+	numIndices = resources->GetNumIndices(mesh);
+	devResources = deviceResources;
+	m_instanced = instanced;
+	numIns = numInstences;
+	instancedBuffer = resources->CreateInstancedBuffer(numInstences, instanced);
 
 	SetProjection(projection);
 
@@ -93,7 +121,31 @@ void Renderer::Update(float dt, InputManager* input)
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 
 	//Draw!
-	if (indexBuffer)
+	if (numIns > 0)
+	{
+		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		D3D11_MAPPED_SUBRESOURCE mapstuff;
+
+		devContext->Map(instancedBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff);
+
+		float3* mapyay = (float3*)mapstuff.pData;
+		for (int i = 0; i < numIns; ++i)
+		{
+			mapyay[i] = m_instanced[i];
+		}
+
+		devContext->Unmap(instancedBuffer, 0);
+
+		unsigned int strides[] = { vertexStride, sizeof(float3) };
+		unsigned int offsets[] = { 0, 0 };
+		ID3D11Buffer* buf_ptrs[] = { vertexBuffer, instancedBuffer };
+
+		devContext->IASetVertexBuffers(0, 2, buf_ptrs, strides, offsets);
+		//and finally... draw models
+		devContext->DrawIndexedInstanced(numIndices, numIns, 0, 0, 0);
+	}
+	else if (indexBuffer)
 	{
 		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
