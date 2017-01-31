@@ -8,6 +8,7 @@
 #include <string>
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "FriendlyIOTransformNode.h"
+#include "vec3.h"
 
 //class Animation;
 //class BindPose;
@@ -83,7 +84,6 @@ public:
 	int GetVertexStride(std::string name);
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
-
 	IDWriteFactory * GetWriteFactory() { return pDWriteFactory.Get(); }
 	IDWriteTextFormat * GetTextFormat() { return pTextFormat.Get(); }
 	ID2D1Factory * GetID2D1Factory() { return pD2DFactory.Get(); }
@@ -92,6 +92,7 @@ public:
 	D2D1_RECT_F * GetRect() { return &layoutRect; }
 
 
+	ID3D11Buffer* ResourceManager::CreateInstancedBuffer(int num, float3* instanced);
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);
