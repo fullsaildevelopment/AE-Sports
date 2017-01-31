@@ -12,6 +12,7 @@ struct VertexShaderInput
 	float3 pos : POSITION;
 	float3 normal : NORMAL;
 	float3 uv : TEXCOORD;
+	float3 instPos : INSTANCEPOS;
 };
 
 // Per-pixel color data passed through the pixel shader.
@@ -30,6 +31,9 @@ PS_BasicInput main(VertexShaderInput input)
 	float4 pos = float4(input.pos, 1.0f);
 	float4 norm = float4(input.normal, 0.0f);
 
+	pos.x += input.instPos.x;
+	pos.y += input.instPos.y;
+	pos.z += input.instPos.z;
 	// Transform the vertex position into projected space.
 	pos = mul(pos, model);
 	output.worldPosition = pos;
