@@ -160,9 +160,19 @@ void Renderer::SetProjection(XMFLOAT4X4 projection)
 	mvpData.projection = projection;
 }
 
+void Renderer::SetCurAnimation(int animIndex)
+{
+	blender->SetCurAnimation(animIndex);
+}
+
 void Renderer::SetNextAnimation(std::string animName)
 {
 	blender->SetNextAnimation(animName);
+}
+
+void Renderer::SetNextAnimation(int animIndex)
+{
+	blender->SetNextAnimation(animIndex);
 }
 
 void Renderer::SetBlendInfo(BlendInfo info)

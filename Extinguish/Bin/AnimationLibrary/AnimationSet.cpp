@@ -27,6 +27,18 @@ Animation* AnimationSet::GetAnimation(std::string animationName)
 	return result;
 }
 
+Animation* AnimationSet::GetAnimation(int animationIndex)
+{
+	Animation* result = nullptr;
+
+	if (animationIndex != -1)
+	{
+		result = &animations[animationIndex];
+	}
+
+	return result;
+}
+
 const BlendInfo* AnimationSet::GetBlendInfo(unsigned int animationFrom, unsigned int animationTo)
 {
 	return &blendInfos[animationFrom][animationTo];
@@ -40,4 +52,9 @@ const Animation* AnimationSet::GetDefaultAnimation()
 Skeleton AnimationSet::GetSkeleton()
 {
 	return skeleton;
+}
+
+int AnimationSet::GetAnimationIndex(std::string animationName)
+{
+	return animationsTable.GetKey(animationName);
 }
