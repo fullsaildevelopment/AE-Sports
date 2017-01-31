@@ -53,6 +53,26 @@ void GameObject::AddComponent(Component* component)
 	components.push_back(component);
 }
 
+void GameObject::AddBoxCollider(BoxCollider* box)
+{
+	components.push_back((Component*)box);
+	boxcolliders.push_back(box);
+}
+
+void GameObject::AddSphereCollider(SphereCollider* s)
+{
+	components.push_back((Component*)s);
+	spherecolliders.push_back(s);
+}
+
+
+void GameObject::AddCapsuleCollider(CapsuleCollider* c)
+{
+	components.push_back((Component*)c);
+	capsulecolliders.push_back(c);
+}
+
+
 GameObject* GameObject::FindGameObject(std::string name)
 {
 	GameObject* result = nullptr;
