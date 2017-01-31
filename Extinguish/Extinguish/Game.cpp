@@ -489,8 +489,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
 	//Hex->AddComponent(ballcol3);
 
-	//Hex->SetTag("Goal");
-	//
+	//Hex->SetTag("Goal2");
+	
 
 
 	//GameObject* bear = new GameObject();
