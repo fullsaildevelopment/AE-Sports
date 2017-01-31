@@ -152,6 +152,9 @@ void ResourceManager::LoadInAnimationSetsAndMeshes()
 						animName.erase(0, animName.find('_') + 1);
 						animName.erase(animName.find(".anim"), 5);
 
+						//give animation name
+						animation.SetAnimationName(animName);
+
 						//initialize animation set
 						animationSet.AddAnimation(animation, animName);
 					} while (::FindNextFile(hFileFind, &fileData));

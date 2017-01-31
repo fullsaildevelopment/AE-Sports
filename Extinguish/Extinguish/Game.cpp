@@ -113,6 +113,22 @@ void Game::Update(float dt)
 			}
 
 			state->parentIndex = parentIndex;
+			
+			int animIndex = -1;
+			Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+			if (renderer)
+			{
+				Blender* blender = renderer->GetBlender();
+
+				if (blender)
+				{
+					if (blender->GetNextInterpolator()->HasAnimation())
+					{
+						animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
+					}
+				}
+			}
 		}
 
 		// if server, set game states
@@ -178,6 +194,28 @@ void Game::Update(float dt)
 						if (parentIndex != -1)
 						{
 							gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
+						}
+
+						Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+						if (renderer)
+						{
+							Blender* blender = renderer->GetBlender();
+							if (blender)
+							{
+								//if (renderer->GetBlender()->Get
+								//int animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetCurInterpolator()->GetAnimation()->GetAnimationName());
+
+								//if (animIndex != client.GetAnimationIndex(i))
+								if (!blender->GetNextInterpolator()->HasAnimation())
+								{
+									BlendInfo info;
+									info.totalBlendTime = 0.01f;
+
+									renderer->SetNextAnimation(client.GetAnimationIndex(i));
+									renderer->SetBlendInfo(info);
+								}
+							}
 						}
 					}
 				}
@@ -471,7 +509,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* bearRenderer = new Renderer();
 	bear->AddComponent(bearRenderer);
 	bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	//bearRenderer->SetNextAnimation("Run");
+	BlendInfo bearBI;
+	bearBI.totalBlendTime = 0.01f;
+	bearRenderer->SetBlendInfo(bearBI);
+	bearRenderer->SetNextAnimation("Run");
 	//PlayerController* playerController = new PlayerController();
 	//bear->AddComponent(playerController);
 	//playerController->Init();

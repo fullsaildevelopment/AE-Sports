@@ -126,6 +126,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		isMoving = true;
 	}
 
+	//sound feedback
 	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f)
 	{
 		SoundEngine::GetSingleton()->PlayWalkingSound();
@@ -134,6 +135,23 @@ void Movement::HandleInput(InputDownEvent* e)
 	else if (!isMoving)
 	{
 		SoundEngine::GetSingleton()->StopWalkingSound();
+	}
+
+	//animation feedback
+	if (isMoving)
+	{
+		Renderer* renderer = GetGameObject()->GetComponent<Renderer>();
+		if (renderer)
+		{
+			Blender* blender = renderer->GetBlender();
+			if (blender)
+			{
+				if (!blender->GetNextInterpolator()->HasAnimation())
+				{
+					GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
+				}
+			}
+		}
 	}
 }
 

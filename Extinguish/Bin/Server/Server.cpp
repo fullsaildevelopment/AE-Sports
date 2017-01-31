@@ -272,6 +272,7 @@ void Server::recievePacket()
 	bIn.Read(tempState.position);
 	bIn.Read(tempState.rotation);
 	bIn.Read(tempState.parentIndex);
+	bIn.Read(tempState.animationIndex);
 
 	clientStates[tempState.clientID] = tempState;
 
@@ -332,12 +333,13 @@ void Server::sendPackets()
 			bOut.Write(clientStates[i].position);
 			bOut.Write(clientStates[i].rotation);
 			bOut.Write(clientStates[i].parentIndex);
+			bOut.Write(clientStates[i].animationIndex);
 		}
 		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 	}
 }
 
-void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex)
+void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex)
 {
 	//if (serverObjs > 0) {
 		//	memcpy(clientStates[index].animationName, animationName, length);
@@ -348,6 +350,7 @@ void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 
 		clientStates[index].position = pos;
 		clientStates[index].rotation = rot;
 		clientStates[index].parentIndex = parentIndex;
+		clientStates[index].animationIndex = animIndex;
 
 	//}
 }

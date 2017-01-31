@@ -39,7 +39,9 @@ public:
 	Blender* GetBlender();
 
 	//setters
+	void SetCurAnimation(int animIndex);
 	void SetNextAnimation(std::string animName);
+	void SetNextAnimation(int animIndex);
 	void SetModel(XMMATRIX& model);
 	void SetModel(XMFLOAT4X4& model);
 	void SetView(XMFLOAT4X4 view);

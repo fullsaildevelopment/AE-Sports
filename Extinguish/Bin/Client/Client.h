@@ -41,13 +41,14 @@ public:
 	{
 		UINT8 clientID;
 		UINT8 nameLength;
-		char animationName[125];
+		//char animationName[125];
 		bool hasBall;
 		//UINT8 hasBall;
 		//	XMFLOAT4X4 world;
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
 		INT8 parentIndex;
+		INT8 animationIndex;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -107,6 +108,7 @@ public:
 	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	bool hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	INT8 GetParentIndex(unsigned int index) { return clientStates[index].parentIndex; }
+	INT8 GetAnimationIndex(unsigned int index) { return clientStates[index].animationIndex; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
 	int getNumPackets() { return numPackets; }
