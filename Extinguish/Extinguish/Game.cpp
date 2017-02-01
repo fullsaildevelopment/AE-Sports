@@ -534,6 +534,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
+	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
+	HexFloor->AddComponent(HexFLoorCol);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
