@@ -120,6 +120,9 @@
     <ClCompile Include="BallController.cpp">
       <Filter>Components\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="FloorController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -231,6 +234,9 @@
       <Filter>Components\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="BallController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="FloorController.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
