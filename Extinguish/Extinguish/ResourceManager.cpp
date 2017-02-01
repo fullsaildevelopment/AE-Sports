@@ -182,6 +182,9 @@ void ResourceManager::LoadInAnimationSetsAndMeshes()
 						animName.erase(0, animName.find('_') + 1);
 						animName.erase(animName.find(".anim"), 5);
 
+						//give animation name
+						animation.SetAnimationName(animName);
+
 						//initialize animation set
 						animationSet.AddAnimation(animation, animName);
 					} while (::FindNextFile(hFileFind, &fileData));
@@ -757,6 +760,7 @@ void ResourceManager::DoFBXExporting()
 
 	//////load in mage with rig and animation
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
+	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Run.fbx", "Mage", "Mage_Run");
 
 	//load in plane
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");

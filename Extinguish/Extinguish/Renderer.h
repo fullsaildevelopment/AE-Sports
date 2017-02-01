@@ -53,7 +53,8 @@ public:
 	void Init(bool isButton, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
 	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources);
 	void Init(int numInstences, float3* instanced, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources);
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
+	void Render();
 
 	//getters
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets();
@@ -62,7 +63,9 @@ public:
 	ID2D1HwndRenderTarget * GetPRT() { return pRT; }
 
 	//setters
+	void SetCurAnimation(int animIndex);
 	void SetNextAnimation(std::string animName);
+	void SetNextAnimation(int animIndex);
 	void SetModel(XMMATRIX& model);
 	void SetModel(XMFLOAT4X4& model);
 	void SetView(XMFLOAT4X4 view);

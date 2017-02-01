@@ -47,7 +47,7 @@ public:
 	//float GetTotalTime() { return totalBlendTime; }
 	std::vector<Bone>* GetBones() { return bones; }
 	KeyFrame* GetBetweenKeyFrame() { return betweenKeyFrame; }
-	Animation* GetAnimation() { return animation; }
+	Animation* GetAnimation();
 	unsigned int GetPrevFrame() { return prevFrame; }
 	unsigned int GetNextFrame() { return nextFrame; }
 };

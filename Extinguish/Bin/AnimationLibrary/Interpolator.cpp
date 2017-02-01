@@ -87,6 +87,7 @@ AnimType Interpolator::Update(float time)
 	return AnimType::RUN_ONCE;
 }
 
+//setters//
 void Interpolator::SetAnimation(Animation* anim)
 {
 	animation = anim;
@@ -103,6 +104,11 @@ void Interpolator::SetAnimation(Animation* anim)
 	}
 }
 
+//getters//
+Animation* Interpolator::GetAnimation()
+{
+	return animation;
+}
 
 //private helper functions
 void Interpolator::Interpolate(KeyFrame* previous, KeyFrame* next, float ratio)

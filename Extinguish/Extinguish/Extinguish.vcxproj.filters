@@ -114,23 +114,23 @@
     <ClCompile Include="Movement.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="BallController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="HexagonCollider.cpp">
       <Filter>Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
     <ClCompile Include="..\Bin\imgui\imgui.cpp">
-      <Filter>imgui</Filter>
+      <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Bin\imgui\imgui_demo.cpp">
-      <Filter>imgui</Filter>
+      <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Bin\imgui\imgui_draw.cpp">
-      <Filter>imgui</Filter>
+      <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp">
-      <Filter>imgui</Filter>
+      <Filter>Imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,9 +230,6 @@
     <ClInclude Include="Movement.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="BallController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Client Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
@@ -245,17 +242,20 @@
     <ClInclude Include="HexagonCollider.h">
       <Filter>Components\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Components</Filter>
+    <ClInclude Include="BallController.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
     <ClInclude Include="..\Bin\imgui\imgui.h">
-      <Filter>imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Bin\imgui\imgui_internal.h">
-      <Filter>imgui</Filter>
+      <Filter>Imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\Bin\imgui\imgui_impl_dx11.h">
-      <Filter>imgui</Filter>
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui_internal.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -305,8 +305,8 @@
     <Filter Include="Network Wrappers">
       <UniqueIdentifier>{7883d501-1961-42ce-a698-f4d0fd022a71}</UniqueIdentifier>
     </Filter>
-    <Filter Include="imgui">
-      <UniqueIdentifier>{c8df21e1-c431-4c00-b527-c73c8362035a}</UniqueIdentifier>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{189c7220-f0ef-44b1-8f0a-2cdf9252f4d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
