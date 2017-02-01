@@ -114,11 +114,11 @@
     <ClCompile Include="Movement.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="BallController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="HexagonCollider.cpp">
       <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Components\Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,9 +218,6 @@
     <ClInclude Include="Movement.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="BallController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Client Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
@@ -232,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="HexagonCollider.h">
       <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="BallController.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

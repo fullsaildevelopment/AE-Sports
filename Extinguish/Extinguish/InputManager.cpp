@@ -30,7 +30,8 @@ void InputManager::ClearKeyboard()
 		mouseUp[i] = false;
 	}
 
-	sendEvent = false;
+	//sendEvent = false;
+	alreadySent = false;
 }
 
 //only to be used to help with event
@@ -56,30 +57,35 @@ void InputManager::Init(bool keyboard[256], bool keyboardDown[256], bool keyboar
 
 void InputManager::Update()
 {
-	bool sendEvent = false;
-
-	for (int i = 0; i < 3; ++i)
+	if (!alreadySent)
 	{
-		if (mouse[i])
+		bool sendEvent = false;
+
+		for (int i = 0; i < 3; ++i)
 		{
-			sendEvent = true;
-			break;
+			if (mouse[i])
+			{
+				sendEvent = true;
+				break;
+			}
+		}
+
+		for (int i = 0; i < 256; ++i)
+		{
+			if (keyboard[i])
+			{
+				sendEvent = true;
+				break;
+			}
+		}
+
+		if (sendEvent)
+		{
+			SendEvent();
 		}
 	}
 
-	for (int i = 0; i < 256; ++i)
-	{
-		if (keyboard[i])
-		{
-			sendEvent = true;
-			break;
-		}
-	}
-
-	if (sendEvent)
-	{
-		SendEvent();
-	}
+	alreadySent = false;
 }
 
 void InputManager::Shutdown()
@@ -248,19 +254,21 @@ void InputManager::SetKeyboardKey(unsigned int index, bool toggle)
 	{
 		if (!keyboardDown[index] && !keyboard[index])
 		{
-			keyboardDown[index] = true;
 			keyboard[index] = true;
+			keyboardDown[index] = true;
+			SendEvent();
+			keyboardDown[index] = false;
 
 			//cout << "Down and GetKey" << endl;
 		}
-		else if (keyboardDown[index])
-		{
-			keyboardDown[index] = false;
+		//else if (keyboardDown[index])
+		//{
+		//	keyboardDown[index] = false;
+		//	
+		//	cout << "No longer down" << endl;
+		//}
 
-			//cout << "GetKey" << endl;
-		}
-
-		SendEvent();
+		//SendEvent();
 
 		//cout << "sent event" << endl;
 	}
@@ -321,13 +329,15 @@ void InputManager::SetMouseButtons(int index, bool toggle)
 		{
 			mouseDown[index] = true;
 			mouse[index] = true;
-		}
-		else if (keyboardDown[index])
-		{
+			SendEvent();
 			mouseDown[index] = false;
 		}
+		//else if (mouseDown[index])
+		//{
+		//	mouseDown[index] = false;
+		//}
 
-		SendEvent();
+		//SendEvent();
 	}
 	else
 	{
@@ -356,4 +366,6 @@ void InputManager::SendEvent()
 	InputDownEvent* inputEvent = new InputDownEvent(this, Game::GetClientID(), false);
 	EventDispatcher::GetSingleton()->Dispatch(inputEvent);
 	delete inputEvent;
+
+	alreadySent = true;
 }
