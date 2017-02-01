@@ -389,16 +389,16 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	////box->AddComponent(bplayerController);
 	////bplayerController->Init(5.0f, 0.75f);
 
-	//GameObject* meterbox2 = new GameObject();
-	//basic->AddGameObject(meterbox2);
-	//meterbox2->Init("MeterBox2");
-	//meterbox2->InitTransform(identity, { 3,6, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	//Renderer* meterboxRenderer2 = new Renderer();
-	//meterbox2->AddComponent(meterboxRenderer2);
-	//meterboxRenderer2->Init("Axis", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	GameObject* meterbox2 = new GameObject();
+	basic->AddGameObject(meterbox2);
+	meterbox2->Init("MeterBox2");
+	meterbox2->InitTransform(identity, { 3,7, -3 }, { 0, 0, 0 }, { 10, 10, 10 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer2 = new Renderer();
+	meterbox2->AddComponent(meterboxRenderer2);
+	meterboxRenderer2->Init("Axis", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	//BoxCollider* meterboxcol2 = new BoxCollider(meterbox2, false, { 0.5f,0.5f,0.5f }, { -0.5f,-0.5f,-0.5f });
 	//meterbox2->AddBoxCollider(meterboxcol2);
-
+	//
 	//GameObject* meterbox3 = new GameObject();
 	//basic->AddGameObject(meterbox3);
 	//meterbox3->Init("MeterBox3");
@@ -432,14 +432,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
-	meterbox6->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 10,0, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	int row = 100;
-	int col = 100;
+
+	int row = 32;
+	int col = 25;
 	float3* floor = CreateFloor(2, row, col, float3(0, 0, 0));
 
 	GameObject* HexFloor = new GameObject();
@@ -449,8 +450,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
+	//HexagonCollider* HexFloorCol = new HexagonCollider(row, col,floor, 10, 2,HexFloor);
+	//HexFloor->AddComponent(HexFloorCol);
 
-	//GameObject* Ball = new GameObject();
+
+	//GameObject* Ball = neHexFloorColw GameObject();
 	//basic->AddGameObject(Ball);
 	//Ball->Init("Ball");
 	//Ball->InitTransform(identity, { 3,1,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
@@ -486,8 +490,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover3 = new Movement();
 	//Hex->AddComponent(ballMover3);
 	//ballMover3->Init(5.0f, 0.75f);
-	//HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
-	//Hex->AddComponent(ballcol3);
+	HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
+	Hex->AddComponent(ballcol3);
 
 	//Hex->SetTag("Goal2");
 	
