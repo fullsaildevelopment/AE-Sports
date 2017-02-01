@@ -18,6 +18,10 @@ ResourceManager::ResourceManager()
 ResourceManager::~ResourceManager()
 {
 	//animationSetsTable->CleanUp();
+
+	if (pBrush)
+		pBrush.Reset();
+
 }
 
 //void ResourceManager::CleanUp()
@@ -832,14 +836,24 @@ void ResourceManager::LoadInTextures()
 
 void ResourceManager::LoadButtonResources(HWND hwnd_)
 {
+	/*D2D1_FACTORY_OPTIONS options;
+	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
+#if defined(_DEBUG)
+	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+#endif*/
+
+
 	HRESULT result;
-	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, pD2DFactory.GetAddressOf());
+	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, 
+		/*__uuidof(ID2D1Factory),
+		&options,*/
+		pD2DFactory.GetAddressOf());
 
 	if (SUCCEEDED(result))
 	{
 		result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, 
 			__uuidof(IDWriteFactory), 
-			reinterpret_cast<IUnknown**>(pDWriteFactory.GetAddressOf()));
+			&pDWriteFactory);
 	}
 
 	if (SUCCEEDED(result))

@@ -141,6 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Bin\imgui\imgui.cpp" />
+    <ClCompile Include="..\Bin\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Bin\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="BallController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Crosse.cpp" />
@@ -172,6 +176,9 @@
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Bin\imgui\imgui.h" />
+    <ClInclude Include="..\Bin\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Bin\imgui\imgui_internal.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BallController.h" />

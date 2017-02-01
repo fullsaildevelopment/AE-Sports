@@ -2,6 +2,7 @@
 
 void DeviceResources::Init(HWND hwnd)
 {
+
 	//create swapchainDesc
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 
@@ -19,21 +20,32 @@ void DeviceResources::Init(HWND hwnd)
 
 	//create swapchain and device
 	UINT flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 #if (_DEBUG)
 	{
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	}
 #endif
+	const D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_2,
+		D3D_FEATURE_LEVEL_9_1,
+	};
 
 
-
-	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, NULL, NULL, D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), NULL, deviceContext.GetAddressOf());
+	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), NULL, deviceContext.GetAddressOf());
 
 	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 	device.As(&dxgiDevice);
-	HRESULT res = D2D1CreateDevice(dxgiDevice.Get(), nullptr, &p2DDevice);
+	HRESULT res = D2D1CreateDevice(dxgiDevice.Get(), NULL, &p2DDevice);
 	p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &p2DDeviceContext);
+
 	//Set up back buffer
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
 
@@ -129,6 +141,9 @@ void DeviceResources::Init(HWND hwnd)
 	CD3D11_BUFFER_DESC boneBufferDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
 	int temp = sizeof(BoneOffsetConstantBuffer);
+
+
+	ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
 }
 
 void DeviceResources::Clear()
@@ -140,11 +155,13 @@ void DeviceResources::Clear()
 
 void DeviceResources::Shutdown()
 {
+	ImGui_ImplDX11_Shutdown();
 	swapChain->SetFullscreenState(FALSE, NULL);
 }
 
 void DeviceResources::Present()
 {
 	//swap back buffer with buffer
+	ImGui::Render();
 	HRESULT swapResult = swapChain->Present(1, 0);
 }

@@ -26,16 +26,18 @@ void Renderer::Init(bool _isButton, ResourceManager* resources, DeviceResources*
 	depthStencilState = state;
 	d2DevContext = deviceResources->Get2DContext();
 
+
 	// to test
 	pDWriteFactory->CreateTextLayout(
 		L"I test good!",
 		(unsigned int)strlen("I test good!"),
 		pTextFormat,
 		240.0f,
-		50.0f,
+		100.0f,
 		&pTextLayout
 	);
 
+	ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
 	pTextLayout->GetMetrics(&textMetrics);
 
 	resources->GetID2D1Factory()->CreateDrawingStateBlock(stateBlock.GetAddressOf());
@@ -190,31 +192,65 @@ void Renderer::Update(float dt, InputManager* input)
 	}
 	else
 	{
-		
-		d2DevContext->SaveDrawingState(stateBlock.Get());
-		devContext->OMSetDepthStencilState(depthStencilState, 1);
-		d2DevContext->BeginDraw();
-		d2DevContext->SetTransform(D2D1::IdentityMatrix());
-	//pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	//	HRESULT hr;
+	//	pDWriteFactory->CreateTextLayout(
+	//		L"I test good!",
+	//		(unsigned int)strlen("I test good!"),
+	//		pTextFormat,
+	//		300.0f,
+	//		50.0f,
+	//		&pTextLayout
+	//	);
+
+	//	pTextLayout->GetMetrics(&textMetrics);
+	//	
+	//	devContext->OMSetDepthStencilState(depthStencilState, 1);
+	//	d2DevContext->SaveDrawingState(stateBlock.Get());
+	//	d2DevContext->BeginDraw();
+	//	d2DevContext->SetTransform(D2D1::IdentityMatrix());
+	//	d2DevContext->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	////pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
 		GameObject * temp = GetGameObject();
 		Button * theButton = (Button*)temp->GetComponent(0);
 
-		/*pRT->DrawTextA(
-			theButton->getText(),
-			theButton->getLength(),
-			pTextFormat,
-			layoutRect,
-			pBrush
-		);*/
+	//	DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
+	//	hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
 
-		d2DevContext->DrawTextLayout(
-			D2D1::Point2F(0.0f, 0.0f),
-			pTextLayout,
-			pBrush
-			);
+	//	d2DevContext->DrawTextA(
+	//		theButton->getText(),
+	//		theButton->getLength(),
+	//		pTextFormat,
+	//		layoutRect,
+	//		pBrush
+	//	);
 
-		d2DevContext->EndDraw();
-		d2DevContext->RestoreDrawingState(stateBlock.Get());
+	//	//pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+
+	//	//d2DevContext->DrawTextLayout(
+	//	//	D2D1::Point2F(0.5f, 0.5f),
+	//	//	pTextLayout,
+	//	//	pBrush
+	//	//	);
+
+	//	hr = d2DevContext->EndDraw();
+	//	if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
+	//	{
+	//		float t = 0;
+	//	}
+	//	d2DevContext->RestoreDrawingState(stateBlock.Get());
+
+		ImGui::BeginMainMenuBar();
+		//ImGui::RenderText(ImVec2(0, 0), "I am test");
+		ImGui::Text(theButton->getCharText());
+
+		if (theButton->iShowFPS())
+		{
+			ImGui::RenderText(ImVec2(300.0f, 2.0f), theButton->getFPS().c_str());
+		}
+
+		ImGui::EndMainMenuBar();
+
+		
 	}
 }
 
