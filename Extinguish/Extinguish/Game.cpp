@@ -583,7 +583,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { 0, 0, 0.1f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
