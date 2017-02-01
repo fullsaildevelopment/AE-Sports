@@ -10,6 +10,9 @@
 #include <WinSock2.h>
 #include <Windows.h>
 #include <d3d11.h>
+#include <d2d1.h>
+#include <d2d1_1.h>
+#include <d2d1effects.h>
 #include <iostream>
 #include <wrl\client.h>
 #include <DirectXMath.h>

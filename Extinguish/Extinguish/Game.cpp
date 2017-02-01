@@ -295,7 +295,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
-
+	basic->set2DRenderTarget(resourceManager.GetRenderTarget());
 
 	GameObject* mage1 = new GameObject();
 	basic->AddGameObject(mage1);
@@ -583,6 +583,18 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Crosse* crosseController2 = new Crosse();
 	crosse2->AddComponent(crosseController2);
 	crosseController2->Init();
+
+	GameObject * testButton = new GameObject();
+	basic->AddGameObject(testButton);
+	testButton->Init("testButton");
+	Button * theButton = new Button(true, true, L"I test good!", (unsigned int)strlen("I test good!"));
+	theButton->SetGameObject(testButton);
+	theButton->setHeight(1.0f);
+	theButton->setWidth(2.0f);
+	testButton->AddComponent(theButton);
+	Renderer * buttonRender = new Renderer();
+	buttonRender->Init(true, &resourceManager, devResources, devResources->GetDisableStencilState());
+	testButton->AddComponent(buttonRender);
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");

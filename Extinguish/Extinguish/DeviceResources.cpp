@@ -26,8 +26,14 @@ void DeviceResources::Init(HWND hwnd)
 	}
 #endif
 
+
+
 	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, NULL, NULL, D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), NULL, deviceContext.GetAddressOf());
 
+	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
+	device.As(&dxgiDevice);
+	HRESULT res = D2D1CreateDevice(dxgiDevice.Get(), nullptr, &p2DDevice);
+	p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &p2DDeviceContext);
 	//Set up back buffer
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
 
@@ -61,6 +67,32 @@ void DeviceResources::Init(HWND hwnd)
 	//create shadow map stv buffer
 	CD3D11_TEXTURE2D_DESC smDsDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, lround((float)CLIENT_WIDTH), lround((float)CLIENT_HEIGHT), 1, 1, D3D11_BIND_DEPTH_STENCIL);
 	HRESULT smDsvBufferResult = device->CreateTexture2D(&smDsDesc, nullptr, shadowMapDepthStencilBuffer.GetAddressOf());
+
+
+	// Clear the second depth stencil state before setting the parameters.
+
+	CD3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+
+	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	device->CreateDepthStencilState(&depthDisabledStencilDesc, depthDisabledStencilState.GetAddressOf());
+
 
 	//create depth stencil view now that depth stencil buffer is done created
 	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
