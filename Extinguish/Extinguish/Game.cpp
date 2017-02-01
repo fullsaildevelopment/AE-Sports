@@ -24,14 +24,14 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		if (server.init("127.0.0.1", 60000) == 1)
-		{
-			isMultiplayer = true;
-			isServer = true;
-		
-			client.init("127.0.0.1", 60001);
-		}
-		else
+		//if (server.init("127.0.0.1", 60000) == 1)
+		//{
+		//	isMultiplayer = true;
+		//	isServer = true;
+		//
+		//	client.init("127.0.0.1", 60001);
+		//}
+		//else
 		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
@@ -536,6 +536,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
 	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
 	HexFloor->AddComponent(HexFLoorCol);
+	FloorController* fcon = new FloorController(floor, row, col, 10);
+	HexFloor->AddComponent(fcon);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
