@@ -21,6 +21,9 @@ private:
 	const float maxY = 46.0f;
 	float minX, minY;
 	float dt;
+	bool catchMode;
+	//float catchAgainTimer;
+	//const float timeUntilCatchAgain = 0.0f;
 
 	int state; //0 = default... 1 = catch... 2 = default to catch... 3 = catch to default...
 
@@ -33,7 +36,7 @@ public:
 
 	//basic
 	void Init();
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
 	void OnTriggerEnter(Collider* collider) override;
 
 	//misc

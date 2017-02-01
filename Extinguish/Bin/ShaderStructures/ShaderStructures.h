@@ -98,12 +98,14 @@ struct GameState
 {
 	uint8_t clientID;
 	uint8_t nameLength;
-	char animationName[125];
+	//char animationName[125];
 	bool hasBall = false;
 //	XMFLOAT4X4 world;
 
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
+	int8_t parentIndex;
+	int8_t animationIndex;
 };
 #pragma pack(pop)
 

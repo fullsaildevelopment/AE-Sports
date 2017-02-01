@@ -22,7 +22,7 @@ private:
 public:
 	//basic
 	void Init(float moveVelocity, float rotateVelocity);
-	void Update(float dt, InputManager* input) override;
+	void Update(float dt) override;
 	void HandleEvent(Event* e);
 
 	//getters

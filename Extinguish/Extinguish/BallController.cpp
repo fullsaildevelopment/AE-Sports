@@ -11,8 +11,8 @@ void BallController::OnTriggerEnter(Collider *obj)
 	SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
 
 	// if i collide with a crosse
-	if (scol)
-		SetHolder(obj->GetGameObject());
+	//if (scol)
+	//	SetHolder(obj->GetGameObject());
 }
 
 BallController::BallController(GameObject* obj) : Component(obj)
@@ -22,12 +22,17 @@ BallController::BallController(GameObject* obj) : Component(obj)
 
 void BallController::Init()
 {
-
+	transform = GetGameObject()->GetTransform();
 }
 
-void BallController::Update(float dt, InputManager* input)
+void BallController::Update(float dt)
 {
 	timer.Signal();
+
+	if (!isHeld && transform->GetParent())
+	{
+		SetHolder(transform->GetParent()->GetGameObject());
+	}
 
 	if (isHeld && !isThrown)
 		me->GetTransform()->SetVelocity(float3(0, 0, 0));
@@ -44,6 +49,8 @@ void BallController::Update(float dt, InputManager* input)
 			holder = nullptr;
 		}
 	}
+
+	cout << isHeld;
 }
 
 void BallController::Throw()
@@ -103,7 +110,7 @@ void BallController::SetHolder(GameObject *person)
 	isHeld = true;
 	holder = person;
 
-	me->GetTransform()->SetPosition(float3(0, 0, 0));
+	me->GetTransform()->SetPosition(float3(0, 0, 0.1f));
 	person->GetTransform()->AddChild(me->GetTransform());
 	me->GetTransform()->SetParent(person->GetTransform());
 }

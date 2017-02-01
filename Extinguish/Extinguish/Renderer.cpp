@@ -96,62 +96,69 @@ void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::
 	}
 }
 
-void Renderer::Update(float dt, InputManager* input)
+void Renderer::Update(float dt)
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 	if (!isButton)
 	{
-	//update blender
-	if (blender)
-	{
-		blender->Update(dt * 0.5f, 0);
-	}
-
-	////set shaders
-	devContext->VSSetShader(vertexShader, NULL, NULL);
-	devContext->PSSetShader(pixelShader, NULL, NULL);
-
-	//set input layout
-	devContext->IASetInputLayout(inputLayout);
-
-	//update and set constant buffers
-	ID3D11Buffer* mvpConstantBuffer = devResources->GetMVPConstantBuffer();
-	devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
-	devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
-
-	if (blender)
-	{
-		std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
-
-		BoneOffsetConstantBuffer boneOffsetsData;
-		for (int i = 0; i < boneOffsets.size(); ++i)
+		//update blender
+		if (blender)
 		{
-			boneOffsetsData.boneOffsets[i] = boneOffsets[i];
+			blender->Update(dt * 0.5f, 0);
 		}
 
-		if (!boneOffsets.empty())
+		////set shaders
+		devContext->VSSetShader(vertexShader, NULL, NULL);
+		devContext->PSSetShader(pixelShader, NULL, NULL);
+
+		//set input layout
+		devContext->IASetInputLayout(inputLayout);
+
+		//update and set constant buffers
+		ID3D11Buffer* mvpConstantBuffer = devResources->GetMVPConstantBuffer();
+		devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
+		devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
+
+		if (blender)
 		{
-			ID3D11Buffer* boneOffsetConstantBuffer = devResources->GetBoneOffsetConstantBuffer();
-			devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, &boneOffsetsData, NULL, NULL);
-			devContext->VSSetConstantBuffers(1, 1, &boneOffsetConstantBuffer);
+			std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
+
+			BoneOffsetConstantBuffer boneOffsetsData;
+			for (int i = 0; i < boneOffsets.size(); ++i)
+			{
+				boneOffsetsData.boneOffsets[i] = boneOffsets[i];
+			}
+
+			if (!boneOffsets.empty())
+			{
+				ID3D11Buffer* boneOffsetConstantBuffer = devResources->GetBoneOffsetConstantBuffer();
+				devContext->UpdateSubresource(boneOffsetConstantBuffer, NULL, NULL, &boneOffsetsData, NULL, NULL);
+				devContext->VSSetConstantBuffers(1, 1, &boneOffsetConstantBuffer);
+			}
 		}
+
+		//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
+
+		//devContext->VSSetConstantBuffers(2, 1, lightMvpConstantBuffer.GetAddressOf());
+
+		//set vertex buffer
+		UINT offset = 0;
+
+		devContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexStride, &offset);
+
+		//set shader resource view
+		devContext->PSSetShaderResources(0, 1, &diffuseSRV);
+		//devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
+		//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
+		//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 	}
+}
 
-	//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
+void Renderer::Render()
+{
+	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
-	//devContext->VSSetConstantBuffers(2, 1, lightMvpConstantBuffer.GetAddressOf());
-
-	//set vertex buffer
-	UINT offset = 0;
-
-	devContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexStride, &offset);
-
-	//set shader resource view
-	devContext->PSSetShaderResources(0, 1, &diffuseSRV);
-	//devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
-	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
-	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
-
+	if (!isButton){
 	//Draw!
 		if (numIns > 0)
 		{
@@ -245,10 +252,14 @@ void Renderer::Update(float dt, InputManager* input)
 
 		if (theButton->iShowFPS())
 		{
-			ImGui::RenderText(ImVec2(300.0f, 2.0f), theButton->getFPS().c_str());
+			ImGui::RenderText(ImVec2(650.0f, 2.0f), theButton->getFPS().c_str());
 		}
 
+		ImGui::RenderText(ImVec2(350.0f, 2.0f), theButton->getTime().c_str());
+
 		ImGui::EndMainMenuBar();
+
+		// if you need anything for debugging purposes, just add it here
 
 		
 	}
@@ -303,9 +314,19 @@ void Renderer::SetProjection(XMFLOAT4X4 projection)
 	mvpData.projection = projection;
 }
 
+void Renderer::SetCurAnimation(int animIndex)
+{
+	blender->SetCurAnimation(animIndex);
+}
+
 void Renderer::SetNextAnimation(std::string animName)
 {
 	blender->SetNextAnimation(animName);
+}
+
+void Renderer::SetNextAnimation(int animIndex)
+{
+	blender->SetNextAnimation(animIndex);
 }
 
 void Renderer::SetBlendInfo(BlendInfo info)

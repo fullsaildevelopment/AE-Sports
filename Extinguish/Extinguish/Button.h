@@ -14,6 +14,7 @@ private:
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;
+	float time = 300.0f;
 	// some function pointer for event?
 
 public:
@@ -39,12 +40,21 @@ public:
 		textLength = length;
 	}
 
-	void Update(float dt, InputManager* input) override 
+	void Update(float dt) override 
 	{
+		time -= dt;
+
+		if (time < 0)
+		{
+			time = 300.0f;
+		}
+
+
+
 		if (showFps)
 		{
 			// 1000/dt
-			int _fps = 1 / dt;
+			int _fps = (int)(1 / dt);
 			
 			fps = to_string(_fps);
 			fps += " FPS";
@@ -65,4 +75,9 @@ public:
 	void showFPS(bool fps) { showFps = fps; }
 	bool iShowFPS() { return showFps; }
 	string getFPS() { return fps; }
+	string getTime() {
+		string theTime = "Countdown: ";
+		theTime += to_string((time / 60.0f));
+		return theTime;
+	}
 };
