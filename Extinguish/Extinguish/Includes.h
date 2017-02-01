@@ -27,6 +27,10 @@
 #include "DDSTextureLoader.h"	 
 #include "../ShaderStructures/ShaderStructures.h"
 
+#include "..\Bin\imgui\imgui.h"
+#include "..\Bin\imgui\imgui_internal.h"
+#include "..\Bin\imgui\imgui_impl_dx11.h"
+
 //defines
 #define CLIENT_WIDTH 1000
 #define CLIENT_HEIGHT 800

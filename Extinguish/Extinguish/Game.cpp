@@ -587,10 +587,12 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject * testButton = new GameObject();
 	basic->AddGameObject(testButton);
 	testButton->Init("testButton");
-	Button * theButton = new Button(true, true, L"I test good!", (unsigned int)strlen("I test good!"));
+	//Button * theButton = new Button(true, true, L"I test good!", (unsigned int)strlen("I test good!"), &resourceManager);
+	Button * theButton = new Button(true, true, "I test good!", (unsigned int)strlen("I test good!"));
 	theButton->SetGameObject(testButton);
 	theButton->setHeight(1.0f);
 	theButton->setWidth(2.0f);
+	theButton->showFPS(true);
 	testButton->AddComponent(theButton);
 	Renderer * buttonRender = new Renderer();
 	buttonRender->Init(true, &resourceManager, devResources, devResources->GetDisableStencilState());

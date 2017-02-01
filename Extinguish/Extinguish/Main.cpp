@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	freopen_s(&hf_out, "CONOUT$", "w", stdout);
 #endif
-	
+
 	XTime timer;
 	timer.Restart();
 	timer.Signal();

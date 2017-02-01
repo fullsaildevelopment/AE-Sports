@@ -446,6 +446,8 @@ void Scene::Update(float dt)
 	//pRT->SetTransform(D2D1::IdentityMatrix());
 	//pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
+	ImGui_ImplDX11_NewFrame();
+
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		gameObjects[i]->Update(dt, input);
@@ -477,6 +479,8 @@ void Scene::Update(float dt)
 	}
 
 	//pRT->EndDraw();
+
+	ImGui::EndFrame();
 }
 
 void Scene::HandleInput()

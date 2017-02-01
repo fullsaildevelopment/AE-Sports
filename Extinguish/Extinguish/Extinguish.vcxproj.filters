@@ -120,6 +120,18 @@
     <ClCompile Include="HexagonCollider.cpp">
       <Filter>Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -236,6 +248,15 @@
     <ClInclude Include="Button.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui_impl_dx11.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -283,6 +304,9 @@
     </Filter>
     <Filter Include="Network Wrappers">
       <UniqueIdentifier>{7883d501-1961-42ce-a698-f4d0fd022a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{c8df21e1-c431-4c00-b527-c73c8362035a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
