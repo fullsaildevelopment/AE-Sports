@@ -6,3 +6,15 @@ void Animation::Init(AnimType type, float time, std::vector<KeyFrame> frames)
 	totalTime = time;
 	keyFrames = frames;
 }
+
+//getters//
+std::string Animation::GetAnimationName()
+{
+	return animationName;
+}
+
+//setters//
+void Animation::SetAnimationName(std::string animName)
+{
+	animationName = animName;
+}

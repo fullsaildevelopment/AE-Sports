@@ -3,13 +3,13 @@
 #include "CapsuleCollider.h"
 #include "BoxCollider.h"
 
-HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collider(o,false)
+HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collider(o, false)
 {
 	poses = nullptr;
 	hex.d = d;
 	hex.s = d * 0.5f;
 	hex.seg.m_Start = o->GetTransform()->GetPosition();
-	hex.seg.m_End = o->GetTransform()->GetPosition() + float3(0,_height,0);
+	hex.seg.m_End = o->GetTransform()->GetPosition() + float3(0, _height, 0);
 	height = _height;
 	hex.h = sqrtf(3)*hex.s;
 	row = 0;
@@ -42,7 +42,7 @@ Hexagon* HexagonCollider::GetWorldHex(int i)
 }
 
 
-void HexagonCollider::Update(float dt, InputManager* input)
+void HexagonCollider::Update(float dt)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 	GameObject* tg = GetGameObject();
@@ -68,21 +68,41 @@ void HexagonCollider::Update(float dt, InputManager* input)
 	}
 	else
 	{
-		for (int i = 0; i < row; ++i)
+		for (int f = 0; f < size; ++f)
 		{
-			for (int j = 0; j < col; ++j)
+			SphereCollider* sphere = (*Others)[f]->GetComponent<SphereCollider>();
+			if (sphere)
 			{
-				for (int f = 0; f < size; ++f)
+				if (!sphere->isTrigger())
 				{
-					SphereCollider* sphere = (*Others)[f]->GetComponent<SphereCollider>();
-					if (sphere)
+					AABB tophalf;
+					tophalf.max = poses[row * col - 1] + float3(0, 10, 0);
+					tophalf.min = poses[(int)(row * 0.5f) * col] - float3(0, 10, 0);
+					if (SphereToAABB(sphere->GetWorldSphere(), tophalf))
 					{
-						if (!sphere->isTrigger())
+						for (int i = (int)(row * 0.5f); i < row; ++i)
 						{
-							float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
-							if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
+							for (int j = 0; j < col; ++j)
 							{
-								sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+								float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
+								if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
+								{
+									sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+								}
+							}
+						}
+					}
+					else
+					{
+						for (int i = 0; i < (int)(row * 0.5f); ++i)
+						{
+							for (int j = 0; j < col; ++j)
+							{
+								float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
+								if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
+								{
+									sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+								}
 							}
 						}
 					}

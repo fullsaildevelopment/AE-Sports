@@ -14,7 +14,7 @@ Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[19];
 Client::Client()
 {
 	//XMStoreFloat4x4(&myState->world, XMMatrixIdentity());
-	memcpy(myState->animationName, "name here", strlen("name here"));
+	//memcpy(myState->animationName, "name here", strlen("name here"));
 	myState->nameLength = (UINT8)strlen("name here");
 	//states->resize(16);
 }
@@ -304,6 +304,8 @@ void Client::sendPacket()
 	//bOut.Write(myState->world);
 	bOut.Write(myState->position);
 	bOut.Write(myState->rotation);
+	bOut.Write(myState->parentIndex);
+	bOut.Write(myState->animationIndex);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
@@ -331,6 +333,8 @@ void Client::recievePackets()
 			//	bIn.Read(clientStates[i].world);
 			bIn.Read(clientStates[i].position);
 			bIn.Read(clientStates[i].rotation);
+			bIn.Read(clientStates[i].parentIndex);
+			bIn.Read(clientStates[i].animationIndex);
 		}
 	}
 }

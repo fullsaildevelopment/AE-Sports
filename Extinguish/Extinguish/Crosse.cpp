@@ -29,7 +29,7 @@ void Crosse::Init()
 	EventDispatcher::GetSingleton()->RegisterHandler(this);
 }
 
-void Crosse::Update(float dt, InputManager* input)
+void Crosse::Update(float dt)
 {
 	//this->input = input;
 
@@ -104,7 +104,6 @@ void Crosse::HandleEvent(Event* e)
 			{
 				HandleInput(inputDownEvent);
 			}
-
 			//HandleInput(inputDownEvent);
 		}
 	}
