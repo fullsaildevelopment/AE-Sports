@@ -50,6 +50,7 @@ private:
 
 	Microsoft::WRL::ComPtr<IDWriteFactory> pDWriteFactory;
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
+	Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;
 	Microsoft::WRL::ComPtr<ID2D1Factory> pD2DFactory;
 	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> pRT;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush;
@@ -90,6 +91,7 @@ public:
 	ID2D1HwndRenderTarget * GetRenderTarget() { return pRT.Get(); }
 	ID2D1SolidColorBrush * GetBrush() { return pBrush.Get(); }
 	D2D1_RECT_F * GetRect() { return &layoutRect; }
+	IDWriteTextLayout * GetTextLayout() { return pTextLayout.Get(); }
 
 
 	ID3D11Buffer* ResourceManager::CreateInstancedBuffer(int num, float3* instanced);

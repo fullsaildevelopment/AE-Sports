@@ -26,9 +26,17 @@ private:
 	ModelViewProjectionConstantBuffer mvpData;
 	IDWriteFactory * pDWriteFactory;
 	IDWriteTextFormat * pTextFormat;
+	IDWriteTextLayout * pTextLayout;
 	ID2D1Factory * pD2DFactory;
 	ID2D1HwndRenderTarget * pRT;
 	ID2D1SolidColorBrush * pBrush;
+	Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock> stateBlock;
+	DWRITE_TEXT_METRICS textMetrics;
+
+	ID2D1DeviceContext * d2DevContext;
+
+	ID3D11DepthStencilState * depthStencilState;
+	
 	unsigned int vertexStride;
 	unsigned int numVerts;
 	unsigned int numIndices;
@@ -42,6 +50,7 @@ public:
 	Renderer();
 	~Renderer();
 
+	void Init(bool isButton, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
 	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources);
 	void Init(int numInstences, float3* instanced, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources);
 	void Update(float dt, InputManager* input) override;
@@ -50,6 +59,7 @@ public:
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets();
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds();
 	Blender* GetBlender();
+	ID2D1HwndRenderTarget * GetPRT() { return pRT; }
 
 	//setters
 	void SetNextAnimation(std::string animName);
@@ -58,7 +68,6 @@ public:
 	void SetView(XMFLOAT4X4 view);
 	void SetProjection(XMFLOAT4X4 projection);
 	void SetBlendInfo(BlendInfo info);
-	void SetIsButton(bool tf) { isButton = tf; }
 	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
 	//void SetBonesWorlds(std::vector<DirectX::XMFLOAT4X4> worlds) { bonesWorlds = worlds; }
 };

@@ -60,6 +60,13 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pointLightConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> spotLightConstantBuffer;
 
+
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthDisabledStencilState;
+	Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock> stateBlock;
+
+	ID2D1HwndRenderTarget * pRT;
+
 	CameraPositionConstantBuffer cameraBufferData;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> cameraConstantBuffer;
 
@@ -87,6 +94,8 @@ public:
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
 	int GetNumObjects() { return (int)gameObjects.size(); };
+
+	void set2DRenderTarget(ID2D1HwndRenderTarget * renderTarget) { pRT = renderTarget; }
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }

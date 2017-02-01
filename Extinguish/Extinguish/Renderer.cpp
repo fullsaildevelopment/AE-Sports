@@ -12,6 +12,35 @@ Renderer::~Renderer()
 	blender = nullptr;
 }
 
+void Renderer::Init(bool _isButton, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state)
+{
+	pDWriteFactory = resources->GetWriteFactory();
+	pTextFormat = resources->GetTextFormat();
+	pD2DFactory = resources->GetID2D1Factory();
+	pRT = resources->GetRenderTarget();
+	pBrush = resources->GetBrush();
+	layoutRect = resources->GetRect();
+	//pTextLayout = resources->GetTextLayout();
+	devResources = deviceResources;
+	isButton = _isButton;
+	depthStencilState = state;
+	d2DevContext = deviceResources->Get2DContext();
+
+	// to test
+	pDWriteFactory->CreateTextLayout(
+		L"I test good!",
+		(unsigned int)strlen("I test good!"),
+		pTextFormat,
+		240.0f,
+		50.0f,
+		&pTextLayout
+	);
+
+	pTextLayout->GetMetrics(&textMetrics);
+
+	resources->GetID2D1Factory()->CreateDrawingStateBlock(stateBlock.GetAddressOf());
+}
+
 //basic
 void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
 {
@@ -29,12 +58,6 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	m_instanced = nullptr;
 	numIns = 0;
 	SetProjection(projection);
-
-	pDWriteFactory = resources->GetWriteFactory();
-	pTextFormat = resources->GetTextFormat();
-	pD2DFactory = resources->GetID2D1Factory();
-	pRT = resources->GetRenderTarget();
-	pBrush = resources->GetBrush();
 
 	if (!curAnimName.empty())
 	{
@@ -61,12 +84,6 @@ void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::
 	numIns = numInstences;
 	instancedBuffer = resources->CreateInstancedBuffer(numInstences, instanced);
 
-	pDWriteFactory = resources->GetWriteFactory();
-	pTextFormat = resources->GetTextFormat();
-	pD2DFactory = resources->GetID2D1Factory();
-	pRT = resources->GetRenderTarget();
-	pBrush = resources->GetBrush();
-
 	SetProjection(projection);
 
 	if (!curAnimName.empty())
@@ -79,15 +96,15 @@ void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::
 
 void Renderer::Update(float dt, InputManager* input)
 {
+	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+	if (!isButton)
+	{
 	//update blender
 	if (blender)
 	{
 		blender->Update(dt * 0.5f, 0);
 	}
 
-	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
-
-	
 	////set shaders
 	devContext->VSSetShader(vertexShader, NULL, NULL);
 	devContext->PSSetShader(pixelShader, NULL, NULL);
@@ -134,8 +151,6 @@ void Renderer::Update(float dt, InputManager* input)
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 
 	//Draw!
-	if (!isButton) 
-	{
 		if (numIns > 0)
 		{
 			devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -171,24 +186,35 @@ void Renderer::Update(float dt, InputManager* input)
 		{
 			devContext->Draw(numVerts, 0);
 		}
+
 	}
 	else
 	{
-		pRT->BeginDraw();
-		pRT->SetTransform(D2D1::IdentityMatrix());
-		pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
+		
+		d2DevContext->SaveDrawingState(stateBlock.Get());
+		devContext->OMSetDepthStencilState(depthStencilState, 1);
+		d2DevContext->BeginDraw();
+		d2DevContext->SetTransform(D2D1::IdentityMatrix());
+	//pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
 		GameObject * temp = GetGameObject();
+		Button * theButton = (Button*)temp->GetComponent(0);
 
-		Button * theButton = temp->GetComponent<Button>();
-		pRT->DrawTextA(
-			(WCHAR*)theButton->getText().c_str(),
+		/*pRT->DrawTextA(
+			theButton->getText(),
 			theButton->getLength(),
 			pTextFormat,
 			layoutRect,
 			pBrush
-		);
+		);*/
 
-		pRT->EndDraw();
+		d2DevContext->DrawTextLayout(
+			D2D1::Point2F(0.0f, 0.0f),
+			pTextLayout,
+			pBrush
+			);
+
+		d2DevContext->EndDraw();
+		d2DevContext->RestoreDrawingState(stateBlock.Get());
 	}
 }
 
