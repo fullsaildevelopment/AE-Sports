@@ -12,17 +12,19 @@ HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collid
 	hex.seg.m_End = o->GetTransform()->GetPosition() + float3(0,_height,0);
 	height = _height;
 	hex.h = sqrtf(3)*hex.s;
-	instanced = 0;
+	row = 0;
+	col = 0;
 }
 
-HexagonCollider::HexagonCollider(int _instanced, float3* positions, float _height, float d, GameObject* o) : Collider(o, false)
+HexagonCollider::HexagonCollider(int _row, int _col, float3* positions, float _height, float d, GameObject* o) : Collider(o, false)
 {
 	poses = positions;
 	height = _height;
 	hex.d = d;
 	hex.s = d * 0.5f;
 	hex.h = sqrtf(3)*hex.s;
-	instanced = _instanced;
+	row = _row;
+	col = _col;
 }
 
 Hexagon* HexagonCollider::GetWorldHex()
@@ -66,19 +68,22 @@ void HexagonCollider::Update(float dt, InputManager* input)
 	}
 	else
 	{
-		for (int i = 0; i < instanced; ++i)
+		for (int i = 0; i < row; ++i)
 		{
-			for (int f = 0; i < size; ++f)
+			for (int j = 0; j < col; ++j)
 			{
-				SphereCollider* sphere = (*Others)[f]->GetComponent<SphereCollider>();
-				if (sphere)
+				for (int f = 0; f < size; ++f)
 				{
-					if (!sphere->isTrigger())
+					SphereCollider* sphere = (*Others)[f]->GetComponent<SphereCollider>();
+					if (sphere)
 					{
-						float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
-						if (HexagonToSphere(*GetWorldHex(i), sphere->GetWorldSphere(), vel))
+						if (!sphere->isTrigger())
 						{
-							sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+							float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
+							if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
+							{
+								sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+							}
 						}
 					}
 				}
