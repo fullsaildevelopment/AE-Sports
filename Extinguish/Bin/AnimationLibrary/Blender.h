@@ -35,11 +35,15 @@ public:
 	//getters
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets() { return boneOffsets; }
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds() { return bonesWorlds; }
+	Interpolator* GetCurInterpolator();
 	Interpolator* GetNextInterpolator();
+	AnimationSet* GetAnimationSet();
 
 	//setters
 	void SetCurAnimation(std::string animName);
+	void SetCurAnimation(int animIndex);
 	void SetNextAnimation(std::string animName);
+	void SetNextAnimation(int animIndex);
 	void SetAnimationSet(AnimationSet* set) { animationSet = set; }
 	void SetBlendInfo(BlendInfo info) { blendInfo = info; }
 	Skeleton* GetSkeleton() { return animationSet->GetSkeleton(); }

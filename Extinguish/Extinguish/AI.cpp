@@ -18,25 +18,6 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
-void AI::UpdateState(State newState)
-{
-	switch (currState)
-	{
-	case idle: Idle(); break;
-
-	case getBall: GetBall(); break;
-
-	case defensive:
-		// do something
-		break;
-
-	case defendTeammate: DefendTeammate(); break;
-
-	default: break;
-
-	}
-}
-
 void AI::OnTriggerEnter(Collider *obj)
 {
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
@@ -56,7 +37,7 @@ void AI::OnCollisionEnter(Collider *obj)
 {
 	SphereCollider *col = dynamic_cast<SphereCollider*>(obj);
 
-	// if i bump into a player, they caught me
+	// if i bump into the ball, i have it
 	if (col && !ballClass->GetIsHeld())
 	{
 		ballClass->SetHolder(me);
@@ -75,96 +56,168 @@ void AI::Init()
 	// for each game object
 	for (int i = 0; i < tmp.size(); ++i)
 	{
-		// if it's the ball, do the thing
-		if (tmp[i]->GetTag() == "Ball")
-			ball = tmp[i];
-
-		// if i'm team1 -> goal1 is mine
-		else if (me->GetTag() == "Team1")
+		if (tmp[i] != me)
 		{
-			// if it's my goal
-			if (tmp[i]->GetTag() == "Goal1")
-				myGoal = tmp[i];
+			// if it's the ball, do the thing
+			if (tmp[i]->GetTag() == "Ball")
+				ball = tmp[i];
 
-			// if it's the enemy goal
-			else if (tmp[i]->GetTag() == "Goal2")
-				enemyGoal = tmp[i];
+			// if i'm team1 -> goal1 is mine
+			else if (me->GetTag() == "Team1")
+			{
+				// if it's my goal
+				if (tmp[i]->GetTag() == "Goal1")
+					myGoal = tmp[i];
+
+				// if it's the enemy goal
+				else if (tmp[i]->GetTag() == "Goal2")
+					enemyGoal = tmp[i];
+			}
+
+			// if i'm team2 -> goal2 is mine
+			else if (me->GetTag() == "Team2")
+			{
+				// if it's my goal
+				if (tmp[i]->GetTag() == "Goal2")
+					myGoal = tmp[i];
+
+				// if it's the enemy goal
+				else if (tmp[i]->GetTag() == "Goal1")
+					enemyGoal = tmp[i];
+			}
+
+			// if they're on my team
+			else if (tmp[i]->GetTag() == me->GetTag())
+			{
+				listOfMates.push_back(tmp[i]);
+
+				if (tmp[i]->GetComponent<AI>())
+				{
+					++fakeTeam;
+					AIbuddies.push_back(tmp[i]);
+				}
+
+			}
+
+			// if they're enemy team
+			else if (tmp[i]->GetTag() != me->GetTag())
+				listOfEnemies.push_back(tmp[i]);
+		}
+	}
+
+	switch (fakeTeam)
+	{
+	case 0: // if I'm the only AI
+
+		currState = tank;
+
+		break;
+
+	case 1: // if there is one other AI
+
+		if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
+			currState = goalie;
+
+		else
+			currState = tank;
+
+		break;
+
+	case 2: // if there are two other AI
+
+		for (int i = 0; i < AIbuddies.size(); ++i)
+		{
+			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
+				currState = playboy;
+
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
+				currState = tank;
+
+			else
+				currState = goalie;
 		}
 
-		// if i'm team2 -> goal2 is mine
-		else if (me->GetTag() == "Team2")
-		{
-			// if it's my goal
-			if (tmp[i]->GetTag() == "Goal2")
-				myGoal = tmp[i];
+		break;
 
-			// if it's the enemy goal
-			else if (tmp[i]->GetTag() == "Goal1")
-				enemyGoal = tmp[i];
+	case 3: // if there are three other AI
+
+		for (int i = 0; i < AIbuddies.size(); ++i)
+		{
+			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
+				currState = playboy;
+
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
+				currState = guy1;
+
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy1)
+				currState = guy2;
+
+			else
+				currState = goalie;
 		}
 
-		// if they're on my team
-		else if (tmp[i]->GetTag() == me->GetTag())
-			listOfMates.push_back(tmp[i]);
+		break;
 
-		// if they're enemy team
-		else if (tmp[i]->GetTag() != me->GetTag())
-			listOfEnemies.push_back(tmp[i]);
+	default: break;
+
 	}
 
 	ballClass = ball->GetComponent<BallController>();
-	currState = idle;
+	Idle();
 }
 
-void AI::Update(float dt, InputManager* input)
+void AI::Update(float dt)
 {
-	// check events and UpdateState accordingly
-
-	// if i have the ball
-	if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
+	// if I'm the goalie
+	if (currState == goalie)
 	{
-		float edist = 789; // distance to enemies
-		float mdist = 0; // distance to friends
-		GameObject *target = nullptr; // the friend i'll throw to
+		float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
-		Score();
-
-		// for each enemy
-		for (int i = 0; i < listOfEnemies.size(); ++i)
+		// if the ball gets close
+		if (dist.magnitude() < 15)
 		{
-			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-			
-			// if their distance is closer, switch to them
-			if (tmp.magnitude() < edist)
-				edist = tmp.magnitude();
+			// if no one is holding it or the enemies have it
+			if (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag())
+				GetBall();
 		}
-
-		// if the enemy is close enough to hit me
-		if (edist < 10)
+		
+		if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
+			Paranoia();
+		
+		else
 		{
-			// for each friend
-			for (int i = 0; i < listOfMates.size(); ++i)
-			{
-				float3 tmp2 = listOfMates[i]->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
-				// if their disctance is further away
-				if (tmp2.magnitude() > mdist)
-				{
-					// switch to them
-					mdist = tmp2.magnitude();
-					target = listOfMates[i];
-				}
-			}
-
-			// pass the ball to the furthest friend
-			ballClass->ThrowTo(target);
-			UpdateState(defendTeammate);
+			// run to our goal and stay there
+			if (RunTo(enemyGoal))
+				Idle();
 		}
 	}
 
-	else
-		GetBall();
+	// if I'm the playboy
+	else if (currState == playboy)
+	{
+		if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
+		{
+			bool trash = RunTo(enemyGoal);
+			Score();
+		}
 
+		else
+		{
+			if (RunTo(enemyGoal))
+				Idle();
+		}
+	}
+
+	// if I'm guy1 || guy2
+	else if (currState == guy1 || currState == guy2)
+	{
+		GetBall();
+		Paranoia();
+	}
+
+	// if I'm the tank
+	else if (currState == tank)
+		DefendTeammate();
 }
 
 void AI::Idle()
@@ -185,9 +238,7 @@ void AI::GetBall()
 		}
 
 		else // he's my teammate
-		{
-			UpdateState(defendTeammate);
-		}
+			DefendTeammate();
 	}
 
 	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
@@ -195,7 +246,7 @@ void AI::GetBall()
 	// if im right next to the ball
 	if (RunTo(ball) && dist.magnitude() < 1)
 	{
-		// running into the ball should pick it up
+		// running into the ball should pick it up *******************************************************************************************
 	}
 }
 
@@ -210,7 +261,7 @@ void AI::DefendTeammate()
 		// for each enemy
 		for (int i = 0; i < listOfEnemies.size(); ++i)
 		{
-			// dist between enemy and my guy
+			// dist between enemy and my teammate
 			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition();
 
 			// if this dist is less than last
@@ -241,6 +292,51 @@ void AI::Attack(GameObject *target)
 	isAttacking = false;
 }
 
+void AI::Paranoia()
+{
+	// if i have the ball
+	if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
+	{
+		float edist = 789; // distance to enemies
+		float mdist = 0; // distance to friends
+		GameObject *target = nullptr; // the friend i'll throw to
+
+		// for each enemy
+		for (int i = 0; i < listOfEnemies.size(); ++i)
+		{
+			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+			// if their distance is closer, switch to them
+			if (tmp.magnitude() < edist)
+				edist = tmp.magnitude();
+		}
+
+		// if the enemy is close enough to hit me
+		if (edist < 10)
+		{
+			// for each friend
+			for (int i = 0; i < listOfMates.size(); ++i)
+			{
+				float3 tmp2 = listOfMates[i]->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
+
+				if (fakeTeam > 2 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
+					target = listOfMates[i];
+
+				// if they're closer to the goal
+				else if (tmp2.magnitude() < mdist)
+				{
+					// switch to them
+					mdist = tmp2.magnitude();
+					target = listOfMates[i];
+				}
+			}
+
+			// pass the ball
+			ballClass->ThrowTo(target);
+		}
+	}
+}
+
 bool AI::RunTo(GameObject *target)
 {
 	//u - forward vector
@@ -265,15 +361,12 @@ bool AI::RunTo(GameObject *target)
 
 void AI::Score()
 {
-	bool tmp = RunTo(enemyGoal);
+	if (RunTo(enemyGoal))
+		ballClass->ThrowTo(enemyGoal);
 
-	ballClass->ThrowTo(enemyGoal);
-
+	//float3 dist = ball->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
 	// if the vector between me and the goal is clear
 		// call the balls ThrowTo(goal) funtion
-
-	// if (tmp)
-		// run into the goal
 }
 
 AI::State AI::GetCurrState() { return currState; }

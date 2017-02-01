@@ -34,7 +34,7 @@ BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : 
 	min = _min;
 }
 
-void BoxCollider::Update(float dt, InputManager* input)
+void BoxCollider::Update(float dt)
 {
 	GameObject* tg = GetGameObject();
 	vector<GameObject*>* Others = tg->GetGameObjects();

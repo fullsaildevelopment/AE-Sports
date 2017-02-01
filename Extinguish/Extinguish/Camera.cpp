@@ -33,7 +33,7 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 	rotateSpeed = rotateVel;
 }
 
-void Camera::Update(float dt, InputManager* input)
+void Camera::Update(float dt)
 {
 	//this->input = input;
 	this->dt = dt;
