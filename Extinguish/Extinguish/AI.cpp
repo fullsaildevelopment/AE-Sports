@@ -364,11 +364,9 @@ void AI::Score()
 	if (RunTo(enemyGoal))
 		ballClass->ThrowTo(enemyGoal);
 
+	//float3 dist = ball->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
 	// if the vector between me and the goal is clear
 		// call the balls ThrowTo(goal) funtion
-
-	// if (tmp)
-		// run into the goal
 }
 
 AI::State AI::GetCurrState() { return currState; }
