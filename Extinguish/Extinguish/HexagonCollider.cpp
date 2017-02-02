@@ -108,6 +108,43 @@ void HexagonCollider::Update(float dt)
 					}
 				}
 			}
+			CapsuleCollider* cap = (*Others)[f]->GetComponent<CapsuleCollider>();
+			if (cap)
+			{
+				if (!cap->isTrigger())
+				{
+					AABB tophalf;
+					tophalf.max = poses[row * col - 1] + float3(0, 10, 0);
+					tophalf.min = poses[(int)(row * 0.5f) * col] - float3(0, 10, 0);
+					if (AABBToCapsule(tophalf, cap->GetWorldCapsule()))
+					{
+						for (int i = (int)(row * 0.5f); i < row; ++i)
+						{
+							for (int j = 0; j < col; ++j)
+							{
+								float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
+								if (HexagonToCapsule(*GetWorldHex(i * col + j), cap->GetWorldCapsule(), vel))
+								{
+									cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+								}
+							}
+						}
+					}
+					else
+					{
+						for (int i = 0; i < (int)(row * 0.5f); ++i)
+						{
+							for (int j = 0; j < col; ++j)
+							{
+								float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
+								if (HexagonToCapsule(*GetWorldHex(i * col + j), cap->GetWorldCapsule(), vel))
+								{
+									cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+								}
+							}
+						}
+					}
+			}
 		}
 	}
 }
