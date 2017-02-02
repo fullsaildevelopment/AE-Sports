@@ -148,6 +148,7 @@
     <ClCompile Include="BallController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Crosse.cpp" />
+    <ClCompile Include="FloorController.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="BallController.h" />
     <ClInclude Include="Client Wrapper.h" />
     <ClInclude Include="Crosse.h" />
+    <ClInclude Include="FloorController.h" />
     <ClInclude Include="HexagonCollider.h" />
     <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
@@ -226,6 +228,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="PS_InstStatic.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="PS_NormalMapped.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

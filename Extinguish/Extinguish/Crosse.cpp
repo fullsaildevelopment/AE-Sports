@@ -27,7 +27,7 @@ void Crosse::Init()
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 
 	//register crosse event handler
-	EventDispatcher::GetSingleton()->RegisterHandler(this);
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 
 	//catchAgainTimer = timeUntilCatchAgain;
 }
@@ -44,6 +44,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 	if (collider->GetGameObject()->GetName() == "GameBall")
 	{
 		BallController* ballController = collider->GetGameObject()->GetComponent<BallController>();
+
 		if (!ballController->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
 			ballController->SetHolder(GetGameObject());
@@ -55,7 +56,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 10.0f;
+	const float throwSpeed = 4.0f;
 
 	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
 	if (ball->GetHolder() == GetGameObject())
@@ -84,7 +85,7 @@ void Crosse::Throw()
 		//play sound
 		SoundEngine::GetSingleton()->PlaySpearSound();
 		
-		//cout << "Throw" << endl;
+		cout << "Throw" << endl;
 	}
 }
 

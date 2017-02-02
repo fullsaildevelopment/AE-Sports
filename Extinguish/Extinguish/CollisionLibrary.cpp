@@ -1220,8 +1220,17 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	return false;
 }
 
-bool HexagonToCapsule(const Hexagon& hex, Capsule& s, float3& vel)
+bool HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 {
+	Sphere s;
+	s.m_Center = c.m_Segment.m_Start;
+	s.m_Radius = c.m_Radius;
+	if (HexagonToSphere(hex, s, vel))
+	{
+		float3 diff = s.m_Center - c.m_Segment.m_Start;
+		c.m_Segment.m_Start += diff;
+		return true;
+	}
 	return false;
 }
 

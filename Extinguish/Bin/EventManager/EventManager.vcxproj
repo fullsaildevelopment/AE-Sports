@@ -142,10 +142,12 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="HashStringCopy.h" />
     <ClInclude Include="InputDownEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventDispatcher.cpp" />
+    <ClCompile Include="HashStringCopy.cpp" />
     <ClCompile Include="InputDownEvent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
