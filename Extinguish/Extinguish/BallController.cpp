@@ -38,7 +38,7 @@ void BallController::Update(float dt)
 		transform->SetVelocity(float3(0, 0, 0));
 
 	else
-		transform->AddVelocity(float3(0, -9.8f * dt, 0));
+		//transform->AddVelocity(float3(0, -9.8f * dt, 0));
 
 	if (isThrown)
 	{
