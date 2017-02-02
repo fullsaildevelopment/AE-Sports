@@ -8,6 +8,7 @@
 #include "Transform.h"
 #include "InputManager.h"
 #include "Button.h"
+#include "UIRenderer.h"
 
 class BoxCollider;
 class SphereCollider;
