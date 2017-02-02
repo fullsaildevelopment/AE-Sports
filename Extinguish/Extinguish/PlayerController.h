@@ -9,16 +9,20 @@ class Camera;
 class PlayerController : public Component
 {
 private:
-	InputManager* input;
+	//temp cache
+	InputManager* input; 
+	Transform* otherPlayer; //is set when colliding with other player
+
+	//cache
 	Transform* transform;
 	Camera* camera;
 	Transform* cameraTransform;
 
-	int prevMouseX, prevMouseY;
+	float dt;
+	
 
 	//private helper functions
-	void MovePlayer(float dt);
-	//void ClampToCamera();
+	void HandleInput();
 
 public:
 	PlayerController();
@@ -27,4 +31,13 @@ public:
 	//basic
 	void Init();
 	void Update(float dt) override;
+	void HandleEvent(Event* e) override;
+
+	//misc
+	void OnCollisionEnter(Collider* collider) override;
+	void OnCollisionExit(Collider* collider) override;
+
+	//actions
+	void Jump();
+	void Attack();
 };
