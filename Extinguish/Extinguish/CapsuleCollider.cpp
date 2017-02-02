@@ -145,7 +145,7 @@ void CapsuleCollider::Update(float dt)
 			{
 				if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
 				{
-					capsule->GetGameObject()->OnTriggerEnter(this);
+					sphere->GetGameObject()->OnTriggerEnter(this);
 					tg->OnTriggerEnter(sphere);
 				}
 			}

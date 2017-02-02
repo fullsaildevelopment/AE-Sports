@@ -1,7 +1,7 @@
 #include "FloorController.h"
 
 
-FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight)
+FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors)
 {
 	currPattern = 0;
 	floor = f;
@@ -9,6 +9,7 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	col = cols;
 	maxHeight = _maxHeight;
 	transSpeed = 0.25f;
+	colors = _colors;
 	timer.Restart();
 }
 
@@ -85,7 +86,7 @@ void FloorController::LevelFloor(float dt)
 	}
 	if (ratios >= 1.0f) currPattern = 0;
 }
-void FloorController::Update(float dt)
+void FloorController::ControlMovement(float dt)
 {
 	timeing += dt;
 	if (timeing < 10 && currPattern != 1)
@@ -98,7 +99,7 @@ void FloorController::Update(float dt)
 		LevelFloor(dt);
 		if (currPattern == 0) ratios = 0;
 	}
-	else if(timeing >= 20 && timeing < 30 && currPattern != 2)
+	else if (timeing >= 20 && timeing < 30 && currPattern != 2)
 	{
 		WavePattern(dt);
 		if (currPattern == 2) ratios = 0;
@@ -115,4 +116,19 @@ void FloorController::Update(float dt)
 	}
 	if (timeing > 40)
 		timeing = 0;
+}
+void FloorController::ControlColors(float dt)
+{
+	for (int i = 0; i < row; ++i)
+	{
+		for (int j = 0; j < col; ++j)
+		{
+			colors[i * col + j] = rand() * 100;
+		}
+	}
+}
+void FloorController::Update(float dt)
+{
+	ControlMovement(dt);
+	ControlColors(dt);
 }

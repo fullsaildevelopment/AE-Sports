@@ -361,6 +361,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
 
+	unsigned int* colors = new unsigned int[row * col];
+
 	GameObject* mage1 = new GameObject();
 	basic->AddGameObject(mage1);
 	mage1->Init("Mage1");
@@ -533,10 +535,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
-	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
+	HexFloorRenderer->Init(row * col, floor, colors,"Hexagon", "InstStatic", "InstancedStatic", "", "", projection, &resourceManager, devResources);
 	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
 	HexFloor->AddComponent(HexFLoorCol);
-	FloorController* fcon = new FloorController(floor, row, col, 10);
+	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
 
 	GameObject* Hex = new GameObject();
