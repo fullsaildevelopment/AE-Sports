@@ -46,6 +46,16 @@ private:
 	std::vector<unsigned int> numVertices;
 	std::vector<unsigned int> numIndices;
 
+	// menu functions; text
+
+	Microsoft::WRL::ComPtr<IDWriteFactory> pDWriteFactory;
+	Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
+	Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;
+	Microsoft::WRL::ComPtr<ID2D1Factory> pD2DFactory;
+	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> pRT;
+	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush;
+	D2D1_RECT_F layoutRect;
+
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
 	Animation LoadInAnimation(std::string path);
@@ -56,6 +66,7 @@ private:
 	void DoFBXExporting();
 	void CreateInputLayouts();
 	void LoadInTextures();
+	void LoadButtonResources(HWND hwnd_);
 public:
 	ResourceManager();
 	~ResourceManager();
@@ -74,6 +85,13 @@ public:
 	int GetVertexStride(std::string name);
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
+	IDWriteFactory * GetWriteFactory() { return pDWriteFactory.Get(); }
+	IDWriteTextFormat * GetTextFormat() { return pTextFormat.Get(); }
+	ID2D1Factory * GetID2D1Factory() { return pD2DFactory.Get(); }
+	ID2D1HwndRenderTarget * GetRenderTarget() { return pRT.Get(); }
+	ID2D1SolidColorBrush * GetBrush() { return pBrush.Get(); }
+	D2D1_RECT_F * GetRect() { return &layoutRect; }
+	IDWriteTextLayout * GetTextLayout() { return pTextLayout.Get(); }
 
 	template <typename T>
 	ID3D11Buffer* CreateInstancedBuffer(int num, T* instanced)

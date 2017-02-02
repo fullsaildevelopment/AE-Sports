@@ -47,8 +47,8 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//set up server stuff
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
-	gameStates.resize(scenes[currentScene]->GetNumObjects());
-	for (int i = 0; i < gameObjects->size(); ++i)
+	gameStates.resize(scenes[currentScene]->GetNumObjects() - 1);
+	for (int i = 0; i < gameObjects->size() - 1; ++i)
 	{
 		GameState* state = new GameState();
 		gameStates[i] = state;
@@ -56,7 +56,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isServer)
 	{
-		server.setObjCount(scenes[currentScene]->GetNumObjects());
+		server.setObjCount(scenes[currentScene]->GetNumObjects() - 1);
 	}
 	
 	//init sound engine
@@ -174,7 +174,7 @@ void Game::Update(float dt)
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
 		{
-			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects() - 1;
 
 			int id = client.getID();
 
@@ -356,6 +356,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Scene* basic = new Scene();
 
 	basic->Init(devResources, input);
+
+	basic->set2DRenderTarget(resourceManager.GetRenderTarget());
 
 	//used for hexagon floor
 	int row = 80; // * 2 = z
@@ -712,6 +714,20 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Crosse* crosseController8 = new Crosse();
 	crosse8->AddComponent(crosseController8);
 	crosseController8->Init();
+
+	GameObject * testButton = new GameObject();
+	basic->AddGameObject(testButton);
+	testButton->Init("testButton");
+	//Button * theButton = new Button(true, true, L"I test good!", (unsigned int)strlen("I test good!"), &resourceManager);
+	Button * theButton = new Button(true, true, "'Time' resets for now.", (unsigned int)strlen("'Time' resets for now."));
+	theButton->SetGameObject(testButton);
+	theButton->setHeight(1.0f);
+	theButton->setWidth(2.0f);
+	theButton->showFPS(true);
+	testButton->AddComponent(theButton);
+	Renderer * buttonRender = new Renderer();
+	buttonRender->Init(true, &resourceManager, devResources, devResources->GetDisableStencilState());
+	testButton->AddComponent(buttonRender);
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
