@@ -11,7 +11,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-
+//	depthDisabledStencilState.ReleaseAndGetAddressOf();
 }
 
 //basic//
@@ -181,6 +181,58 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	devContext->PSSetSamplers(0, 1, wrapSamplerState.GetAddressOf());
 	devContext->PSSetSamplers(1, 1, clampSamplerState.GetAddressOf());
 
+	// create depth stencil state
+	CD3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	// Initialize the description of the stencil state.
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+	// Set up the description of the stencil state.
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilDesc.StencilEnable = true;
+	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing.
+	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing.
+	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	device->CreateDepthStencilState(&depthStencilDesc, depthStencilState.GetAddressOf());
+
+
+	// Clear the second depth stencil state before setting the parameters.
+
+	CD3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+
+	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	device->CreateDepthStencilState(&depthDisabledStencilDesc, depthDisabledStencilState.GetAddressOf());
+
 	//create lighting buffers and set them
 
 	//create camera constat buffer
@@ -335,6 +387,8 @@ void Scene::CreateModels()
 //void Scene::Update(InputManager input, float dt)
 void Scene::Update(float dt)
 {
+	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
+	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 	//handle input
 	//this->input = input;
 	//HandleInput();
@@ -385,6 +439,13 @@ void Scene::Update(float dt)
 
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
 
+	
+	//Renderer* renderer = gameObjects[gameObjects.size() - 1]->GetComponent<Renderer>();
+	//ID2D1HwndRenderTarget * pRT = renderer->GetPRT();
+
+
+	ImGui_ImplDX11_NewFrame();
+
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		if (id == 1)
@@ -420,6 +481,14 @@ void Scene::Update(float dt)
 			//}
 		}
 	}
+
+	for (unsigned int i = 0; i < uiObjects.size(); ++i)
+	{
+		uiObjects[i]->Update(dt);
+		uiObjects[i]->GetComponent<UIRenderer>()->Render();
+	}
+
+	ImGui::EndFrame();
 }
 
 void Scene::HandleInput()
@@ -589,6 +658,7 @@ void Scene::Render()
 	//		models[i].Render();
 	//	}
 	//}
+
 }
 
 void Scene::Shutdown()
@@ -596,6 +666,10 @@ void Scene::Shutdown()
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		delete gameObjects[i];
+	}
+	for (int i = 0; i < uiObjects.size(); ++i)
+	{
+		delete uiObjects[i];
 	}
 }
 
@@ -609,4 +683,10 @@ void Scene::AddGameObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	gameObjects.push_back(gameObject);
+}
+
+void Scene::AddUIObject(GameObject* gameObject)
+{
+	gameObject->SetScene(this);
+	uiObjects.push_back(gameObject);
 }
