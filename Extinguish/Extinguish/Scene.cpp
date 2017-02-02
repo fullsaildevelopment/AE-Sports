@@ -473,7 +473,10 @@ void Scene::Update(float dt)
 				renderer->SetModel(world);
 			}
 
-			renderer->Render();
+			if (i + 1 != id)
+			{
+				renderer->Render();
+			}
 
 			//if (i == 0)
 			//{
