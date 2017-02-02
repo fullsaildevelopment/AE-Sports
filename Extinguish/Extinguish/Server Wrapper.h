@@ -58,7 +58,7 @@ public:
 					inputEvent->SetID(tempEvent->clientID);
 					inputEvent->SetIsServer(tempEvent->isServer);
 
-					EventDispatcher::GetSingleton()->Dispatch(inputEvent);
+					EventDispatcher::GetSingleton()->DispatchTo(inputEvent, "Game");
 
 					delete tempEvent;
 				}

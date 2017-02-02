@@ -146,8 +146,6 @@ void UIRenderer::Render()
 
 	// if you need anything for debugging purposes, just add it here
 
-
-
 	stateBlock.Reset();
 	
 }

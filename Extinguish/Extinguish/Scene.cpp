@@ -473,7 +473,15 @@ void Scene::Update(float dt)
 				renderer->SetModel(world);
 			}
 
-			renderer->Render();
+			if (i + 1 != id)
+			{
+				renderer->Render();
+			}
+
+			//if (i == 0)
+			//{
+			//	cout << renderer->GetBlender()->GetCurInterpolator()->GetAnimation()->GetAnimationName() << endl;
+			//}
 		}
 	}
 

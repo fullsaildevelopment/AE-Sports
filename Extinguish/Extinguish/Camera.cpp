@@ -23,7 +23,7 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 	input = InputManager::GetSingleton();
 
 	//register handler
-	EventDispatcher::GetSingleton()->RegisterHandler(this);
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 
 	//set camera initial position
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
@@ -178,7 +178,7 @@ void Camera::MoveCamera(InputDownEvent* e)
 			//cout << curRotX << " " << curRotY << endl;
 
 			//transform->RotateX(degX);
-			transform->RotateY(degY);
+			//transform->RotateY(degY);
 			playerTransform->RotateY(degY);
 		}
 	}

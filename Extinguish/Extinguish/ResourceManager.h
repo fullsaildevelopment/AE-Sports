@@ -84,8 +84,29 @@ public:
 	/*D2D1_RECT_F * GetRect() { return &layoutRect; }*/
 	//IDWriteTextLayout * GetTextLayout() { return pTextLayout.Get(); }
 
+	template <typename T>
+	ID3D11Buffer* CreateInstancedBuffer(int num, T* instanced)
+	{
+		ID3D11Buffer* m_instanceBuffer;
+		D3D11_BUFFER_DESC instanceBufferDesc;
+		D3D11_SUBRESOURCE_DATA instancedData;
 
-	ID3D11Buffer* ResourceManager::CreateInstancedBuffer(int num, float3* instanced);
+		instanceBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		instanceBufferDesc.ByteWidth = sizeof(T) * num;
+		instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		instanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		instanceBufferDesc.MiscFlags = 0;
+		instanceBufferDesc.StructureByteStride = 0;
+
+		instancedData.pSysMem = instanced;
+		instancedData.SysMemPitch = 0;
+		instancedData.SysMemSlicePitch = 0;
+
+		// Create the instance buffer.
+		device->CreateBuffer(&instanceBufferDesc, &instancedData, &m_instanceBuffer);
+		return m_instanceBuffer;
+	}
+
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);
