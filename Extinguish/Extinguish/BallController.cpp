@@ -35,10 +35,10 @@ void BallController::Update(float dt)
 	}
 
 	if (isHeld && !isThrown)
-		me->GetTransform()->SetVelocity(float3(0, 0, 0));
+		transform->SetVelocity(float3(0, 0, 0));
 
 	else
-		me->GetTransform()->AddVelocity(float3(0, -9.8f * dt, 0));
+		transform->AddVelocity(float3(0, -9.8f * dt, 0));
 
 	if (isThrown)
 	{
@@ -50,7 +50,7 @@ void BallController::Update(float dt)
 		}
 	}
 
-	cout << isHeld;
+	//cout << isHeld;
 }
 
 void BallController::Throw()
@@ -59,7 +59,7 @@ void BallController::Throw()
 	isThrown = true;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
 	holder = nullptr;
-	me->GetTransform()->SetParent(nullptr);
+	transform->SetParent(nullptr);
 }
 
 void BallController::ThrowTo(GameObject *target)
@@ -67,10 +67,10 @@ void BallController::ThrowTo(GameObject *target)
 	isHeld = false;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
 	holder = nullptr;
-	me->GetTransform()->SetParent(nullptr);
+	transform->SetParent(nullptr);
 
 	float3 vel = me->GetTransform()->GetForwardf3() * ThrowSpeed;
-	me->GetTransform()->AddVelocity(vel);
+	transform->AddVelocity(vel);
 }
 
 void BallController::DropBall(GameObject *person)
@@ -78,11 +78,11 @@ void BallController::DropBall(GameObject *person)
 	isHeld = false;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
 	holder = nullptr;
-	me->GetTransform()->SetParent(nullptr);
+	transform->SetParent(nullptr);
 
 	// add some velocity to me in the holders forward vec
 	float3 vel = person->GetTransform()->GetForwardf3() * DropSpeed;
-	me->GetTransform()->AddVelocity(vel);
+	transform->AddVelocity(vel);
 }
 
 bool  BallController::GetIsHeld()
@@ -110,7 +110,7 @@ void BallController::SetHolder(GameObject *person)
 	isHeld = true;
 	holder = person;
 
-	me->GetTransform()->SetPosition(float3(0, 0, 0.1f));
+	transform->SetPosition(float3(0, 0, 0.1f));
 	person->GetTransform()->AddChild(me->GetTransform());
-	me->GetTransform()->SetParent(person->GetTransform());
+	transform->SetParent(person->GetTransform());
 }
