@@ -1,28 +1,33 @@
 #pragma once
 #include "Includes.h"
+#include "DeviceResources.h"
+#include "ResourceManager.h"
 #include "Component.h"
 
 class Button : public Component
 {
 private:
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
-	float height, width;
+	float height, width, fontSize;
 	unsigned int textLength;
 	wchar_t * text;
 	char * ctext;
 	string fps;
+	float time = 300.0f;
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;
-	float time = 300.0f;
 	// some function pointer for event?
 
 public:
-	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, ResourceManager * resources) { 
+	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
+		DeviceResources * resources) { 
 		isActive = active; 
 		isClickable = clickable; 
 		text = newText;
 		textLength = length;
+		height = _height;
+		width = _width;
 		HRESULT hr = resources->GetWriteFactory()->CreateTypography(pTypography.GetAddressOf());
 		if (SUCCEEDED(hr))
 		{
@@ -53,7 +58,6 @@ public:
 
 		if (showFps)
 		{
-			// 1000/dt
 			int _fps = (int)(1 / dt);
 			
 			fps = to_string(_fps);
@@ -64,20 +68,26 @@ public:
 
 	void HandleEvent(Event* e) override {};
 
-	void setHeight(float _height) { height = _height; }
-	void setWidth(float _width) { width = _width; }
-	void setText(WCHAR * _text) { text = _text; }
-	void setTexture(char * _textureAddress) {}
-	wchar_t * getText() { return text; }
-	char * getCharText() { return ctext; }
-	unsigned int getLength() { return textLength; }
-	IDWriteTypography * getTypography() { return pTypography.Get(); }
 	void showFPS(bool fps) { showFps = fps; }
 	bool iShowFPS() { return showFps; }
+
+	/* GETTERS */
+	float getWidth() { return width; };
+	float getHeight() { return height; };
 	string getFPS() { return fps; }
 	string getTime() {
 		string theTime = "Countdown: ";
 		theTime += to_string((time / 60.0f));
 		return theTime;
 	}
+	unsigned int getLength() { return textLength; }
+	IDWriteTypography * getTypography() { return pTypography.Get(); }
+
+	/* SETTERS */
+	void setHeight(float _height) { height = _height; }
+	void setWidth(float _width) { width = _width; }
+	void setText(WCHAR * _text) { text = _text; }
+	void setTexture(char * _textureAddress) {}
+	wchar_t * getText() { return text; }
+	char * getCharText() { return ctext; }
 };

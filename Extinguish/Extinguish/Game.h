@@ -21,6 +21,7 @@
 #include "EventHandler.h"
 #include "HexagonCollider.h"
 #include "Button.h"
+#include "UIRenderer.h"
 
 class BallController;
 
@@ -46,6 +47,7 @@ private:
 
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
+	void CreateUI(DeviceResources * devResources, Scene * basic);
 public:
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);
