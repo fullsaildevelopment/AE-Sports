@@ -60,13 +60,13 @@ void DeviceResources::Init(HWND hwnd)
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
 
 	// specify the desired bitmap properties
-	D2D1_BITMAP_PROPERTIES1 bp;
+	/*D2D1_BITMAP_PROPERTIES1 bp;
 	bp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	bp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-	/*bp.dpiX = 96.0f;
-	bp.dpiY = 96.0f;*/
+	bp.dpiX = DEFAULT_DPI;
+	bp.dpiY = DEFAULT_DPI;
 	bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
-	bp.colorContext = nullptr;
+	bp.colorContext = nullptr;*/
 
 	// Direct2D needs the dxgi version of the back buffer
 	Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;

@@ -132,7 +132,9 @@
     <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="UIRenderer.cpp" />
+    <ClCompile Include="UIRenderer.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -258,7 +260,9 @@
     <ClInclude Include="Button.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="UIRenderer.h" />
+    <ClInclude Include="UIRenderer.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />

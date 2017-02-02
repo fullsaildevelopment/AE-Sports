@@ -5,10 +5,12 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dwrite.lib")
+#pragma comment(lib, "windowscodecs.lib")
 
 //includes
 #include <WinSock2.h>
 #include <Windows.h>
+#include <Wincodec.h>
 #include <d3d11.h>
 //#include <d2d1.h>
 //#include <d2d1_1.h>
@@ -25,7 +27,6 @@
 #include <string>
 #include <d3dcompiler.h> //needed to compile shaders
 #include <time.h>
-
 #include <DXGIDebug.h>
 #include <atlbase.h>
 //#include <vld.h> 
