@@ -1,5 +1,10 @@
+#include <iostream>
 #include "PlayerController.h"
 #include "Camera.h"
+#include "EventDispatcher.h"
+#include "CapsuleCollider.h"
+
+using namespace std;
 
 PlayerController::PlayerController()
 {
@@ -15,115 +20,117 @@ void PlayerController::Init()
 {
 	//cache
 	transform = GetGameObject()->GetTransform();
-	cameraTransform = GetGameObject()->FindGameObject("Camera")->GetTransform();
-	camera = GetGameObject()->FindGameObject("Camera")->GetComponent<Camera>();;
-	//camera->GetGameObject()->GetTransform()->SetPosition(transform->GetPosition());
+
+	//register as event handler
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+
+	//initialize to null
+	otherPlayer = nullptr;
 }
 
 void PlayerController::Update(float dt)
 {
-	this->input = input;
+	this->dt = dt;
 
-	//react to input to move character
-	MovePlayer(dt);
-
-	//give camera world
-	//camera->SetClampPos(transform->GetPosition());
-
-	//ClampToCamera();
-
-	//GetGameObject()->GetTransform()->Translate({ 0.01f, 0, 0 });
-	//GetGameObject()->GetTransform()->RotateY(0.005f);
+	//transform->AddVelocity(float3(0, -9.8f * dt, 0));
 }
 
-//private helper functions
-void PlayerController::MovePlayer(float dt)
+void PlayerController::HandleEvent(Event* e)
 {
-	
+	//filter throw events to find right one
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-//#if _DEBUG
-//	if (input->GetMouseX() && input->GetMouseY())
-//	{
-//		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
-//		{
-//			XMFLOAT4X4 player = transform->GetWorld();
-//
-//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-//
-//			//store old cam position
-//			XMFLOAT3 camPosition = XMFLOAT3(player._41, player._42, player._43);
-//
-//			player._41 = 0;
-//			player._42 = 0;
-//			player._43 = 0;
-//
-//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-//
-//			//apply rotations to player
-//			XMMATRIX tempPlayer = XMLoadFloat4x4(&player);
-//			tempPlayer = XMMatrixMultiply(rotX, tempPlayer);
-//			tempPlayer = XMMatrixMultiply(tempPlayer, rotY);
-//
-//			//store new player
-//			XMStoreFloat4x4(&player, tempPlayer);
-//
-//			//change position to where it was earlier
-//			player._41 = camPosition.x;
-//			player._42 = camPosition.y;
-//			player._43 = camPosition.z;
-//
-//			transform->SetLocal(player);
-//			camera->UpdateCamsRotation(dy * rotateSpeed * dt, dx * rotateSpeed * dt);
-//		}
-//
-//		prevMouseX = input->GetMouseX();
-//		prevMouseY = input->GetMouseY();
-//	}
-//#else
-//	if (input->GetMouseX() && input->GetMouseY())
-//	{
-//		if (prevMouseX && prevMouseY)
-//		{
-//			XMFLOAT4X4 player = transform->GetWorld();
-//
-//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-//
-//			//store old cam position
-//			XMFLOAT3 camPosition = XMFLOAT3(player._41, player._42, player._43);
-//
-//			player._41 = 0;
-//			player._42 = 0;
-//			player._43 = 0;
-//
-//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-//
-//			//apply rotations to player
-//			XMMATRIX tempPlayer = XMLoadFloat4x4(&player);
-//			tempPlayer = XMMatrixMultiply(rotX, tempPlayer);
-//			tempPlayer = XMMatrixMultiply(tempPlayer, rotY);
-//
-//			//store new player
-//			XMStoreFloat4x4(&player, tempPlayer);
-//
-//			//change position to where it was earlier
-//			player._41 = camPosition.x;
-//			player._42 = camPosition.y;
-//			player._43 = camPosition.z;
-//
-//			transform->SetLocal(player);
-//		}
-//
-//		prevMouseX = input->GetMouseX();
-//		prevMouseY = input->GetMouseY();
-//	}
-//#endif
+	if (inputDownEvent)
+	{
+		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
+
+		if (inputDownEvent->IsServer())
+		{
+			string name;
+			name = "Mage";
+			name += to_string(inputDownEvent->GetID());
+
+			if (GetGameObject()->GetName() == name)
+			{
+				input = inputDownEvent->GetInput();
+				HandleInput();
+			}
+		}
+	}
 }
 
-//void PlayerController::ClampToCamera()
-//{
-//	GetGameObject()->GetTransform()->SetLocal(camera);
-//}
+//misc//
+void PlayerController::OnCollisionEnter(Collider* collider)
+{
+	CapsuleCollider* capsCollider = dynamic_cast<CapsuleCollider*>(collider);
+
+	if (capsCollider)
+	{
+		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
+		{
+			//cout << "Collision enter" << endl;
+
+			otherPlayer = capsCollider->GetGameObject()->GetTransform();
+		}
+	}
+}
+
+void PlayerController::OnCollisionExit(Collider* collider)
+{
+	if (otherPlayer)
+	{
+		CapsuleCollider* capsCollider = dynamic_cast<CapsuleCollider*>(collider);
+
+		if (capsCollider)
+		{
+			if (capsCollider->GetGameObject()->GetTransform() == otherPlayer)
+			{
+				cout << "Collision exit" << endl;
+
+				otherPlayer = nullptr;
+			}
+		}
+	}
+}
+
+//private helper functions//
+void PlayerController::HandleInput()
+{
+	if (input->GetKeyDown(VK_SPACE))
+	{
+		Jump();
+	}
+
+	if (input->GetKeyDown('F'))
+	{
+		cout << "F" << endl;
+		Attack();
+	}
+}
+
+void PlayerController::Jump()
+{
+	//if the player is touching the ground
+	//{
+	//	maybe translate too to make the jump better?
+		//transform->AddVelocity({ 0, 20, 0 });
+	//}
+
+	//cout << "JUMP" << endl;
+}
+
+void PlayerController::Attack()
+{
+	//if colliding with another player
+	if (otherPlayer)
+	{
+		const float attackForce = 1000;
+
+		XMFLOAT3 back = otherPlayer->GetForward();
+		back = { -back.x, -back.y, -back.z };
+
+		otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
+
+		cout << "Attack" << endl;
+	}
+}

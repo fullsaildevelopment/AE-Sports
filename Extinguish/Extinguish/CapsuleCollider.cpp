@@ -9,6 +9,7 @@ CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o,
 	radius = r;
 	Start = s;
 	End = e;
+	otherCapsule = nullptr;
 }
 
 Capsule CapsuleCollider::GetCapsule()
@@ -133,6 +134,15 @@ void CapsuleCollider::Update(float dt)
 					capsule->GetGameObject()->OnCollisionEnter(this);
 					tg->OnCollisionEnter(capsule);
 					capsule->checked.push_back(this);
+					otherCapsule = capsule;
+				}
+				else
+				{
+					if (otherCapsule == capsule)
+					{
+						tg->OnCollisionExit(otherCapsule);
+						otherCapsule = nullptr;
+					}
 				}
 			}
 			continue;
