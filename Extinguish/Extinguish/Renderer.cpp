@@ -38,7 +38,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	}
 }
 
-void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
+void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
 {
 	indexBuffer = resources->GetIndexBuffer(mesh);
 	vertexBuffer = resources->GetVertexBuffer(mesh);
@@ -52,8 +52,10 @@ void Renderer::Init(int numInstences, float3* instanced, std::string mesh, std::
 	numIndices = resources->GetNumIndices(mesh);
 	devResources = deviceResources;
 	m_instanced = instanced;
+	m_instancedcolor = color;
 	numIns = numInstences;
 	instancedBuffer = resources->CreateInstancedBuffer(numInstences, instanced);
+	instancedBuffer2 = resources->CreateInstancedBuffer(numInstences, color);
 
 	SetProjection(projection);
 
@@ -131,22 +133,28 @@ void Renderer::Render()
 		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		D3D11_MAPPED_SUBRESOURCE mapstuff;
+		D3D11_MAPPED_SUBRESOURCE mapstuff2;
 
 		devContext->Map(instancedBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff);
+		devContext->Map(instancedBuffer2, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff2);
 
 		float3* mapyay = (float3*)mapstuff.pData;
+		unsigned int* mapyay2 = (unsigned int*)mapstuff2.pData;
+
 		for (int i = 0; i < numIns; ++i)
 		{
 			mapyay[i] = m_instanced[i];
+			mapyay2[i] = m_instancedcolor[i];
 		}
 
 		devContext->Unmap(instancedBuffer, 0);
+		devContext->Unmap(instancedBuffer2, 0);
 
-		unsigned int strides[] = { vertexStride, sizeof(float3) };
-		unsigned int offsets[] = { 0, 0 };
-		ID3D11Buffer* buf_ptrs[] = { vertexBuffer, instancedBuffer };
+		unsigned int strides[] = { vertexStride, sizeof(float3), sizeof(unsigned int) };
+		unsigned int offsets[] = { 0, 0, 0 };
+		ID3D11Buffer* buf_ptrs[] = { vertexBuffer, instancedBuffer, instancedBuffer2 };
 
-		devContext->IASetVertexBuffers(0, 2, buf_ptrs, strides, offsets);
+		devContext->IASetVertexBuffers(0, 3, buf_ptrs, strides, offsets);
 		//and finally... draw models
 		devContext->DrawIndexedInstanced(numIndices, numIns, 0, 0, 0);
 	}
