@@ -443,10 +443,6 @@ void Scene::Update(float dt)
 	//Renderer* renderer = gameObjects[gameObjects.size() - 1]->GetComponent<Renderer>();
 	//ID2D1HwndRenderTarget * pRT = renderer->GetPRT();
 
-	//pRT->SaveDrawingState(stateBlock.Get());
-	//pRT->BeginDraw();
-	//pRT->SetTransform(D2D1::IdentityMatrix());
-	//pRT->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
 	ImGui_ImplDX11_NewFrame();
 
@@ -481,7 +477,11 @@ void Scene::Update(float dt)
 		}
 	}
 
-	//pRT->EndDraw();
+	for (unsigned int i = 0; i < uiObjects.size(); ++i)
+	{
+		uiObjects[i]->Update(dt);
+		uiObjects[i]->GetComponent<UIRenderer>()->Render();
+	}
 
 	ImGui::EndFrame();
 }
@@ -662,6 +662,10 @@ void Scene::Shutdown()
 	{
 		delete gameObjects[i];
 	}
+	for (int i = 0; i < uiObjects.size(); ++i)
+	{
+		delete uiObjects[i];
+	}
 }
 
 void Scene::CreateGameObject()
@@ -674,4 +678,10 @@ void Scene::AddGameObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	gameObjects.push_back(gameObject);
+}
+
+void Scene::AddUIObject(GameObject* gameObject)
+{
+	gameObject->SetScene(this);
+	uiObjects.push_back(gameObject);
 }

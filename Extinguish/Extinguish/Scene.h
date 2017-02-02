@@ -42,6 +42,7 @@ private:
 	//ResourceManager* resourceManager;
 	//vector<AnimatedRenderNode*> renderNodes;
 	vector<GameObject*> gameObjects;
+	vector<GameObject*> uiObjects;
 	unsigned int curFrame;
 
 	float radiusChange[2] = { 1.0f / 60.0f, 1.0f / 60.0f };
@@ -90,6 +91,7 @@ public:
 	//misc
 	void CreateGameObject();
 	void AddGameObject(GameObject* gameObject);
+	void AddUIObject(GameObject* gameObject);
 
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };

@@ -47,8 +47,8 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//set up server stuff
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
-	gameStates.resize(scenes[currentScene]->GetNumObjects() - 1);
-	for (int i = 0; i < gameObjects->size() - 1; ++i)
+	gameStates.resize(scenes[currentScene]->GetNumObjects());
+	for (int i = 0; i < gameObjects->size(); ++i)
 	{
 		GameState* state = new GameState();
 		gameStates[i] = state;
@@ -56,7 +56,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isServer)
 	{
-		server.setObjCount(scenes[currentScene]->GetNumObjects() - 1);
+		server.setObjCount(scenes[currentScene]->GetNumObjects());
 	}
 	
 	//init sound engine
@@ -174,7 +174,7 @@ void Game::Update(float dt)
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
 		{
-			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects() - 1;
+			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 
 			int id = client.getID();
 
@@ -357,7 +357,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
-	basic->set2DRenderTarget(resourceManager.GetRenderTarget());
+	basic->set2DRenderTarget(devResources->GetRenderTarget());
 
 	//used for hexagon floor
 	int row = 80; // * 2 = z
@@ -527,7 +527,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	float3* floor = CreateFloor(2.0f, row, col, float3(-row, -10, -col));
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
@@ -711,22 +711,29 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->AddComponent(crosseController8);
 	crosseController8->Init();
 
-	GameObject * testButton = new GameObject();
-	basic->AddGameObject(testButton);
-	testButton->Init("testButton");
-	//Button * theButton = new Button(true, true, L"I test good!", (unsigned int)strlen("I test good!"), &resourceManager);
-	Button * theButton = new Button(true, true, "'Time' resets for now.", (unsigned int)strlen("'Time' resets for now."));
-	theButton->SetGameObject(testButton);
-	theButton->setHeight(1.0f);
-	theButton->setWidth(2.0f);
-	theButton->showFPS(true);
-	testButton->AddComponent(theButton);
-	Renderer * buttonRender = new Renderer();
-	buttonRender->Init(true, &resourceManager, devResources, devResources->GetDisableStencilState());
-	testButton->AddComponent(buttonRender);
+
+
+	// so that we keep the chunk of 3d object creation and 2d object creation separate
+	CreateUI(devResources, basic);
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
+}
+
+void Game::CreateUI(DeviceResources * devResources, Scene * basic)
+{
+	GameObject * testButton = new GameObject();
+	basic->AddUIObject(testButton);
+	testButton->Init("testButton");
+	Button * theButton = new Button(true, true, L"8 Sticks & 1 Ball", (unsigned int)strlen("8 Sticks & 1 Ball"), 400.0f, 100.0f, devResources);
+	//Button * theButton = new Button(true, true, "'Time' resets for now.", (unsigned int)strlen("'Time' resets for now."));
+	theButton->SetGameObject(testButton);
+	theButton->showFPS(true);
+	testButton->AddComponent(theButton);
+	UIRenderer * buttonRender = new UIRenderer();
+	buttonRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	buttonRender->setOrigin(2.0f, 30.0f);
+	testButton->AddComponent(buttonRender);
 }
 
 //getters

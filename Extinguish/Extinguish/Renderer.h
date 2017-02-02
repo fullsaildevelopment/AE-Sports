@@ -13,7 +13,8 @@ class Renderer : public Component
 {
 private:
 	Blender* blender;
-	
+
+	DeviceResources* devResources;
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* instancedBuffer;
 	ID3D11Buffer* indexBuffer;
@@ -22,20 +23,7 @@ private:
 	ID3D11PixelShader* pixelShader;
 	ID3D11ComputeShader* computeShader;
 	ID3D11ShaderResourceView* diffuseSRV;
-	DeviceResources* devResources;
 	ModelViewProjectionConstantBuffer mvpData;
-	IDWriteFactory * pDWriteFactory;
-	IDWriteTextFormat * pTextFormat;
-	IDWriteTextLayout * pTextLayout;
-	ID2D1Factory * pD2DFactory;
-	ID2D1HwndRenderTarget * pRT;
-	ID2D1SolidColorBrush * pBrush;
-	Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock> stateBlock;
-	DWRITE_TEXT_METRICS textMetrics;
-
-	ID2D1DeviceContext * d2DevContext;
-
-	ID3D11DepthStencilState * depthStencilState;
 	
 	unsigned int vertexStride;
 	unsigned int numVerts;
@@ -43,14 +31,11 @@ private:
 	float3* m_instanced;
 	int numIns;
 
-	bool isButton = false;
-	D2D1_RECT_F * layoutRect;
 
 public:
 	Renderer();
 	~Renderer();
 
-	void Init(bool isButton, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
 	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources);
 	void Init(int numInstences, float3* instanced, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources);
 	void Update(float dt) override;
@@ -60,7 +45,6 @@ public:
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets();
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds();
 	Blender* GetBlender();
-	ID2D1HwndRenderTarget * GetPRT() { return pRT; }
 
 	//setters
 	void SetCurAnimation(int animIndex);
