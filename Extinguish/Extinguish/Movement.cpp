@@ -18,7 +18,7 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 	SetKeys('W', 'S', 'A', 'D', 'Q', 'E');
 
 	//register movement event handler
-	EventDispatcher::GetSingleton()->RegisterHandler(this);
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 
 	timeSincePlayed = 0.0f;
 }
@@ -56,9 +56,30 @@ void Movement::Update(float dt)
 			Blender* blender = renderer->GetBlender();
 			if (blender)
 			{
-				if (!blender->GetNextInterpolator()->HasAnimation())
+				//if (!blender->GetNextInterpolator()->HasAnimation())
+
+				if (blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() == "Idle")
 				{
-					GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
+					Animation* nextAnimation = blender->GetNextInterpolator()->GetAnimation();
+					bool runAnimation = false;
+
+					if (nextAnimation)
+					{
+						if (nextAnimation->GetAnimationName() != "Run")
+						{
+							runAnimation = true;
+							//GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
+						}
+					}
+					else
+					{
+						runAnimation = true;
+					}
+
+					if (runAnimation)
+					{
+						GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
+					}
 				}
 			}
 		}
@@ -71,7 +92,10 @@ void Movement::Update(float dt)
 			Blender* blender = renderer->GetBlender();
 			if (blender)
 			{
-				blender->SetNextAnimation("Idle");
+				if (blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != "Idle")
+				{
+					blender->SetNextAnimation("Idle");
+				}
 			}
 		}
 	}
