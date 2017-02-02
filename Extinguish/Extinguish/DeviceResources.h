@@ -12,6 +12,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> shadowMapRTV;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthStencilBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthDisabledStencilState;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowMapDepthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> shadowMapDSV;
@@ -19,8 +21,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mvpConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> boneOffsetConstantBuffer;
 	D3D11_VIEWPORT viewPort;
-
-
+	Microsoft::WRL::ComPtr<ID2D1Device> p2DDevice;
+	Microsoft::WRL::ComPtr<ID2D1DeviceContext> p2DDeviceContext;
+	Microsoft::WRL::ComPtr<ID2D1Factory> pD2DFactory;
+	
 public:
 	void Init(HWND hwnd);
 	void Present();
@@ -28,6 +32,11 @@ public:
 	void Shutdown();
 
 	//Getters
+	//ID3D11DepthStencilState * GetStencilState() { return depthStencilState.Get(); }
+	ID3D11DepthStencilState * GetDisableStencilState() { return depthDisabledStencilState.Get(); }
+
+	ID2D1DeviceContext * Get2DContext() { return p2DDeviceContext.Get(); }
+
 	ID3D11Device* GetDevice() const { return device.Get(); }
 	ID3D11DeviceContext* GetDeviceContext() const { return deviceContext.Get(); }
 	IDXGISwapChain* GetSwapChain() const { return swapChain.Get(); }

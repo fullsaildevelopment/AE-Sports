@@ -2,6 +2,7 @@
 
 void DeviceResources::Init(HWND hwnd)
 {
+
 	//create swapchainDesc
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 
@@ -19,14 +20,31 @@ void DeviceResources::Init(HWND hwnd)
 
 	//create swapchain and device
 	UINT flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
 #if (_DEBUG)
 	{
 		flags |= D3D11_CREATE_DEVICE_DEBUG;
 	}
 #endif
+	const D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_2,
+		D3D_FEATURE_LEVEL_9_1,
+	};
 
-	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, NULL, NULL, D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), NULL, deviceContext.GetAddressOf());
+
+	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), NULL, deviceContext.GetAddressOf());
+
+	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
+	device.As(&dxgiDevice);
+	HRESULT res = D2D1CreateDevice(dxgiDevice.Get(), NULL, &p2DDevice);
+	p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &p2DDeviceContext);
 
 	//Set up back buffer
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
@@ -61,6 +79,32 @@ void DeviceResources::Init(HWND hwnd)
 	//create shadow map stv buffer
 	CD3D11_TEXTURE2D_DESC smDsDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, lround((float)CLIENT_WIDTH), lround((float)CLIENT_HEIGHT), 1, 1, D3D11_BIND_DEPTH_STENCIL);
 	HRESULT smDsvBufferResult = device->CreateTexture2D(&smDsDesc, nullptr, shadowMapDepthStencilBuffer.GetAddressOf());
+
+
+	// Clear the second depth stencil state before setting the parameters.
+
+	CD3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+
+	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	device->CreateDepthStencilState(&depthDisabledStencilDesc, depthDisabledStencilState.GetAddressOf());
+
 
 	//create depth stencil view now that depth stencil buffer is done created
 	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
@@ -97,6 +141,9 @@ void DeviceResources::Init(HWND hwnd)
 	CD3D11_BUFFER_DESC boneBufferDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
 	HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
 	int temp = sizeof(BoneOffsetConstantBuffer);
+
+
+	ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
 }
 
 void DeviceResources::Clear()
@@ -108,11 +155,13 @@ void DeviceResources::Clear()
 
 void DeviceResources::Shutdown()
 {
+	ImGui_ImplDX11_Shutdown();
 	swapChain->SetFullscreenState(FALSE, NULL);
 }
 
 void DeviceResources::Present()
 {
 	//swap back buffer with buffer
+	ImGui::Render();
 	HRESULT swapResult = swapChain->Present(1, 0);
 }

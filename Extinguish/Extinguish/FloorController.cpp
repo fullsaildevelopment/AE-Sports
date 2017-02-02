@@ -11,6 +11,7 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	transSpeed = 0.25f;
 	colors = _colors;
 	timer.Restart();
+	ControlColors(0);
 }
 
 void FloorController::WavePattern(float dt)
@@ -119,16 +120,30 @@ void FloorController::ControlMovement(float dt)
 }
 void FloorController::ControlColors(float dt)
 {
-	for (int i = 0; i < row; ++i)
+	int tr = (int)(row * 0.5f);
+	for (int i = 0; i < tr; ++i)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			colors[i * col + j] = rand() * 100;
+			colors[i * col + j] = 0xFF000000;
+		}
+	}
+	for (int i = tr; i < row; ++i)
+	{
+		for (int j = 0; j < col; ++j)
+		{
+			colors[i * col + j] = 0x00FF0000;
 		}
 	}
 }
 void FloorController::Update(float dt)
 {
 	ControlMovement(dt);
-	ControlColors(dt);
+	//ControlColors(dt);
+}
+
+FloorController::~FloorController()
+{
+	delete[] floor;
+	delete[] colors;
 }

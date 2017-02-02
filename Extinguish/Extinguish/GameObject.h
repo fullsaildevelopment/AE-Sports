@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "Transform.h"
 #include "InputManager.h"
+#include "Button.h"
 
 class BoxCollider;
 class SphereCollider;
@@ -14,6 +15,7 @@ class CapsuleCollider;
 class Component;
 class Collider;
 class Scene;
+class Button;
 
 class GameObject
 {

@@ -13,7 +13,7 @@ SamplerState filter : register(s0);
 
 float4 main(PS_BasicInput input) : SV_TARGET
 {
-	float4 finalColor;
+	float4 finalColor = float4(0,0,0,0);
 
 	//get texture color with uvs help
 	float3 diffuseColor = (float3)baseTexture.Sample(filter, input.uv);

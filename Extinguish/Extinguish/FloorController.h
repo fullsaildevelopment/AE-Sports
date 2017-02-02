@@ -23,6 +23,7 @@ class FloorController : public Component
 	void ControlColors(float dt);
 public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
+	~FloorController();
 	void MovePillar(int pillar, float ratio);
 	void LevelFloor(float dt);
 	void Update(float dt) override;
