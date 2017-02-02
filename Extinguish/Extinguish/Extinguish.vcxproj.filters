@@ -31,6 +31,9 @@
     <FxCompile Include="VS_InstancedStatic.hlsl">
       <Filter>Shaders\VertexShaders</Filter>
     </FxCompile>
+    <FxCompile Include="PS_InstStatic.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -120,6 +123,22 @@
     <ClCompile Include="BallController.cpp">
       <Filter>Components\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="FloorController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui_demo.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui_draw.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -233,6 +252,22 @@
     <ClInclude Include="BallController.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="FloorController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui_impl_dx11.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\imgui\imgui_internal.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -280,6 +315,9 @@
     </Filter>
     <Filter Include="Network Wrappers">
       <UniqueIdentifier>{7883d501-1961-42ce-a698-f4d0fd022a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{189c7220-f0ef-44b1-8f0a-2cdf9252f4d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

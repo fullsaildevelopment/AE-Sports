@@ -24,14 +24,14 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		if (server.init("127.0.0.1", 60000) == 1)
-		{
-			isMultiplayer = true;
-			isServer = true;
-		
-			client.init("127.0.0.1", 60001);
-		}
-		else
+		//if (server.init("127.0.0.1", 60000) == 1)
+		//{
+		//	isMultiplayer = true;
+		//	isServer = true;
+		//
+		//	client.init("127.0.0.1", 60001);
+		//}
+		//else
 		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
@@ -366,9 +366,13 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
+	basic->set2DRenderTarget(devResources->GetRenderTarget());
+
 	//used for hexagon floor
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
+
+	unsigned int* colors = new unsigned int[row * col];
 
 	GameObject* mage1 = new GameObject();
 	basic->AddGameObject(mage1);
@@ -589,7 +593,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	float3* floor = CreateFloor(2.0f, row, col, float3(-row, -10, -col));
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
@@ -597,9 +601,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
-	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
+	HexFloorRenderer->Init(row * col, floor, colors,"Hexagon", "InstStatic", "InstancedStatic", "", "", projection, &resourceManager, devResources);
 	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
 	HexFloor->AddComponent(HexFLoorCol);
+	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
+	HexFloor->AddComponent(fcon);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
@@ -773,8 +779,29 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->AddComponent(crosseController8);
 	crosseController8->Init();
 
+
+
+	// so that we keep the chunk of 3d object creation and 2d object creation separate
+	CreateUI(devResources, basic);
+
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
+}
+
+void Game::CreateUI(DeviceResources * devResources, Scene * basic)
+{
+	GameObject * testButton = new GameObject();
+	basic->AddUIObject(testButton);
+	testButton->Init("testButton");
+	Button * theButton = new Button(true, true, L"8 Sticks & 1 Ball", (unsigned int)strlen("8 Sticks & 1 Ball"), 400.0f, 100.0f, devResources);
+	//Button * theButton = new Button(true, true, "'Time' resets for now.", (unsigned int)strlen("'Time' resets for now."));
+	theButton->SetGameObject(testButton);
+	theButton->showFPS(true);
+	testButton->AddComponent(theButton);
+	UIRenderer * buttonRender = new UIRenderer();
+	buttonRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	buttonRender->setOrigin(2.0f, 30.0f);
+	testButton->AddComponent(buttonRender);
 }
 
 //getters
