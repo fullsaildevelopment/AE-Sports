@@ -4,6 +4,7 @@
 #include "BallController.h"
 #include "AI.h"
 #include "EventDispatcher.h"
+#include "Physics.h"
 
 using namespace DirectX;
 using namespace std;
@@ -24,14 +25,14 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		//if (server.init("127.0.0.1", 60000) == 1)
-		//{
-		//	isMultiplayer = true;
-		//	isServer = true;
-		//
-		//	client.init("127.0.0.1", 60001);
-		//}
-		//else
+		if (server.init("127.0.0.1", 60000) == 1)
+		{
+			isMultiplayer = true;
+			isServer = true;
+		
+			client.init("127.0.0.1", 60001);
+		}
+		else
 		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
@@ -372,6 +373,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
 
+	//deleted inside a different class
 	unsigned int* colors = new unsigned int[row * col];
 
 	GameObject* mage1 = new GameObject();
@@ -615,39 +617,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Hex->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover3 = new Movement();
-	//Hex->AddComponent(ballMover3);
-	//ballMover3->Init(5.0f, 0.75f);
-	//HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
-	//Hex->AddComponent(ballcol3);
-
-	//Hex->SetTag("Goal2");
-	
-
-
-	//GameObject* bear = new GameObject();
-	//basic->AddGameObject(bear);
-	//bear->Init("Bear");
-	//bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
-	//Renderer* bearRenderer = new Renderer();
-	//bear->AddComponent(bearRenderer);
-	//bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	//BlendInfo bearBI;
-	//bearBI.totalBlendTime = 0.01f;
-	//bearRenderer->SetBlendInfo(bearBI);
-	//bearRenderer->SetNextAnimation("Run");
-	////bearRenderer->SetNextAnimation("Run");
-	////PlayerController* playerController = new PlayerController();
-	////bear->AddComponent(playerController);
-	////playerController->Init();
-	//Movement* bearMover = new Movement();
-	//bear->AddComponent(bearMover);
-	//bearMover->Init(1.0f, 0.75f);
-	//CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
-	//bear->AddCapsuleCollider(bearcol);
-	//
-	//bear->SetTag("Team1");
-	//AI *bearAI = new AI(bear);
-	//bear->AddComponent(bearAI);
 
 	GameObject* gameBall = new GameObject();
 	basic->AddGameObject(gameBall);
@@ -661,14 +630,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
 	gameBall->AddSphereCollider(gameBallCollider);
+	Physics* physics = new Physics();
+	gameBall->AddComponent(physics);
+	physics->Init();
 	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 	ballController->SetHolder(crosse);
 
 	gameBall->SetTag("Ball");
-	//bearAI->Init();
-
 
 	crosse->Init("Crosse1");
 	crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
@@ -779,8 +749,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->AddComponent(crosseController8);
 	crosseController8->Init();
 
-
-
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
 	CreateUI(devResources, basic);
 
@@ -790,6 +758,19 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 {
+	GameObject * testScore = new GameObject();
+	basic->AddUIObject(testScore);
+	testScore->Init("testScore");
+	Button * theSButton = new Button(true, true, L"00 : 00", (unsigned int)strlen("00 : 00"), 500.0f, 100.0f, devResources);
+	theSButton->SetGameObject(testScore);
+	theSButton->showFPS(false);
+	testScore->AddComponent(theSButton);
+	UIRenderer * scoreRender = new UIRenderer();
+	scoreRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	scoreRender->setOrigin(250.0f, 30.0f);
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	testScore->AddComponent(scoreRender);
+
 	GameObject * testButton = new GameObject();
 	basic->AddUIObject(testButton);
 	testButton->Init("testButton");
@@ -799,8 +780,8 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theButton->showFPS(true);
 	testButton->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
-	buttonRender->setOrigin(2.0f, 30.0f);
+	buttonRender->Init(true, 30.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	buttonRender->setOrigin(0.0f, 30.0f);
 	testButton->AddComponent(buttonRender);
 }
 

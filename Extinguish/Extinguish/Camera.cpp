@@ -178,7 +178,7 @@ void Camera::MoveCamera(InputDownEvent* e)
 			//cout << curRotX << " " << curRotY << endl;
 
 			//transform->RotateX(degX);
-			transform->RotateY(degY);
+			//transform->RotateY(degY);
 			playerTransform->RotateY(degY);
 		}
 	}
