@@ -138,7 +138,9 @@
     <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="UIRenderer.cpp" />
+    <ClCompile Include="UIRenderer.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
     <ClCompile Include="Physics.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -282,7 +284,9 @@
     <ClInclude Include="Button.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="UIRenderer.h" />
+    <ClInclude Include="UIRenderer.h">
+      <Filter>Components</Filter>
+    </ClInclude>
     <ClInclude Include="Physics.h">
       <Filter>Components</Filter>
     </ClInclude>

@@ -101,7 +101,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -130,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>

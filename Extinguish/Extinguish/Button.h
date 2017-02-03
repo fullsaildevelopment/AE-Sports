@@ -90,4 +90,15 @@ public:
 	void setTexture(char * _textureAddress) {}
 	wchar_t * getText() { return text; }
 	char * getCharText() { return ctext; }
+
+	D2D1_RECT_F getRect(D2D1_SIZE_F rtSize) {
+		D2D1_RECT_F rect = D2D1::RectF(
+			rtSize.width / 2.0f - (width / 2.0f),
+			-height,
+			rtSize.width / 2.0f + (width / 2.0f),
+			height
+		);
+
+		return rect;
+	}
 };
