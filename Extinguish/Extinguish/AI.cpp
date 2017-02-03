@@ -108,13 +108,13 @@ void AI::Init()
 	switch (fakeTeam)
 	{
 	case 0: // if I'm the only AI
-
+	{
 		currState = tank;
 
 		break;
-
+	}
 	case 1: // if there is one other AI
-
+	{
 		bool bgoalie = false;
 		bool btank = false;
 
@@ -128,9 +128,9 @@ void AI::Init()
 		else if (!btank) currState = tank;
 
 		break;
-
+	}
 	case 2: // if there are two other AI
-
+	{
 		bool bgoalie = false;
 		bool bplayboy = false;
 		bool btank = false;
@@ -152,9 +152,9 @@ void AI::Init()
 		else if (!btank) currState = tank;
 
 		break;
-
+	}
 	case 3: // if there are three other AI
-
+	{
 		bool bgoalie = false;
 		bool bplayboy = false;
 		bool bguy1 = false;
@@ -181,7 +181,7 @@ void AI::Init()
 		else if (!btank) currState = tank;
 
 		break;
-
+	}
 	default: break;
 
 	}

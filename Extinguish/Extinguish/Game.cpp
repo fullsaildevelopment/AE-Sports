@@ -774,7 +774,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
 	debugUI->Init("debugUI");
-	Button * theButton = new Button(true, true, L"8 Sticks & 1 Ball", (unsigned int)strlen("8 Sticks & 1 Ball"), 400.0f, 100.0f, devResources);
+	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 400.0f, 100.0f, devResources);
 	theButton->SetGameObject(debugUI);
 	theButton->showFPS(true);
 	theButton->setOrigin(0.0f, 30.0f);
