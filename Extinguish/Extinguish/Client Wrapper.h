@@ -96,6 +96,6 @@ public:
 	}
 
 
-	UINT8 getFloorState(unsigned int i) { return newClient.getFloorState(i); }
+	int getFloorState(unsigned int i) { return newClient.getFloorState(i); }
 
 };
