@@ -67,6 +67,7 @@ void BallController::Throw()
 
 	//turn on physics
 	physics->SetIsKinematic(false);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 }
 
 void BallController::ThrowTo(GameObject *target)
@@ -81,6 +82,7 @@ void BallController::ThrowTo(GameObject *target)
 
 	//turn on physics
 	physics->SetIsKinematic(false);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 }
 
 void BallController::DropBall(GameObject *person)
@@ -96,6 +98,7 @@ void BallController::DropBall(GameObject *person)
 
 	//turn on physics
 	physics->SetIsKinematic(false);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 }
 
 bool  BallController::GetIsHeld()
@@ -129,4 +132,5 @@ void BallController::SetHolder(GameObject *person)
 
 	//turn off physics
 	physics->SetIsKinematic(true);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 }

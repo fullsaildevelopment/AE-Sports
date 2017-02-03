@@ -2,6 +2,7 @@
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
 #include "BoxCollider.h"
+#include "Physics.h"
 
 HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collider(o, false)
 {
@@ -55,17 +56,38 @@ void HexagonCollider::Update(float dt)
 			SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 			if (sphere)
 			{
-				if (!sphere->isTrigger())
+				if (!sphere->isTrigger() && sphere->isEnabled())
 				{
 					float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
 					if (HexagonToSphere(*GetWorldHex(), sphere->GetWorldSphere(), vel))
 					{
+						if (vel.y * dt <= 0.01f && vel.y * dt >= -0.01f)
+						{
+							vel.y = 0;
+							if (vel.isEquil(float3(0, 0, 0)))
+								sphere->GetGameObject()->GetComponent<Physics>()->SetIsKinematic(true);
+						}
 						sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+					}
+				}
+			}
+			CapsuleCollider* cap = (*Others)[i]->GetComponent<CapsuleCollider>();
+			if (cap)
+			{
+				if (!cap->isTrigger() && cap->isEnabled())
+				{
+					float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
+					Capsule c = cap->GetWorldCapsule();
+					if (HexagonToCapsule(*GetWorldHex(), cap->GetWorldCapsule(), vel))
+					{
+						cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+						cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 					}
 				}
 			}
 		}
 	}
+
 	else
 	{
 		for (int f = 0; f < size; ++f)
@@ -73,11 +95,15 @@ void HexagonCollider::Update(float dt)
 			SphereCollider* sphere = (*Others)[f]->GetComponent<SphereCollider>();
 			if (sphere)
 			{
-				if (!sphere->isTrigger())
+				if (!sphere->isTrigger() && sphere->isEnabled())
 				{
 					AABB tophalf;
 					tophalf.max = poses[row * col - 1] + float3(0, 20, 0);
 					tophalf.min = poses[(int)(row * 0.5f) * col] - float3(0, 10, 0);
+					AABB bottomhalf;
+					bottomhalf.max = poses[(int)(row * 0.5f) * col + col - 1] + float3(0, 20, 0);
+					bottomhalf.min = poses[0] - float3(0, 10, 0);
+
 					if (SphereToAABB(sphere->GetWorldSphere(), tophalf))
 					{
 						for (int i = (int)(row * 0.5f); i < row; ++i)
@@ -94,7 +120,7 @@ void HexagonCollider::Update(float dt)
 							}
 						}
 					}
-					else
+					else if (SphereToAABB(sphere->GetWorldSphere(), bottomhalf))
 					{
 						for (int i = 0; i < (int)(row * 0.5f); ++i)
 						{
@@ -115,20 +141,24 @@ void HexagonCollider::Update(float dt)
 			CapsuleCollider* cap = (*Others)[f]->GetComponent<CapsuleCollider>();
 			if (cap)
 			{
-				if (!cap->isTrigger())
+				if (!cap->isTrigger() && cap->isEnabled())
 				{
 					AABB tophalf;
-					tophalf.max = poses[row * col - 1] + float3(0, 10, 0);
+					tophalf.max = poses[row * col - 1] + float3(0, 20, 0);
 					tophalf.min = poses[(int)(row * 0.5f) * col] - float3(0, 10, 0);
+					AABB bottomhalf;
+					tophalf.max = poses[(int)(row * 0.5f) * col] + float3(0, 20, 0);
+					tophalf.min = poses[0] - float3(0, 10, 0);
+
 					if (AABBToCapsule(tophalf, cap->GetWorldCapsule()))
 					{
+						Capsule c = cap->GetWorldCapsule();
+						float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
 						for (int i = (int)(row * 0.5f); i < row; ++i)
 						{
 							for (int j = 0; j < col; ++j)
 							{
-								float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
-								Capsule c = cap->GetWorldCapsule();
-								if (HexagonToCapsule(*GetWorldHex(i * col + j), cap->GetWorldCapsule(), vel))
+								if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 								{
 									cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 									cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
@@ -136,15 +166,15 @@ void HexagonCollider::Update(float dt)
 							}
 						}
 					}
-					else
+					else if (AABBToCapsule(tophalf, cap->GetWorldCapsule()))
 					{
+						float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
+						Capsule c = cap->GetWorldCapsule();
 						for (int i = 0; i < (int)(row * 0.5f); ++i)
 						{
 							for (int j = 0; j < col; ++j)
 							{
-								float3 vel = cap->GetGameObject()->GetTransform()->GetVelocity();
-								Capsule c = cap->GetWorldCapsule();
-								if (HexagonToCapsule(*GetWorldHex(i * col + j), cap->GetWorldCapsule(), vel))
+								if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 								{
 									cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 									cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
