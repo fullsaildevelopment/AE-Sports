@@ -15,7 +15,7 @@ private:
 	unsigned int nextFrame;
 	//float totalBlendTime;
 	std::vector<Bone>* bones;
-	bool timeBased;
+	//bool timeBased;
 	KeyFrame* betweenKeyFrame;
 
 	//private helper functions
@@ -36,7 +36,7 @@ public:
 	void SetAnimation(Animation* anim);
 	//void SetTotalTime(float time) { totalBlendTime = time; }
 	void SetCurFrame(unsigned int index) { curFrame = index; }
-	void SetIsTimeBased(bool toggle) { timeBased = toggle; }
+	//void SetIsTimeBased(bool toggle) { timeBased = toggle; }
 	void SetPrevFrame(unsigned int index) { prevFrame = index; }  // I do this when blending is done to store nextinterpolators frame into curinterpolators frame
 	void SetNextFrame(unsigned int index) { nextFrame = index; }  // I do this when blending is done to store nextinterpolators frame into curinterpolators frame
 
