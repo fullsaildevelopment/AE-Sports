@@ -14,7 +14,7 @@ Interpolator::Interpolator()
 
 	curTime = 0;
 	frameTime = 0;
-	timeBased = false;
+	//timeBased = false;
 	prevFrame = 0;
 	nextFrame = 1;
 	curFrame = 0;
@@ -31,7 +31,7 @@ AnimType Interpolator::Update(float time)
 {
 	if (animation)
 	{
-		if (timeBased)
+		//if (timeBased)
 		{
 			float tweenTime = 0;
 
@@ -69,19 +69,19 @@ AnimType Interpolator::Update(float time)
 			}
 
 		}
-		else
-		{
-			//get bones from current frame
-			KeyFrame* curKeyFrame;
+		//else
+		//{
+		//	//get bones from current frame
+		//	KeyFrame* curKeyFrame;
 
-			curKeyFrame = animation->GetFrame(curFrame);
+		//	curKeyFrame = animation->GetFrame(curFrame);
 
-			///bones->clear();
-			for (unsigned int i = 0; i < curKeyFrame->GetBones().size(); ++i)
-			{
-				(*bones)[i] = *curKeyFrame->GetBone(i);
-			}
-		}
+		//	///bones->clear();
+		//	for (unsigned int i = 0; i < curKeyFrame->GetBones().size(); ++i)
+		//	{
+		//		(*bones)[i] = *curKeyFrame->GetBone(i);
+		//	}
+		//}
 	}
 
 	return AnimType::RUN_ONCE;

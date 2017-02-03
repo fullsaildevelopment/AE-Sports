@@ -9,8 +9,16 @@ class State
 private:
 	Animation* animation;
 	std::vector<Transition*> transitions;
+	//bool loop;
+	//float speed;
 
 public:
-	void Update();
+	//basic//
+	Transition* Update(float dt);
 
+	//getters//
+	Animation* GetAnimation();
+
+	//setters//
+	void SetAnimation(Animation* anim);
 };

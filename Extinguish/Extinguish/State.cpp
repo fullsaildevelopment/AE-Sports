@@ -1,10 +1,31 @@
 #include "State.h"
 #include "Transition.h"
 
-void State::Update()
+//basic//
+Transition* State::Update(float dt)
 {
+	Transition* result = nullptr;
+
 	for (int i = 0; i < transitions.size(); ++i)
 	{
-		transitions[i]->Update();
+		if (transitions[i]->Update(dt))
+		{
+			result = transitions[i];
+			break;
+		}
 	}
+
+	return nullptr;
+}
+
+//getters//
+Animation* State::GetAnimation()
+{
+	return animation;
+}
+
+//setters//
+void State::SetAnimation(Animation* anim)
+{
+	animation = anim;
 }
