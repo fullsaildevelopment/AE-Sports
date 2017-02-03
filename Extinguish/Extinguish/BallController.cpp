@@ -29,7 +29,7 @@ void BallController::Update(float dt)
 {
 	timer.Signal();
 
-	cout << isHeld;
+	//cout << isHeld;
 
 	if (!isHeld && transform->GetParent())
 	{

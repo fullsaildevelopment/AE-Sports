@@ -86,8 +86,8 @@ void AI::Init()
 					enemyGoal = tmp[i];
 			}
 
-			// if they're on my team
-			else if (tmp[i]->GetTag() == me->GetTag())
+			// if they're on my team && they're not me
+			else if (tmp[i]->GetTag() == me->GetTag() && tmp[i] != me)
 			{
 				listOfMates.push_back(tmp[i]);
 
@@ -115,46 +115,70 @@ void AI::Init()
 
 	case 1: // if there is one other AI
 
-		if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
-			currState = goalie;
+		bool bgoalie = false;
+		bool btank = false;
 
-		else
-			currState = tank;
+		if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
+			btank = true;
+
+		else if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == goalie)
+			bgoalie = true;
+
+		if (!bgoalie) currState = goalie;
+		else if (!btank) currState = tank;
 
 		break;
 
 	case 2: // if there are two other AI
 
+		bool bgoalie = false;
+		bool bplayboy = false;
+		bool btank = false;
+
 		for (int i = 0; i < AIbuddies.size(); ++i)
 		{
 			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
-				currState = playboy;
+				bgoalie = true;
 
 			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
-				currState = tank;
+				bplayboy = true;
 
-			else
-				currState = goalie;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
+				btank = true;
 		}
+
+		if (!bgoalie) currState = goalie;
+		else if (!bplayboy) currState = playboy;
+		else if (!btank) currState = tank;
 
 		break;
 
 	case 3: // if there are three other AI
 
+		bool bgoalie = false;
+		bool bplayboy = false;
+		bool bguy1 = false;
+		bool btank = false;
+
 		for (int i = 0; i < AIbuddies.size(); ++i)
 		{
 			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
-				currState = playboy;
+				bgoalie = true;
 
 			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
-				currState = guy1;
+				bplayboy = true;
 
 			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy1)
-				currState = guy2;
+				bguy1 = true;
 
-			else
-				currState = goalie;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
+				btank = true;
 		}
+
+		if (!bgoalie) currState = goalie;
+		else if (!bplayboy) currState = playboy;
+		else if (!bguy1) currState = guy1;
+		else if (!btank) currState = tank;
 
 		break;
 
@@ -255,26 +279,30 @@ void AI::DefendTeammate()
 	// double check that my teammate has the ball
 	if (ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() == me->GetTag())
 	{
-		float dist = 785; // random high number
-		GameObject *target = nullptr;
-
-		// for each enemy
-		for (int i = 0; i < listOfEnemies.size(); ++i)
+		// double check that it's not me who has the ball
+		if (ballClass->GetHolder() != me)
 		{
-			// dist between enemy and my teammate
-			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition();
+			float dist = 785; // random high number
+			GameObject *target = nullptr;
 
-			// if this dist is less than last
-			if (tmp.magnitude() < dist)
+			// for each enemy
+			for (int i = 0; i < listOfEnemies.size(); ++i)
 			{
-				// make them my target
-				dist = tmp.magnitude();
-				target = listOfEnemies[i];
-			}
-		}
+				// dist between enemy and my teammate
+				float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition();
 
-		if (target)
-			Attack(target);
+				// if this dist is less than last
+				if (tmp.magnitude() < dist)
+				{
+					// make them my target
+					dist = tmp.magnitude();
+					target = listOfEnemies[i];
+				}
+			}
+
+			if (target)
+				Attack(target);
+		}
 	}
 }
 
@@ -282,12 +310,9 @@ void AI::Attack(GameObject *target)
 {
 	isAttacking = true;
 
-	// if they're not on my team
+	// if they're not on my team run into target
 	if (target->GetTag() != me->GetTag() && RunTo(target))
-	{
-		// run into target
 		me->GetTransform()->AddVelocity(float3(AttackSpeed, AttackSpeed, AttackSpeed));
-	}
 
 	isAttacking = false;
 }
