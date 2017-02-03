@@ -469,6 +469,16 @@ void Scene::Update(float dt)
 		}
 	}
 
+	// commented out until we have the scoring
+	// if score needs to be updated
+	//GameObject * scoreUpdate = uiObjects[0]->FindGameObject("gameScore");
+	//if (scoreUpdate)
+	//{
+	//	// something about if score isn't what the ui has, then update
+	//	Button * scoreButton = scoreUpdate->GetComponent<Button>();
+	//	wstring score = to_wstring(redScore) + L" : " + to_wstring(blueScore);
+	//}
+
 	for (unsigned int i = 0; i < uiObjects.size(); ++i)
 	{
 		uiObjects[i]->Update(dt);

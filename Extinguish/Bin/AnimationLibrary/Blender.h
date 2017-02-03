@@ -29,7 +29,7 @@ public:
 	Blender();
 	~Blender();
 
-	void Init(bool timeBased, std::string curAnimName, std::string nextAnimName);
+	void Init(std::string curAnimName, std::string nextAnimName);
 	void Update(float time, unsigned int frameIndex);
 
 	//getters

@@ -10,7 +10,7 @@ using namespace std;
 
 void BallController::OnTriggerEnter(Collider *obj)
 {
-	SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
+	//SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
 
 	// if i collide with a crosse
 	//if (scol)
