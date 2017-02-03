@@ -204,7 +204,7 @@ void Game::Update(float dt)
 						{
 							// do stuff here
 							// call client.getFloorState(i);
-							gameObject->GetComponent<FloorController>()->SetState(client.getFloorState(i));
+							gameObject->GetComponent<FloorController>()->SetState(client.getFloorState(i),dt);
 						}
 
 						XMFLOAT3 position, rotation;

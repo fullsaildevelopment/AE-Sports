@@ -152,12 +152,15 @@ void CapsuleCollider::Update(float dt)
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (isTrigger() || sphere->isTrigger())
+			if (sphere->isEnabled())
 			{
-				if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
+				if (isTrigger() || sphere->isTrigger())
 				{
-					sphere->GetGameObject()->OnTriggerEnter(this);
-					tg->OnTriggerEnter(sphere);
+					if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
+					{
+						sphere->GetGameObject()->OnTriggerEnter(this);
+						tg->OnTriggerEnter(sphere);
+					}
 				}
 			}
 		}
