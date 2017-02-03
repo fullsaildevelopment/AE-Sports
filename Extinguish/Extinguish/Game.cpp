@@ -96,6 +96,11 @@ void Game::Update(float dt)
 				GameState* state = gameStates[i];
 				GameObject* gameObject = (*gameObjects)[i];
 
+				if (gameObject->GetName() == "HexFloor")
+				{
+					state->otherIndex = 0;
+				}
+
 				float3 position = gameObject->GetTransform()->GetPosition();
 				float3 rotation = gameObject->GetTransform()->GetRotation();
 				state->position = { position.x, position.y, position.z };
@@ -194,6 +199,13 @@ void Game::Update(float dt)
 					//if (i != id)
 					{
 						GameObject* gameObject = (*gameObjects)[i];
+
+						if (gameObject->GetName() == "HexFloor")
+						{
+							// do stuff here
+							// call client.getFloorState(i);
+						}
+
 						XMFLOAT3 position, rotation;
 						position = client.getLocation(i);
 						rotation = client.getRotation(i);

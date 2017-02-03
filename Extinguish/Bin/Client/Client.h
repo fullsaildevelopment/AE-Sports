@@ -49,6 +49,7 @@ public:
 		XMFLOAT3 rotation;
 		INT8 parentIndex;
 		INT8 animationIndex;
+		INT8 otherIndex;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -114,6 +115,7 @@ public:
 	int getNumPackets() { return numPackets; }
 	void setLocation(XMFLOAT3 loc) { myState->position = loc; }
 	void setRotation(XMFLOAT3 rot) { myState->rotation = rot; }
+	UINT8 getFloorState(unsigned int i) { return clientStates[i].otherIndex; }
 
 private:
 	UINT8 objects;
