@@ -139,6 +139,21 @@
       <Filter>Imgui</Filter>
     </ClCompile>
     <ClCompile Include="UIRenderer.cpp" />
+    <ClCompile Include="Physics.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatorController.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Transition.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
+    <ClCompile Include="Parameter.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -268,6 +283,21 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="UIRenderer.h" />
+    <ClInclude Include="Physics.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorController.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Transition.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Parameter.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -318,6 +348,9 @@
     </Filter>
     <Filter Include="Imgui">
       <UniqueIdentifier>{189c7220-f0ef-44b1-8f0a-2cdf9252f4d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\AnimatorController">
+      <UniqueIdentifier>{03ddfbbd-f0a4-44c2-b737-a5d0ce246a9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

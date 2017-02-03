@@ -1,5 +1,7 @@
 #include <iostream>
 #include "BallController.h"
+#include "Physics.h"
+
 using namespace std;
 
 #define ThrowSpeed 28
@@ -22,7 +24,9 @@ BallController::BallController(GameObject* obj) : Component(obj)
 
 void BallController::Init()
 {
+	//cache
 	transform = GetGameObject()->GetTransform();
+	physics = GetGameObject()->GetComponent<Physics>();
 }
 
 void BallController::Update(float dt)
@@ -34,10 +38,10 @@ void BallController::Update(float dt)
 		SetHolder(transform->GetParent()->GetGameObject());
 	}
 
-	if (isHeld && !isThrown)
-		transform->SetVelocity(float3(0, 0, 0));
+	//if (isHeld && !isThrown)
+	//	transform->SetVelocity(float3(0, 0, 0));
 
-	else
+	//else
 		//transform->AddVelocity(float3(0, -9.8f * dt, 0));
 
 	if (isThrown)
@@ -60,6 +64,9 @@ void BallController::Throw()
 	holder->GetTransform()->RemoveChild(me->GetTransform());
 	holder = nullptr;
 	transform->SetParent(nullptr);
+
+	//turn on physics
+	physics->SetIsKinematic(false);
 }
 
 void BallController::ThrowTo(GameObject *target)
@@ -71,6 +78,9 @@ void BallController::ThrowTo(GameObject *target)
 
 	float3 vel = me->GetTransform()->GetForwardf3() * ThrowSpeed;
 	transform->AddVelocity(vel);
+
+	//turn on physics
+	physics->SetIsKinematic(false);
 }
 
 void BallController::DropBall(GameObject *person)
@@ -83,6 +93,9 @@ void BallController::DropBall(GameObject *person)
 	// add some velocity to me in the holders forward vec
 	float3 vel = person->GetTransform()->GetForwardf3() * DropSpeed;
 	transform->AddVelocity(vel);
+
+	//turn on physics
+	physics->SetIsKinematic(false);
 }
 
 bool  BallController::GetIsHeld()
@@ -113,4 +126,7 @@ void BallController::SetHolder(GameObject *person)
 	transform->SetPosition(float3(0, 0, 0.1f));
 	person->GetTransform()->AddChild(me->GetTransform());
 	transform->SetParent(person->GetTransform());
+
+	//turn off physics
+	physics->SetIsKinematic(true);
 }

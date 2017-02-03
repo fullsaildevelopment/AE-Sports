@@ -6,6 +6,8 @@
 #include "vec3.h"
 #include "XTime.h"
 
+class Physics;
+
 class BallController : public Component
 {
 private:
@@ -15,6 +17,7 @@ private:
 	GameObject *holder;
 	XTime timer;
 	Transform* transform;
+	Physics* physics;
 
 public:
 	BallController(GameObject* obj);
