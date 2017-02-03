@@ -31,7 +31,7 @@ public:
 	virtual void OnTriggerExit(Collider* e) {};
 
 	//getters
-	GameObject* const GetGameObject(void) { return Object; };
+	GameObject* GetGameObject(void) { return Object; };
 
 	//setters
 	void SetGameObject(GameObject* object) { Object = object; }

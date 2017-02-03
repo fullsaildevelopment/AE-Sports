@@ -46,6 +46,8 @@ private:
 	std::vector<unsigned int> numVertices;
 	std::vector<unsigned int> numIndices;
 
+
+
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
 	Animation LoadInAnimation(std::string path);
@@ -74,7 +76,37 @@ public:
 	int GetVertexStride(std::string name);
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
-	ID3D11Buffer* ResourceManager::CreateInstancedBuffer(int num, float3* instanced);
+	//IDWriteFactory * GetWriteFactory() { return pDWriteFactory.Get(); }
+	//IDWriteTextFormat * GetTextFormat() { return pTextFormat.Get(); }
+	//ID2D1Factory * GetID2D1Factory() { return pD2DFactory.Get(); }
+	//ID2D1HwndRenderTarget * GetRenderTarget() { return pRT.Get(); }
+	//ID2D1SolidColorBrush * GetBrush() { return pBrush.Get(); }
+	/*D2D1_RECT_F * GetRect() { return &layoutRect; }*/
+	//IDWriteTextLayout * GetTextLayout() { return pTextLayout.Get(); }
+
+	template <typename T>
+	ID3D11Buffer* CreateInstancedBuffer(int num, T* instanced)
+	{
+		ID3D11Buffer* m_instanceBuffer;
+		D3D11_BUFFER_DESC instanceBufferDesc;
+		D3D11_SUBRESOURCE_DATA instancedData;
+
+		instanceBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		instanceBufferDesc.ByteWidth = sizeof(T) * num;
+		instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		instanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		instanceBufferDesc.MiscFlags = 0;
+		instanceBufferDesc.StructureByteStride = 0;
+
+		instancedData.pSysMem = instanced;
+		instancedData.SysMemPitch = 0;
+		instancedData.SysMemSlicePitch = 0;
+
+		// Create the instance buffer.
+		device->CreateBuffer(&instanceBufferDesc, &instancedData, &m_instanceBuffer);
+		return m_instanceBuffer;
+	}
+
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);

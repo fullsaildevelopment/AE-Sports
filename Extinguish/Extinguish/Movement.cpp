@@ -18,7 +18,7 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 	SetKeys('W', 'S', 'A', 'D', 'Q', 'E');
 
 	//register movement event handler
-	EventDispatcher::GetSingleton()->RegisterHandler(this);
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 
 	timeSincePlayed = 0.0f;
 }
@@ -34,6 +34,70 @@ void Movement::Update(float dt)
 	else
 	{
 		timeSincePlayed = 0;
+	}
+
+	//sound feedback
+	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f)
+	{
+		SoundEngine::GetSingleton()->PlayWalkingSound();
+		timeSincePlayed = 0;
+	}
+	else if (!isMoving)
+	{
+		SoundEngine::GetSingleton()->StopWalkingSound();
+	}
+
+	//animation feedback
+	if (isMoving)
+	{
+		Renderer* renderer = GetGameObject()->GetComponent<Renderer>();
+		if (renderer)
+		{
+			Blender* blender = renderer->GetBlender();
+			if (blender)
+			{
+				//if (!blender->GetNextInterpolator()->HasAnimation())
+
+				if (blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() == "Idle")
+				{
+					Animation* nextAnimation = blender->GetNextInterpolator()->GetAnimation();
+					bool runAnimation = false;
+
+					if (nextAnimation)
+					{
+						if (nextAnimation->GetAnimationName() != "Run")
+						{
+							runAnimation = true;
+							//GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
+						}
+					}
+					else
+					{
+						runAnimation = true;
+					}
+
+					if (runAnimation)
+					{
+						GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		Renderer* renderer = GetGameObject()->GetComponent<Renderer>();
+		if (renderer)
+		{
+			Blender* blender = renderer->GetBlender();
+			if (blender)
+			{
+				if (blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != "Idle")
+				{
+					blender->SetNextAnimation("Idle");
+				}
+			}
+		}
 	}
 }
 
@@ -124,34 +188,6 @@ void Movement::HandleInput(InputDownEvent* e)
 		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
 		//transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
 		isMoving = true;
-	}
-
-	//sound feedback
-	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f)
-	{
-		SoundEngine::GetSingleton()->PlayWalkingSound();
-		timeSincePlayed = 0;
-	}
-	else if (!isMoving)
-	{
-		SoundEngine::GetSingleton()->StopWalkingSound();
-	}
-
-	//animation feedback
-	if (isMoving)
-	{
-		Renderer* renderer = GetGameObject()->GetComponent<Renderer>();
-		if (renderer)
-		{
-			Blender* blender = renderer->GetBlender();
-			if (blender)
-			{
-				if (!blender->GetNextInterpolator()->HasAnimation())
-				{
-					GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
-				}
-			}
-		}
 	}
 }
 

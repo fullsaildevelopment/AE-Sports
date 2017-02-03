@@ -27,7 +27,7 @@ private:
 	int mouseX, mouseY;
 	//KeyState mouseButtons[3];
 
-	bool sendEvent;
+	bool alreadySent;
 
 	//private helper functions
 	void SendEvent();
