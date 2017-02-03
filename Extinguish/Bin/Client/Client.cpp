@@ -335,6 +335,7 @@ void Client::recievePackets()
 			bIn.Read(clientStates[i].rotation);
 			bIn.Read(clientStates[i].parentIndex);
 			bIn.Read(clientStates[i].animationIndex);
+			bIn.Read(clientStates[i].otherIndex);
 		}
 	}
 }

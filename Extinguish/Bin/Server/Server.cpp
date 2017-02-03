@@ -334,6 +334,7 @@ void Server::sendPackets()
 			bOut.Write(clientStates[i].rotation);
 			bOut.Write(clientStates[i].parentIndex);
 			bOut.Write(clientStates[i].animationIndex);
+			bOut.Write(clientStates[i].otherIndex);
 		}
 		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 	}
