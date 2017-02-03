@@ -25,14 +25,14 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		//if (server.init("127.0.0.1", 60000) == 1)
-		//{
-		//	isMultiplayer = true;
-		//	isServer = true;
-		//
-		//	client.init("127.0.0.1", 60001);
-		//}
-		//else
+		if (server.init("127.0.0.1", 60000) == 1)
+		{
+			isMultiplayer = true;
+			isServer = true;
+		
+			client.init("127.0.0.1", 60001);
+		}
+		else
 		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
@@ -98,7 +98,7 @@ void Game::Update(float dt)
 
 				if (gameObject->GetName() == "HexFloor")
 				{
-					state->otherIndex = 0;
+					state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
 				}
 
 				float3 position = gameObject->GetTransform()->GetPosition();
@@ -204,6 +204,7 @@ void Game::Update(float dt)
 						{
 							// do stuff here
 							// call client.getFloorState(i);
+							gameObject->GetComponent<FloorController>()->SetState(client.getFloorState(i));
 						}
 
 						XMFLOAT3 position, rotation;
