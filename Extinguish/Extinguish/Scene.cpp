@@ -11,7 +11,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-
+//	depthDisabledStencilState.ReleaseAndGetAddressOf();
 }
 
 //basic//
@@ -181,6 +181,58 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	devContext->PSSetSamplers(0, 1, wrapSamplerState.GetAddressOf());
 	devContext->PSSetSamplers(1, 1, clampSamplerState.GetAddressOf());
 
+	// create depth stencil state
+	CD3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	// Initialize the description of the stencil state.
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+	// Set up the description of the stencil state.
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilDesc.StencilEnable = true;
+	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing.
+	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing.
+	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	device->CreateDepthStencilState(&depthStencilDesc, depthStencilState.GetAddressOf());
+
+
+	// Clear the second depth stencil state before setting the parameters.
+
+	CD3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+
+	// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	device->CreateDepthStencilState(&depthDisabledStencilDesc, depthDisabledStencilState.GetAddressOf());
+
 	//create lighting buffers and set them
 
 	//create camera constat buffer
@@ -335,9 +387,8 @@ void Scene::CreateModels()
 //void Scene::Update(InputManager input, float dt)
 void Scene::Update(float dt)
 {
-	//handle input
-	//this->input = input;
-	//HandleInput();
+	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
+	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
 	//update lights
 	//if (pointLights.size())
@@ -351,21 +402,6 @@ void Scene::Update(float dt)
 	//	devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
 	//}
 
-	//update camera (private function)
-	//UpdateCamera(dt, 5.0f, 0.75f);
-
-	//update camera constant buffer
-	//cameraBufferData.cameraposW = XMFLOAT4(camera._41, camera._42, camera._43, 1);
-	//devContext->UpdateSubresource(cameraConstantBuffer.Get(), NULL, NULL, &cameraBufferData, NULL, NULL);
-	//devContext->PSSetConstantBuffers(2, 1, cameraConstantBuffer.GetAddressOf());
-
-
-	//update view on every object
-	//XMFLOAT4X4 sceneCam;
-	//XMStoreFloat4x4(&sceneCam, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
-
-	//update camera first because we need an accurate camera
-	//gameObjects[0]->Update(dt, input);
 
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
@@ -385,8 +421,16 @@ void Scene::Update(float dt)
 
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
 
+	
+	//Renderer* renderer = gameObjects[gameObjects.size() - 1]->GetComponent<Renderer>();
+	//ID2D1HwndRenderTarget * pRT = renderer->GetPRT();
+
+
+	ImGui_ImplDX11_NewFrame();
+
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
+		//only update game objects if this is the server
 		if (id == 1)
 		{
 			gameObjects[i]->Update(dt);
@@ -412,9 +456,26 @@ void Scene::Update(float dt)
 				renderer->SetModel(world);
 			}
 
-			renderer->Render();
+			//don't render yourself
+			if (i + 1 != id)
+			{
+				renderer->Render();
+			}
+
+			if (i == 1)
+			{
+				cout << transform->GetVelocity().x << " " << transform->GetVelocity().y << " " << transform->GetVelocity().z << endl;
+			}
 		}
 	}
+
+	for (unsigned int i = 0; i < uiObjects.size(); ++i)
+	{
+		uiObjects[i]->Update(dt);
+		uiObjects[i]->GetComponent<UIRenderer>()->Render();
+	}
+
+	ImGui::EndFrame();
 }
 
 void Scene::HandleInput()
@@ -584,6 +645,7 @@ void Scene::Render()
 	//		models[i].Render();
 	//	}
 	//}
+
 }
 
 void Scene::Shutdown()
@@ -591,6 +653,10 @@ void Scene::Shutdown()
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		delete gameObjects[i];
+	}
+	for (int i = 0; i < uiObjects.size(); ++i)
+	{
+		delete uiObjects[i];
 	}
 }
 
@@ -604,4 +670,10 @@ void Scene::AddGameObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	gameObjects.push_back(gameObject);
+}
+
+void Scene::AddUIObject(GameObject* gameObject)
+{
+	gameObject->SetScene(this);
+	uiObjects.push_back(gameObject);
 }

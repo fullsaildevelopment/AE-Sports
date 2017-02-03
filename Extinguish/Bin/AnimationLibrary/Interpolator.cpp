@@ -97,9 +97,9 @@ void Interpolator::SetAnimation(Animation* anim)
 		bones->resize(anim->GetNumBones());
 		
 		//reinitialize variables
-		//prevFrame = 0;
-		//nextFrame = 1;
-		//frameTime = 0;
+		prevFrame = 0;
+		nextFrame = 1;
+		frameTime = 0;
 
 	}
 }

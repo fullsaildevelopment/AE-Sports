@@ -9,6 +9,7 @@ CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o,
 	radius = r;
 	Start = s;
 	End = e;
+	otherCapsule = nullptr;
 }
 
 Capsule CapsuleCollider::GetCapsule()
@@ -129,10 +130,20 @@ void CapsuleCollider::Update(float dt)
 					tgt->SetPosition(pos);
 					tgt->SetVelocity(vel * 0.6f);
 					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
-					capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
+					//TODO: Turned off because I need to attack
+					//capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
 					capsule->GetGameObject()->OnCollisionEnter(this);
 					tg->OnCollisionEnter(capsule);
 					capsule->checked.push_back(this);
+					otherCapsule = capsule;
+				}
+				else
+				{
+					if (otherCapsule == capsule)
+					{
+						tg->OnCollisionExit(otherCapsule);
+						otherCapsule = nullptr;
+					}
 				}
 			}
 			continue;
@@ -145,7 +156,7 @@ void CapsuleCollider::Update(float dt)
 			{
 				if (CapsuleToSphere(GetWorldCapsule(), sphere->GetWorldSphere()))
 				{
-					capsule->GetGameObject()->OnTriggerEnter(this);
+					sphere->GetGameObject()->OnTriggerEnter(this);
 					tg->OnTriggerEnter(sphere);
 				}
 			}

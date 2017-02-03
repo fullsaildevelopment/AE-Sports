@@ -7,7 +7,7 @@ Packet * Client::packet = nullptr;
 char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
-Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[19];
+Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[28];
 //std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
 
@@ -197,8 +197,8 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 		bsOut.Write(mouseDown[i]);
 	for (unsigned int i = 0; i < 3; ++i)
 		bsOut.Write(mouseUp[i]);
-	bsOut.Write((UINT8)mouseX);
-	bsOut.Write((UINT8)mouseY);
+	bsOut.Write((UINT16)mouseX);
+	bsOut.Write((UINT16)mouseY);
 	bsOut.Write(isServer);
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);

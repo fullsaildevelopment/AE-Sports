@@ -4,6 +4,7 @@
 #include "BallController.h"
 #include "AI.h"
 #include "EventDispatcher.h"
+#include "Physics.h"
 
 using namespace DirectX;
 using namespace std;
@@ -17,24 +18,25 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	soundEngine = SoundEngine::GetSingleton();
 
 	//register to event dispatcher
-	EventDispatcher::GetSingleton()->RegisterHandler(this);
+	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
 
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
 	if (isMultiplayer)
 	{
-		//if (server.init("127.0.0.1", 60000) == 1)
-		//{
-		//	isMultiplayer = true;
-		//	isServer = true;
-		//
-		//	client.init("127.0.0.1", 60001);
-		//}
-		//else
+		if (server.init("127.0.0.1", 60000) == 1)
+		{
+			isMultiplayer = true;
+			isServer = true;
 		
+			client.init("127.0.0.1", 60001);
+		}
+		else
+		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
+		}
 		
 	}
 
@@ -86,54 +88,62 @@ void Game::Update(float dt)
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
-		for (int i = 0; i < gameStates.size(); ++i)
-		{
-			GameState* state = gameStates[i];
-			GameObject* gameObject = (*gameObjects)[i];
-
-			float3 position = gameObject->GetTransform()->GetPosition();
-			float3 rotation = gameObject->GetTransform()->GetRotation();
-			state->position = { position.x, position.y, position.z };
-			state->rotation = { rotation.x, rotation.y, rotation.z };
-
-			int parentIndex = -1;
-			Transform* parent = gameObject->GetTransform()->GetParent();
-
-			if (parent)
-			{
-				for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
-				{
-					GameObject* gameObject2 = (*gameObjects)[parentIndex];
-
-					if (parent == gameObject2->GetTransform())
-					{
-						break;
-					}
-				}
-			}
-
-			state->parentIndex = parentIndex;
-			
-			int animIndex = -1;
-			Renderer* renderer = gameObject->GetComponent<Renderer>();
-
-			if (renderer)
-			{
-				Blender* blender = renderer->GetBlender();
-
-				if (blender)
-				{
-					if (blender->GetNextInterpolator()->HasAnimation())
-					{
-						animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
-					}
-				}
-			}
-		}
-
 		// if server, set game states
 		if (isServer)
 		{
+			for (int i = 0; i < gameStates.size(); ++i)
+			{
+				GameState* state = gameStates[i];
+				GameObject* gameObject = (*gameObjects)[i];
+
+				float3 position = gameObject->GetTransform()->GetPosition();
+				float3 rotation = gameObject->GetTransform()->GetRotation();
+				state->position = { position.x, position.y, position.z };
+				state->rotation = { rotation.x, rotation.y, rotation.z };
+
+				int parentIndex = -1;
+				Transform* parent = gameObject->GetTransform()->GetParent();
+
+				if (parent)
+				{
+					for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
+					{
+						GameObject* gameObject2 = (*gameObjects)[parentIndex];
+
+						if (parent == gameObject2->GetTransform())
+						{
+							break;
+						}
+					}
+				}
+
+				state->parentIndex = parentIndex;
+
+				int animIndex = -1;
+				Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+				if (renderer)
+				{
+					Blender* blender = renderer->GetBlender();
+
+					if (blender)
+					{
+						if (blender->GetNextInterpolator()->HasAnimation())
+						{
+							animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
+						}
+					}
+				}
+
+				if (animIndex == 1)
+				{
+					int breakpoint = 0;
+					breakpoint += 69;
+				}
+
+				state->animationIndex = animIndex;
+			}
+
 			server.SetGameStates(gameStates);
 		}
 
@@ -152,10 +162,10 @@ void Game::Update(float dt)
 		{
 			int serverState = server.run();
 
-			if (serverState == 2)
-			{
-				gameStates = server.getStates();
-			}
+			//if (serverState == 2)
+			//{
+			//	gameStates = server.getStates();
+			//}
 		}
 
 		//run client
@@ -187,6 +197,13 @@ void Game::Update(float dt)
 						XMFLOAT3 position, rotation;
 						position = client.getLocation(i);
 						rotation = client.getRotation(i);
+
+						if (i == 20)
+						{
+							int breakpoint = 0;
+							breakpoint = 5;
+						}
+
 						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
@@ -196,24 +213,35 @@ void Game::Update(float dt)
 							gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
 						}
 
-						Renderer* renderer = gameObject->GetComponent<Renderer>();
+						INT8 animIndex = client.GetAnimationIndex(i);
 
-						if (renderer)
+						if (animIndex != -1)
 						{
-							Blender* blender = renderer->GetBlender();
-							if (blender)
+							Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+							if (renderer)
 							{
-								//if (renderer->GetBlender()->Get
-								//int animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetCurInterpolator()->GetAnimation()->GetAnimationName());
+								Blender* blender = renderer->GetBlender();
 
-								//if (animIndex != client.GetAnimationIndex(i))
-								if (!blender->GetNextInterpolator()->HasAnimation())
+								if (blender)
 								{
-									BlendInfo info;
-									info.totalBlendTime = 0.01f;
+									if (animIndex == 1)
+									{
+										int breakpoint = 0;
+										breakpoint += 69;
+									}
 
-									renderer->SetNextAnimation(client.GetAnimationIndex(i));
-									renderer->SetBlendInfo(info);
+									//if (!blender->GetNextInterpolator()->HasAnimation())
+									if ((blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != blender->GetAnimationSet()->GetAnimation(animIndex)->GetAnimationName()))
+									{
+										BlendInfo info;
+										info.totalBlendTime = 0.01f;
+
+										renderer->SetNextAnimation(animIndex);
+										renderer->SetBlendInfo(info);
+
+										cout << "Change in animation" << endl;
+									}
 								}
 							}
 						}
@@ -266,14 +294,14 @@ void Game::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		//if it's the server, but the messenger is a client, dispatch a message from server to all components to handle input... or messenger is server, but not marked as one
+		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
 		if ((isServer && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
 		}
-		else if (inputDownEvent->GetID() > 1) //if not server, give server your input to handle it
+		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
 			client.sendInput(inputDownEvent);
 		}
@@ -339,23 +367,61 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->Init(devResources, input);
 
+	basic->set2DRenderTarget(devResources->GetRenderTarget());
+
 	//used for hexagon floor
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
 
+	//deleted inside a different class
+	unsigned int* colors = new unsigned int[row * col];
+
 	GameObject* mage1 = new GameObject();
 	basic->AddGameObject(mage1);
 	mage1->Init("Mage1");
-	mage1->InitTransform(identity, { (float)-col, 0, -12 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	mage1->InitTransform(identity, { (float)-col, 0, -12 }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer1 = new Renderer();
 	mage1->AddComponent(mageRenderer1);
 	mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	Movement* mageMover = new Movement();
 	mage1->AddComponent(mageMover);
 	mageMover->Init(5.0f, 0.75f);
-	//PlayerController* bplayerController = new PlayerController();
-	//mage->AddComponent(bplayerController);
-	//bplayerController->Init(5.0f, 0.75f);
+	PlayerController* bplayerController = new PlayerController();
+	mage1->AddComponent(bplayerController);
+	bplayerController->Init();
+	CapsuleCollider* mageCollider1 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
+	mage1->AddCapsuleCollider(mageCollider1);
+	mageCollider1->Init(mage1);
+
+	//for (int i = 1; i <= 8; ++i)
+	//{
+	//	string playerName = "Mage";
+	//	playerName += to_string(i);
+
+	//	GameObject* mage1 = new GameObject();
+	//	basic->AddGameObject(mage1);
+	//	mage1->Init(playerName);
+
+	//	int tempCol = col;
+	//	if (i > 4)
+	//	{
+	//		tempCol = -tempCol;
+	//	}
+
+	//	mage1->InitTransform(identity, { (float)tempCol, 0, -12 + i * 4}, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+
+	//	Renderer* mageRenderer1 = new Renderer();
+	//	mage1->AddComponent(mageRenderer1);
+	//	mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
+	//	Movement* mageMover = new Movement();
+	//	mage1->AddComponent(mageMover);
+	//	mageMover->Init(5.0f, 0.75f);
+	//	PlayerController* bplayerController = new PlayerController();
+	//	mage1->AddComponent(bplayerController);
+	//	bplayerController->Init();
+	//	CapsuleCollider* mageCollider1 = new CapsuleCollider(0.5f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
+	//	mageCollider1->Init(mage1);
+	//}
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
@@ -367,6 +433,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* mageMover2 = new Movement();
 	mage2->AddComponent(mageMover2);
 	mageMover2->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider2 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage2, false);
+	mage2->AddCapsuleCollider(mageCollider2);
+	mageCollider2->Init(mage2);
 
 	GameObject* mage3 = new GameObject();
 	basic->AddGameObject(mage3);
@@ -378,6 +447,10 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* mageMover3 = new Movement();
 	mage3->AddComponent(mageMover3);
 	mageMover3->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider3 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage3, false);
+	mage3->AddCapsuleCollider(mageCollider3);
+	mageCollider3->Init(mage3);
+
 
 	GameObject* mage4 = new GameObject();
 	basic->AddGameObject(mage4);
@@ -387,8 +460,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage4->AddComponent(mageRenderer4);
 	mageRenderer4->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
 	Movement* mageMover4 = new Movement();
-	mage4->AddComponent(mageMover2);
-	mageMover2->Init(5.0f, 0.75f);
+	mage4->AddComponent(mageMover4);
+	mageMover4->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider4 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage4, false);
+	mage4->AddCapsuleCollider(mageCollider4);
+	mageCollider4->Init(mage4);
 
 	GameObject* mage5 = new GameObject();
 	basic->AddGameObject(mage5);
@@ -400,6 +476,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* mageMover5 = new Movement();
 	mage5->AddComponent(mageMover5);
 	mageMover5->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider5 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage5, false);
+	mage5->AddCapsuleCollider(mageCollider5);
+	mageCollider5->Init(mage5);
 
 	GameObject* mage6 = new GameObject();
 	basic->AddGameObject(mage6);
@@ -411,6 +490,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* mageMover6 = new Movement();
 	mage6->AddComponent(mageMover6);
 	mageMover6->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider6 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage6, false);
+	mage6->AddCapsuleCollider(mageCollider6);
+	mageCollider6->Init(mage6);
 
 	GameObject* mage7 = new GameObject();
 	basic->AddGameObject(mage7);
@@ -422,6 +504,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* mageMover7 = new Movement();
 	mage7->AddComponent(mageMover7);
 	mageMover7->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider7 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage7, false);
+	mage7->AddCapsuleCollider(mageCollider7);
+	mageCollider7->Init(mage7);
 
 	GameObject* mage8 = new GameObject();
 	basic->AddGameObject(mage8);
@@ -433,6 +518,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* mageMover8 = new Movement();
 	mage8->AddComponent(mageMover8);
 	mageMover8->Init(5.0f, 0.75f);
+	CapsuleCollider* mageCollider8 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage8, false);
+	mage8->AddCapsuleCollider(mageCollider8);
+	mageCollider8->Init(mage8);
 
 	GameObject* camera1 = new GameObject();
 	basic->AddGameObject(camera1);
@@ -507,7 +595,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	float3* floor = CreateFloor(2.0f, row, col, float3(-row, -10, -col));
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
@@ -515,7 +603,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
-	HexFloorRenderer->Init(row * col,floor,"Hexagon", "Static", "InstancedStatic", "", "", projection, &resourceManager, devResources);
+	HexFloorRenderer->Init(row * col, floor, colors,"Hexagon", "InstStatic", "InstancedStatic", "", "", projection, &resourceManager, devResources);
+	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
+	HexFloor->AddComponent(HexFLoorCol);
+	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
+	HexFloor->AddComponent(fcon);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
@@ -525,39 +617,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Hex->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover3 = new Movement();
-	//Hex->AddComponent(ballMover3);
-	//ballMover3->Init(5.0f, 0.75f);
-	//HexagonCollider* ballcol3 = new HexagonCollider(Hex,2,10);
-	//Hex->AddComponent(ballcol3);
-
-	//Hex->SetTag("Goal2");
-	
-
-
-	//GameObject* bear = new GameObject();
-	//basic->AddGameObject(bear);
-	//bear->Init("Bear");
-	//bear->InitTransform(identity, { 5, 0, 0 }, { 0, -180, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
-	//Renderer* bearRenderer = new Renderer();
-	//bear->AddComponent(bearRenderer);
-	//bearRenderer->Init("Teddy", "NormalMapped", "Bind", "", "Idle", projection, &resourceManager, devResources);
-	//BlendInfo bearBI;
-	//bearBI.totalBlendTime = 0.01f;
-	//bearRenderer->SetBlendInfo(bearBI);
-	//bearRenderer->SetNextAnimation("Run");
-	////bearRenderer->SetNextAnimation("Run");
-	////PlayerController* playerController = new PlayerController();
-	////bear->AddComponent(playerController);
-	////playerController->Init();
-	//Movement* bearMover = new Movement();
-	//bear->AddComponent(bearMover);
-	//bearMover->Init(1.0f, 0.75f);
-	//CapsuleCollider* bearcol = new CapsuleCollider(0.5, { 0,0,0 }, { 0, 1, 0 }, bear, false); // bear, false, { 1,2,1 }, { -1,0,-1 }
-	//bear->AddCapsuleCollider(bearcol);
-	//
-	//bear->SetTag("Team1");
-	//AI *bearAI = new AI(bear);
-	//bear->AddComponent(bearAI);
 
 	GameObject* gameBall = new GameObject();
 	basic->AddGameObject(gameBall);
@@ -565,20 +624,21 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	basic->AddGameObject(crosse);
 
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { -5, 0, 0 }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
+	gameBall->InitTransform(identity, { 0, 0, 0.1f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
 	gameBall->AddSphereCollider(gameBallCollider);
+	Physics* physics = new Physics();
+	gameBall->AddComponent(physics);
+	physics->Init();
 	BallController* ballController = new BallController(gameBall);
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 	ballController->SetHolder(crosse);
 
 	gameBall->SetTag("Ball");
-	//bearAI->Init();
-
 
 	crosse->Init("Crosse1");
 	crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
@@ -610,7 +670,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse3->Init("Crosse3");
 	crosse3->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage3->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider3 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider3 = new SphereCollider(0.25f, crosse3, true);
 	crosse3->AddSphereCollider(crosseNetCollider3);
 	Renderer* crosseRenderer3 = new Renderer();
 	crosse3->AddComponent(crosseRenderer3);
@@ -624,7 +684,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse4->Init("Crosse4");
 	crosse4->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage4->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider4 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider4 = new SphereCollider(0.25f, crosse4, true);
 	crosse4->AddSphereCollider(crosseNetCollider4);
 	Renderer* crosseRenderer4 = new Renderer();
 	crosse4->AddComponent(crosseRenderer4);
@@ -638,7 +698,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse5->Init("Crosse5");
 	crosse5->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage5->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider5 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider5 = new SphereCollider(0.25f, crosse5, true);
 	crosse5->AddSphereCollider(crosseNetCollider5);
 	Renderer* crosseRenderer5 = new Renderer();
 	crosse5->AddComponent(crosseRenderer5);
@@ -652,7 +712,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse6->Init("Crosse6");
 	crosse6->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage6->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider6 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider6 = new SphereCollider(0.25f, crosse6, true);
 	crosse6->AddSphereCollider(crosseNetCollider6);
 	Renderer* crosseRenderer6 = new Renderer();
 	crosse6->AddComponent(crosseRenderer6);
@@ -666,7 +726,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse7->Init("Crosse7");
 	crosse7->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage7->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider7 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider7 = new SphereCollider(0.25f, crosse7, true);
 	crosse7->AddSphereCollider(crosseNetCollider7);
 	Renderer* crosseRenderer7 = new Renderer();
 	crosse7->AddComponent(crosseRenderer7);
@@ -680,7 +740,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->Init("Crosse8");
 	crosse8->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage8->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider8 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider8 = new SphereCollider(0.25f, crosse8, true);
 	crosse8->AddSphereCollider(crosseNetCollider8);
 	Renderer* crosseRenderer8 = new Renderer();
 	crosse8->AddComponent(crosseRenderer8);
@@ -689,8 +749,40 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->AddComponent(crosseController8);
 	crosseController8->Init();
 
+	// so that we keep the chunk of 3d object creation and 2d object creation separate
+	CreateUI(devResources, basic);
+
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
+}
+
+void Game::CreateUI(DeviceResources * devResources, Scene * basic)
+{
+	GameObject * testScore = new GameObject();
+	basic->AddUIObject(testScore);
+	testScore->Init("testScore");
+	Button * theSButton = new Button(true, true, L"00 : 00", (unsigned int)strlen("00 : 00"), 500.0f, 100.0f, devResources);
+	theSButton->SetGameObject(testScore);
+	theSButton->showFPS(false);
+	testScore->AddComponent(theSButton);
+	UIRenderer * scoreRender = new UIRenderer();
+	scoreRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	scoreRender->setOrigin(250.0f, 30.0f);
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	testScore->AddComponent(scoreRender);
+
+	GameObject * testButton = new GameObject();
+	basic->AddUIObject(testButton);
+	testButton->Init("testButton");
+	Button * theButton = new Button(true, true, L"8 Sticks & 1 Ball", (unsigned int)strlen("8 Sticks & 1 Ball"), 400.0f, 100.0f, devResources);
+	//Button * theButton = new Button(true, true, "'Time' resets for now.", (unsigned int)strlen("'Time' resets for now."));
+	theButton->SetGameObject(testButton);
+	theButton->showFPS(true);
+	testButton->AddComponent(theButton);
+	UIRenderer * buttonRender = new UIRenderer();
+	buttonRender->Init(true, 30.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	buttonRender->setOrigin(0.0f, 30.0f);
+	testButton->AddComponent(buttonRender);
 }
 
 //getters

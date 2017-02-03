@@ -85,7 +85,7 @@ private:
 		bool mouse[3];
 		bool mouseDown[3];
 		bool mouseUp[3];
-		UINT8 mouseX, mouseY;
+		UINT16 mouseX, mouseY;
 		UINT8 clientID;
 		bool isServer;
 	};

@@ -1,7 +1,7 @@
 #include "Server.h"
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
-Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[19];
+Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[28];
 
 
 void Server::setObjectCount(int count) { 
@@ -303,8 +303,8 @@ void Server::recieveInput()
 	bIn.Read(tempState.mouseDown[i]);
 	for (unsigned int i = 0; i < 3; ++i)
 	bIn.Read(tempState.mouseUp[i]);
-	bIn.Read((UINT8)tempState.mouseX);
-	bIn.Read((UINT8)tempState.mouseY);
+	bIn.Read(tempState.mouseX);
+	bIn.Read(tempState.mouseY);
 	bIn.Read(tempState.isServer);
 
 	newInput[tempState.clientID - 1] = true;

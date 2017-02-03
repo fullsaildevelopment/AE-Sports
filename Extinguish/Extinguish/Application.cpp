@@ -39,6 +39,7 @@ bool Application::Update(float dt)
 	else //handle game code
 	{
 		//game.Update(input, dt);
+		//TODO: make input inside of game, and only allow server to update it
 		input->Update();
 		//soundEngine.ProcessAudio();
 		game.Update(dt);

@@ -18,6 +18,8 @@ ResourceManager::ResourceManager()
 ResourceManager::~ResourceManager()
 {
 	//animationSetsTable->CleanUp();
+
+
 }
 
 //void ResourceManager::CleanUp()
@@ -26,33 +28,12 @@ ResourceManager::~ResourceManager()
 //	singleton = nullptr;
 //}
 
-ID3D11Buffer* ResourceManager::CreateInstancedBuffer(int num, float3* instanced)
-{
-	ID3D11Buffer* m_instanceBuffer;
-	D3D11_BUFFER_DESC instanceBufferDesc;
-	D3D11_SUBRESOURCE_DATA instancedData;
-
-	instanceBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	instanceBufferDesc.ByteWidth = sizeof(float3) * num;
-	instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	instanceBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	instanceBufferDesc.MiscFlags = 0;
-	instanceBufferDesc.StructureByteStride = 0;
-
-	instancedData.pSysMem = instanced;
-	instancedData.SysMemPitch = 0;
-	instancedData.SysMemSlicePitch = 0;
-
-	// Create the instance buffer.
-	device->CreateBuffer(&instanceBufferDesc, &instancedData, &m_instanceBuffer);
-	return m_instanceBuffer;
-}
 
 void ResourceManager::Init(DeviceResources const * devResources)
 {
 	device = devResources->GetDevice();
 	devContext = devResources->GetDeviceContext();
-
+	
 	DoFBXExporting();
 
 	//load in shaders
@@ -63,6 +44,9 @@ void ResourceManager::Init(DeviceResources const * devResources)
 
 	//load in textures
 	LoadInTextures();
+
+	DXGI_SWAP_CHAIN_DESC tempDesc;
+	devResources->GetSwapChain()->GetDesc(&tempDesc);
 }
 
 void ResourceManager::LoadInAnimationSetsAndMeshes()
@@ -607,6 +591,7 @@ void ResourceManager::LoadAndCreateShaders()
 							{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 							{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 							{ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+							{ "INSTANCECOLOR", 0, DXGI_FORMAT_R32_UINT, 2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 },//set last value to 2 for half the cost but half the accuracy
 						};
 
 						HRESULT inputResult = device->CreateInputLayout(staticInputElementDescs, ARRAYSIZE(staticInputElementDescs), &shaderData[0], shaderData.size(), InststaticInput.GetAddressOf());
@@ -752,6 +737,7 @@ void ResourceManager::DoFBXExporting()
 
 	//////load in mage with rig and animation
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Run.fbx", "Mage", "Mage_Run");
 
 	//load in plane
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");

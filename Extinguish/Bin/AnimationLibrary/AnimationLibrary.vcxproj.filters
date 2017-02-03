@@ -45,10 +45,10 @@
     <ClInclude Include="ForFBX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HashString.h">
+    <ClInclude Include="FriendlyIOTransformNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FriendlyIOTransformNode.h">
+    <ClInclude Include="HashString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
