@@ -35,7 +35,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	{
 		blender = new Blender();
 		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
-		blender->Init(true, curAnimName, "");
+		blender->Init(curAnimName, "");
 	}
 }
 
@@ -64,7 +64,7 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 	{
 		blender = new Blender();
 		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
-		blender->Init(true, curAnimName, "");
+		blender->Init(curAnimName, "");
 	}
 }
 

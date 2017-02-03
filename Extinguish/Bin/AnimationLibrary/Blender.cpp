@@ -20,14 +20,14 @@ Blender::~Blender()
 	delete nextInterpolator;
 }
 
-void Blender::Init(bool timeBased, std::string curAnimName, std::string nextAnimName)
+void Blender::Init(std::string curAnimName, std::string nextAnimName)
 {
 	//set interpolators values
 	curInterpolator->SetAnimation(animationSet->GetAnimation(curAnimName));
-	curInterpolator->SetIsTimeBased(timeBased);
+	//curInterpolator->SetIsTimeBased(timeBased);
 
 	nextInterpolator->SetAnimation(animationSet->GetAnimation(nextAnimName));
-	nextInterpolator->SetIsTimeBased(timeBased);
+	//nextInterpolator->SetIsTimeBased(timeBased);
 }
 
 void Blender::Update(float time, unsigned int frameIndex) // i just use frameIndex for bear, so if its 0 and time isn't 0, don't update
@@ -120,7 +120,7 @@ void Blender::SetNextAnimation(std::string animName)
 	if (!nextInterpolator->HasAnimation())
 	{
 		nextInterpolator->SetAnimation(animationSet->GetAnimation(animName));
-		nextInterpolator->SetIsTimeBased(true);
+		//nextInterpolator->SetIsTimeBased(true);
 	}
 }
 
@@ -129,7 +129,7 @@ void Blender::SetNextAnimation(int animIndex)
 	if (!nextInterpolator->HasAnimation())
 	{
 		nextInterpolator->SetAnimation(animationSet->GetAnimation(animIndex));
-		nextInterpolator->SetIsTimeBased(true);
+		//nextInterpolator->SetIsTimeBased(true);
 	}
 }
 

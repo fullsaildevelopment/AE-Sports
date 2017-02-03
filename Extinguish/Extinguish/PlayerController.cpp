@@ -103,7 +103,7 @@ void PlayerController::HandleInput()
 
 	if (input->GetKeyDown('F'))
 	{
-		cout << "F" << endl;
+		//cout << "F" << endl;
 		Attack();
 	}
 }
@@ -124,9 +124,9 @@ void PlayerController::Attack()
 	//if colliding with another player
 	if (otherPlayer)
 	{
-		const float attackForce = 1000;
+		const float attackForce = 1;
 
-		XMFLOAT3 back = otherPlayer->GetForward();
+		XMFLOAT3 back = transform->GetForward();
 		back = { -back.x, -back.y, -back.z };
 
 		otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
