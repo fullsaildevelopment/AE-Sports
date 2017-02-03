@@ -758,6 +758,19 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 {
+	GameObject * testScore = new GameObject();
+	basic->AddUIObject(testScore);
+	testScore->Init("testScore");
+	Button * theSButton = new Button(true, true, L"00 : 00", (unsigned int)strlen("00 : 00"), 500.0f, 100.0f, devResources);
+	theSButton->SetGameObject(testScore);
+	theSButton->showFPS(false);
+	testScore->AddComponent(theSButton);
+	UIRenderer * scoreRender = new UIRenderer();
+	scoreRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	scoreRender->setOrigin(250.0f, 30.0f);
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	testScore->AddComponent(scoreRender);
+
 	GameObject * testButton = new GameObject();
 	basic->AddUIObject(testButton);
 	testButton->Init("testButton");
@@ -767,8 +780,8 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theButton->showFPS(true);
 	testButton->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
-	buttonRender->setOrigin(2.0f, 30.0f);
+	buttonRender->Init(true, 30.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	buttonRender->setOrigin(0.0f, 30.0f);
 	testButton->AddComponent(buttonRender);
 }
 
