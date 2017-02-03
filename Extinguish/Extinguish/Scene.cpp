@@ -389,9 +389,6 @@ void Scene::Update(float dt)
 {
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
-	//handle input
-	//this->input = input;
-	//HandleInput();
 
 	//update lights
 	//if (pointLights.size())
@@ -405,21 +402,6 @@ void Scene::Update(float dt)
 	//	devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
 	//}
 
-	//update camera (private function)
-	//UpdateCamera(dt, 5.0f, 0.75f);
-
-	//update camera constant buffer
-	//cameraBufferData.cameraposW = XMFLOAT4(camera._41, camera._42, camera._43, 1);
-	//devContext->UpdateSubresource(cameraConstantBuffer.Get(), NULL, NULL, &cameraBufferData, NULL, NULL);
-	//devContext->PSSetConstantBuffers(2, 1, cameraConstantBuffer.GetAddressOf());
-
-
-	//update view on every object
-	//XMFLOAT4X4 sceneCam;
-	//XMStoreFloat4x4(&sceneCam, XMMatrixTranspose(XMMatrixInverse(nullptr, XMLoadFloat4x4(&camera))));
-
-	//update camera first because we need an accurate camera
-	//gameObjects[0]->Update(dt, input);
 
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
@@ -448,6 +430,7 @@ void Scene::Update(float dt)
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
+		//only update game objects if this is the server
 		if (id == 1)
 		{
 			gameObjects[i]->Update(dt);
@@ -473,12 +456,16 @@ void Scene::Update(float dt)
 				renderer->SetModel(world);
 			}
 
-			renderer->Render();
+			//don't render yourself
+			if (i + 1 != id)
+			{
+				renderer->Render();
+			}
 
-			//if (i == 0)
-			//{
-			//	cout << renderer->GetBlender()->GetCurInterpolator()->GetAnimation()->GetAnimationName() << endl;
-			//}
+			if (i == 1)
+			{
+				cout << transform->GetVelocity().x << " " << transform->GetVelocity().y << " " << transform->GetVelocity().z << endl;
+			}
 		}
 	}
 

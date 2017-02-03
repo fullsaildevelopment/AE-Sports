@@ -101,7 +101,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -130,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -145,12 +145,14 @@
     <ClCompile Include="..\Bin\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\Bin\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="AnimatorController.cpp" />
     <ClCompile Include="BallController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Crosse.cpp" />
     <ClCompile Include="FloorController.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
     <ClCompile Include="Movement.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -172,7 +174,10 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="Parameter.cpp" />
     <ClCompile Include="UIRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="XTime.cpp" />
@@ -181,6 +186,7 @@
     <ClInclude Include="..\Bin\imgui\imgui.h" />
     <ClInclude Include="..\Bin\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="..\Bin\imgui\imgui_internal.h" />
+    <ClInclude Include="AnimatorController.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="BallController.h" />
@@ -191,6 +197,7 @@
     <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="Movement.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="AI.h" />
@@ -215,7 +222,10 @@
     <ClInclude Include="Server Wrapper.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Transition.h" />
+    <ClInclude Include="Parameter.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="vec3.h" />
     <ClInclude Include="vec4.h" />

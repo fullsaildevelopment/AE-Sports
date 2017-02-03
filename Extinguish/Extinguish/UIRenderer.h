@@ -20,6 +20,12 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
 	Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush;
+	
+	Microsoft::WRL::ComPtr<IWICBitmap>		   pWBitmap;
+	Microsoft::WRL::ComPtr<ID2D1Bitmap>		   pBitmap;
+	Microsoft::WRL::ComPtr<IWICImagingFactory> IWICfactory;
+	Microsoft::WRL::ComPtr<IWICBitmapDecoder>  IWICdecoder;
+	Microsoft::WRL::ComPtr<ID2D1RenderTarget>  pBRT;
 
 	D2D1_RECT_F * layoutRect;
 	bool isButton = false;
@@ -32,6 +38,7 @@ public:
 	void Init(bool isButton, float fontSize, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
 	void Update(float dt) override;
 	void Render();
+	void DecodeBitmap(PCWSTR address);
 
 	void setOrigin(float x, float y) { originX = x; originY = y; }
 };
