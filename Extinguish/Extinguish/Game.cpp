@@ -436,6 +436,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//	mageCollider1->Init(mage1);
 	//}
 
+	GameObject* goal = new GameObject();
+	basic->AddGameObject(goal);
+	goal->Init("Goal");
+	goal->InitTransform(identity, { 0,0,0 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Renderer* GoalRenderer = new Renderer();
+	goal->AddComponent(GoalRenderer);
+	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, &resourceManager, devResources);
+
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
 	mage2->Init("Mage2");
