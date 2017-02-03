@@ -7,12 +7,17 @@
 class Button : public Component
 {
 private:
+	// for rendering
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
 	float height, width, fontSize;
+	float originX, originY;
+
+	// text and functionality
 	unsigned int textLength;
-	wchar_t * text;
+//	wchar_t * text;
 	char * ctext;
 	string fps;
+	wstring text;
 	float time = 300.0f;
 	bool isActive;
 	bool isClickable;
@@ -83,12 +88,7 @@ public:
 	unsigned int getLength() { return textLength; }
 	IDWriteTypography * getTypography() { return pTypography.Get(); }
 
-	/* SETTERS */
-	void setHeight(float _height) { height = _height; }
-	void setWidth(float _width) { width = _width; }
-	void setText(WCHAR * _text) { text = _text; }
-	void setTexture(char * _textureAddress) {}
-	wchar_t * getText() { return text; }
+	wstring getText() { return text; }
 	char * getCharText() { return ctext; }
 
 	D2D1_RECT_F getRect(D2D1_SIZE_F rtSize) {
@@ -101,4 +101,20 @@ public:
 
 		return rect;
 	}
+
+	float getOriginX() { return originX; }
+	float getOriginY() { return originY; }
+
+	/* SETTERS */
+	void setHeight(float _height) { height = _height; }
+	void setWidth(float _width) { width = _width; }
+	void setText(WCHAR * _text) { text = _text; }
+	void setText(wstring _text) { text = _text; }
+	void setTexture(char * _textureAddress) {}
+	void setOrigin(float x, float y) { originX = x; originY = y; }
+
+
+
+
+
 };

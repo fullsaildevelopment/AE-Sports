@@ -12,13 +12,16 @@ void Window::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
 	ShowWind(nCmdShow);
 }
 
+extern LRESULT ImGui_ImplDX11_WndProcHandler(HWND hWnd, UINT msg);// , WPARAM wParam, LPARAM lParam);
 int Window::Update(InputManager* input)
 {
 	MSG msg;
 	bool handledMsg = true;
 
+
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
+		ImGui_ImplDX11_WndProcHandler(Window::GetHWND(), msg.message);// , wParam, lParam);
 		switch (msg.message)
 		{
 			case (WM_KEYDOWN):

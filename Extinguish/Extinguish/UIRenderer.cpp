@@ -81,7 +81,7 @@ void UIRenderer::Update(float dt)
 	Button * theButton = temp->GetComponent<Button>();
 
 	pDWriteFactory->CreateTextLayout(
-		theButton->getText(),
+		theButton->getText().c_str(),
 		theButton->getLength(),
 		pTextFormat.Get(),
 		theButton->getWidth(),
@@ -111,7 +111,6 @@ void UIRenderer::Render()
 	{
 		D2D1_SIZE_F rtSize = d2DevContext->GetSize();
 		
-		
 		d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(rtSize));
 	}
 
@@ -119,18 +118,30 @@ void UIRenderer::Render()
 	hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
 
 	d2DevContext->DrawTextLayout(
-		D2D1::Point2F(originX, originY),
+		D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
 		pTextLayout.Get(),
 		pBrush.Get()
 	);
 
 	hr = d2DevContext->EndDraw();
-	if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
+	/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
 	{
 		float t = 0;
-	}
+	}*/
 	d2DevContext->RestoreDrawingState(stateBlock.Get());
 
+	if (GetGameObject()->GetName() == "debugUI") {
+		RenderDebugUI(theButton);
+	}
+
+
+
+	stateBlock.Reset();
+	
+}
+
+void UIRenderer::RenderDebugUI(Button * theButton)
+{
 	ImGui::BeginMainMenuBar();
 
 	ImGui::Text("DEBUG BAR >>");
@@ -144,10 +155,26 @@ void UIRenderer::Render()
 
 	ImGui::EndMainMenuBar();
 
-	// if you need anything for debugging purposes, just add it here
+	//ImGui::SetNextWindowSize(ImVec2(180.0f, 80.0f));
+	//ImGui::Begin("Quick Networking");
+	//
+	//if (ImGui::Button("         Host         "))
+	//{
+	//	// start server
+	//	float temp = 0.0f;
+	//}
 
-	stateBlock.Reset();
-	
+	//if (ImGui::Button("         Join         "))
+	//{
+	//	if (ImGui::IsMouseDown(0))
+	//	{
+	//		// join server
+	//	}
+	//}
+
+	//ImGui::End();
+
+	// if you need anything for debugging purposes, just add it here
 }
 
 void UIRenderer::DecodeBitmap(PCWSTR address)

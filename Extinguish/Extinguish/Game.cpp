@@ -766,29 +766,28 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 {
 	GameObject * testScore = new GameObject();
 	basic->AddUIObject(testScore);
-	testScore->Init("testScore");
-	Button * theSButton = new Button(true, true, L"00 : 00", (unsigned int)strlen("00 : 00"), 500.0f, 100.0f, devResources);
+	testScore->Init("gameScore");
+	Button * theSButton = new Button(true, true, L"0 : 0", (unsigned int)strlen("0 : 0"), 500.0f, 100.0f, devResources);
 	theSButton->SetGameObject(testScore);
 	theSButton->showFPS(false);
+	theSButton->setOrigin(250.0f, 30.0f);
 	testScore->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
 	scoreRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
-	scoreRender->setOrigin(250.0f, 30.0f);
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 	testScore->AddComponent(scoreRender);
 
-	GameObject * testButton = new GameObject();
-	basic->AddUIObject(testButton);
-	testButton->Init("testButton");
+	GameObject * debugUI = new GameObject();
+	basic->AddUIObject(debugUI);
+	debugUI->Init("debugUI");
 	Button * theButton = new Button(true, true, L"8 Sticks & 1 Ball", (unsigned int)strlen("8 Sticks & 1 Ball"), 400.0f, 100.0f, devResources);
-	//Button * theButton = new Button(true, true, "'Time' resets for now.", (unsigned int)strlen("'Time' resets for now."));
-	theButton->SetGameObject(testButton);
+	theButton->SetGameObject(debugUI);
 	theButton->showFPS(true);
-	testButton->AddComponent(theButton);
+	theButton->setOrigin(0.0f, 30.0f);
+	debugUI->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
 	buttonRender->Init(true, 30.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
-	buttonRender->setOrigin(0.0f, 30.0f);
-	testButton->AddComponent(buttonRender);
+	debugUI->AddComponent(buttonRender);
 }
 
 //getters
