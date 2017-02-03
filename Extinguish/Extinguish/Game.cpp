@@ -597,6 +597,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox6->AddBoxCollider(meterboxcol6);
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
@@ -604,19 +606,23 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors,"Hexagon", "InstStatic", "InstancedStatic", "", "", projection, &resourceManager, devResources);
-	//HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
-	//HexFloor->AddComponent(HexFLoorCol);
+	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
+	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
 
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
 	Hex->Init("Team2");
-	Hex->InitTransform(identity, { 1,0,-5 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Hex->InitTransform(identity, { (float)-col - 3, 0, -4 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
 	Hex->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, &resourceManager, devResources);
 	Movement* ballMover3 = new Movement();
+	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10);
+	Hex->AddComponent(HexPillar);
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* gameBall = new GameObject();
 	basic->AddGameObject(gameBall);

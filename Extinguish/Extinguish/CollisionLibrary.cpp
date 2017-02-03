@@ -1209,6 +1209,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	if (topcify == 3)
 	{
 		s.m_Center = SpherePlanePoint(toptest, s);
+		s.m_Center.y += 0.0001f;
 
 		float3 n = float3(0, 1, 0);
 

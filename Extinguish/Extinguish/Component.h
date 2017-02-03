@@ -11,6 +11,7 @@ class Component : public EventHandler
 {
 private:
 	GameObject* Object;
+	bool enabled = true;
 public:
 	Component() {}
 	Component(GameObject* o) { Object = o; };
@@ -32,9 +33,10 @@ public:
 
 	//getters
 	GameObject* GetGameObject(void) { return Object; };
-
+	bool isEnabled() { return enabled; };
 	//setters
 	void SetGameObject(GameObject* object) { Object = object; }
+	void SetEnabled(bool e) { enabled = e; };
 	//Component(GameObject* o) { Object = o; };
 protected:
 	//void SetGameObject(GameObject* g) { Object = g; };

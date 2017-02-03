@@ -38,9 +38,9 @@ void GameObject::Update(float deltaTime)
 {
 	for (int i = 0; i < components.size(); ++i)
 	{
-		components[i]->Update(deltaTime);
+		if(components[i]->isEnabled())
+			components[i]->Update(deltaTime);
 	}
-
 	transform->Update(deltaTime);
 }
 
