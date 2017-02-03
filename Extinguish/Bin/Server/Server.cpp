@@ -340,7 +340,7 @@ void Server::sendPackets()
 	}
 }
 
-void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex)
+void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex)
 {
 	//if (serverObjs > 0) {
 		//	memcpy(clientStates[index].animationName, animationName, length);
@@ -352,6 +352,7 @@ void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 
 		clientStates[index].rotation = rot;
 		clientStates[index].parentIndex = parentIndex;
 		clientStates[index].animationIndex = animIndex;
+		clientStates[index].otherIndex = oIndex;
 
 	//}
 }
