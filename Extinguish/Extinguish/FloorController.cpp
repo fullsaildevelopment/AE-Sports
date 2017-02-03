@@ -17,6 +17,7 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 void FloorController::WavePattern(float dt)
 {
 	ratios += dt * transSpeed;
+	if (ratios > 1) ratios = 1;
 	for (int i = 0; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
@@ -163,11 +164,11 @@ void FloorController::ControlColors(float dt)
 }
 void FloorController::Update(float dt)
 {
-	ControlMovement(dt);
+	//ControlMovement(dt);
 	//ControlColors(dt);
 }
 
-void FloorController::SetState(int state)
+void FloorController::SetState(int state, float dt)
 {
 	if (state == -1)
 	{
@@ -177,13 +178,13 @@ void FloorController::SetState(int state)
 	{
 		currPattern = 1;
 		timeing = 10;
-		Update(0.003f);
+		Update(dt);
 	}
 	else if (state == 1)
 	{
 		currPattern = 0;
 		timeing = 0;
-		Update(0.003f);
+		Update(dt);
 	}
 	else if (state == 10)
 	{
@@ -193,7 +194,7 @@ void FloorController::SetState(int state)
 	{
 		currPattern = 0;
 		timeing = 20;
-		Update(0.003f);
+		Update(dt);
 	}
 	else if (state == 20)
 	{
@@ -203,7 +204,7 @@ void FloorController::SetState(int state)
 	{
 		currPattern = 0;
 		timeing = 40;
-		Update(0.003f);
+		Update(dt);
 	}
 	else if (state == 30)
 	{

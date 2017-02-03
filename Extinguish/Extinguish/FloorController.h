@@ -27,7 +27,7 @@ public:
 	~FloorController();
 	void MovePillar(int pillar, float ratio);
 	void LevelFloor(float dt);
-	void SetState(int state);
+	void SetState(int state, float dt);
 	void Update(float dt) override;
 	int GetState() { return transState; };
 };
