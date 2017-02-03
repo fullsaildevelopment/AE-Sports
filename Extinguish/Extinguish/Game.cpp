@@ -25,14 +25,14 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	if (isMultiplayer)
 	{
-		if (server.init("127.0.0.1", 60000) == 1)
-		{
-			isMultiplayer = true;
-			isServer = true;
-		
-			client.init("127.0.0.1", 60001);
-		}
-		else
+		//if (server.init("127.0.0.1", 60000) == 1)
+		//{
+		//	isMultiplayer = true;
+		//	isServer = true;
+		//
+		//	client.init("127.0.0.1", 60001);
+		//}
+		//else
 		{
 			isServer = false;
 			client.init("127.0.0.1", 60001);
@@ -648,7 +648,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	crosse->Init("Crosse1");
 	crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider = new SphereCollider(0.25f, crosse, true);
+	SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 	crosse->AddSphereCollider(crosseNetCollider);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
@@ -662,7 +662,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse2->Init("Crosse2");
 	crosse2->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage2->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider2 = new SphereCollider(0.25f, crosse2, true);
+	SphereCollider* crosseNetCollider2 = new SphereCollider(0.75f, crosse2, true);
 	crosse2->AddSphereCollider(crosseNetCollider2);
 	Renderer* crosseRenderer2 = new Renderer();
 	crosse2->AddComponent(crosseRenderer2);
@@ -676,7 +676,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse3->Init("Crosse3");
 	crosse3->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage3->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider3 = new SphereCollider(0.25f, crosse3, true);
+	SphereCollider* crosseNetCollider3 = new SphereCollider(0.75f, crosse3, true);
 	crosse3->AddSphereCollider(crosseNetCollider3);
 	Renderer* crosseRenderer3 = new Renderer();
 	crosse3->AddComponent(crosseRenderer3);
@@ -690,7 +690,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse4->Init("Crosse4");
 	crosse4->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage4->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider4 = new SphereCollider(0.25f, crosse4, true);
+	SphereCollider* crosseNetCollider4 = new SphereCollider(0.75f, crosse4, true);
 	crosse4->AddSphereCollider(crosseNetCollider4);
 	Renderer* crosseRenderer4 = new Renderer();
 	crosse4->AddComponent(crosseRenderer4);
@@ -704,7 +704,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse5->Init("Crosse5");
 	crosse5->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage5->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider5 = new SphereCollider(0.25f, crosse5, true);
+	SphereCollider* crosseNetCollider5 = new SphereCollider(0.75f, crosse5, true);
 	crosse5->AddSphereCollider(crosseNetCollider5);
 	Renderer* crosseRenderer5 = new Renderer();
 	crosse5->AddComponent(crosseRenderer5);
@@ -718,7 +718,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse6->Init("Crosse6");
 	crosse6->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage6->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider6 = new SphereCollider(0.25f, crosse6, true);
+	SphereCollider* crosseNetCollider6 = new SphereCollider(0.75f, crosse6, true);
 	crosse6->AddSphereCollider(crosseNetCollider6);
 	Renderer* crosseRenderer6 = new Renderer();
 	crosse6->AddComponent(crosseRenderer6);
@@ -732,7 +732,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse7->Init("Crosse7");
 	crosse7->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage7->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider7 = new SphereCollider(0.25f, crosse7, true);
+	SphereCollider* crosseNetCollider7 = new SphereCollider(0.75f, crosse7, true);
 	crosse7->AddSphereCollider(crosseNetCollider7);
 	Renderer* crosseRenderer7 = new Renderer();
 	crosse7->AddComponent(crosseRenderer7);
@@ -746,7 +746,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->Init("Crosse8");
 	crosse8->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage8->GetTransform(), nullptr, nullptr);
 	//crosse->InitTransform(identity, { 0.5f, 0.15f, 0.9f }, { 0, 1 * XM_PI, -0.25f * XM_PI }, { 0.001f, 0.001f, 0.001f }, camera->GetTransform(), nullptr, nullptr);
-	SphereCollider* crosseNetCollider8 = new SphereCollider(0.25f, crosse8, true);
+	SphereCollider* crosseNetCollider8 = new SphereCollider(0.75f, crosse8, true);
 	crosse8->AddSphereCollider(crosseNetCollider8);
 	Renderer* crosseRenderer8 = new Renderer();
 	crosse8->AddComponent(crosseRenderer8);

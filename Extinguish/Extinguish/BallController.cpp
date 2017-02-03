@@ -126,9 +126,9 @@ void BallController::SetHolder(GameObject *person)
 	isHeld = true;
 	holder = person;
 
-	transform->SetPosition(float3(0, 0, 0.1f));
 	person->GetTransform()->AddChild(me->GetTransform());
 	transform->SetParent(person->GetTransform());
+	transform->SetPosition(float3(0, 0, 0));
 
 	//turn off physics
 	physics->SetIsKinematic(true);
