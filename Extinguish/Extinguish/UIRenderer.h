@@ -30,7 +30,7 @@ private:
 	D2D1_RECT_F * layoutRect;
 	bool isButton = false;
 
-	float originX, originY;
+	void RenderDebugUI(Button * theButton);
 
 public:
 	UIRenderer();
@@ -40,6 +40,5 @@ public:
 	void Render();
 	void DecodeBitmap(PCWSTR address);
 
-	void setOrigin(float x, float y) { originX = x; originY = y; }
 };
 
