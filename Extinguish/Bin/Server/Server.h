@@ -43,7 +43,7 @@ public:
 		XMFLOAT3 rotation;
 		INT8 parentIndex;
 		INT8 animationIndex;
-		INT8 otherIndex;
+		int otherIndex;
 
 		CLIENT_GAME_STATE() {}
 	};
