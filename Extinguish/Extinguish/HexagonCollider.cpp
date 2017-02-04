@@ -49,6 +49,7 @@ void HexagonCollider::Update(float dt)
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	size_t size = (*Others).size();
+
 	if (!poses)
 	{
 		for (int i = 0; i < size; ++i)
