@@ -220,7 +220,7 @@ void DeviceResources::Present()
 {
 	//swap back buffer with buffer
 	ImGui::Render();
-	HRESULT swapResult = swapChain->Present(1, 0);
+	HRESULT swapResult = swapChain->Present(0, 0);
 }
 
 
