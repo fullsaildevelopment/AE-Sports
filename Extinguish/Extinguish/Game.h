@@ -34,7 +34,7 @@ private:
 	HashString scenesNamesTable;
 
 	//InputManager* input;
-	ResourceManager resourceManager;
+	ResourceManager* resourceManager;
 	SoundEngine* soundEngine;
 
 	bool isServer = true;

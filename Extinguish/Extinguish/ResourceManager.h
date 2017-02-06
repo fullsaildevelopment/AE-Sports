@@ -17,6 +17,8 @@
 class ResourceManager
 {
 private:
+	static ResourceManager* singleton;
+
 	std::string resourcesPath = "../Resources/";
 	std::string debugPath = "../Bin/x64/Debug/";
 	std::string ddsPath = "../Assets/Textures/DDS/";
@@ -63,8 +65,10 @@ public:
 	~ResourceManager();
 
 	void Init(DeviceResources const* devResources);
+	void Shutdown();
 
 	//getters
+	static ResourceManager* GetSingleton();
 	AnimationSet* GetAnimationSet(std::string animation);
 	ID3D11Buffer* GetVertexBuffer(std::string name);
 	ID3D11Buffer* GetIndexBuffer(std::string name);

@@ -7,16 +7,16 @@
 class Interpolator
 {
 private:
-	Animation* animation = nullptr; //soft pointer
-	float curTime;
+	Animation* animation; //soft pointer
+	std::vector<Bone>* bones;
+	KeyFrame* betweenKeyFrame; float curTime;
 	float frameTime;
 	unsigned int prevFrame;
 	unsigned int curFrame;
 	unsigned int nextFrame;
-	//float totalBlendTime;
-	std::vector<Bone>* bones;
-	//bool timeBased;
-	KeyFrame* betweenKeyFrame;
+	float speed;
+	bool doLoop;
+	bool finished;
 
 	//private helper functions
 	void Interpolate(KeyFrame* previous, KeyFrame* next, float ratio);
@@ -39,7 +39,8 @@ public:
 	//void SetIsTimeBased(bool toggle) { timeBased = toggle; }
 	void SetPrevFrame(unsigned int index) { prevFrame = index; }  // I do this when blending is done to store nextinterpolators frame into curinterpolators frame
 	void SetNextFrame(unsigned int index) { nextFrame = index; }  // I do this when blending is done to store nextinterpolators frame into curinterpolators frame
-
+	void SetSpeed(float animSpeed);
+	void SetIsLoop(bool toggle);
 
 	//getters
 	Bone GetCurrentBone(unsigned int index) { return (*bones)[index]; }
@@ -50,4 +51,6 @@ public:
 	Animation* GetAnimation();
 	unsigned int GetPrevFrame() { return prevFrame; }
 	unsigned int GetNextFrame() { return nextFrame; }
+	float GetSpeed();
+	bool IsLoop();
 };

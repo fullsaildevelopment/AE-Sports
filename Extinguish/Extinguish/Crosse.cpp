@@ -56,7 +56,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 10.0f;
+	const float throwSpeed = 5.0f;
 
 	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
 	if (ball->GetHolder() == GetGameObject())
@@ -83,7 +83,7 @@ void Crosse::Throw()
 		//transform->RotateX(XMConvertToRadians(45));
 
 		//play sound
-		SoundEngine::GetSingleton()->PlaySpearSound();
+		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
 		
 		cout << "Throw" << endl;
 	}
