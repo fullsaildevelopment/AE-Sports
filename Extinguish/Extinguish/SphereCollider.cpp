@@ -1,6 +1,7 @@
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
 #include "BoxCollider.h"
+#include "GameObject.h"
 
 
 

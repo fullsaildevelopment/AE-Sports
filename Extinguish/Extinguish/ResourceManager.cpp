@@ -7,7 +7,7 @@
 #include "ForFBX.h"
 #include "ResourceManager.h"
 
-//ResourceManager* ResourceManager::singleton = 0;
+ResourceManager* ResourceManager::singleton = 0;
 
 ResourceManager::ResourceManager()
 {
@@ -22,13 +22,7 @@ ResourceManager::~ResourceManager()
 
 }
 
-//void ResourceManager::CleanUp()
-//{
-//	delete singleton;
-//	singleton = nullptr;
-//}
-
-
+//basic//
 void ResourceManager::Init(DeviceResources const * devResources)
 {
 	device = devResources->GetDevice();
@@ -49,6 +43,13 @@ void ResourceManager::Init(DeviceResources const * devResources)
 	devResources->GetSwapChain()->GetDesc(&tempDesc);
 }
 
+void ResourceManager::Shutdown()
+{
+	delete singleton;
+	singleton = nullptr;
+}
+
+//private helper functions//
 void ResourceManager::LoadInAnimationSetsAndMeshes()
 {
 	WIN32_FIND_DATA fileData, folderData;
@@ -321,6 +322,16 @@ void ResourceManager::LoadInBasicMesh(std::string path)
 }
 
 //getters//
+
+ResourceManager* ResourceManager::GetSingleton()
+{
+	if (!singleton)
+	{
+		singleton = new ResourceManager();
+	}
+
+	return singleton;
+}
 
 ID3D11Buffer* ResourceManager::GetVertexBuffer(std::string name)
 {

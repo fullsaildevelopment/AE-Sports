@@ -2,6 +2,7 @@
 #include "CollisionLibrary.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
+#include "GameObject.h"
 
 using namespace DirectX;
 

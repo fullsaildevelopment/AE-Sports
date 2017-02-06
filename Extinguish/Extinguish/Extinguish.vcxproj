@@ -76,13 +76,13 @@
     <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\Program Files (x86)\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
+    <IncludePath>E:\Program Files (x86)\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise\include;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
     <LibraryPath>E:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <ExecutablePath>E:\Program Files %28x86%29\Visual Leak Detector\bin\Win64;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\Program Files (x86)\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
+    <IncludePath>E:\Program Files (x86)\Visual Leak Detector\include;Bin\AnimationLibrary;Bin\ShaderResources;Bin\Wwise\include;Bin\Wwise;Bin\Server;Bin\Client;Bin\EventManager;$(IncludePath);$(WindowsSDK_IncludePath);$(VC_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <LibraryPath>E:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(WindowsSdkDir)\lib\x64;$(SolutionDir)Bin\$(Platform)\$(Configuration)\;$(LibraryPath);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
     <ExecutablePath>E:\Program Files %28x86%29\Visual Leak Detector\bin\Win64;$(ExecutablePath)</ExecutablePath>
@@ -101,7 +101,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise\include;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -130,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader;$(SolutionDir)Bin\EventManager</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise\include;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -179,6 +179,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="Parameter.cpp" />
+    <ClCompile Include="Trigger.cpp" />
     <ClCompile Include="UIRenderer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="XTime.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="Parameter.h" />
+    <ClInclude Include="Trigger.h" />
     <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="vec3.h" />
     <ClInclude Include="vec4.h" />

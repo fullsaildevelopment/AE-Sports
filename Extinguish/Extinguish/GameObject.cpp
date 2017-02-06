@@ -1,4 +1,10 @@
 #include "GameObject.h"
+#include "Scene.h"
+#include "Blender.h"
+#include "Renderer.h"
+#include "Transform.h"
+#include "Button.h"
+#include "UIRenderer.h"
 
 GameObject::GameObject()
 {

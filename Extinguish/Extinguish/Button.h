@@ -8,10 +8,14 @@
 #include "InputDownEvent.h"
 #include "EventDispatcher.h"
 
+class ClientWrapper;
+class ServerWrapper;
+
 class Button : public Component
 {
 private:
 	enum BUTTON_TYPE {
+		NONE,
 		HOST,
 		JOIN,
 		PLAY,
@@ -39,13 +43,14 @@ private:
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;
+	unsigned int sceneIndex;
 
 	// some function pointer for event
 	void (*eventFunction)(void);
 
 public:
 	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
-		DeviceResources * resources, void (*func)(void));
+		DeviceResources * resources, unsigned int type);
 
 
 	Button(bool active, bool clickable, char * newText, unsigned int length);
@@ -87,7 +92,8 @@ public:
 	void setOrigin(float x, float y) { originX = x; originY = y; }
 	void setPositionMultipliers(float w, float h) { widthMult = w; heightMult = h; }
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
-	void setButtonType(unsigned int type);
+	void setButtonType();
+	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 
 	/* HELPERS*/
 
@@ -102,8 +108,4 @@ public:
 
 	void MakeHandler();
 
-private:
-	/* BUTTON FUNCTIONS */
-	void StartServer();
-	void JoinServer();
 };

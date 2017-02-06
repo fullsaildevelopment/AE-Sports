@@ -11,7 +11,6 @@ Blender::Blender()
 	//hashString = HashString::GetSingleton();
 	//resourceManager = ResourceManager::GetSingleton();
 	curBlendTime = 0;
-	
 }
 
 Blender::~Blender()
@@ -71,6 +70,8 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 			curInterpolator->SetAnimation(nextInterpolator->GetAnimation()); 
 			curInterpolator->SetPrevFrame(nextInterpolator->GetPrevFrame());
 			curInterpolator->SetNextFrame(nextInterpolator->GetNextFrame());
+			curInterpolator->SetSpeed(nextInterpolator->GetSpeed());
+			curInterpolator->SetIsLoop(nextInterpolator->IsLoop());
 
 			nextInterpolator->SetAnimation(nullptr); //set next animation to null
 		}

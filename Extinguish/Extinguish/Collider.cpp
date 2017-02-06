@@ -1,5 +1,5 @@
 #include "Collider.h"
-
+#include "GameObject.h"
 
 Collider::Collider(GameObject* o, bool trigger) : Component(o)
 {

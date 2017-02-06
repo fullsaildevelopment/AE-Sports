@@ -1,4 +1,5 @@
 #include "FloorController.h"
+#include "GameObject.h"
 
 
 FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors)

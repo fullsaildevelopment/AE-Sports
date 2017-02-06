@@ -8,7 +8,9 @@
 #include "DeviceResources.h"
 #include "../ShaderStructures/ShaderStructures.h"
 #include "Button.h"
-#include "GameObject.h"
+
+class GameObject;
+
 class Renderer : public Component
 {
 private:
@@ -32,7 +34,7 @@ private:
 	float3* m_instanced;
 	unsigned int* m_instancedcolor;
 	int numIns;
-
+	std::vector<DirectX::XMFLOAT4X4> boneOffsets;
 
 public:
 	Renderer();
@@ -57,6 +59,7 @@ public:
 	void SetView(XMFLOAT4X4 view);
 	void SetProjection(XMFLOAT4X4 projection);
 	void SetBlendInfo(BlendInfo info);
+	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4> boneOffsets);
 	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
 	//void SetBonesWorlds(std::vector<DirectX::XMFLOAT4X4> worlds) { bonesWorlds = worlds; }
 };
