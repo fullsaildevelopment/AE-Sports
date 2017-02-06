@@ -50,19 +50,21 @@ void Camera::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		if (inputDownEvent->IsServer())
-		{
-			string name;
-			name = "Camera";
-			name += to_string(inputDownEvent->GetID());
-
-			if (GetGameObject()->GetName() == name)
+		if (GetGameObject()->GetTransform()->GetParent()) {
+			if (inputDownEvent->IsServer())
 			{
-				string playerName = "Mage";
-				playerName += to_string(inputDownEvent->GetID());
+				string name;
+				name = "Camera";
+				name += to_string(inputDownEvent->GetID());
 
-				playerTransform = GetGameObject()->FindGameObject(playerName)->GetTransform();
-				MoveCamera(inputDownEvent);
+				if (GetGameObject()->GetName() == name)
+				{
+					string playerName = "Mage";
+					playerName += to_string(inputDownEvent->GetID());
+
+					playerTransform = GetGameObject()->FindGameObject(playerName)->GetTransform();
+					MoveCamera(inputDownEvent);
+				}
 			}
 		}
 	}

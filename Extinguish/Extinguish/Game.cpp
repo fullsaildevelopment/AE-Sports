@@ -23,7 +23,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//initialize resource manager
 	resourceManager.Init(devResources);
 
-	if (isMultiplayer)
+	/*if (isMultiplayer)
 	{
 		if (server.init("127.0.0.1", 60000) == 1)
 		{
@@ -38,7 +38,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 			client.init("127.0.0.1", 60001);
 		}
 		
-	}
+	}*/
 
 	currentScene = 0;
 
@@ -55,10 +55,10 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		gameStates[i] = state;
 	}
 
-	if (isServer)
+	/*if (isServer)
 	{
 		server.setObjCount(scenes[currentScene]->GetNumObjects());
-	}
+	}*/
 	
 	//init sound engine
 	std::vector<unsigned int> ids;
@@ -82,8 +82,11 @@ void Game::Update(float dt)
 {
 	if (isMultiplayer)
 	{
+		if (resourceManager.GetServer()->getObjCount() == 0)
+			resourceManager.GetServer()->setObjCount(scenes[currentScene]->GetNumObjects());
+
 		//set client id
-		Game::clientID = client.getID();
+		Game::clientID = resourceManager.GetClient()->getID();
 
 		// get current game states
 		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -149,7 +152,7 @@ void Game::Update(float dt)
 				state->animationIndex = animIndex;
 			}
 
-			server.SetGameStates(gameStates);
+			resourceManager.GetServer()->SetGameStates(gameStates);
 		}
 
 		//if (client.getID() > 0)
@@ -165,7 +168,7 @@ void Game::Update(float dt)
 		//run server
 		if (isServer)
 		{
-			int serverState = server.run();
+			int serverState = resourceManager.GetServer()->run();
 
 			//if (serverState == 2)
 			//{
@@ -174,15 +177,15 @@ void Game::Update(float dt)
 		}
 
 		//run client
-		int clientState = client.run();
+		int clientState = resourceManager.GetClient()->run();
 		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
-		if (clientState == 2 && client.getID() > 0)
+		if (clientState == 2 && resourceManager.GetClient()->getID() > 0)
 		{
 			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 
-			int id = client.getID();
+			int id = resourceManager.GetClient()->getID();
 
 			if (id != 1)
 			{
@@ -207,8 +210,8 @@ void Game::Update(float dt)
 						}
 
 						XMFLOAT3 position, rotation;
-						position = client.getLocation(i);
-						rotation = client.getRotation(i);
+						position = resourceManager.GetClient()->getLocation(i);
+						rotation = resourceManager.GetClient()->getRotation(i);
 
 						if (i == 20)
 						{
@@ -219,13 +222,13 @@ void Game::Update(float dt)
 						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
-						INT8 parentIndex = client.GetParentIndex(i);
+						INT8 parentIndex = resourceManager.GetClient()->GetParentIndex(i);
 						if (parentIndex != -1)
 						{
 							gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
 						}
 
-						INT8 animIndex = client.GetAnimationIndex(i);
+						INT8 animIndex = resourceManager.GetClient()->GetAnimationIndex(i);
 
 						if (animIndex != -1)
 						{
@@ -315,7 +318,7 @@ void Game::HandleEvent(Event* e)
 		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
-			client.sendInput(inputDownEvent);
+			resourceManager.GetClient()->sendInput(inputDownEvent);
 		}
 	}
 }
@@ -355,9 +358,6 @@ float3* CreateFloor(float d, int r, int c, float3 p)
 //add the component before you initialize, so you can cache from the game object (this works because init sets component's game object pointer)
 void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 {
-	//create menus, levels, etc.//
-
-	//create basic level
 
 	//set projection matrix
 	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
@@ -374,6 +374,30 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+
+	//create menus, levels, etc.//
+
+	Scene* menu = new Scene();
+	// ask tom
+	GameObject* camera = new GameObject();
+	menu->AddGameObject(camera);
+	camera->Init("Camera1");
+	camera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Camera* cameraController = new Camera();
+	camera->AddComponent(cameraController);
+	cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+	menu->Init(devResources, input);
+
+	menu->set2DRenderTarget(devResources->GetRenderTarget());
+
+	CreateMenu(devResources, menu);
+
+	scenes.push_back(menu);
+	scenesNamesTable.Insert("Menu");
+
+	//create basic level
+
 
 	Scene* basic = new Scene();
 
@@ -779,7 +803,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	GameObject * testScore = new GameObject();
 	basic->AddUIObject(testScore);
 	testScore->Init("gameScore");
-	Button * theSButton = new Button(true, true, L"0 : 0", (unsigned int)strlen("0 : 0"), 500.0f, 100.0f, devResources);
+	Button * theSButton = new Button(true, true, L"0 : 0", (unsigned int)strlen("0 : 0"), 500.0f, 100.0f, devResources, nullptr);
 	theSButton->SetGameObject(testScore);
 	theSButton->showFPS(false);
 	theSButton->setOrigin(250.0f, 30.0f);
@@ -792,7 +816,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
 	debugUI->Init("debugUI");
-	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 400.0f, 100.0f, devResources);
+	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 400.0f, 100.0f, devResources, nullptr);
 	theButton->SetGameObject(debugUI);
 	theButton->showFPS(true);
 	theButton->setOrigin(0.0f, 30.0f);
@@ -801,6 +825,127 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	buttonRender->Init(true, 30.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
 	debugUI->AddComponent(buttonRender);
 }
+
+void Game::StartServer()
+{
+	if (resourceManager.GetServer()->init("127.0.0.1", 60000) == 1)
+	{
+		isMultiplayer = true;
+		isServer = true;
+
+		resourceManager.GetClient()->init("127.0.0.1", 60001);
+
+		resourceManager.GetServer()->setObjCount(scenes[currentScene]->GetNumObjects());
+	}
+}
+
+void Game::JoinServer()
+{
+	isMultiplayer = true;
+	isServer = false;
+	resourceManager.GetClient()->init("127.0.0.1", 60001);
+}
+
+void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
+{
+	// title
+	GameObject * title = new GameObject();
+	scene->AddUIObject(title);
+	title->Init("title");
+	Button * tButton = new Button(true, false, L"", 0, 400.0f, 400.0f, devResources, nullptr);
+	tButton->SetGameObject(title);
+	tButton->showFPS(false);
+	tButton->setOrigin(0.0f, 0.0f);
+	tButton->setPositionMultipliers(0.5f, 0.25f);
+	title->AddComponent(tButton);
+	UIRenderer * tRender = new UIRenderer();
+	tRender->Init(true, 35.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	tRender->DecodeBitmap(L"../Assets/UI/newTitle.png");
+	title->AddComponent(tRender);
+	tRender->MakeRTSize();
+	tButton->MakeRect();
+
+	// solo button
+	GameObject * soloPlayer = new GameObject();
+	scene->AddUIObject(soloPlayer);
+	soloPlayer->Init("soloPlayer");
+	Button * sButton = new Button(true, true, L"Play Game", (unsigned int)strlen("Play Game"), 300.0f, 60.0f, devResources, nullptr);
+	sButton->SetGameObject(soloPlayer);
+	sButton->showFPS(false);
+	sButton->setOrigin(350.0f, 425.0f);
+	sButton->setPositionMultipliers(0.5f, 0.55f);
+	soloPlayer->AddComponent(sButton);
+	UIRenderer * sRender = new UIRenderer();
+	sRender->Init(true, 25.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	sRender->DecodeBitmap(L"../Assets/UI/button.png");
+	soloPlayer->AddComponent(sRender);
+	sRender->MakeRTSize();
+	sButton->MakeRect();
+	sButton->MakeHandler();
+
+
+	// host button
+	GameObject * multiPlayer = new GameObject();
+	scene->AddUIObject(multiPlayer);
+	multiPlayer->Init("multiHost");
+	Button * mButton = new Button(true, true, L"Host", (unsigned int)strlen("Host"), 145.0f, 60.0f, devResources, &StartServerStatic);
+	mButton->SetGameObject(multiPlayer);
+	mButton->showFPS(false);
+	mButton->setOrigin(350.0f, 505.0f);
+	mButton->setPositionMultipliers(0.425f, 0.65f);
+	multiPlayer->AddComponent(mButton);
+	UIRenderer * mRender = new UIRenderer();
+	mRender->Init(true, 25.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	mRender->DecodeBitmap(L"../Assets/UI/button.png");
+	multiPlayer->AddComponent(mRender);
+	mRender->MakeRTSize();
+	mButton->MakeRect();
+	mButton->MakeHandler();
+
+	// join button
+	GameObject * multiPlayer2 = new GameObject();
+	scene->AddUIObject(multiPlayer2);
+	multiPlayer->Init("multiJoin");
+	Button * mButton2 = new Button(true, true, L"Join", (unsigned int)strlen("Join"), 145.0f, 60.0f, devResources, &JoinServerStatic);
+	mButton2->SetGameObject(multiPlayer2);
+	mButton2->showFPS(false);
+	mButton2->setOrigin(500.0f, 505.0f);
+	mButton2->setPositionMultipliers(0.575f, 0.65f);
+	multiPlayer2->AddComponent(mButton2);
+	UIRenderer * mRender2 = new UIRenderer();
+	mRender2->Init(true, 25.0f, &resourceManager, devResources, devResources->GetDisableStencilState());
+	mRender2->DecodeBitmap(L"../Assets/UI/button.png");
+	multiPlayer2->AddComponent(mRender2);
+	mRender2->MakeRTSize();
+	mButton2->MakeRect();
+	mButton2->MakeHandler();
+	
+	// credits
+
+
+	// exit
+
+
+	// create lobby
+	CreateLobby(devResources, scene);
+}
+
+void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
+{
+	// host button
+
+
+	// join button
+
+
+	// input name
+
+
+	// lobby screen -- show current players
+
+}
+
+
 
 //getters
 int Game::GetClientID()

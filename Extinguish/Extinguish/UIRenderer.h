@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Button.h"
 #include "GameObject.h"
+class Button;
 class UIRenderer : public Component
 {
 private:
@@ -39,6 +40,7 @@ public:
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
+	void MakeRTSize();
 
 };
 

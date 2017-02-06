@@ -3,14 +3,31 @@
 #include "DeviceResources.h"
 #include "ResourceManager.h"
 #include "Component.h"
+#include "GameObject.h"
+#include "InputManager.h"
+#include "InputDownEvent.h"
+#include "EventDispatcher.h"
 
 class Button : public Component
 {
 private:
+	enum BUTTON_TYPE {
+		HOST,
+		JOIN,
+		PLAY,
+		CREDITS,
+		EXIT,
+		RESUME_GAME
+	};
+
 	// for rendering
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
 	float height, width, fontSize;
 	float originX, originY;
+	float widthMult, heightMult;
+	D2D1_SIZE_F rtSize;
+	D2D1_RECT_F rect;
+	BUTTON_TYPE buttonType;
 
 	// text and functionality
 	unsigned int textLength;
@@ -22,56 +39,21 @@ private:
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;
-	// some function pointer for event?
+
+	// some function pointer for event
+	void (*eventFunction)(void);
 
 public:
 	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
-		DeviceResources * resources) { 
-		isActive = active; 
-		isClickable = clickable; 
-		text = newText;
-		textLength = length;
-		height = _height;
-		width = _width;
-		HRESULT hr = resources->GetWriteFactory()->CreateTypography(pTypography.GetAddressOf());
-		if (SUCCEEDED(hr))
-		{
-			DWRITE_FONT_FEATURE fontFeature = { DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_7,
-			1 };
-			hr = pTypography->AddFontFeature(fontFeature);
-		}
-	}
+		DeviceResources * resources, void (*func)(void));
 
 
-	Button(bool active, bool clickable, char * newText, unsigned int length) {
-		isActive = active;
-		isClickable = clickable;
-		ctext = newText;
-		textLength = length;
-	}
+	Button(bool active, bool clickable, char * newText, unsigned int length);
 
-	void Update(float dt) override 
-	{
-		time -= dt;
-
-		if (time < 0)
-		{
-			time = 300.0f;
-		}
+	void Update(float dt) override;
 
 
-
-		if (showFps)
-		{
-			int _fps = (int)(1 / dt);
-			
-			fps = to_string(_fps);
-			fps += " FPS";
-		}
-	}
-
-
-	void HandleEvent(Event* e) override {};
+	void HandleEvent(Event* e) override;
 
 	void showFPS(bool fps) { showFps = fps; }
 	bool iShowFPS() { return showFps; }
@@ -91,16 +73,7 @@ public:
 	wstring getText() { return text; }
 	char * getCharText() { return ctext; }
 
-	D2D1_RECT_F getRect(D2D1_SIZE_F rtSize) {
-		D2D1_RECT_F rect = D2D1::RectF(
-			rtSize.width / 2.0f - (width / 2.0f),
-			-height,
-			rtSize.width / 2.0f + (width / 2.0f),
-			height
-		);
-
-		return rect;
-	}
+	D2D1_RECT_F getRect() {return rect;}
 
 	float getOriginX() { return originX; }
 	float getOriginY() { return originY; }
@@ -112,9 +85,25 @@ public:
 	void setText(wstring _text) { text = _text; }
 	void setTexture(char * _textureAddress) {}
 	void setOrigin(float x, float y) { originX = x; originY = y; }
+	void setPositionMultipliers(float w, float h) { widthMult = w; heightMult = h; }
+	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
+	void setButtonType(unsigned int type);
 
+	/* HELPERS*/
 
+	void MakeRect() {
+		rect = D2D1::RectF(
+			rtSize.width * widthMult - (width * 0.5f),
+			rtSize.height * heightMult - height * 0.5f,
+			rtSize.width * widthMult + (width * 0.5f),
+			rtSize.height * heightMult + height * 0.5f
+		);
+	}
 
+	void MakeHandler();
 
-
+private:
+	/* BUTTON FUNCTIONS */
+	void StartServer();
+	void JoinServer();
 };
