@@ -15,18 +15,18 @@ Renderer::~Renderer()
 
 
 //basic
-void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
+void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources)
 {
-	indexBuffer = resources->GetIndexBuffer(mesh);
-	vertexBuffer = resources->GetVertexBuffer(mesh);
-	inputLayout = resources->GetInputLayout(vsName);
-	pixelShader = resources->GetPixelShader(psName);
-	vertexShader = resources->GetVertexShader(vsName);
-	computeShader = resources->GetComputeShader(csName);
-	diffuseSRV = resources->GetShaderResourceView(mesh);
-	vertexStride = resources->GetVertexStride(mesh);
-	numVerts = resources->GetNumVertices(mesh);
-	numIndices = resources->GetNumIndices(mesh);
+	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
+	vertexBuffer = ResourceManager::GetSingleton()->GetVertexBuffer(mesh);
+	inputLayout = ResourceManager::GetSingleton()->GetInputLayout(vsName);
+	pixelShader = ResourceManager::GetSingleton()->GetPixelShader(psName);
+	vertexShader = ResourceManager::GetSingleton()->GetVertexShader(vsName);
+	computeShader = ResourceManager::GetSingleton()->GetComputeShader(csName);
+	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
+	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
+	numVerts = ResourceManager::GetSingleton()->GetNumVertices(mesh);
+	numIndices = ResourceManager::GetSingleton()->GetNumIndices(mesh);
 	devResources = deviceResources;
 	m_instanced = nullptr;
 	numIns = 0;
@@ -35,36 +35,36 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	if (!curAnimName.empty())
 	{
 		blender = new Blender();
-		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
+		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
 		blender->Init(curAnimName, "");
 	}
 }
 
-void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, ResourceManager* resources, DeviceResources* deviceResources)
+void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources)
 {
-	indexBuffer = resources->GetIndexBuffer(mesh);
-	vertexBuffer = resources->GetVertexBuffer(mesh);
-	inputLayout = resources->GetInputLayout(vsName);
-	pixelShader = resources->GetPixelShader(psName);
-	vertexShader = resources->GetVertexShader(vsName);
-	computeShader = resources->GetComputeShader(csName);
-	diffuseSRV = resources->GetShaderResourceView(mesh);
-	vertexStride = resources->GetVertexStride(mesh);
-	numVerts = resources->GetNumVertices(mesh);
-	numIndices = resources->GetNumIndices(mesh);
+	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
+	vertexBuffer = ResourceManager::GetSingleton()->GetVertexBuffer(mesh);
+	inputLayout = ResourceManager::GetSingleton()->GetInputLayout(vsName);
+	pixelShader = ResourceManager::GetSingleton()->GetPixelShader(psName);
+	vertexShader = ResourceManager::GetSingleton()->GetVertexShader(vsName);
+	computeShader = ResourceManager::GetSingleton()->GetComputeShader(csName);
+	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
+	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
+	numVerts = ResourceManager::GetSingleton()->GetNumVertices(mesh);
+	numIndices = ResourceManager::GetSingleton()->GetNumIndices(mesh);
 	devResources = deviceResources;
 	m_instanced = instanced;
 	m_instancedcolor = color;
 	numIns = numInstences;
-	instancedBuffer = resources->CreateInstancedBuffer(numInstences, instanced);
-	instancedBuffer2 = resources->CreateInstancedBuffer(numInstences, color);
-
+	instancedBuffer = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, instanced);
+	instancedBuffer2 = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, color);
+	
 	SetProjection(projection);
 
 	if (!curAnimName.empty())
 	{
 		blender = new Blender();
-		blender->SetAnimationSet(resources->GetAnimationSet(mesh));
+		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
 		blender->Init(curAnimName, "");
 	}
 }
