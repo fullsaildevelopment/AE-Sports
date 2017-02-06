@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include <iostream>
 #include "EventDispatcher.h"
+#include "GameObject.h"
 
 using namespace DirectX;
 using namespace std;

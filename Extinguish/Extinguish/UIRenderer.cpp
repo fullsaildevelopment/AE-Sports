@@ -1,4 +1,5 @@
 #include "UIRenderer.h"
+#include "GameObject.h"
 
 
 
@@ -33,7 +34,7 @@ UIRenderer::~UIRenderer()
 }
 
 
-void UIRenderer::Init(bool _isButton, float fontSize, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state)
+void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, ID3D11DepthStencilState * state)
 {
 	pDWriteFactory = deviceResources->GetWriteFactory();
 	pD2DFactory = deviceResources->GetID2D1Factory();

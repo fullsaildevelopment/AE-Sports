@@ -1,6 +1,7 @@
 #include "Renderer.h"
+#include "GameObject.h"
 
-//constructor
+//structors
 Renderer::Renderer() : Component(nullptr)
 {
 	blender = nullptr;
@@ -73,10 +74,10 @@ void Renderer::Update(float dt)
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	//update blender
-	if (blender)
-	{
-		blender->Update(dt * 0.5f, 0);
-	}
+	//if (blender)
+	//{
+	//	blender->Update(dt * 0.5f, 0);
+	//}
 
 	////set shaders
 	devContext->VSSetShader(vertexShader, NULL, NULL);
@@ -90,9 +91,9 @@ void Renderer::Update(float dt)
 	devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
 	devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
 
-	if (blender)
+	if (boneOffsets.size())
 	{
-		std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
+		//std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
 
 		BoneOffsetConstantBuffer boneOffsetsData;
 		for (int i = 0; i < boneOffsets.size(); ++i)
@@ -199,7 +200,7 @@ Blender* Renderer::GetBlender()
 	return blender;
 }
 
-//setters
+//setters//
 void Renderer::SetModel(XMMATRIX& model)
 {
 	XMFLOAT4X4 tempModel;
@@ -239,4 +240,9 @@ void Renderer::SetNextAnimation(int animIndex)
 void Renderer::SetBlendInfo(BlendInfo info)
 {
 	blender->SetBlendInfo(info);
+}
+
+void Renderer::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4> boneOffsets)
+{
+	this->boneOffsets = boneOffsets;
 }

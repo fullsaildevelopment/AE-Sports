@@ -9,8 +9,7 @@
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "FriendlyIOTransformNode.h"
 #include "vec3.h"
-#include "Client Wrapper.h"
-#include "Server Wrapper.h"
+
 
 //class Animation;
 //class BindPose;
@@ -19,6 +18,8 @@
 class ResourceManager
 {
 private:
+	static ResourceManager* singleton;
+
 	std::string resourcesPath = "../Resources/";
 	std::string debugPath = "../Bin/x64/Debug/";
 	std::string ddsPath = "../Assets/Textures/DDS/";
@@ -50,8 +51,9 @@ private:
 
 	// client server wrappers
 
-	ClientWrapper client;
-	ServerWrapper server;
+	bool isServer = true;
+	bool isMultiplayer = false;
+	bool gamePaused = false;
 
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
@@ -68,11 +70,15 @@ public:
 	~ResourceManager();
 
 	void Init(DeviceResources const* devResources);
+	void Shutdown();
+
+	// setters
+	void SetMultiplayer(bool m) { isMultiplayer = m; }
+	void SetPaused(bool m) { gamePaused = m; }
+	void SetServer(bool m) { isServer = m; }
 
 	//getters
-	ClientWrapper * GetClient() { return &client; }
-	ServerWrapper * GetServer() { return &server; }
-
+	static ResourceManager* GetSingleton();
 	AnimationSet* GetAnimationSet(std::string animation);
 	ID3D11Buffer* GetVertexBuffer(std::string name);
 	ID3D11Buffer* GetIndexBuffer(std::string name);
@@ -84,6 +90,9 @@ public:
 	int GetVertexStride(std::string name);
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
+	bool IsPaused() { return gamePaused; }
+	bool IsMultiplayer() { return isMultiplayer; }
+	bool IsServer() { return isServer; }
 	//IDWriteFactory * GetWriteFactory() { return pDWriteFactory.Get(); }
 	//IDWriteTextFormat * GetTextFormat() { return pTextFormat.Get(); }
 	//ID2D1Factory * GetID2D1Factory() { return pD2DFactory.Get(); }

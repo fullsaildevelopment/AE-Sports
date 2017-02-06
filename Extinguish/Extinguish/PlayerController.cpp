@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "EventDispatcher.h"
 #include "CapsuleCollider.h"
+#include "GameObject.h"
 
 using namespace std;
 

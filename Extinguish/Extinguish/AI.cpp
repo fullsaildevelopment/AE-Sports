@@ -1,4 +1,5 @@
 #include "AI.h"
+#include "GameObject.h"
 
 #define RunSpeed 20
 #define AttackSpeed 35

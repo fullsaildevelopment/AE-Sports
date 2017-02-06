@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "Wwise_IDs.h"
 
 class CAkFilePackageLowLevelIOBlocking;
 //class AkUniqueID;
@@ -29,8 +30,8 @@ public:
 
 	//misc
 	static SoundEngine* GetSingleton();
-	//bool PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID);
-	bool PlaySpearSound();
-	bool PlayWalkingSound();
-	bool StopWalkingSound();
+	bool PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID);
+	//bool PlaySpearSound();
+	//bool PlayWalkingSound();
+	//bool StopWalkingSound();
 };

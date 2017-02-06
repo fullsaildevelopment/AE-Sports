@@ -3,6 +3,8 @@
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "Camera.h"
 #include "Game.h"
+#include "GameObject.h"
+#include "UIRenderer.h"
 
 Scene::Scene()
 {
@@ -469,7 +471,7 @@ void Scene::Update(float dt)
 
 			if (i == 1)
 			{
-				cout << transform->GetVelocity().x << " " << transform->GetVelocity().y << " " << transform->GetVelocity().z << endl;
+				//cout << transform->GetVelocity().x << " " << transform->GetVelocity().y << " " << transform->GetVelocity().z << endl;
 			}
 		}
 	}
