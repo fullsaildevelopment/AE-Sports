@@ -6,6 +6,9 @@
 #include "EventDispatcher.h"
 #include "Physics.h"
 #include "AnimatorController.h"
+#include "State.h"
+#include "Transition.h"
+#include "Trigger.h"
 
 using namespace DirectX;
 using namespace std;
@@ -87,87 +90,16 @@ void Game::Update(float dt)
 		//set client id
 		Game::clientID = client.getID();
 
-		// get current game states
-		std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
-
 		// if server, set game states
 		if (isServer)
 		{
-			for (int i = 0; i < gameStates.size(); ++i)
-			{
-				GameState* state = gameStates[i];
-				GameObject* gameObject = (*gameObjects)[i];
-
-				float3 position = gameObject->GetTransform()->GetPosition();
-				float3 rotation = gameObject->GetTransform()->GetRotation();
-				state->position = { position.x, position.y, position.z };
-				state->rotation = { rotation.x, rotation.y, rotation.z };
-
-				int parentIndex = -1;
-				Transform* parent = gameObject->GetTransform()->GetParent();
-
-				if (parent)
-				{
-					for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
-					{
-						GameObject* gameObject2 = (*gameObjects)[parentIndex];
-
-						if (parent == gameObject2->GetTransform())
-						{
-							break;
-						}
-					}
-				}
-
-				state->parentIndex = parentIndex;
-
-				int animIndex = -1;
-				Renderer* renderer = gameObject->GetComponent<Renderer>();
-
-				if (renderer)
-				{
-					Blender* blender = renderer->GetBlender();
-
-					if (blender)
-					{
-						if (blender->GetNextInterpolator()->HasAnimation())
-						{
-							animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
-						}
-					}
-				}
-
-				if (animIndex == 1)
-				{
-					int breakpoint = 0;
-					breakpoint += 69;
-				}
-
-				state->animationIndex = animIndex;
-			}
-
-			server.SetGameStates(gameStates);
+			UpdateServerStates();
 		}
-
-		//if (client.getID() > 0)
-		//{
-		//	// get camera position
-		//	client.setLocation(gameStates[clientID]->position);
-		//	client.setRotation(gameStates[clientID]->rotation);
-
-		//	// send to server
-		//	client.sendPacket();
-		//}
 
 		//run server
 		if (isServer)
 		{
 			int serverState = server.run();
-
-			//if (serverState == 2)
-			//{
-			//	gameStates = server.getStates();
-			//}
 		}
 
 		//run client
@@ -177,79 +109,7 @@ void Game::Update(float dt)
 		// so that it can be included in update
 		if (clientState == 2 && client.getID() > 0)
 		{
-			unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
-
-			int id = client.getID();
-
-			if (id != 1)
-			{
-				//remove children of every object
-				for (unsigned int i = 0; i < numobjs; ++i)
-				{
-					GameObject* gameObject = (*gameObjects)[i];
-					gameObject->GetTransform()->RemoveChildren();
-				}
-
-				for (unsigned int i = 0; i < numobjs; ++i)
-				{
-					//if (i != 0 && i != id)
-					//if (i != id)
-					{
-						GameObject* gameObject = (*gameObjects)[i];
-						XMFLOAT3 position, rotation;
-						position = client.getLocation(i);
-						rotation = client.getRotation(i);
-
-						if (i == 20)
-						{
-							int breakpoint = 0;
-							breakpoint = 5;
-						}
-
-						gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
-						gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
-
-						INT8 parentIndex = client.GetParentIndex(i);
-						if (parentIndex != -1)
-						{
-							gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
-						}
-
-						INT8 animIndex = client.GetAnimationIndex(i);
-
-						if (animIndex != -1)
-						{
-							Renderer* renderer = gameObject->GetComponent<Renderer>();
-
-							if (renderer)
-							{
-								Blender* blender = renderer->GetBlender();
-
-								if (blender)
-								{
-									if (animIndex == 1)
-									{
-										int breakpoint = 0;
-										breakpoint += 69;
-									}
-
-									//if (!blender->GetNextInterpolator()->HasAnimation())
-									if ((blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != blender->GetAnimationSet()->GetAnimation(animIndex)->GetAnimationName()))
-									{
-										BlendInfo info;
-										info.totalBlendTime = 0.01f;
-
-										renderer->SetNextAnimation(animIndex);
-										renderer->SetBlendInfo(info);
-
-										cout << "Change in animation" << endl;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			UpdateClientObjects();
 		}
 	}
 
@@ -312,7 +172,10 @@ void Game::HandleEvent(Event* e)
 }
 
 //getters//
-
+int Game::GetClientID()
+{
+	return clientID;
+}
 
 //setters//
 float3* CreateFloor(float d, int r, int c, float3 p)
@@ -395,7 +258,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	CapsuleCollider* mageCollider1 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 	mage1->AddCapsuleCollider(mageCollider1);
 	mageCollider1->Init(mage1);
-
+	AnimatorController* mageAnim1 = new AnimatorController();
+	mage1->AddComponent(mageAnim1);
+	mageAnim1->Init("Mage", 0, "Idle");
+	State* idle = new State();
+	mageAnim1->AddState(idle);
+	idle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f);
+	State* running = new State();
+	mageAnim1->AddState(running);
+	running->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f);
 
 	//for (int i = 1; i <= 8; ++i)
 	//{
@@ -794,8 +665,143 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	debugUI->AddComponent(buttonRender);
 }
 
-//getters
-int Game::GetClientID()
+void Game::UpdateServerStates()
 {
-	return clientID;
+	// get current game states
+	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+
+	for (int i = 0; i < gameStates.size(); ++i)
+	{
+		GameState* state = gameStates[i];
+		GameObject* gameObject = (*gameObjects)[i];
+
+		float3 position = gameObject->GetTransform()->GetPosition();
+		float3 rotation = gameObject->GetTransform()->GetRotation();
+		state->position = { position.x, position.y, position.z };
+		state->rotation = { rotation.x, rotation.y, rotation.z };
+
+		int parentIndex = -1;
+		Transform* parent = gameObject->GetTransform()->GetParent();
+
+		if (parent)
+		{
+			for (parentIndex = 0; parentIndex < gameObjects->size(); ++parentIndex)
+			{
+				GameObject* gameObject2 = (*gameObjects)[parentIndex];
+
+				if (parent == gameObject2->GetTransform())
+				{
+					break;
+				}
+			}
+		}
+
+		state->parentIndex = parentIndex;
+
+		int animIndex = -1;
+		Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+		if (renderer)
+		{
+			Blender* blender = renderer->GetBlender();
+
+			if (blender)
+			{
+				if (blender->GetNextInterpolator()->HasAnimation())
+				{
+					animIndex = blender->GetAnimationSet()->GetAnimationIndex(blender->GetNextInterpolator()->GetAnimation()->GetAnimationName());
+				}
+			}
+		}
+
+		if (animIndex == 1)
+		{
+			int breakpoint = 0;
+			breakpoint += 69;
+		}
+
+		state->animationIndex = animIndex;
+	}
+
+	server.SetGameStates(gameStates);
+}
+
+void Game::UpdateClientObjects()
+{
+	// get current game states
+	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
+
+	unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+
+	int id = client.getID();
+
+	if (id != 1)
+	{
+		//remove children of every object
+		for (unsigned int i = 0; i < numobjs; ++i)
+		{
+			GameObject* gameObject = (*gameObjects)[i];
+			gameObject->GetTransform()->RemoveChildren();
+		}
+
+		for (unsigned int i = 0; i < numobjs; ++i)
+		{
+			//if (i != 0 && i != id)
+			//if (i != id)
+			{
+				GameObject* gameObject = (*gameObjects)[i];
+				XMFLOAT3 position, rotation;
+				position = client.getLocation(i);
+				rotation = client.getRotation(i);
+
+				if (i == 20)
+				{
+					int breakpoint = 0;
+					breakpoint = 5;
+				}
+
+				gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+
+				INT8 parentIndex = client.GetParentIndex(i);
+				if (parentIndex != -1)
+				{
+					gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
+				}
+
+				INT8 animIndex = client.GetAnimationIndex(i);
+
+				if (animIndex != -1)
+				{
+					Renderer* renderer = gameObject->GetComponent<Renderer>();
+
+					if (renderer)
+					{
+						Blender* blender = renderer->GetBlender();
+
+						if (blender)
+						{
+							/*								if (animIndex == 1)
+							{
+							int breakpoint = 0;
+							breakpoint += 69;
+							}*/
+
+							//if (!blender->GetNextInterpolator()->HasAnimation())
+							if ((blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != blender->GetAnimationSet()->GetAnimation(animIndex)->GetAnimationName()))
+							{
+								BlendInfo info;
+								info.totalBlendTime = 0.01f;
+
+								renderer->SetNextAnimation(animIndex);
+								renderer->SetBlendInfo(info);
+
+								cout << "Change in animation" << endl;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
