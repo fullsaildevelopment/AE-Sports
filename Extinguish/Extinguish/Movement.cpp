@@ -4,6 +4,7 @@
 #include "InputDownEvent.h"
 #include "EventDispatcher.h"
 #include "SoundEngine.h"
+#include "Game.h"
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -27,6 +28,19 @@ void Movement::Update(float dt)
 {
 	this->dt = dt;
 
+	cout << isMoving << endl;
+
+	//sound feedback
+	if (isMoving && (timeSincePlayed == 0 || timeSincePlayed > 18.0f))
+	{
+		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, Game::GetClientID());
+		timeSincePlayed = 0;
+	}
+	else if (!isMoving && timeSincePlayed)
+	{
+		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, Game::GetClientID());
+	}
+
 	if (isMoving)
 	{
 		timeSincePlayed += dt;
@@ -34,17 +48,6 @@ void Movement::Update(float dt)
 	else
 	{
 		timeSincePlayed = 0;
-	}
-
-	//sound feedback
-	if (isMoving && timeSincePlayed == 0 || timeSincePlayed > 18.0f)
-	{
-		SoundEngine::GetSingleton()->PlayWalkingSound();
-		timeSincePlayed = 0;
-	}
-	else if (!isMoving)
-	{
-		SoundEngine::GetSingleton()->StopWalkingSound();
 	}
 
 	//animation feedback
@@ -99,6 +102,8 @@ void Movement::Update(float dt)
 			}
 		}
 	}
+
+	isMoving = false;
 }
 
 void Movement::HandleEvent(Event* e)
@@ -132,8 +137,6 @@ bool Movement::IsMoving()
 void Movement::HandleInput(InputDownEvent* e)
 {
 	InputManager* input = e->GetInput();
-
-	isMoving = false;
 
 	if (input->GetKey(forward))
 	{

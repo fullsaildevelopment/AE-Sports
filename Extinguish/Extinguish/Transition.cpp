@@ -1,5 +1,7 @@
 #include "Transition.h"
 #include "Parameter.h"
+#include "State.h"
+#include "AnimatorController.h"
 
 Transition::Transition()
 {
@@ -45,6 +47,7 @@ bool Transition::Update(float dt)
 			{
 				doTransition = true;
 				timer = 0.0f; //reset timer because new timer will be used for transition duration
+				to->GetAnimationController()->TransitionTo(this);
 			}
 		}
 		else if (hasExitTime)
@@ -53,14 +56,20 @@ bool Transition::Update(float dt)
 			{
 				doTransition = true;
 				timer = 0.0f;
+				to->GetAnimationController()->TransitionTo(this);
 			}
 		}
 	}
 	else
 	{
 		//reset boolean and timer because the next frame this won't run given the state will have changed in animator controller
-		doTransition = false;
-		timer = 0.0f;
+		//when transition is done, animator controller state needs to be set
+		if (timer > transitionDuration)
+		{
+			to->GetAnimationController()->SetCurrentState(to);
+			doTransition = false;
+			timer = 0.0f;
+		}
 	}
 
 	return doTransition;

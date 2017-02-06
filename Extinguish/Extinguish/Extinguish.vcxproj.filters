@@ -156,6 +156,9 @@
     <ClCompile Include="Parameter.cpp">
       <Filter>Components\AnimatorController</Filter>
     </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Components\AnimatorController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -300,6 +303,9 @@
       <Filter>Components\AnimatorController</Filter>
     </ClInclude>
     <ClInclude Include="Parameter.h">
+      <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger.h">
       <Filter>Components\AnimatorController</Filter>
     </ClInclude>
   </ItemGroup>
