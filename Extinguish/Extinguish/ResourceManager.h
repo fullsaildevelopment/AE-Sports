@@ -10,6 +10,7 @@
 #include "FriendlyIOTransformNode.h"
 #include "vec3.h"
 
+
 //class Animation;
 //class BindPose;
 //class AnimationSet;
@@ -48,6 +49,12 @@ private:
 	std::vector<unsigned int> numVertices;
 	std::vector<unsigned int> numIndices;
 
+	// client server wrappers
+
+	bool isServer = true;
+	bool isMultiplayer = false;
+	bool gamePaused = false;
+
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
 	Animation LoadInAnimation(std::string path);
@@ -65,6 +72,11 @@ public:
 	void Init(DeviceResources const* devResources);
 	void Shutdown();
 
+	// setters
+	void SetMultiplayer(bool m) { isMultiplayer = m; }
+	void SetPaused(bool m) { gamePaused = m; }
+	void SetServer(bool m) { isServer = m; }
+
 	//getters
 	static ResourceManager* GetSingleton();
 	AnimationSet* GetAnimationSet(std::string animation);
@@ -78,6 +90,9 @@ public:
 	int GetVertexStride(std::string name);
 	int GetNumIndices(std::string name);
 	int GetNumVertices(std::string name);
+	bool IsPaused() { return gamePaused; }
+	bool IsMultiplayer() { return isMultiplayer; }
+	bool IsServer() { return isServer; }
 	//IDWriteFactory * GetWriteFactory() { return pDWriteFactory.Get(); }
 	//IDWriteTextFormat * GetTextFormat() { return pTextFormat.Get(); }
 	//ID2D1Factory * GetID2D1Factory() { return pD2DFactory.Get(); }

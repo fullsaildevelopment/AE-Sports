@@ -2,10 +2,11 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <string>
-#include "GameObject.h"
 #include "Component.h"
 #include "Transform.h"
 #include "CollisionLibrary.h"
+
+class GameObject;
 
 class Collider : public Component
 {

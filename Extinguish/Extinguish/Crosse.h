@@ -1,10 +1,11 @@
 #pragma once
 #include "Component.h"
 #include "InputManager.h"
-#include "GameObject.h"
 #include "PlayerController.h"
 #include "EventHandler.h"
 #include "InputDownEvent.h"
+
+class GameObject;
 
 class Crosse : public Component
 {

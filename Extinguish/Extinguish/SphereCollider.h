@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "Collider.h"
+class GameObject;
 
 class SphereCollider : public Collider
 {
