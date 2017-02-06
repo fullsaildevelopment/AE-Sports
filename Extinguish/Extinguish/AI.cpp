@@ -194,7 +194,7 @@ void AI::Init()
 void AI::Update(float dt)
 {
 	// if I'm the goalie
-	if (currState == goalie)
+	if (currState == goalie || currState == playboy)
 	{
 		float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
@@ -206,43 +206,77 @@ void AI::Update(float dt)
 				GetBall();
 		}
 		
+		// if i have the ball
 		if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
+		{
+			Score();
 			Paranoia();
+		}
 		
 		else
 		{
-			// run to our goal and stay there
-			if (RunTo(enemyGoal))
-				Idle();
+			if (currState == playboy)
+			{
+				if (RunTo(enemyGoal))
+					Idle();
+			}
+
+			else if (currState == goalie)
+			{
+				// run to our goal and stay there
+				if (RunTo(myGoal))
+					Idle();
+			}
 		}
 	}
 
-	// if I'm the playboy
-	else if (currState == playboy)
+	// if I'm guy1
+	else if (currState == guy1)
 	{
+		// if i have the ball
 		if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
 		{
-			bool trash = RunTo(enemyGoal);
 			Score();
+			Paranoia();
 		}
 
 		else
-		{
-			if (RunTo(enemyGoal))
-				Idle();
-		}
-	}
-
-	// if I'm guy1 || guy2
-	else if (currState == guy1 || currState == guy2)
-	{
-		GetBall();
-		Paranoia();
+			GetBall();
 	}
 
 	// if I'm the tank
 	else if (currState == tank)
-		DefendTeammate();
+	{
+		// if someone has the ball
+		if (ballClass->GetIsHeld())
+		{
+			// if they're on my team
+			if (ballClass->GetHolder()->GetTag() == me->GetTag())
+			{
+				// if it's me
+				if (ballClass->GetHolder() == me)
+				{
+					Score();
+					Paranoia();
+				}
+
+				// if it's my friend
+				else
+					DefendTeammate();
+			}
+
+			// if they're on the enemy team
+			else
+			{
+				
+			}
+		}
+
+		// if nobody has the ball
+			// Attack a random dude
+
+	}
+		
 }
 
 void AI::Idle()
@@ -309,13 +343,15 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
-	isAttacking = true;
-
 	// if they're not on my team run into target
 	if (target->GetTag() != me->GetTag() && RunTo(target))
+	{
+		isAttacking = true;
+
 		me->GetTransform()->AddVelocity(float3(AttackSpeed, AttackSpeed, AttackSpeed));
 
-	isAttacking = false;
+		isAttacking = false;
+	}
 }
 
 void AI::Paranoia()
