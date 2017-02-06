@@ -83,7 +83,7 @@ void Crosse::Throw()
 		//transform->RotateX(XMConvertToRadians(45));
 
 		//play sound
-		SoundEngine::GetSingleton()->PlaySpearSound();
+		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
 		
 		cout << "Throw" << endl;
 	}

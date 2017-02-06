@@ -34,7 +34,7 @@ private:
 	HashString scenesNamesTable;
 
 	//InputManager* input;
-	ResourceManager resourceManager;
+	ResourceManager* resourceManager;
 	SoundEngine* soundEngine;
 
 	bool isServer = false;
@@ -49,6 +49,8 @@ private:
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
 	void CreateUI(DeviceResources * devResources, Scene * basic);
+	void UpdateServerStates();
+	void UpdateClientObjects();
 public:
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);

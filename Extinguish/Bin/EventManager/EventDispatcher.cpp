@@ -6,15 +6,20 @@ EventDispatcher *EventDispatcher::singleton = 0;
 
 EventDispatcher::~EventDispatcher()
 {
-	delete singleton;
+
 }
 
-//basic
-//basic
+//basic//
 void EventDispatcher::RegisterHandler(EventHandler* handler, string handlerName)
 {
 	handlers.push_back(handler);
 	handlersTable.Insert(handlerName);
+}
+
+void EventDispatcher::Shutdown()
+{
+	delete singleton;
+	singleton = nullptr;
 }
 
 //sends event to all devices registere

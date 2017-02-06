@@ -8,7 +8,6 @@
 #include "AK/Tools/Common/AkPlatformFuncs.h"
 #include "AK/MusicEngine/Common/AkMusicEngine.h"
 #include "AkFilePackageLowLevelIOBlocking.h"
-#include "Wwise_IDs.h"
 
 #ifndef AK_OPTIMIZED
 	#include <AK/Comm/AkCommunication.h>
@@ -60,7 +59,7 @@ SoundEngine::SoundEngine()
 
 SoundEngine::~SoundEngine()
 {
-	delete singleton;
+
 }
 
 bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std::string> names)
@@ -107,6 +106,9 @@ void SoundEngine::Terminate()
 
 	//terminate memory manager
 	AK::MemoryMgr::Term();
+
+	delete singleton;
+	singleton = nullptr;
 }
 
 //misc//
@@ -120,42 +122,42 @@ SoundEngine* SoundEngine::GetSingleton()
 	return singleton;
 }
 
-//bool SoundEngine::PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID)
+bool SoundEngine::PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID)
+{
+	bool result = true;
+
+	AK::SoundEngine::PostEvent(eventID, gameObjectID);
+
+	return result;
+}
+
+//bool SoundEngine::PlaySpearSound(AkGameObjectID gameObjectID)
+//bool SoundEngine::PlaySpearSound()
 //{
 //	bool result = true;
 //
-//	AK::SoundEngine::PostEvent(eventID, gameObjectID);
+//	AkPlayingID playId =  AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
 //
 //	return result;
 //}
-
-//bool SoundEngine::PlaySpearSound(AkGameObjectID gameObjectID)
-bool SoundEngine::PlaySpearSound()
-{
-	bool result = true;
-
-	AkPlayingID playId =  AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
-
-	return result;
-}
-
-bool SoundEngine::PlayWalkingSound()
-{
-	bool result = true;
-
-	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, 1);
-
-	return result;
-}
-
-bool SoundEngine::StopWalkingSound()
-{
-	bool result = true;
-
-	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, 1);
-
-	return result;
-}
+//
+//bool SoundEngine::PlayWalkingSound()
+//{
+//	bool result = true;
+//
+//	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, 1);
+//
+//	return result;
+//}
+//
+//bool SoundEngine::StopWalkingSound()
+//{
+//	bool result = true;
+//
+//	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, 1);
+//
+//	return result;
+//}
 
 //private helper functions//
 bool SoundEngine::InitSettings()
