@@ -26,6 +26,12 @@ Transition* State::Update(float dt)
 	return result;
 }
 
+//misc//
+void State::AddTransition(Transition* transition)
+{
+	transitions.push_back(transition);
+}
+
 //getters//
 Animation* State::GetAnimation()
 {

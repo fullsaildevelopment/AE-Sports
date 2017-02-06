@@ -258,15 +258,31 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	CapsuleCollider* mageCollider1 = new CapsuleCollider(1.0f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 	mage1->AddCapsuleCollider(mageCollider1);
 	mageCollider1->Init(mage1);
+
 	AnimatorController* mageAnim1 = new AnimatorController();
 	mage1->AddComponent(mageAnim1);
 	mageAnim1->Init("Mage", 0, "Idle");
-	State* idle = new State();
-	mageAnim1->AddState(idle);
-	idle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f);
-	State* running = new State();
-	mageAnim1->AddState(running);
-	running->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f);
+	Param::Trigger* runTrigger = new Param::Trigger();
+	mageAnim1->AddParameter(runTrigger);
+	runTrigger->Init("Run", false);
+	Param::Trigger* stumbleTrigger = new Param::Trigger();
+	mageAnim1->AddParameter(runTrigger);
+	runTrigger->Init("Stumble", false);
+	//mageAnim1->AddTrigger("Run", false);
+	//mageAnim1->AddTrigger("Stumble", false);
+	State* mageIdle = new State();
+	mageAnim1->AddState(mageIdle);
+	mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 5.0f);
+	State* mageRun = new State();
+	mageAnim1->AddState(mageRun);
+	mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f);
+	State* mageStumble = new State();
+	mageAnim1->AddState(mageStumble);
+	mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("StumbleBackwards"), false, 1.0f);
+	Transition* idleToRun = new Transition();
+	mageIdle->AddTransition(idleToRun);
+	idleToRun->Init(mageIdle, mageRun, -1, 0.001f);
+	idleToRun->AddCondition(
 
 	//for (int i = 1; i <= 8; ++i)
 	//{
@@ -304,15 +320,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal->InitTransform(identity, { (float)-col, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, resourceManager, devResources);
 
 	GameObject* goal2 = new GameObject();
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
 	goal2->InitTransform(identity, { (float)col - 15, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
-	goal2->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	goal2->AddComponent(GoalRenderer2);
+	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, resourceManager, devResources);
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
