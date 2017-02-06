@@ -753,6 +753,8 @@ void ResourceManager::DoFBXExporting()
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Axis\\Axis.fbx", "Axis");
 
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Goal\\Goal.fbx", "Goal");
+
 
 #endif
 }

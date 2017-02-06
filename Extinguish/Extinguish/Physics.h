@@ -7,7 +7,7 @@ class Physics : public Component
 {
 private:
 	//const
-	const float gravity = -9.8f;
+	const float gravity = 0;
 	//const float friction 
 
 	//cache
