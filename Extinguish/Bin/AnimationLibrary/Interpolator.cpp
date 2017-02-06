@@ -20,7 +20,7 @@ Interpolator::Interpolator()
 	nextFrame = 1;
 	curFrame = 0;
 	speed = 1;
-	doLoop = false;
+	doLoop = true;
 	finished = false;
 }
 
@@ -40,13 +40,11 @@ AnimType Interpolator::Update(float time)
 			//influence time by speed
 			time *= speed;
 
-			float tweenTime = 0;
-
 			//update frame time
 			frameTime += time;
 
 			//store tweentime
-			tweenTime = animation->GetFrame(nextFrame)->GetTweenTime();
+			float tweenTime = animation->GetFrame(nextFrame)->GetTweenTime();
 
 			//if frame time passed the tween time
 			while (frameTime > tweenTime)
