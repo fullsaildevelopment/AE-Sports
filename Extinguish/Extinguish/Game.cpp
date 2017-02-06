@@ -323,7 +323,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Transition* idleToRun = new Transition();
 	mageIdle->AddTransition(idleToRun);
 	idleToRun->Init(mageIdle, mageRun, -1, 0.001f);
-	idleToRun->AddCondition(
+	//idleToRun->AddCondition(
 
 	//for (int i = 1; i <= 8; ++i)
 	//{
@@ -361,7 +361,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal->InitTransform(identity, { (float)-col, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, resourceManager, devResources);
+	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
 
 	GameObject* goal2 = new GameObject();
 	basic->AddGameObject(goal2);
@@ -369,7 +369,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal2->InitTransform(identity, { (float)col - 15, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
-	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, resourceManager, devResources);
+	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
