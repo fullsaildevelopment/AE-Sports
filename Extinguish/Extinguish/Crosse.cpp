@@ -5,6 +5,7 @@
 #include "BallController.h"
 #include "SoundEngine.h"
 #include "Includes.h"
+#include "GameObject.h"
 
 using namespace std;
 

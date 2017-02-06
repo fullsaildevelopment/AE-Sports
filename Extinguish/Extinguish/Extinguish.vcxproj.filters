@@ -159,6 +159,9 @@
     <ClCompile Include="Trigger.cpp">
       <Filter>Components\AnimatorController</Filter>
     </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">

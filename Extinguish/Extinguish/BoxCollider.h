@@ -4,6 +4,8 @@
 #include <string>
 #include "Collider.h"
 
+class GameObject;
+
 class BoxCollider : public Collider
 {
 private:

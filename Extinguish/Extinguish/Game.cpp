@@ -9,12 +9,29 @@
 #include "State.h"
 #include "Transition.h"
 #include "Trigger.h"
+#include "Transform.h"
+#include "Crosse.h"
+#include "PlayerController.h"
+#include "Camera.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+#include "CapsuleCollider.h"
+#include "SoundEngine.h"
+#include "EventHandler.h"
+#include "HexagonCollider.h"
+#include "FloorController.h"
+#include "Button.h"
+#include "UIRenderer.h"
 
 using namespace DirectX;
 using namespace std;
 
 //initialize static member
 int Game::clientID = 1;
+
+ClientWrapper Game::client;
+ServerWrapper Game::server;
+unsigned int Game::currentScene;
 
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
@@ -28,7 +45,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//initialize resource manager
 	resourceManager->Init(devResources);
 
-	if (isMultiplayer)
+	/*if (isMultiplayer)
 	{
 		if (server.init("127.0.0.1", 60000) == 1)
 		{
@@ -43,7 +60,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 			client.init("127.0.0.1", 60001);
 		}
 		
-	}
+	}*/
 
 	currentScene = 0;
 
@@ -60,10 +77,10 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 		gameStates[i] = state;
 	}
 
-	if (isServer)
+	/*if (isServer)
 	{
 		server.setObjCount(scenes[currentScene]->GetNumObjects());
-	}
+	}*/
 	
 	//init sound engine
 	std::vector<unsigned int> ids;
@@ -85,19 +102,22 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 void Game::Update(float dt)
 {
-	if (isMultiplayer)
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
+		if (server.getObjCount() == 0)
+			server.setObjCount(scenes[currentScene]->GetNumObjects());
+
 		//set client id
 		Game::clientID = client.getID();
 
 		// if server, set game states
-		if (isServer)
+		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			UpdateServerStates();
 		}
 
 		//run server
-		if (isServer)
+		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			int serverState = server.run();
 		}
@@ -158,7 +178,7 @@ void Game::HandleEvent(Event* e)
 	if (inputDownEvent)
 	{
 		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
-		if ((isServer && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
@@ -209,9 +229,6 @@ float3* CreateFloor(float d, int r, int c, float3 p)
 //add the component before you initialize, so you can cache from the game object (this works because init sets component's game object pointer)
 void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 {
-	//create menus, levels, etc.//
-
-	//create basic level
 
 	//set projection matrix
 	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
@@ -228,6 +245,30 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+
+	//create menus, levels, etc.//
+
+	Scene* menu = new Scene();
+	// ask tom
+	GameObject* camera = new GameObject();
+	menu->AddGameObject(camera);
+	camera->Init("Camera1");
+	camera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Camera* cameraController = new Camera();
+	camera->AddComponent(cameraController);
+	cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+	menu->Init(devResources, input);
+
+	menu->set2DRenderTarget(devResources->GetRenderTarget());
+
+	CreateMenu(devResources, menu);
+
+	scenes.push_back(menu);
+	scenesNamesTable.Insert("Menu");
+
+	//create basic level
+
 
 	Scene* basic = new Scene();
 
@@ -248,7 +289,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage1->InitTransform(identity, { (float)-col, 0, -12 }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer1 = new Renderer();
 	mage1->AddComponent(mageRenderer1);
-	mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover = new Movement();
 	mage1->AddComponent(mageMover);
 	mageMover->Init(5.0f, 0.75f);
@@ -336,7 +377,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage2->InitTransform(identity, { (float)-col, 0, -4 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer2 = new Renderer();
 	mage2->AddComponent(mageRenderer2);
-	mageRenderer2->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer2->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover2 = new Movement();
 	mage2->AddComponent(mageMover2);
 	mageMover2->Init(5.0f, 0.75f);
@@ -350,7 +391,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage3->InitTransform(identity, { (float)-col, 0, 4 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer3 = new Renderer();
 	mage3->AddComponent(mageRenderer3);
-	mageRenderer3->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer3->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover3 = new Movement();
 	mage3->AddComponent(mageMover3);
 	mageMover3->Init(5.0f, 0.75f);
@@ -365,7 +406,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage4->InitTransform(identity, { (float)-col, 0, 12 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer4 = new Renderer();
 	mage4->AddComponent(mageRenderer4);
-	mageRenderer4->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer4->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover4 = new Movement();
 	mage4->AddComponent(mageMover4);
 	mageMover4->Init(5.0f, 0.75f);
@@ -379,7 +420,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage5->InitTransform(identity, { (float)col, 0, -12 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer5 = new Renderer();
 	mage5->AddComponent(mageRenderer5);
-	mageRenderer5->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer5->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover5 = new Movement();
 	mage5->AddComponent(mageMover5);
 	mageMover5->Init(5.0f, 0.75f);
@@ -393,7 +434,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage6->InitTransform(identity, { (float)col, 0, -4 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer6 = new Renderer();
 	mage6->AddComponent(mageRenderer6);
-	mageRenderer6->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer6->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover6 = new Movement();
 	mage6->AddComponent(mageMover6);
 	mageMover6->Init(5.0f, 0.75f);
@@ -407,7 +448,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage7->InitTransform(identity, { (float)col, 0, 4 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer7 = new Renderer();
 	mage7->AddComponent(mageRenderer7);
-	mageRenderer7->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer7->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover7 = new Movement();
 	mage7->AddComponent(mageMover7);
 	mageMover7->Init(5.0f, 0.75f);
@@ -421,7 +462,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	mage8->InitTransform(identity, { (float)col, 0, 12 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* mageRenderer8 = new Renderer();
 	mage8->AddComponent(mageRenderer8);
-	mageRenderer8->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, resourceManager, devResources);
+	mageRenderer8->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 	Movement* mageMover8 = new Movement();
 	mage8->AddComponent(mageMover8);
 	mageMover8->Init(5.0f, 0.75f);
@@ -499,7 +540,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterbox6->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
-	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, resourceManager, devResources);
+	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
@@ -512,7 +553,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
-	HexFloorRenderer->Init(row * col, floor, colors,"Hexagon", "InstStatic", "InstancedStatic", "", "", projection, resourceManager, devResources);
+	HexFloorRenderer->Init(row * col, floor, colors,"Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
 	HexagonCollider* HexFLoorCol = new HexagonCollider( row, col, floor, 10, 2,HexFloor);
 	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
@@ -524,7 +565,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Hex->InitTransform(identity, { (float)-col - 3, 0, -4 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
 	Hex->AddComponent(ballrenderer3);
-	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, resourceManager, devResources);
+	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
 	Movement* ballMover3 = new Movement();
 	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10);
 	Hex->AddComponent(HexPillar);
@@ -540,7 +581,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	gameBall->InitTransform(identity, { 0, 0, 0.1f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, crosse->GetTransform(), nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
-	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, resourceManager, devResources);
+	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, devResources);
 	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
 	gameBall->AddSphereCollider(gameBallCollider);
 	Physics* physics = new Physics();
@@ -559,7 +600,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse->AddSphereCollider(crosseNetCollider);
 	Renderer* crosseRenderer = new Renderer();
 	crosse->AddComponent(crosseRenderer);
-	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController = new Crosse();
 	crosse->AddComponent(crosseController);
 	crosseController->Init();
@@ -573,7 +614,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse2->AddSphereCollider(crosseNetCollider2);
 	Renderer* crosseRenderer2 = new Renderer();
 	crosse2->AddComponent(crosseRenderer2);
-	crosseRenderer2->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer2->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController2 = new Crosse();
 	crosse2->AddComponent(crosseController2);
 	crosseController2->Init();
@@ -587,7 +628,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse3->AddSphereCollider(crosseNetCollider3);
 	Renderer* crosseRenderer3 = new Renderer();
 	crosse3->AddComponent(crosseRenderer3);
-	crosseRenderer3->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer3->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController3 = new Crosse();
 	crosse3->AddComponent(crosseController3);
 	crosseController3->Init();
@@ -601,7 +642,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse4->AddSphereCollider(crosseNetCollider4);
 	Renderer* crosseRenderer4 = new Renderer();
 	crosse4->AddComponent(crosseRenderer4);
-	crosseRenderer4->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer4->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController4 = new Crosse();
 	crosse4->AddComponent(crosseController4);
 	crosseController4->Init();
@@ -615,7 +656,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse5->AddSphereCollider(crosseNetCollider5);
 	Renderer* crosseRenderer5 = new Renderer();
 	crosse5->AddComponent(crosseRenderer5);
-	crosseRenderer5->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer5->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController5 = new Crosse();
 	crosse5->AddComponent(crosseController5);
 	crosseController5->Init();
@@ -629,7 +670,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse6->AddSphereCollider(crosseNetCollider6);
 	Renderer* crosseRenderer6 = new Renderer();
 	crosse6->AddComponent(crosseRenderer6);
-	crosseRenderer6->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer6->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController6 = new Crosse();
 	crosse6->AddComponent(crosseController6);
 	crosseController6->Init();
@@ -643,7 +684,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse7->AddSphereCollider(crosseNetCollider7);
 	Renderer* crosseRenderer7 = new Renderer();
 	crosse7->AddComponent(crosseRenderer7);
-	crosseRenderer7->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer7->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController7 = new Crosse();
 	crosse7->AddComponent(crosseController7);
 	crosseController7->Init();
@@ -657,7 +698,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	crosse8->AddSphereCollider(crosseNetCollider8);
 	Renderer* crosseRenderer8 = new Renderer();
 	crosse8->AddComponent(crosseRenderer8);
-	crosseRenderer8->Init("Crosse", "Static", "Static", "", "", projection, resourceManager, devResources);
+	crosseRenderer8->Init("Crosse", "Static", "Static", "", "", projection, devResources);
 	Crosse* crosseController8 = new Crosse();
 	crosse8->AddComponent(crosseController8);
 	crosseController8->Init();
@@ -674,28 +715,128 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	GameObject * testScore = new GameObject();
 	basic->AddUIObject(testScore);
 	testScore->Init("gameScore");
-	Button * theSButton = new Button(true, true, L"0 : 0", (unsigned int)strlen("0 : 0"), 500.0f, 100.0f, devResources);
+	Button * theSButton = new Button(true, true, L"0 : 0", (unsigned int)strlen("0 : 0"), 500.0f, 100.0f, devResources, 0);
 	theSButton->SetGameObject(testScore);
 	theSButton->showFPS(false);
 	theSButton->setOrigin(250.0f, 30.0f);
 	testScore->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
-	scoreRender->Init(true, 35.0f, resourceManager, devResources, devResources->GetDisableStencilState());
+	scoreRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 	testScore->AddComponent(scoreRender);
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
 	debugUI->Init("debugUI");
-	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 400.0f, 100.0f, devResources);
+	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 400.0f, 100.0f, devResources, 0);
 	theButton->SetGameObject(debugUI);
 	theButton->showFPS(true);
 	theButton->setOrigin(0.0f, 30.0f);
 	debugUI->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 30.0f, resourceManager, devResources, devResources->GetDisableStencilState());
+	buttonRender->Init(true, 30.0f, devResources, devResources->GetDisableStencilState());
 	debugUI->AddComponent(buttonRender);
 }
+
+void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
+{
+	// title
+	GameObject * title = new GameObject();
+	scene->AddUIObject(title);
+	title->Init("title");
+	Button * tButton = new Button(true, false, L"", 0, 400.0f, 400.0f, devResources, 0);
+	tButton->SetGameObject(title);
+	tButton->showFPS(false);
+	tButton->setOrigin(0.0f, 0.0f);
+	tButton->setPositionMultipliers(0.5f, 0.25f);
+	title->AddComponent(tButton);
+	UIRenderer * tRender = new UIRenderer();
+	tRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
+	tRender->DecodeBitmap(L"../Assets/UI/newTitle.png");
+	title->AddComponent(tRender);
+	tRender->MakeRTSize();
+	tButton->MakeRect();
+
+	// solo button
+	GameObject * soloPlayer = new GameObject();
+	scene->AddUIObject(soloPlayer);
+	soloPlayer->Init("soloPlayer");
+	Button * sButton = new Button(true, true, L"Play Game", (unsigned int)strlen("Play Game"), 300.0f, 60.0f, devResources, 3);
+	sButton->SetGameObject(soloPlayer);
+	sButton->showFPS(false);
+	sButton->setOrigin(350.0f, 425.0f);
+	sButton->setPositionMultipliers(0.5f, 0.55f);
+	soloPlayer->AddComponent(sButton);
+	UIRenderer * sRender = new UIRenderer();
+	sRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	sRender->DecodeBitmap(L"../Assets/UI/button.png");
+	soloPlayer->AddComponent(sRender);
+	sRender->MakeRTSize();
+	sButton->MakeRect();
+	sButton->MakeHandler();
+
+
+	// host button
+	GameObject * multiPlayer = new GameObject();
+	scene->AddUIObject(multiPlayer);
+	multiPlayer->Init("multiHost");
+	Button * mButton = new Button(true, true, L"Host", (unsigned int)strlen("Host"), 145.0f, 60.0f, devResources, 1);
+	mButton->SetGameObject(multiPlayer);
+	mButton->showFPS(false);
+	mButton->setOrigin(350.0f, 505.0f);
+	mButton->setPositionMultipliers(0.425f, 0.65f);
+	multiPlayer->AddComponent(mButton);
+	UIRenderer * mRender = new UIRenderer();
+	mRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	mRender->DecodeBitmap(L"../Assets/UI/button.png");
+	multiPlayer->AddComponent(mRender);
+	mRender->MakeRTSize();
+	mButton->MakeRect();
+	mButton->MakeHandler();
+
+	// join button
+	GameObject * multiPlayer2 = new GameObject();
+	scene->AddUIObject(multiPlayer2);
+	multiPlayer->Init("multiJoin");
+	Button * mButton2 = new Button(true, true, L"Join", (unsigned int)strlen("Join"), 145.0f, 60.0f, devResources, 2);
+	mButton2->SetGameObject(multiPlayer2);
+	mButton2->showFPS(false);
+	mButton2->setOrigin(500.0f, 505.0f);
+	mButton2->setPositionMultipliers(0.575f, 0.65f);
+	multiPlayer2->AddComponent(mButton2);
+	UIRenderer * mRender2 = new UIRenderer();
+	mRender2->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	mRender2->DecodeBitmap(L"../Assets/UI/button.png");
+	multiPlayer2->AddComponent(mRender2);
+	mRender2->MakeRTSize();
+	mButton2->MakeRect();
+	mButton2->MakeHandler();
+	
+	// credits
+
+
+	// exit
+
+
+	// create lobby
+	CreateLobby(devResources, scene);
+}
+
+void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
+{
+	// host button
+
+
+	// join button
+
+
+	// input name
+
+
+	// lobby screen -- show current players
+
+}
+
 
 void Game::UpdateServerStates()
 {

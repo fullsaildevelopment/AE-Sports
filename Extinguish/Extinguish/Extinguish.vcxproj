@@ -147,6 +147,7 @@
     <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="AnimatorController.cpp" />
     <ClCompile Include="BallController.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Crosse.cpp" />
     <ClCompile Include="FloorController.cpp" />
