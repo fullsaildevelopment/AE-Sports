@@ -279,6 +279,16 @@ bool AABBToCapsule(const AABB& box, const Capsule& cap)
 
 bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
 {
+	AABB bl;
+	AABB br;
+	bl.min = capl.m_Segment.m_Start - float3(capl.m_Radius, capl.m_Radius, capl.m_Radius);
+	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius, capl.m_Radius, capl.m_Radius);
+
+	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
+	br.max = capr.m_Segment.m_End +   float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
+
+	if (!AABBtoAABB(bl, br)) return false;
+
 	float3 cpl;
 	float3 cpr;
 
@@ -762,6 +772,17 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	//
 	//p0 = p0 + u*sc;
 	//q0 = q0 + v*tc;
+
+	AABB bl;
+	AABB br;
+	bl.min = capl.m_Segment.m_Start - float3(capl.m_Radius, capl.m_Radius, capl.m_Radius) * 2;
+	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius, capl.m_Radius, capl.m_Radius) * 2;
+
+	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius, capr.m_Radius, capr.m_Radius) * 2;
+	br.max = capr.m_Segment.m_End + float3(capr.m_Radius, capr.m_Radius, capr.m_Radius) * 2;
+
+	if (!AABBtoAABB(bl, br)) 
+		return false;
 
 	float3 p0;
 	float3 q0;
