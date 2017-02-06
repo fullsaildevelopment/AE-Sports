@@ -99,11 +99,23 @@ public:
 
 	void MakeRect() {
 		rect = D2D1::RectF(
-			rtSize.width * widthMult - (width * 0.5f),
-			rtSize.height * heightMult - height * 0.5f,
-			rtSize.width * widthMult + (width * 0.5f),
-			rtSize.height * heightMult + height * 0.5f
+			(rtSize.width * widthMult) - (width * 0.5f),
+			(rtSize.height * heightMult) - (height * 0.5f),
+			(rtSize.width * widthMult) + (width * 0.5f),
+			(rtSize.height * heightMult) + (height * 0.5f)
 		);
+
+		if (widthMult <= 0.0f)
+		{
+			rect.left = 0.0f;
+			rect.right = width;
+		}
+
+		if (heightMult <= 0.0f)
+		{
+			rect.top = 0.0f;
+			rect.bottom = height;
+		}
 	}
 
 	void MakeHandler();

@@ -703,16 +703,19 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButton->SetGameObject(testScore);
 	theSButton->showFPS(false);
 	theSButton->setOrigin(250.0f, 30.0f);
+	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	testScore->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
 	scoreRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 	testScore->AddComponent(scoreRender);
+	scoreRender->MakeRTSize();
+	theSButton->MakeRect();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
 	debugUI->Init("debugUI");
-	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 400.0f, 100.0f, devResources, 0);
+	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
 	theButton->SetGameObject(debugUI);
 	theButton->showFPS(true);
 	theButton->setOrigin(0.0f, 30.0f);
