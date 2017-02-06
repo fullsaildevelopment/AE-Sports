@@ -34,6 +34,7 @@ public:
 	//getters
 	GameObject* GetGameObject(void) { return Object; };
 	bool isEnabled() { return enabled; };
+	
 	//setters
 	void SetGameObject(GameObject* object) { Object = object; }
 	void SetEnabled(bool e) { enabled = e; };
