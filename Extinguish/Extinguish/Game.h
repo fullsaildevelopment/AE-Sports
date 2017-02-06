@@ -15,8 +15,6 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
-#include "Client Wrapper.h"
-#include "Server Wrapper.h"
 #include "SoundEngine.h"
 #include "EventHandler.h"
 #include "HexagonCollider.h"
@@ -38,10 +36,9 @@ private:
 	SoundEngine* soundEngine;
 
 	bool isServer = true;
-	bool isMultiplayer = true;
+	bool isMultiplayer = false;
+	bool gamePaused = false;
 
-	ClientWrapper client;
-	ServerWrapper server;
 	std::vector<GameState*> gameStates;
 
 	static int clientID;
@@ -49,6 +46,15 @@ private:
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
 	void CreateUI(DeviceResources * devResources, Scene * basic);
+	void CreateMenu(DeviceResources * devResources, Scene * scene);
+	void CreateLobby(DeviceResources * devResources, Scene * scene);
+
+
+	void StartServer();
+	void JoinServer();
+	static void StartServerStatic(void * obj) { static_cast<Game *>(obj)->StartServer(); }
+	static void JoinServerStatic(void * obj)  { static_cast<Game *>(obj)->JoinServer(); }
+
 public:
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);

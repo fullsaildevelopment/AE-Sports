@@ -405,18 +405,23 @@ void Scene::Update(float dt)
 
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
-	int id = Game::GetClientID();
-
-	if (id == 0)
-	{
-		id = 1;
-	}
-
-	cameraName += to_string(id);
-
-	//update cam to get accurate view
 	XMFLOAT4X4 cameraCam;
 	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
+
+	int id = Game::GetClientID();
+	if (!camObject)
+	{
+
+		if (id == 0)
+		{
+			id = 1;
+		}
+
+		cameraName += to_string(id);
+
+		//update cam to get accurate view
+		camObject = gameObjects[0]->FindGameObject(cameraName);
+	}
 	camObject->Update(dt);
 
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;

@@ -101,43 +101,42 @@ void UIRenderer::Render()
 	Button * theButton = temp->GetComponent<Button>();
 	HRESULT hr;
 
+	if (theButton->isEnabled()) {
+		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
+		//devContext->OMSetDepthStencilState(depthStencilState, 1);
+		d2DevContext->SaveDrawingState(stateBlock.Get());
+		d2DevContext->BeginDraw();
+		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
-	pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
-	//devContext->OMSetDepthStencilState(depthStencilState, 1);
-	d2DevContext->SaveDrawingState(stateBlock.Get());
-	d2DevContext->BeginDraw();
-	d2DevContext->SetTransform(D2D1::IdentityMatrix());
-	if (pBitmap)
-	{
-		D2D1_SIZE_F rtSize = d2DevContext->GetSize();
-		
-		d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(rtSize));
+		if (pBitmap)
+		{
+			d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
+		}
+
+		DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
+		hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
+
+		d2DevContext->DrawTextLayout(
+			D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
+			pTextLayout.Get(),
+			pBrush.Get()
+		);
+
+		hr = d2DevContext->EndDraw();
+		/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
+		{
+			float t = 0;
+		}*/
+		d2DevContext->RestoreDrawingState(stateBlock.Get());
+
+		if (GetGameObject()->GetName() == "debugUI") {
+			RenderDebugUI(theButton);
+		}
+
+
+
+		stateBlock.Reset();
 	}
-
-	DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
-	hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
-
-	d2DevContext->DrawTextLayout(
-		D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
-		pTextLayout.Get(),
-		pBrush.Get()
-	);
-
-	hr = d2DevContext->EndDraw();
-	/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
-	{
-		float t = 0;
-	}*/
-	d2DevContext->RestoreDrawingState(stateBlock.Get());
-
-	if (GetGameObject()->GetName() == "debugUI") {
-		RenderDebugUI(theButton);
-	}
-
-
-
-	stateBlock.Reset();
-	
 }
 
 void UIRenderer::RenderDebugUI(Button * theButton)
@@ -232,4 +231,13 @@ void UIRenderer::DecodeBitmap(PCWSTR address)
 
 	//delete pFrame;
 	//delete pConvertedSource;
+}
+
+
+void UIRenderer::MakeRTSize()
+{
+	D2D1_SIZE_F rtSize = d2DevContext->GetSize();
+	GameObject * object = GetGameObject();
+	Button * button = object->GetComponent<Button>();
+	button->setRT(rtSize);
 }

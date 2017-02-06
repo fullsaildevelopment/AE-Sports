@@ -9,6 +9,8 @@
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "FriendlyIOTransformNode.h"
 #include "vec3.h"
+#include "Client Wrapper.h"
+#include "Server Wrapper.h"
 
 //class Animation;
 //class BindPose;
@@ -46,7 +48,10 @@ private:
 	std::vector<unsigned int> numVertices;
 	std::vector<unsigned int> numIndices;
 
+	// client server wrappers
 
+	ClientWrapper client;
+	ServerWrapper server;
 
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
@@ -65,6 +70,9 @@ public:
 	void Init(DeviceResources const* devResources);
 
 	//getters
+	ClientWrapper * GetClient() { return &client; }
+	ServerWrapper * GetServer() { return &server; }
+
 	AnimationSet* GetAnimationSet(std::string animation);
 	ID3D11Buffer* GetVertexBuffer(std::string name);
 	ID3D11Buffer* GetIndexBuffer(std::string name);
