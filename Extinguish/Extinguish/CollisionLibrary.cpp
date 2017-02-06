@@ -1035,6 +1035,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	bottomtest.n = float3(0, -1, 0);
 	bottomtest.p = hex.seg.m_Start;
 	int bottomcify = ClassifySphereToPlane(bottomtest, s);
+
 	if (bottomcify == 1) return false;
 
 	if (bottomcify == 2 && topcify == 2)
