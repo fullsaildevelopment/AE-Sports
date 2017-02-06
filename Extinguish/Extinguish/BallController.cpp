@@ -46,7 +46,7 @@ void BallController::Update(float dt)
 
 	if (isThrown)
 	{
-		if (timer.TotalTime() > 0.28f)
+		if (timer.TotalTime() > 0.31f)
 		{
 			isHeld = false;
 			isThrown = false;
@@ -126,9 +126,10 @@ void BallController::SetHolder(GameObject *person)
 	isHeld = true;
 	holder = person;
 
-	transform->SetPosition(float3(0, 0, 0.1f));
 	person->GetTransform()->AddChild(me->GetTransform());
 	transform->SetParent(person->GetTransform());
+	transform->SetVelocity(float3(0, 0, 0));
+	transform->SetPosition(float3(0, 0, 0));
 
 	//turn off physics
 	physics->SetIsKinematic(true);

@@ -95,4 +95,7 @@ public:
 		newClient.setRotation(rot);
 	}
 
+
+	int getFloorState(unsigned int i) { return newClient.getFloorState(i); }
+
 };

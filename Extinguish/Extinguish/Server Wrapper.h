@@ -101,7 +101,7 @@ public:
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-			newServer.setStates(i, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation, gameStates[i]->parentIndex, gameStates[i]->animationIndex);
+			newServer.setStates(i, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation, gameStates[i]->parentIndex, gameStates[i]->animationIndex, gameStates[i]->otherIndex);
 		}
 	}
 
