@@ -11,6 +11,7 @@ Interpolator::Interpolator()
 	//betweenKeyFrame = nullptr;
 	bones = new std::vector<Bone>();
 	betweenKeyFrame = new KeyFrame();
+	animation = nullptr;
 
 	curTime = 0;
 	frameTime = 0;
@@ -18,6 +19,9 @@ Interpolator::Interpolator()
 	prevFrame = 0;
 	nextFrame = 1;
 	curFrame = 0;
+	speed = 1;
+	doLoop = false;
+	finished = false;
 }
 
 Interpolator::~Interpolator()
@@ -31,8 +35,11 @@ AnimType Interpolator::Update(float time)
 {
 	if (animation)
 	{
-		//if (timeBased)
+		if (doLoop || !finished)
 		{
+			//influence time by speed
+			time *= speed;
+
 			float tweenTime = 0;
 
 			//update frame time
@@ -52,6 +59,7 @@ AnimType Interpolator::Update(float time)
 				if (nextFrame == animation->GetNumKeyFrames())
 				{
 					nextFrame = 0;
+					finished = true;
 				}
 			}
 
@@ -67,21 +75,7 @@ AnimType Interpolator::Update(float time)
 			{
 				(*bones)[i] = *betweenKeyFrame->GetBone(i);
 			}
-
 		}
-		//else
-		//{
-		//	//get bones from current frame
-		//	KeyFrame* curKeyFrame;
-
-		//	curKeyFrame = animation->GetFrame(curFrame);
-
-		//	///bones->clear();
-		//	for (unsigned int i = 0; i < curKeyFrame->GetBones().size(); ++i)
-		//	{
-		//		(*bones)[i] = *curKeyFrame->GetBone(i);
-		//	}
-		//}
 	}
 
 	return AnimType::RUN_ONCE;
@@ -91,23 +85,42 @@ AnimType Interpolator::Update(float time)
 void Interpolator::SetAnimation(Animation* anim)
 {
 	animation = anim;
-	
-	if (anim) 
-	{ 
+
+	if (anim)
+	{
 		bones->resize(anim->GetNumBones());
-		
+
 		//reinitialize variables
 		prevFrame = 0;
 		nextFrame = 1;
 		frameTime = 0;
-
 	}
+}
+
+void Interpolator::SetSpeed(float animSpeed)
+{
+	speed = animSpeed;
+}
+
+void Interpolator::SetIsLoop(bool toggle)
+{
+	doLoop = toggle;
 }
 
 //getters//
 Animation* Interpolator::GetAnimation()
 {
 	return animation;
+}
+
+float Interpolator::GetSpeed()
+{
+	return speed;
+}
+
+bool Interpolator::IsLoop()
+{
+	return doLoop;
 }
 
 //private helper functions
@@ -119,7 +132,7 @@ void Interpolator::Interpolate(KeyFrame* previous, KeyFrame* next, float ratio)
 		Bone newBone;
 
 		XMVECTOR quarternion = XMQuaternionSlerp(XMQuaternionRotationMatrix(XMLoadFloat4x4(&previous->GetBone(i)->GetWorld())), XMQuaternionRotationMatrix(XMLoadFloat4x4(&next->GetBone(i)->GetWorld())), ratio);
-		
+
 		XMFLOAT4X4 prevBone = previous->GetBone(i)->GetWorld();
 		XMVECTOR prevTranslation = XMVectorSet(prevBone._41, prevBone._42, prevBone._43, prevBone._44);
 

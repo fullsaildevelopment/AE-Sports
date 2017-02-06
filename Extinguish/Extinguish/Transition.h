@@ -12,8 +12,10 @@ private:
 	State* to;
 	std::vector<Parameter*> conditions;
 
+	//exit time will make transition happen regardless of conditions
 	bool hasExitTime;
 	float exitTime;
+
 	float transitionDuration;
 	float timer;
 	bool doTransition;

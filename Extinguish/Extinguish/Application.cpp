@@ -1,5 +1,5 @@
-#include "Application.h"
 #include <iostream>
+#include "Application.h"
 
 void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
