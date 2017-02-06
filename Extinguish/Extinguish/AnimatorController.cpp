@@ -4,6 +4,7 @@
 #include "Blender.h"
 #include "Transition.h"
 #include "Renderer.h"
+#include "Trigger.h"
 
 AnimatorController::AnimatorController()
 {
@@ -62,6 +63,16 @@ void AnimatorController::AddState(State* state)
 void AnimatorController::AddParameter(Parameter* parameter)
 {
 	parameters.push_back(parameter);
+}
+
+void AnimatorController::AddTrigger(std::string name, bool toggle)
+{
+	Param::Trigger* trigger = new Param::Trigger();
+
+	trigger->SetName(name);
+	trigger->SetTrigger(toggle);
+
+	parameters.push_back(trigger);
 }
 
 void AnimatorController::TransitionTo(Transition* transition)

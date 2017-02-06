@@ -20,6 +20,9 @@ public:
 	void Init(AnimatorController* controller, Animation* anim, bool doLoop, float animSpeed);
 	Transition* Update(float dt);
 
+	//misc
+	void AddTransition(Transition* transition);
+
 	//getters//
 	Animation* GetAnimation();
 	AnimatorController* GetAnimationController();

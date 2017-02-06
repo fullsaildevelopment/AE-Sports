@@ -30,6 +30,7 @@ public:
 	//void CreateAndAddState(std::string animName, bool doLoop, float animSpeed);
 	void AddState(State* state);
 	void AddParameter(Parameter* parameter);
+	void AddTrigger(std::string name, bool toggle);
 	void TransitionTo(Transition* transition);
 
 	//getters//

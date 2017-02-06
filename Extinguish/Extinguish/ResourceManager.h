@@ -48,8 +48,6 @@ private:
 	std::vector<unsigned int> numVertices;
 	std::vector<unsigned int> numIndices;
 
-
-
 	//private helper functions
 	Skeleton LoadInSkeleton(std::string path);
 	Animation LoadInAnimation(std::string path);

@@ -20,6 +20,15 @@ void Transition::Init(State* curState, State* nextState, float exitTime, float t
 	to = nextState;
 	this->exitTime = exitTime;
 	this->transitionDuration = transitionDuration;
+
+	if (exitTime != -1)
+	{
+		hasExitTime = true;
+	}
+	else
+	{
+		hasExitTime = false;
+	}
 }
 
 bool Transition::Update(float dt)
