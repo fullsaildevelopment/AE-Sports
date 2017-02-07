@@ -5,15 +5,17 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "UIRenderer.h"
+#include "HashString.h"
 
 Scene::Scene()
 {
-	
+	gameObjectsTable = new HashString();
 }
 
 Scene::~Scene()
 {
 //	depthDisabledStencilState.ReleaseAndGetAddressOf();
+	delete gameObjectsTable;
 }
 
 //basic//
@@ -464,14 +466,14 @@ void Scene::Update(float dt)
 			}
 
 			//don't render yourself
-			if (i + 1 != id)
+			if (i != (id - 1) * 3 + 1)
 			{
 				renderer->Render();
 			}
-
-			if (i == 1)
+			else
 			{
-				//cout << transform->GetVelocity().x << " " << transform->GetVelocity().y << " " << transform->GetVelocity().z << endl;
+				int breakPoint = 0;
+				breakPoint++;
 			}
 		}
 	}
@@ -687,10 +689,25 @@ void Scene::AddGameObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	gameObjects.push_back(gameObject);
+	gameObjectsTable->Insert(gameObject->GetName());
 }
 
 void Scene::AddUIObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	uiObjects.push_back(gameObject);
+}
+
+//getters//
+GameObject* Scene::GetGameObject(std::string name)
+{
+	GameObject* result = nullptr;
+	int index = gameObjectsTable->GetKey(name);
+
+	if (index != -1)
+	{
+		result = gameObjects[index];
+	}
+
+	return result;
 }
