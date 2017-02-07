@@ -382,7 +382,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,10,3 }, { -3,0,0 });
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,20,3 }, { -3,0,0 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
@@ -394,7 +394,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 2,7,2 }, { -2,0,0 });
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 3,20,3 }, { -3,0,0 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
@@ -566,7 +566,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
-	meterbox6->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
