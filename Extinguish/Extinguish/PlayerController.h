@@ -1,9 +1,9 @@
 #pragma once
 #include "Component.h"
 #include "InputManager.h"
-#include "GameObject.h"
 #include "Transform.h"
 
+class GameObject;
 class Camera;
 
 class PlayerController : public Component

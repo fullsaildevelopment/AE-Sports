@@ -2,13 +2,8 @@
 #include <vector>
 #include <string>
 #include <DirectXMath.h>
-#include "Scene.h"
-#include "Blender.h"
-#include "Renderer.h"
-#include "Transform.h"
 #include "InputManager.h"
-#include "Button.h"
-#include "UIRenderer.h"
+#include "vec3.h"
 
 class BoxCollider;
 class SphereCollider;
@@ -17,6 +12,8 @@ class Component;
 class Collider;
 class Scene;
 class Button;
+class Transform;
+class UIRenderer;
 
 class GameObject
 {

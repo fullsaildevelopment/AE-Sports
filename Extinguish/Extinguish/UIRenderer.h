@@ -4,7 +4,9 @@
 #include "ResourceManager.h"
 #include "Component.h"
 #include "Button.h"
-#include "GameObject.h"
+
+class GameObject;
+class Button;
 class UIRenderer : public Component
 {
 private:
@@ -35,10 +37,11 @@ private:
 public:
 	UIRenderer();
 	~UIRenderer();
-	void Init(bool isButton, float fontSize, ResourceManager* resources, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
+	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
+	void MakeRTSize();
 
 };
 

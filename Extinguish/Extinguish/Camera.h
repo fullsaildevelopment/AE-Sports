@@ -1,10 +1,11 @@
 #pragma once
 #include <DirectXMath.h>
-#include "GameObject.h"
 #include "Component.h"
 #include "Transform.h"
 #include "InputManager.h"
 #include "InputDownEvent.h"
+
+class GameObject;
 
 class Camera : public Component
 {

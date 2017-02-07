@@ -7,7 +7,6 @@
 #include "DeviceResources.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "GameObject.h"
 #include "InputManager.h"
 #include "Transform.h"
 #include "PlayerController.h"
@@ -16,6 +15,7 @@
 #define NUMOFSPOTLIGHTS 0
 // in regards to shaders and what not, if we want multiple ones, we can have an enum and a member to choose which num from enum we want
 
+class GameObject;
 
 class Scene
 {

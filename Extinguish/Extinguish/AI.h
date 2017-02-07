@@ -1,9 +1,10 @@
 #pragma once
 #include "Component.h"
-#include "GameObject.h"
 #include "vec3.h"
 #include "BallController.h"
 #include "CapsuleCollider.h"
+
+class GameObject;
 
 class AI : public Component
 {

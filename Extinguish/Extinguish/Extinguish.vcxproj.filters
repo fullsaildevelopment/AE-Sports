@@ -159,6 +159,12 @@
     <ClCompile Include="Trigger.cpp">
       <Filter>Components\AnimatorController</Filter>
     </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Goal.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -307,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="Trigger.h">
       <Filter>Components\AnimatorController</Filter>
+    </ClInclude>
+    <ClInclude Include="Goal.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

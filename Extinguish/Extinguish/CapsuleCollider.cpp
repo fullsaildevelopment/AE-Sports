@@ -1,6 +1,7 @@
 #include "CapsuleCollider.h"
 #include "SphereCollider.h"
 #include "BoxCollider.h"
+#include "GameObject.h"
 
 using namespace DirectX;
 

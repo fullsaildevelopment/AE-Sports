@@ -14,6 +14,7 @@ private:
 	bool shutdown = false;
 	bool noPeer = false;
 	std::vector<GameState*> states;
+	unsigned int objCount = 0;
 
 public:
 	~ServerWrapper() { 
@@ -127,6 +128,7 @@ public:
 
 	void setObjCount(int count)
 	{
+		objCount = count;
 		newServer.setObjectCount(count);
 	}
 
@@ -144,4 +146,6 @@ public:
 	{
 		return newServer.
 	}*/
+
+	unsigned int getObjCount() { return objCount; }
 };
