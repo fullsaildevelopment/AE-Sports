@@ -378,7 +378,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* goal = new GameObject();
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { 0, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -7, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
@@ -390,7 +390,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* goal2 = new GameObject();
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { 0, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -7, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
@@ -398,7 +398,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
