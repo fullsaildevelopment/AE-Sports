@@ -2,6 +2,9 @@
 #include "Parameter.h"
 #include "State.h"
 #include "AnimatorController.h"
+#include <iostream>
+
+using namespace std;
 
 Transition::Transition()
 {
@@ -76,6 +79,7 @@ bool Transition::Update(float dt)
 		if (timer > transitionDuration)
 		{
 			to->GetAnimationController()->SetCurrentState(to);
+			cout << to->GetName() << endl;
 			doTransition = false;
 			timer = 0.0f;
 		}

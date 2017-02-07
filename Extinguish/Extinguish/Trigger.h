@@ -7,14 +7,15 @@ namespace Param
 	class Trigger : public Parameter
 	{
 	private:
-		std::string name;
 		bool trigger;
 	public:
 		void Init(std::string triggerName, bool toggle);
-		bool Check() override;
+		bool Check() override; //check will eat bool if true
+
+		//getter//
+		bool GetTrigger() const; //get trigger will not harm bool
 
 		//setter//
-		void SetTrigger(bool toggle);
-		void SetName(std::string triggerName);
+		void SetTrigger();
 	};
 }

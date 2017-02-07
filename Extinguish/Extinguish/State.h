@@ -9,6 +9,7 @@ class AnimatorController;
 class State
 {
 private:
+	std::string name;
 	AnimatorController* animController; //need a reference to it so we can call its functions
 	Animation* animation;
 	std::vector<Transition*> transitions;
@@ -17,10 +18,10 @@ private:
 
 public:
 	//basic//
-	void Init(AnimatorController* controller, Animation* anim, bool doLoop, float animSpeed);
+	void Init(AnimatorController* controller, Animation* anim, bool doLoop, float animSpeed, std::string stateName);
 	Transition* Update(float dt);
 
-	//misc
+	//misc//
 	void AddTransition(Transition* transition);
 
 	//getters//
@@ -28,6 +29,7 @@ public:
 	AnimatorController* GetAnimationController();
 	bool DoesItLoop();
 	float GetSpeed();
+	std::string GetName();
 
 	//setters//
 	void SetAnimation(Animation* anim);

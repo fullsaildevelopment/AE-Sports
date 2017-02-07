@@ -4,7 +4,7 @@ namespace Param
 {
 	void Trigger::Init(std::string triggerName, bool toggle)
 	{
-		name = triggerName;
+		SetName(triggerName);
 		trigger = toggle;
 	}
 
@@ -22,13 +22,15 @@ namespace Param
 		return result;
 	}
 
-	void Trigger::SetTrigger(bool toggle)
+	//getter//
+	bool Trigger::GetTrigger() const
 	{
-		trigger = toggle;
+		return trigger;
 	}
 
-	void Trigger::SetName(std::string triggerName)
+	//setter//
+	void Trigger::SetTrigger()
 	{
-		name = triggerName;
+		trigger = true;
 	}
 }
