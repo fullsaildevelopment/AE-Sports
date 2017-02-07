@@ -3,6 +3,7 @@
 #include "CapsuleCollider.h"
 #include "BoxCollider.h"
 #include "Physics.h"
+#include "GameObject.h"
 
 HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collider(o, false)
 {

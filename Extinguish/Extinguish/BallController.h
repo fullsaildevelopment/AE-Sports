@@ -1,5 +1,4 @@
 #pragma once
-#include "GameObject.h"
 #include "Component.h"
 #include "CapsuleCollider.h"
 #include "SphereCollider.h"
@@ -7,6 +6,7 @@
 #include "XTime.h"
 
 class Physics;
+class GameObject;
 
 class BallController : public Component
 {

@@ -147,9 +147,11 @@
     <ClCompile Include="..\Bin\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="AnimatorController.cpp" />
     <ClCompile Include="BallController.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Crosse.cpp" />
     <ClCompile Include="FloorController.cpp" />
+    <ClCompile Include="Goal.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Physics.cpp" />
@@ -194,6 +196,7 @@
     <ClInclude Include="Client Wrapper.h" />
     <ClInclude Include="Crosse.h" />
     <ClInclude Include="FloorController.h" />
+    <ClInclude Include="Goal.h" />
     <ClInclude Include="HexagonCollider.h" />
     <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />

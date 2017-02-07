@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 
+class GameObject;
 class Transform;
 
 class Physics : public Component

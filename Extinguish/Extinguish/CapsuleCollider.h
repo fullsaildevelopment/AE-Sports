@@ -4,6 +4,7 @@
 #include <string>
 #include "Collider.h"
 
+class GameObject;
 class CapsuleCollider : public Collider
 {
 private:
