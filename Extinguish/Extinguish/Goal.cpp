@@ -25,11 +25,7 @@ void Goal::Score(int team)
 	se->SetTeam(team);
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
 	std::vector<GameObject*>* go = GetGameObject()->GetGameObjects();
-	for (int i = 0; i < go->size(); ++go)
-	{
-		if ((*go)[i]->GetName() == "GameBall")
-		{
-			(*go)[i]->GetTransform()->SetPosition({ 0,10,-25 });
-		}
-	}
+	Transform* bt = GetGameObject()->FindGameObject("GameBall")->GetTransform();
+	bt->SetPosition({ 0,10,-20.5f });
+	bt->SetVelocity({ 0,0,0 });
 }
