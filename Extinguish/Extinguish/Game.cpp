@@ -22,6 +22,8 @@
 #include "FloorController.h"
 #include "Button.h"
 #include "UIRenderer.h"
+#include "ScoreEvent.h"
+#include "Goal.h"
 
 using namespace DirectX;
 using namespace std;
@@ -194,6 +196,26 @@ void Game::HandleEvent(Event* e)
 			client.sendInput(inputDownEvent);
 		}
 	}
+	else 
+	{
+		ScoreEvent* SEvent = dynamic_cast<ScoreEvent*>(e);
+		if (SEvent)
+		{
+			switch (SEvent->GetTeam())
+			{
+			case 0:
+				++Team1Score;
+				break;
+			case 1:
+				++Team2Score;
+				break;
+			default:
+				break;
+			}
+			//Reset Game
+
+		}
+	}
 }
 
 //getters//
@@ -344,21 +366,31 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//	mageCollider1->Init(mage1);
 	//}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	GameObject* goal = new GameObject();
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { (float)-col, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { 0, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,10,3 }, { -3,0,0 });
+	goal->AddBoxCollider(Goal1col);
+	Goal* g1 = new Goal(goal);
+	goal->AddComponent(g1);
 
 	GameObject* goal2 = new GameObject();
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { (float)col - 15, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { 0, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
-	goal2->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
+	goal2->AddComponent(GoalRenderer2);
+	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 2,7,2 }, { -2,0,0 });
+	goal2->AddBoxCollider(Goal2col);
+	Goal* g2 = new Goal(goal2);
+	goal2->AddComponent(g2);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);

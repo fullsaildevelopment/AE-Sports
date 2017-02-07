@@ -31,6 +31,8 @@ public:
 	static ClientWrapper client;
 	static ServerWrapper server;
 	static unsigned int currentScene;
+	int Team1Score;
+	int Team2Score;
 private:
 	std::vector<Scene*> scenes;
 	HashString scenesNamesTable;
