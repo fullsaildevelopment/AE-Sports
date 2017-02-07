@@ -24,4 +24,12 @@ void Goal::Score(int team)
 	ScoreEvent* se = new ScoreEvent();
 	se->SetTeam(team);
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
+	std::vector<GameObject*>* go = GetGameObject()->GetGameObjects();
+	for (int i = 0; i < go->size(); ++go)
+	{
+		if ((*go)[i]->GetName() == "GameBall")
+		{
+			(*go)[i]->GetTransform()->SetPosition({ 0,10,-25 });
+		}
+	}
 }

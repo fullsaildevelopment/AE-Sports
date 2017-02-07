@@ -159,28 +159,14 @@ void FloorController::ControlColors(float dt)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			if (i < tr * 0.5f)
-				if (i < tr * 0.25f)
-					colors[i * col + j] = 0x0000FF00;
-				else
-					colors[i * col + j] = 0xF000F000;
-			else if (i < tr * 0.75f)
-				colors[i * col + j] = 0x00FF0000;
-			else colors[i * col + j] = 0x0F000F00;
+			colors[i * col + j] = 0x0000FF00;
 		}
 	}
 	for (int i = tr; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			if (i < tr * 1.5f)
-				if(i < tr * 1.25f)
-					colors[i * col + j] = 0x0F0F0000;
-				else
-					colors[i * col + j] = 0x0F00F0F0;
-			else if(i < tr * 1.75f)
-				colors[i * col + j] = 0x00F0F000;
-			else colors[i * col + j] = 0x000FF000;
+			colors[i * col + j] = 0x0F0F0000;
 		}
 	}
 }
