@@ -2,6 +2,7 @@
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
 Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[28];
+Server::GAME_STATE * Server::gameState = new GAME_STATE();
 
 
 void Server::setObjectCount(int count) { 
@@ -362,7 +363,7 @@ void Server::sendState()
 	BitStream bOut;
 	bOut.Write((MessageID)ID_INCOMING_STATE);
 
-	bOut.Write(gameState.scoreA);
-	bOut.Write(gameState.scoreB);
-	bOut.Write(gameState.time);
+	bOut.Write(gameState->scoreA);
+	bOut.Write(gameState->scoreB);
+	bOut.Write(gameState->time);
 }

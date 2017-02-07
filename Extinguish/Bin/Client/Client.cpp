@@ -8,6 +8,7 @@ char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
 Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[28];
+Client::GAME_STATE * Client::gameState = new GAME_STATE();
 //std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
 
@@ -357,7 +358,7 @@ void Client::receiveGameState()
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
-	bIn.Read(gameState.scoreA);
-	bIn.Read(gameState.scoreB);
-	bIn.Read(gameState.time);
+	bIn.Read(gameState->scoreA);
+	bIn.Read(gameState->scoreB);
+	bIn.Read(gameState->time);
 }
