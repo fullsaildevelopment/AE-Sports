@@ -756,6 +756,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	testScore->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
 	theSButton->MakeRect();
+	scoreRender->InitMetrics();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
@@ -807,7 +808,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	sRender->MakeRTSize();
 	sButton->MakeRect();
 	sButton->MakeHandler();
-
+	sRender->InitMetrics();
 
 	// host button
 	GameObject * multiPlayer = new GameObject();
@@ -827,6 +828,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender->MakeRTSize();
 	mButton->MakeRect();
 	mButton->MakeHandler();
+	mRender->InitMetrics();
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
@@ -846,6 +848,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender2->MakeRTSize();
 	mButton2->MakeRect();
 	mButton2->MakeHandler();
+	mRender2->InitMetrics();
 	
 	// credits
 
