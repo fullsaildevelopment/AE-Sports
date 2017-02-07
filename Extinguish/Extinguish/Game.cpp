@@ -127,9 +127,14 @@ void Game::Update(float dt)
 		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
-		if (clientState == 2 && client.getID() > 0)
+		if ((clientState == 2 || clientState == 4) && client.getID() > 0)
 		{
 			UpdateClientObjects();
+
+			if (clientState == 4)
+			{
+				UpdateUI();
+			}
 		}
 	}
 
@@ -964,4 +969,13 @@ void Game::UpdateClientObjects()
 			}
 		}
 	}
+}
+
+void Game::UpdateUI()
+{
+	wstring newScore = to_wstring(client.getScoreA()) + L" : " + to_wstring(client.getScoreB());
+	
+	GameObject * score = scenes[currentScene]->GetUIByName("Score");
+	Button * button = score->GetComponent<Button>();
+	button->setText(newScore);
 }

@@ -356,3 +356,13 @@ void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 
 
 	//}
 }
+
+void Server::sendState() 
+{
+	BitStream bOut;
+	bOut.Write((MessageID)ID_INCOMING_STATE);
+
+	bOut.Write(gameState.scoreA);
+	bOut.Write(gameState.scoreB);
+	bOut.Write(gameState.time);
+}
