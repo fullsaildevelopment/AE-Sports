@@ -801,7 +801,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	soloPlayer->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
 	sRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
-	sRender->DecodeBitmap(L"../Assets/UI/button.png");
+	sRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	sRender->DecodeBitmap(L"../Assets/UI/button3.png");
 	soloPlayer->AddComponent(sRender);
 	sRender->MakeRTSize();
 	sButton->MakeRect();
@@ -820,7 +821,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	multiPlayer->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
 	mRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
-	mRender->DecodeBitmap(L"../Assets/UI/button.png");
+	mRender->DecodeBitmap(L"../Assets/UI/button4.png");
+	mRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer->AddComponent(mRender);
 	mRender->MakeRTSize();
 	mButton->MakeRect();
@@ -838,7 +840,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	multiPlayer2->AddComponent(mButton2);
 	UIRenderer * mRender2 = new UIRenderer();
 	mRender2->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
-	mRender2->DecodeBitmap(L"../Assets/UI/button.png");
+	mRender2->DecodeBitmap(L"../Assets/UI/button4.png");
+	mRender2->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer2->AddComponent(mRender2);
 	mRender2->MakeRTSize();
 	mButton2->MakeRect();
