@@ -89,7 +89,7 @@ private:
 	static char * address;
 	static CLIENT_GAME_STATE * myState;
 	static CLIENT_GAME_STATE * clientStates;
-	GAME_STATE gameState;
+	static GAME_STATE * gameState;
 //	static std::vector<CLIENT_GAME_STATE> * states;
 public:
 
@@ -131,9 +131,9 @@ public:
 	void setLocation(XMFLOAT3 loc) { myState->position = loc; }
 	void setRotation(XMFLOAT3 rot) { myState->rotation = rot; }
 	int getFloorState(unsigned int i) { return clientStates[i].otherIndex; }
-	UINT8 getScoreA() { return gameState.scoreA; }
-	UINT8 getScoreB() { return gameState.scoreB; }
-	float getTime() { return gameState.time; }
+	UINT8 getScoreA() { return gameState->scoreA; }
+	UINT8 getScoreB() { return gameState->scoreB; }
+	float getTime() { return gameState->time; }
 
 private:
 	UINT8 objects;

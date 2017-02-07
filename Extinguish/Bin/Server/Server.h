@@ -110,7 +110,7 @@ private:
 
 	static CLIENT_GAME_STATE * clientStates;
 	InputEventStruct clientInput[4];
-	GAME_STATE gameState;
+	static GAME_STATE * gameState;
 	//static CLIENT_GAME_STATE * aiStates;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
@@ -151,8 +151,8 @@ public:
 	}
 
 	void sendState();
-	void setScores(int scoreA, int scoreB) { gameState.scoreA = scoreA; gameState.scoreB = scoreB; }
-	void setTime(float time) { gameState.time = time; }
+	void setScores(int scoreA, int scoreB) { gameState->scoreA = scoreA; gameState->scoreB = scoreB; }
+	void setTime(float time) { gameState->time = time; }
 private:
 	int lastState = 0;
 	int packRec = 0;

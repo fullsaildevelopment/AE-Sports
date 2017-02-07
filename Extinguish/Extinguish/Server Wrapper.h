@@ -151,4 +151,6 @@ public:
 
 	void setScores(int scoreA, int scoreB) { newServer.setScores(scoreA, scoreB); }
 	void setTime(float time) { newServer.setTime(time); }
+
+	void sendGameState() { newServer.sendState(); }
 };
