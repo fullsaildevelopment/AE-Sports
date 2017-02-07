@@ -28,6 +28,7 @@ void FloorController::WavePattern(float dt)
 	}
 	if (ratios >= 1.0f) currPattern = 2;
 }
+
 void FloorController::BigHexPattern(float dt)
 {
 	ratios += dt * transSpeed;
@@ -41,6 +42,7 @@ void FloorController::BigHexPattern(float dt)
 	}
 	if (ratios >= 1.0f) currPattern = 3;
 }
+
 void FloorController::StripPattern(float dt)
 {
 	ratios += dt * transSpeed;
@@ -54,6 +56,7 @@ void FloorController::StripPattern(float dt)
 	}
 	if (ratios >= 1.0f) currPattern = 1;
 }
+
 void FloorController::RandomPattern(float dt)
 {
 	ratios += dt * transSpeed;
@@ -67,11 +70,13 @@ void FloorController::RandomPattern(float dt)
 	}
 	if (ratios >= 1.0f) currPattern = 4;
 }
+
 void FloorController::MovePillar(int pillar, float ratio)
 {
 	floor[pillar].y = ratio * maxHeight - 10;
 	if (floor[pillar].y > -0.0001f) floor[pillar].y = 0;
 }
+
 void FloorController::LevelFloor(float dt)
 {
 	ratios += dt * transSpeed;
@@ -89,6 +94,7 @@ void FloorController::LevelFloor(float dt)
 	}
 	if (ratios >= 1.0f) currPattern = 0;
 }
+
 void FloorController::ControlMovement(float dt)
 {
 	timeing += dt;
@@ -145,6 +151,7 @@ void FloorController::ControlMovement(float dt)
 	if (timeing > 40)
 		timeing = 0;
 }
+
 void FloorController::ControlColors(float dt)
 {
 	int tr = (int)(row * 0.5f);
@@ -156,7 +163,7 @@ void FloorController::ControlColors(float dt)
 				if (i < tr * 0.25f)
 					colors[i * col + j] = 0x0000FF00;
 				else
-					colors[i * col + j] = 0x0000F0F0;
+					colors[i * col + j] = 0xF000F000;
 			else if (i < tr * 0.75f)
 				colors[i * col + j] = 0x00FF0000;
 			else colors[i * col + j] = 0x0F000F00;
@@ -168,18 +175,19 @@ void FloorController::ControlColors(float dt)
 		{
 			if (i < tr * 1.5f)
 				if(i < tr * 1.25f)
-					colors[i * col + j] = 0x0000FF00;
+					colors[i * col + j] = 0x0F0F0000;
 				else
-					colors[i * col + j] = 0x0000F0F0;
+					colors[i * col + j] = 0x0F00F0F0;
 			else if(i < tr * 1.75f)
-				colors[i * col + j] = 0x00FF0000;
-			else colors[i * col + j] = 0x0F000F00;
+				colors[i * col + j] = 0x00F0F000;
+			else colors[i * col + j] = 0x000FF000;
 		}
 	}
 }
+
 void FloorController::Update(float dt)
 {
-	ControlMovement(dt);
+	//ControlMovement(dt);
 	//ControlColors(dt);
 }
 

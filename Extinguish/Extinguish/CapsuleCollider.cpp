@@ -165,8 +165,8 @@ void CapsuleCollider::Update(float dt)
 				}
 			}
 		}
-		continue;
 	}
+	checked.clear();
 }
 void CapsuleCollider::setRadius(float r)
 {
