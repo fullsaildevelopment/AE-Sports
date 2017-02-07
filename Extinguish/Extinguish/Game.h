@@ -53,13 +53,9 @@ private:
 	void CreateMenu(DeviceResources * devResources, Scene * scene);
 	void CreateLobby(DeviceResources * devResources, Scene * scene);
 
-	/*void StartServer();
-	void JoinServer();
-	static void StartServerStatic(void * obj) { static_cast<Game *>(obj)->StartServer(); }
-	static void JoinServerStatic(void * obj)  { static_cast<Game *>(obj)->JoinServer(); }*/
-
 	void UpdateServerStates();
 	void UpdateClientObjects();
+	void UpdateUI();
 public:
 
 	//basic

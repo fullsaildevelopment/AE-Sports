@@ -694,3 +694,16 @@ void Scene::AddUIObject(GameObject* gameObject)
 	gameObject->SetScene(this);
 	uiObjects.push_back(gameObject);
 }
+
+GameObject* const Scene::GetUIByName(string name)
+{
+	for (unsigned int i = 0; i < uiObjects.size(); ++i)
+	{
+		if (uiObjects[i]->GetName() == name)
+		{
+			return uiObjects[i];
+		}
+	}
+
+	return nullptr;
+}

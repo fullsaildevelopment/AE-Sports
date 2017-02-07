@@ -129,9 +129,16 @@ void Game::Update(float dt)
 		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
-		if (clientState == 2 && client.getID() > 0)
+		if ((clientState == 2 || clientState == 4) && client.getID() > 0)
 		{
 			UpdateClientObjects();
+
+			if (clientState == 4)
+			{
+				Team1Score = client.getScoreA();
+				Team2Score = client.getScoreB();
+				UpdateUI();
+			}
 		}
 	}
 
@@ -207,6 +214,12 @@ void Game::HandleEvent(Event* e)
 			default:
 				break;
 			}
+			if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
+			{
+				server.setScores(Team1Score, Team2Score);
+				server.sendGameState();
+			}
+			UpdateUI();
 			//Reset Game
 
 		}
@@ -996,4 +1009,13 @@ void Game::UpdateClientObjects()
 			}
 		}
 	}
+}
+
+void Game::UpdateUI()
+{
+	wstring newScore = to_wstring(Team1Score) + L" : " + to_wstring(Team2Score);
+	
+	GameObject * score = scenes[currentScene]->GetUIByName("gameScore");
+	Button * button = score->GetComponent<Button>();
+	button->setText(newScore);
 }
