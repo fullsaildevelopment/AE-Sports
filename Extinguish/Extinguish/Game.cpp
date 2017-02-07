@@ -304,15 +304,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal->InitTransform(identity, { (float)-col, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, resourceManager, devResources);
 
 	GameObject* goal2 = new GameObject();
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
 	goal2->InitTransform(identity, { (float)col - 15, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
-	goal2->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, &resourceManager, devResources);
+	goal2->AddComponent(GoalRenderer2);
+	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, resourceManager, devResources);
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
