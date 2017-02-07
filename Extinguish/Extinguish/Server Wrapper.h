@@ -148,4 +148,7 @@ public:
 	}*/
 
 	unsigned int getObjCount() { return objCount; }
+
+	void setScores(int scoreA, int scoreB) { newServer.setScores(scoreA, scoreB); }
+	void setTime(float time) { newServer.setTime(time); }
 };

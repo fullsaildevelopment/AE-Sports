@@ -55,6 +55,19 @@ public:
 	};
 #pragma pack(pop)
 
+
+#pragma pack(push, 1)
+	struct GAME_STATE
+	{
+		int scoreA;
+		int scoreB;
+		float time;
+
+
+		GAME_STATE() {}
+	};
+#pragma pack(pop)
+
 private:
 
 	enum GameMessages
@@ -67,7 +80,8 @@ private:
 		ID_REQUEST,
 		ID_INCOMING_PACKET,
 		ID_REMOVE_CLIENT,
-		ID_INCOMING_INPUT
+		ID_INCOMING_INPUT,
+		ID_INCOMING_STATE
 	};
 
 	static RakPeerInterface * peer;
@@ -75,6 +89,7 @@ private:
 	static char * address;
 	static CLIENT_GAME_STATE * myState;
 	static CLIENT_GAME_STATE * clientStates;
+	GAME_STATE gameState;
 //	static std::vector<CLIENT_GAME_STATE> * states;
 public:
 
@@ -116,6 +131,9 @@ public:
 	void setLocation(XMFLOAT3 loc) { myState->position = loc; }
 	void setRotation(XMFLOAT3 rot) { myState->rotation = rot; }
 	int getFloorState(unsigned int i) { return clientStates[i].otherIndex; }
+	UINT8 getScoreA() { return gameState.scoreA; }
+	UINT8 getScoreB() { return gameState.scoreB; }
+	float getTime() { return gameState.time; }
 
 private:
 	UINT8 objects;
@@ -129,6 +147,7 @@ private:
 	void readMessage();
 	void GetID();
 	void registerName();
-	void recievePackets();
+	void receivePackets();
+	void receiveGameState();
 };
 
