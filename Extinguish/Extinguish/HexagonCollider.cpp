@@ -145,10 +145,10 @@ void HexagonCollider::Update(float dt)
 					float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
 
 					//Top
-					if (CheckSphereAABB((int)(row * 0.5f) * col, row * col - 1, s))
+					if (CheckSphereAABB((int)floor(row * 0.5f) * col, row * col - 1, s))
 					{
 						//TopTop
-						if (CheckSphereAABB((int)(row * 0.75f) * col, row * col - 1, s))
+						if (CheckSphereAABB((int)floor(row * 0.75f) * col, row * col - 1, s))
 						{
 							AABB test;
 							for (int i = (int)(row * 0.75f); i < row; ++i)
@@ -169,7 +169,7 @@ void HexagonCollider::Update(float dt)
 							}
 						}
 						//TopBottom
-						else if (CheckSphereAABB((int)(row * 0.5f) * col, (int)(row * 0.75f) * col + col - 1, s))
+						else if (CheckSphereAABB((int)floor(row * 0.5f) * col, (int)ceil(row * 0.75f) * col + col - 1, s))
 						{
 							AABB test;
 							for (int i = (int)(row * 0.5f); i < (int)(row * 0.75f); ++i)
@@ -191,10 +191,10 @@ void HexagonCollider::Update(float dt)
 						}
 					}
 					//Bottom
-					else if (CheckSphereAABB(0, (int)(row * 0.5f) * col + col - 1, s))
+					else if (CheckSphereAABB(0, (int)ceil(row * 0.5f) * col + col - 1, s))
 					{
 						//BottomTop
-						if (CheckSphereAABB((int)(row * 0.25f) * col, (int)(row * 0.5f) * col + col - 1, s))
+						if (CheckSphereAABB((int)floor(row * 0.25f) * col, (int)ceil(row * 0.5f) * col + col - 1, s))
 						{
 							AABB test;
 							for (int i = (int)(row * 0.25f); i < (int)(row * 0.5f); ++i)
@@ -215,7 +215,7 @@ void HexagonCollider::Update(float dt)
 							}
 						}
 						//BottomBottom
-						if (CheckSphereAABB(0, (int)(row * 0.25f) * col + col - 1, s))
+						if (CheckSphereAABB(0, (int)ceil(row * 0.25f) * col + col - 1, s))
 						{
 							AABB test;
 							for (int i = 0; i < (int)(row * 0.25f); ++i)
@@ -346,7 +346,6 @@ void HexagonCollider::Update(float dt)
 					//Bottom
 					else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.5f)) * col + col - 1, c))
 					{
-
 						//BottomTop
 						if (CheckCapsuleAABB((int)(floor(row * 0.25f)) * col, (int)(ceil(row * 0.5f)) * col + col - 1, c))
 						{
