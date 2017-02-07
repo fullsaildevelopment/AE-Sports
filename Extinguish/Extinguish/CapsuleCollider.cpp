@@ -29,30 +29,6 @@ Capsule CapsuleCollider::GetCapsule()
 Capsule CapsuleCollider::GetWorldCapsule()
 {
 	Capsule cap = GetCapsule();
-	//cap.m_Segment.m_Start.x += GetTransform().GetPosition().x;
-	//cap.m_Segment.m_Start.y += GetTransform().GetPosition().y;
-	//cap.m_Segment.m_Start.z += GetTransform().GetPosition().z;
-	//cap.m_Segment.m_End.x += GetTransform().GetPosition().x;
-	//cap.m_Segment.m_End.y += GetTransform().GetPosition().y;
-	//cap.m_Segment.m_End.z += GetTransform().GetPosition().z;
-	//XMFLOAT4 se;
-	//se.x = cap.m_Segment.m_Start.x;
-	//se.y = cap.m_Segment.m_Start.y;
-	//se.z = cap.m_Segment.m_Start.z;
-	//se.w = 1;
-	//XMStoreFloat4(&se, XMVector4Transform(XMLoadFloat4(&se), XMLoadFloat4x4(&GetTransform().GetWorld())));
-	//cap.m_Segment.m_Start.x = se.x;
-	//cap.m_Segment.m_Start.y = se.y;
-	//cap.m_Segment.m_Start.z = se.z;
-	//
-	//se.x = cap.m_Segment.m_End.x;
-	//se.y = cap.m_Segment.m_End.y;
-	//se.z = cap.m_Segment.m_End.z;
-	//se.w = 1;
-	//XMStoreFloat4(&se, XMVector4Transform(XMLoadFloat4(&se), XMLoadFloat4x4(&GetTransform().GetWorld())));
-	//cap.m_Segment.m_End.x = se.x;
-	//cap.m_Segment.m_End.y = se.y;
-	//cap.m_Segment.m_End.z = se.z;
 	float3 pos = GetGameObject()->GetTransform()->GetPosition();
 	cap.m_Segment.m_Start.x += pos.x;
 	cap.m_Segment.m_Start.y += pos.y;
@@ -168,15 +144,18 @@ void CapsuleCollider::Update(float dt)
 	}
 	checked.clear();
 }
+
 void CapsuleCollider::setRadius(float r)
 {
 	radius = r;
 }
+
 void CapsuleCollider::SetSegment(DirectX::XMFLOAT3 s, DirectX::XMFLOAT3 e)
 {
 	Start = s;
 	End = e;
 }
+
 float CapsuleCollider::GetRadius()
 {
 	return radius;
