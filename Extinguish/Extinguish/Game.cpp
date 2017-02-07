@@ -575,7 +575,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
@@ -598,7 +597,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover3 = new Movement();
 	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10);
 	Hex->AddComponent(HexPillar);
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* gameBall = new GameObject();
