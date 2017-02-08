@@ -2,12 +2,13 @@
 #include "Transition.h"
 
 //basic//
-void State::Init(AnimatorController* controller, Animation* anim, bool isLooping, float animSpeed)
+void State::Init(AnimatorController* controller, Animation* anim, bool isLooping, float animSpeed, std::string stateName)
 {
 	animController = controller;
 	animation = anim;
 	doLoop = isLooping;
 	speed = animSpeed;
+	name = stateName;
 }
 
 Transition* State::Update(float dt)
@@ -24,6 +25,12 @@ Transition* State::Update(float dt)
 	}
 
 	return result;
+}
+
+//misc//
+void State::AddTransition(Transition* transition)
+{
+	transitions.push_back(transition);
 }
 
 //getters//
@@ -45,6 +52,11 @@ bool State::DoesItLoop()
 float State::GetSpeed()
 {
 	return speed;
+}
+
+std::string State::GetName()
+{
+	return name;
 }
 
 //setters//

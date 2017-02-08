@@ -4,6 +4,7 @@
 #include "EventDispatcher.h"
 #include "CapsuleCollider.h"
 #include "GameObject.h"
+#include "AnimatorController.h"
 
 using namespace std;
 
@@ -86,7 +87,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (capsCollider->GetGameObject()->GetTransform() == otherPlayer)
 			{
-				cout << "Collision exit" << endl;
+				//cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
 			}
@@ -104,7 +105,7 @@ void PlayerController::HandleInput()
 
 	if (input->GetKeyDown('F'))
 	{
-		//cout << "F" << endl;
+		cout << "F" << endl;
 		Attack();
 	}
 }
@@ -131,6 +132,11 @@ void PlayerController::Attack()
 		back = { -back.x, -back.y, -back.z };
 
 		otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
+
+		//do animation
+		AnimatorController* animator = otherPlayer->GetGameObject()->GetComponent<AnimatorController>();
+
+		animator->SetTrigger("Stumble");
 
 		cout << "Attack" << endl;
 	}

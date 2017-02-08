@@ -1,7 +1,6 @@
 #include "HashString.h"
 
-//HashString* HashString::singleton = 0;
-
+//returns -1 if the result is neglible
 int HashString::GetKey(std::string key)
 { 
 	int result = -1;
