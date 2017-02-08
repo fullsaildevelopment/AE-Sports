@@ -212,7 +212,7 @@ LRESULT CALLBACK InputProc(HWND _hWnd, UINT msg, WPARAM _w, LPARAM _l)
 		//}
 	}
 
-	std::cout << msg << endl;
+	//std::cout << msg << endl;
 
 	return 0;
 }

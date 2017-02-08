@@ -8,6 +8,11 @@ class Parameter;
 class Blender;
 class Transition;
 class Renderer;
+class HashString;
+namespace Param
+{
+	class Trigger;
+};
 
 class AnimatorController : public Component
 {
@@ -17,6 +22,8 @@ private:
 	std::vector<State*> states;
 	std::vector<Parameter*> parameters;
 	unsigned int currentState;
+	HashString* parametersTable;
+	HashString* statesTable;
 
 public:
 	AnimatorController();
@@ -25,17 +32,24 @@ public:
 	//basic
 	void Init(std::string animationSetName, unsigned int curStateIndex, std::string curAnimName);
 	void Update(float dt) override;
-	
+	void UpdateCurAnimatorsLoopAndSpeed();
+
 	//misc//
 	//void CreateAndAddState(std::string animName, bool doLoop, float animSpeed);
 	void AddState(State* state);
 	void AddParameter(Parameter* parameter);
+	//void AddTrigger(std::string name, bool toggle);
 	void TransitionTo(Transition* transition);
 
 	//getters//
 	Blender* GetBlender();
+	State* GetState(std::string name);
+	State* GetState(unsigned int index);
+	unsigned int GetCurrentStateIndex();
+	Param::Trigger* GetTrigger(std::string name);
 
 	//setters//
 	void SetCurrentState(unsigned int curState);
 	void SetCurrentState(State* curState);
+	void SetTrigger(std::string name);
 };

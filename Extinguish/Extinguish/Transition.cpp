@@ -1,7 +1,11 @@
+#include <iostream>
 #include "Transition.h"
 #include "Parameter.h"
 #include "State.h"
 #include "AnimatorController.h"
+#include "Blender.h"
+
+using namespace std;
 
 Transition::Transition()
 {
@@ -20,6 +24,15 @@ void Transition::Init(State* curState, State* nextState, float exitTime, float t
 	to = nextState;
 	this->exitTime = exitTime;
 	this->transitionDuration = transitionDuration;
+
+	if (exitTime != -1)
+	{
+		hasExitTime = true;
+	}
+	else
+	{
+		hasExitTime = false;
+	}
 }
 
 bool Transition::Update(float dt)
@@ -50,7 +63,7 @@ bool Transition::Update(float dt)
 				to->GetAnimationController()->TransitionTo(this);
 			}
 		}
-		else if (hasExitTime)
+		else if (hasExitTime && to->GetAnimationController()->GetBlender()->GetCurInterpolator()->IsFinished())
 		{
 			if (timer > exitTime)
 			{
@@ -67,6 +80,7 @@ bool Transition::Update(float dt)
 		if (timer > transitionDuration)
 		{
 			to->GetAnimationController()->SetCurrentState(to);
+			//cout << to->GetName() << endl;
 			doTransition = false;
 			timer = 0.0f;
 		}

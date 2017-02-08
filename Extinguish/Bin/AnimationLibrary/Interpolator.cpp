@@ -68,6 +68,7 @@ AnimType Interpolator::Update(float time)
 			betweenKeyFrame->ClearBones();
 			Interpolate(animation->GetFrame(prevFrame), animation->GetFrame(nextFrame), delta);
 
+
 			//get bones from current frame
 			for (unsigned int i = 0; i < betweenKeyFrame->GetBones().size(); ++i)
 			{
@@ -92,6 +93,7 @@ void Interpolator::SetAnimation(Animation* anim)
 		prevFrame = 0;
 		nextFrame = 1;
 		frameTime = 0;
+		finished = false;
 	}
 }
 
@@ -119,6 +121,11 @@ float Interpolator::GetSpeed()
 bool Interpolator::IsLoop()
 {
 	return doLoop;
+}
+
+bool Interpolator::IsFinished()
+{
+	return finished;
 }
 
 //private helper functions
