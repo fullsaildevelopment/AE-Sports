@@ -13,6 +13,11 @@ InputManager::~InputManager()
 
 }
 
+void InputManager::WindowResize(uint16_t w,uint16_t h)
+{
+
+}
+
 void InputManager::ClearKeyboard()
 {
 	for (int i = 0; i < 256; ++i)
