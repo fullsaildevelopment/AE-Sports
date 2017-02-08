@@ -650,6 +650,24 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	
 	// credits
 
+	/*GameObject * credits = new GameObject();
+	scene->AddUIObject(credits);
+	credits->Init("credits");
+	Button * cButton = new Button(true, true, L"Credits", (unsigned int)strlen("Credits"), 300.0f, 60.0f, devResources, 3);
+	cButton->SetGameObject(soloPlayer);
+	cButton->showFPS(false);
+	cButton->setOrigin(350.0f, 585.0f);
+	cButton->setPositionMultipliers(0.5f, 0.55f);
+	credits->AddComponent(cButton);
+	UIRenderer * cRender = new UIRenderer();
+	cRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	cRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	cRender->DecodeBitmap(L"../Assets/UI/button3.png");
+	credits->AddComponent(sRender);
+	cRender->MakeRTSize();
+	cButton->MakeRect();
+	cButton->MakeHandler();
+	cRender->InitMetrics();*/
 
 	// exit
 
