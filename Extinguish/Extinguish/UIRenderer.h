@@ -34,12 +34,14 @@ private:
 	bool isButton = false;
 	float left;
 
+	Button * theButton;
+
 	void RenderDebugUI(Button * theButton);
 
 public:
 	UIRenderer();
 	~UIRenderer();
-	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
+	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button);
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);

@@ -31,10 +31,13 @@ UIRenderer::~UIRenderer()
 	IWICdecoder.Reset();
 	if (pBRT)
 	pBRT.Reset();
+
+	if (theButton)
+		delete theButton;
 }
 
 
-void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, ID3D11DepthStencilState * state)
+void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button)
 {
 	pDWriteFactory = deviceResources->GetWriteFactory();
 	pD2DFactory = deviceResources->GetID2D1Factory();
@@ -43,7 +46,7 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	//pTextLayout = resources->GetTextLayout();
 	devResources = deviceResources;
 	isButton = _isButton;
-	depthStencilState = state;
+	theButton = button;
 	d2DevContext = deviceResources->Get2DContext();
 
 
@@ -76,7 +79,7 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 void UIRenderer::InitMetrics()
 {
 	GameObject * temp = GetGameObject();
-	Button * theButton = temp->GetComponent<Button>();
+	//Button * theButton = temp->GetComponent<Button>();
 
 	HRESULT res = pDWriteFactory->CreateTextLayout(
 		theButton->getText().c_str(),
@@ -99,7 +102,7 @@ void UIRenderer::Update(float dt)
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	GameObject * temp = GetGameObject();
-	Button * theButton = temp->GetComponent<Button>();
+	//Button * theButton = temp->GetComponent<Button>();
 
 	HRESULT res = pDWriteFactory->CreateTextLayout(
 		theButton->getText().c_str(),
@@ -125,7 +128,7 @@ void UIRenderer::Render()
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	GameObject * temp = GetGameObject();
-	Button * theButton = temp->GetComponent<Button>();
+	//Button * theButton = temp->GetComponent<Button>();
 	HRESULT hr;
 
 	if (theButton->isEnabled()) {
@@ -274,6 +277,6 @@ void UIRenderer::MakeRTSize()
 {
 	D2D1_SIZE_F rtSize = d2DevContext->GetSize();
 	GameObject * object = GetGameObject();
-	Button * button = object->GetComponent<Button>();
-	button->setRT(rtSize);
+//	Button * button = object->GetComponent<Button>();
+	theButton->setRT(rtSize);
 }
