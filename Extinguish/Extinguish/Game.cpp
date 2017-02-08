@@ -996,14 +996,14 @@ void Game::UpdateClientObjects()
 				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
 				INT8 parentIndex = client.GetParentIndex(i);
-				if (parentIndex != -1)
+				if (parentIndex >= 0)
 				{
 					gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
 				}
 
 				INT8 animIndex = client.GetAnimationIndex(i);
 
-				if (animIndex != -1)
+				if (animIndex >= 0)
 				{
 					Renderer* renderer = gameObject->GetComponent<Renderer>();
 
