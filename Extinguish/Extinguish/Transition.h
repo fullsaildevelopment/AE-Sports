@@ -5,6 +5,7 @@ class State;
 class Parameter;
 class Trigger;
 
+//a transition is the time when we go from one state to another while blending between them
 class Transition
 {
 private:
@@ -16,6 +17,7 @@ private:
 	bool hasExitTime;
 	float exitTime;
 
+	//how long will we transition (aka blend between states)
 	float transitionDuration;
 	float timer;
 	bool doTransition;

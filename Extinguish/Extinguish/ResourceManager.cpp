@@ -7,6 +7,7 @@
 #include "ForFBX.h"
 #include "ResourceManager.h"
 
+
 ResourceManager* ResourceManager::singleton = 0;
 
 ResourceManager::ResourceManager()
@@ -749,6 +750,10 @@ void ResourceManager::DoFBXExporting()
 	//////load in mage with rig and animation
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Mage\\Idle.fbx", "Mage", "Mage_Idle");
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Run.fbx", "Mage", "Mage_Run");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Walk.fbx", "Mage", "Mage_Walk");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\StumbleBackwards.fbx", "Mage", "Mage_StumbleBackwards");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\StumbleBackwards2.fbx", "Mage", "Mage_StumbleBackwards2");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\StumbleBackwards3.fbx", "Mage", "Mage_StumbleBackwards3");
 
 	//load in plane
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
