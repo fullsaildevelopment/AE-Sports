@@ -108,7 +108,7 @@ void CapsuleCollider::Update(float dt)
 					tgt->SetVelocity(vel * 0.6f);
 					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
 					//TODO: Turned off because I need to attack
-					//capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
+					capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
 					capsule->GetGameObject()->OnCollisionEnter(this);
 					tg->OnCollisionEnter(capsule);
 					capsule->checked.push_back(this);
