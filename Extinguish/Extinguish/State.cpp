@@ -54,7 +54,7 @@ float State::GetSpeed()
 	return speed;
 }
 
-std::string State::GetName()
+std::string& const State::GetName()
 {
 	return name;
 }

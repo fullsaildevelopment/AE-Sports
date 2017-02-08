@@ -33,7 +33,7 @@ public:
 	void Update(float time, unsigned int frameIndex);
 
 	//getters
-	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets() { return boneOffsets; }
+	std::vector<DirectX::XMFLOAT4X4>& GetBoneOffsets() { return boneOffsets; }
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds() { return bonesWorlds; }
 	Interpolator* GetCurInterpolator();
 	Interpolator* GetNextInterpolator();
