@@ -25,6 +25,7 @@ private:
 	
 	Microsoft::WRL::ComPtr<IWICBitmap>		   pWBitmap;
 	Microsoft::WRL::ComPtr<ID2D1Bitmap>		   pBitmap;
+	Microsoft::WRL::ComPtr<ID2D1Bitmap>		   pBitmapHovered;
 	Microsoft::WRL::ComPtr<IWICImagingFactory> IWICfactory;
 	Microsoft::WRL::ComPtr<IWICBitmapDecoder>  IWICdecoder;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>  pBRT;

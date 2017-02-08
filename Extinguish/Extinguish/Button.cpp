@@ -2,10 +2,15 @@
 #include "Game.h"
 #include "Server Wrapper.h"
 #include "Client Wrapper.h"
+#include "EventDispatcher.h"
+#include "LoadSceneEvent.h"
 
 void StartGame()
 {
-	Game::currentScene = 1;
+	LoadSceneEvent* event = new LoadSceneEvent();
+	event->Init("FirstLevel");
+	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+	delete event;
 }
 
 void StartServer()
@@ -98,15 +103,24 @@ void Button::HandleEvent(Event* e)
 		{
 			InputManager * input = inputDownEvent->GetInput();
 
-			if (input->GetMouseDown()[0])
-			{
-				int mouseX = input->GetMouseX();
-				int mouseY = input->GetMouseY();
+			int mouseX = input->GetMouseX();
+			int mouseY = input->GetMouseY();
 
-				if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
+			if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
+			{
+
+				if (input->GetMouseDown()[0])
 				{
 					eventFunction();
 				}
+				else
+				{
+					hovered = true;
+				}
+			}
+			else
+			{
+				hovered = false;
 			}
 		}
 	}
