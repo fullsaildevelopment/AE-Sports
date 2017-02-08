@@ -35,7 +35,10 @@ void JoinServer()
 	StartGame();
 }
 
-
+void ShutdownGame()
+{
+	// shutdown game
+}
 
 Button::Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 	DeviceResources * resources, unsigned int type) {
@@ -151,6 +154,7 @@ void Button::setButtonType()
 	}
 	case BUTTON_TYPE::EXIT:
 	{
+		eventFunction = ShutdownGame;
 		break;
 	}
 	case BUTTON_TYPE::RESUME_GAME:
