@@ -29,7 +29,7 @@ public:
 	AnimatorController* GetAnimationController();
 	bool DoesItLoop();
 	float GetSpeed();
-	std::string GetName();
+	std::string& const GetName();
 
 	//setters//
 	void SetAnimation(Animation* anim);
