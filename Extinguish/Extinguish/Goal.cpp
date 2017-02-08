@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EventDispatcher.h"
 #include "ScoreEvent.h"
+#include "BallController.h"
 
 Goal::Goal(GameObject* g) : Component(g)
 {
@@ -25,6 +26,7 @@ void Goal::Score(int team)
 	se->SetTeam(team);
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
 	Transform* bt = GetGameObject()->FindGameObject("GameBall")->GetTransform();
-	bt->SetPosition({ 0,10,-20.5f });
+	bt->SetPosition({ -7,10,-20.5f });
 	bt->SetVelocity({ 0,0,0 });
+	bt->GetGameObject()->GetComponent<BallController>()->SetHolder(nullptr);
 }

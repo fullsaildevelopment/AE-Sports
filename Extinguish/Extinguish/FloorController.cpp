@@ -166,7 +166,7 @@ void FloorController::ControlColors(float dt)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			colors[i * col + j] = 0x0F0F0000;
+			colors[i * col + j] = 0xFF000000;
 		}
 	}
 }

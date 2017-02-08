@@ -124,15 +124,28 @@ void BallController::SetIsHeld(bool ans)
 
 void BallController::SetHolder(GameObject *person)
 {
-	isHeld = true;
-	holder = person;
+	if (person)
+	{
+		isHeld = true;
+		holder = person;
 
-	person->GetTransform()->AddChild(me->GetTransform());
-	transform->SetParent(person->GetTransform());
-	transform->SetVelocity(float3(0, 0, 0));
-	transform->SetPosition(float3(0, 0, 0));
+		person->GetTransform()->AddChild(me->GetTransform());
+		transform->SetParent(person->GetTransform());
+		transform->SetVelocity(float3(0, 0, 0));
+		transform->SetPosition(float3(0, 0, 0));
 
-	//turn off physics
-	physics->SetIsKinematic(true);
-	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+		//turn off physics
+		physics->SetIsKinematic(true);
+		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+	}
+	else
+	{
+		isHeld = false;
+		holder = person;
+		if (transform->GetParent())
+			transform->GetParent()->RemoveChild(transform);
+		transform->SetParent(nullptr);
+		physics->SetIsKinematic(false);
+		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+	}
 }
