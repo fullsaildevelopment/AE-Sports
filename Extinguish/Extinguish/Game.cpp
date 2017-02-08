@@ -103,6 +103,29 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	soundEngine->InitSoundEngine(ids, names);
 }
 
+void Game::WindowResize(uint16_t w, uint16_t h)
+{
+	//set projection matrix
+	float aspectRatio = (float)w / (float)h;
+	float fovAngleY = 70.0f * XM_PI / 180.0f;
+
+	if (aspectRatio < 1.0f)
+	{
+		fovAngleY *= 2.0f;
+	}
+
+	XMFLOAT4X4 projection;
+	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
+	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
+
+	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		go[i]->GetComponent<Renderer>()->SetProjection(projection);
+	}
+}
+
 void Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
@@ -528,6 +551,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	testScore->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
 	theSButton->MakeRect();
+	scoreRender->InitMetrics();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
@@ -579,7 +603,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	sRender->MakeRTSize();
 	sButton->MakeRect();
 	sButton->MakeHandler();
-
+	sRender->InitMetrics();
 
 	// host button
 	GameObject * multiPlayer = new GameObject();
@@ -599,6 +623,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender->MakeRTSize();
 	mButton->MakeRect();
 	mButton->MakeHandler();
+	mRender->InitMetrics();
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
@@ -618,7 +643,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender2->MakeRTSize();
 	mButton2->MakeRect();
 	mButton2->MakeHandler();
-
+	mRender2->InitMetrics();
+	
 	// credits
 
 
@@ -744,7 +770,7 @@ void Game::UpdateClientObjects()
 
 				INT8 animIndex = client.GetAnimationIndex(i);
 
-				if (animIndex != -1)
+				if (animIndex >= 0)
 				{
 					//Renderer* renderer = gameObject->GetComponent<Renderer>();
 
