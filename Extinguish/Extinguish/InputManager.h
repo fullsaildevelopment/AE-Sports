@@ -41,6 +41,8 @@ public:
 	void Update();
 	void Shutdown();
 
+	void WindowResize(uint16_t w, uint16_t h);
+
 	//getters
 	static InputManager* GetSingleton();
 	bool GetKey(unsigned int button);

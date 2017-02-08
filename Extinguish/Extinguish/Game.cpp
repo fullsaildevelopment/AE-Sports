@@ -102,6 +102,29 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	soundEngine->InitSoundEngine(ids, names);
 }
 
+void Game::WindowResize(uint16_t w, uint16_t h)
+{
+	//set projection matrix
+	float aspectRatio = (float)w / (float)h;
+	float fovAngleY = 70.0f * XM_PI / 180.0f;
+
+	if (aspectRatio < 1.0f)
+	{
+		fovAngleY *= 2.0f;
+	}
+
+	XMFLOAT4X4 projection;
+	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
+	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
+
+	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		go[i]->GetComponent<Renderer>()->SetProjection(projection);
+	}
+}
+
 void Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
