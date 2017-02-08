@@ -549,7 +549,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	testScore->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
-	scoreRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
+	scoreRender->Init(true, 35.0f, devResources, theSButton);
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 	testScore->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
@@ -565,7 +565,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theButton->setOrigin(0.0f, 30.0f);
 	debugUI->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 30.0f, devResources, devResources->GetDisableStencilState());
+	buttonRender->Init(true, 30.0f, devResources, theButton);
 	debugUI->AddComponent(buttonRender);
 }
 
@@ -582,7 +582,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	tButton->setPositionMultipliers(0.5f, 0.25f);
 	title->AddComponent(tButton);
 	UIRenderer * tRender = new UIRenderer();
-	tRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
+	tRender->Init(true, 35.0f, devResources, tButton);
 	tRender->DecodeBitmap(L"../Assets/UI/newTitle.png");
 	title->AddComponent(tRender);
 	tRender->MakeRTSize();
@@ -599,7 +599,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	sButton->setPositionMultipliers(0.5f, 0.55f);
 	soloPlayer->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
-	sRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	sRender->Init(true, 25.0f, devResources, sButton);
 	sRender->DecodeBitmap(L"../Assets/UI/button2.png");
 	sRender->DecodeBitmap(L"../Assets/UI/button3.png");
 	soloPlayer->AddComponent(sRender);
@@ -619,7 +619,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton->setPositionMultipliers(0.425f, 0.65f);
 	multiPlayer->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
-	mRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	mRender->Init(true, 25.0f, devResources, mButton);
 	mRender->DecodeBitmap(L"../Assets/UI/button4.png");
 	mRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer->AddComponent(mRender);
@@ -639,7 +639,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton2->setPositionMultipliers(0.575f, 0.65f);
 	multiPlayer2->AddComponent(mButton2);
 	UIRenderer * mRender2 = new UIRenderer();
-	mRender2->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	mRender2->Init(true, 25.0f, devResources, mButton2);
 	mRender2->DecodeBitmap(L"../Assets/UI/button4.png");
 	mRender2->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer2->AddComponent(mRender2);
@@ -650,26 +650,45 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	
 	// credits
 
-	/*GameObject * credits = new GameObject();
+	GameObject * credits = new GameObject();
 	scene->AddUIObject(credits);
 	credits->Init("credits");
-	Button * cButton = new Button(true, true, L"Credits", (unsigned int)strlen("Credits"), 300.0f, 60.0f, devResources, 3);
-	cButton->SetGameObject(soloPlayer);
+	Button * cButton = new Button(true, true, L"Credits", (unsigned int)strlen("Credits"), 300.0f, 60.0f, devResources, 4);
+	cButton->SetGameObject(credits);
 	cButton->showFPS(false);
 	cButton->setOrigin(350.0f, 585.0f);
-	cButton->setPositionMultipliers(0.5f, 0.55f);
+	cButton->setPositionMultipliers(0.5f, 0.75f);
 	credits->AddComponent(cButton);
 	UIRenderer * cRender = new UIRenderer();
-	cRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	cRender->Init(true, 25.0f, devResources, cButton);
 	cRender->DecodeBitmap(L"../Assets/UI/button2.png");
 	cRender->DecodeBitmap(L"../Assets/UI/button3.png");
-	credits->AddComponent(sRender);
+	credits->AddComponent(cRender);
 	cRender->MakeRTSize();
 	cButton->MakeRect();
 	cButton->MakeHandler();
-	cRender->InitMetrics();*/
+	cRender->InitMetrics();
 
 	// exit
+
+	GameObject * exit = new GameObject();
+	scene->AddUIObject(exit);
+	exit->Init("exit");
+	Button * eButton = new Button(true, true, L"Exit", (unsigned int)strlen("Exit"), 300.0f, 60.0f, devResources, 5);
+	eButton->SetGameObject(exit);
+	eButton->showFPS(false);
+	eButton->setOrigin(350.0f, 665.0f);
+	eButton->setPositionMultipliers(0.5f, 0.85f);
+	exit->AddComponent(eButton);
+	UIRenderer * eRender = new UIRenderer();
+	eRender->Init(true, 25.0f, devResources, eButton);
+	eRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	eRender->DecodeBitmap(L"../Assets/UI/button3.png");
+	exit->AddComponent(eRender);
+	eRender->MakeRTSize();
+	eButton->MakeRect();
+	eButton->MakeHandler();
+	eRender->InitMetrics();
 
 
 	// create lobby
