@@ -112,29 +112,29 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
-	//Dresources->ResizeWindow(w, h);
-	//
-	//float aspectRatio = (float)w / (float)h;
-	//float fovAngleY = 70.0f * XM_PI / 180.0f;
-	//
-	//if (aspectRatio < 1.0f)
-	//{
-	//	fovAngleY *= 2.0f;
-	//}
-	//
-	//XMFLOAT4X4 projection;
-	//XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
-	//XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
-	//
-	//vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
-	//Renderer* R;
-	//int size = go.size();
-	//for (int i = 0; i < size; ++i)
-	//{
-	//	R = go[i]->GetComponent<Renderer>();
-	//	if(R)
-	//		R->SetProjection(projection);
-	//}
+	Dresources->ResizeWindow(w, h);
+	
+	float aspectRatio = (float)w / (float)h;
+	float fovAngleY = 70.0f * XM_PI / 180.0f;
+	
+	if (aspectRatio < 1.0f)
+	{
+		fovAngleY *= 2.0f;
+	}
+	
+	XMFLOAT4X4 projection;
+	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
+	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
+	
+	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
+	Renderer* R;
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		R = go[i]->GetComponent<Renderer>();
+		if(R)
+			R->SetProjection(projection);
+	}
 }
 
 void Game::Update(float dt)
@@ -258,24 +258,27 @@ void Game::HandleEvent(Event* e)
 		//Reset Game
 
 		return;
+	}
+	else
+	{
+		WindowResizeEvent* wre = dynamic_cast<WindowResizeEvent*>(e);
+		if (wre)
+		{
+			WindowResize(wre->w, wre->h);
+		}
 		else
 		{
-			WindowResizeEvent* wre = dynamic_cast<WindowResizeEvent*>(e);
-			if (wre)
+			LoadSceneEvent* loadSceneEvent = dynamic_cast<LoadSceneEvent*>(e);
+
+			if (loadSceneEvent)
 			{
-				WindowResize(wre->w, wre->h);
+				LoadScene(loadSceneEvent->GetName());
+
+				return;
 			}
 		}
 	}
 
-	LoadSceneEvent* loadSceneEvent = dynamic_cast<LoadSceneEvent*>(e);
-
-	if (loadSceneEvent)
-	{
-		LoadScene(loadSceneEvent->GetName());
-
-		return;
-	}
 }
 
 //getters//
@@ -663,7 +666,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton2->MakeRect();
 	mButton2->MakeHandler();
 	mRender2->InitMetrics();
-	
+
 	// credits
 
 	GameObject * credits = new GameObject();
