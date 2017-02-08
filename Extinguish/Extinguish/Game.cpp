@@ -777,6 +777,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	testScore->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
 	theSButton->MakeRect();
+	scoreRender->InitMetrics();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
@@ -828,7 +829,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	sRender->MakeRTSize();
 	sButton->MakeRect();
 	sButton->MakeHandler();
-
+	sRender->InitMetrics();
 
 	// host button
 	GameObject * multiPlayer = new GameObject();
@@ -848,6 +849,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender->MakeRTSize();
 	mButton->MakeRect();
 	mButton->MakeHandler();
+	mRender->InitMetrics();
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
@@ -867,6 +869,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender2->MakeRTSize();
 	mButton2->MakeRect();
 	mButton2->MakeHandler();
+	mRender2->InitMetrics();
 	
 	// credits
 
@@ -993,14 +996,14 @@ void Game::UpdateClientObjects()
 				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
 				INT8 parentIndex = client.GetParentIndex(i);
-				if (parentIndex != -1)
+				if (parentIndex >= 0)
 				{
 					gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
 				}
 
 				INT8 animIndex = client.GetAnimationIndex(i);
 
-				if (animIndex != -1)
+				if (animIndex >= 0)
 				{
 					Renderer* renderer = gameObject->GetComponent<Renderer>();
 
