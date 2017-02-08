@@ -49,6 +49,20 @@ public:
 	};
 #pragma pack(pop)
 
+
+
+#pragma pack(push, 1)
+	struct GAME_STATE
+	{
+		int scoreA;
+		int scoreB;
+		float time;
+
+
+		GAME_STATE() {}
+	};
+#pragma pack(pop)
+
 private:
 
 	enum GameMessages
@@ -61,7 +75,8 @@ private:
 		ID_REQUEST,
 		ID_INCOMING_PACKET,
 		ID_REMOVE_CLIENT,
-		ID_INCOMING_INPUT
+		ID_INCOMING_INPUT,
+		ID_INCOMING_STATE
 	};
 
 
@@ -95,6 +110,7 @@ private:
 
 	static CLIENT_GAME_STATE * clientStates;
 	InputEventStruct clientInput[4];
+	static GAME_STATE * gameState;
 	//static CLIENT_GAME_STATE * aiStates;
 	UINT16 numPlayers = 0;
 	RakPeerInterface * peer;
@@ -133,6 +149,10 @@ public:
 		clientStates[index].position = position;
 	clientStates[index].rotation = rotation;
 	}
+
+	void sendState();
+	void setScores(int scoreA, int scoreB) { gameState->scoreA = scoreA; gameState->scoreB = scoreB; }
+	void setTime(float time) { gameState->time = time; }
 private:
 	int lastState = 0;
 	int packRec = 0;

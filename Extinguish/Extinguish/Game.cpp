@@ -22,6 +22,8 @@
 #include "FloorController.h"
 #include "Button.h"
 #include "UIRenderer.h"
+#include "ScoreEvent.h"
+#include "Goal.h"
 
 using namespace DirectX;
 using namespace std;
@@ -100,6 +102,29 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	soundEngine->InitSoundEngine(ids, names);
 }
 
+void Game::WindowResize(uint16_t w, uint16_t h)
+{
+	//set projection matrix
+	float aspectRatio = (float)w / (float)h;
+	float fovAngleY = 70.0f * XM_PI / 180.0f;
+
+	if (aspectRatio < 1.0f)
+	{
+		fovAngleY *= 2.0f;
+	}
+
+	XMFLOAT4X4 projection;
+	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
+	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
+
+	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		go[i]->GetComponent<Renderer>()->SetProjection(projection);
+	}
+}
+
 void Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
@@ -127,9 +152,16 @@ void Game::Update(float dt)
 		
 		// if client gets server's game states, get the state's location from the client
 		// so that it can be included in update
-		if (clientState == 2 && client.getID() > 0)
+		if ((clientState == 2 || clientState == 4) && client.getID() > 0)
 		{
 			UpdateClientObjects();
+
+			if (clientState == 4)
+			{
+				Team1Score = client.getScoreA();
+				Team2Score = client.getScoreB();
+				UpdateUI();
+			}
 		}
 	}
 
@@ -187,6 +219,32 @@ void Game::HandleEvent(Event* e)
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
 			client.sendInput(inputDownEvent);
+		}
+	}
+	else 
+	{
+		ScoreEvent* SEvent = dynamic_cast<ScoreEvent*>(e);
+		if (SEvent)
+		{
+			switch (SEvent->GetTeam())
+			{
+			case 0:
+				++Team1Score;
+				break;
+			case 1:
+				++Team2Score;
+				break;
+			default:
+				break;
+			}
+			if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
+			{
+				server.setScores(Team1Score, Team2Score);
+				server.sendGameState();
+			}
+			UpdateUI();
+			//Reset Game
+
 		}
 	}
 }
@@ -339,21 +397,31 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//	mageCollider1->Init(mage1);
 	//}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	GameObject* goal = new GameObject();
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { (float)-col, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -7, 0, (float)-row}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,20,3 }, { -3,0,0 });
+	goal->AddBoxCollider(Goal1col);
+	Goal* g1 = new Goal(goal);
+	goal->AddComponent(g1);
 
 	GameObject* goal2 = new GameObject();
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { (float)col - 15, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -7, 0, (float)row - 38}, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
-	goal2->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
+	goal2->AddComponent(GoalRenderer2);
+	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 3,20,3 }, { -3,0,0 });
+	goal2->AddBoxCollider(Goal2col);
+	Goal* g2 = new Goal(goal2);
+	goal2->AddComponent(g2);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* mage2 = new GameObject();
 	basic->AddGameObject(mage2);
@@ -521,7 +589,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
-	meterbox6->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -530,7 +598,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
@@ -553,7 +620,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Movement* ballMover3 = new Movement();
 	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10);
 	Hex->AddComponent(HexPillar);
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* gameBall = new GameObject();
@@ -756,7 +822,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	soloPlayer->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
 	sRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
-	sRender->DecodeBitmap(L"../Assets/UI/button.png");
+	sRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	sRender->DecodeBitmap(L"../Assets/UI/button3.png");
 	soloPlayer->AddComponent(sRender);
 	sRender->MakeRTSize();
 	sButton->MakeRect();
@@ -775,7 +842,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	multiPlayer->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
 	mRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
-	mRender->DecodeBitmap(L"../Assets/UI/button.png");
+	mRender->DecodeBitmap(L"../Assets/UI/button4.png");
+	mRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer->AddComponent(mRender);
 	mRender->MakeRTSize();
 	mButton->MakeRect();
@@ -793,7 +861,8 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	multiPlayer2->AddComponent(mButton2);
 	UIRenderer * mRender2 = new UIRenderer();
 	mRender2->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
-	mRender2->DecodeBitmap(L"../Assets/UI/button.png");
+	mRender2->DecodeBitmap(L"../Assets/UI/button4.png");
+	mRender2->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer2->AddComponent(mRender2);
 	mRender2->MakeRTSize();
 	mButton2->MakeRect();
@@ -964,4 +1033,13 @@ void Game::UpdateClientObjects()
 			}
 		}
 	}
+}
+
+void Game::UpdateUI()
+{
+	wstring newScore = to_wstring(Team1Score) + L" : " + to_wstring(Team2Score);
+	
+	GameObject * score = scenes[currentScene]->GetUIByName("gameScore");
+	Button * button = score->GetComponent<Button>();
+	button->setText(newScore);
 }

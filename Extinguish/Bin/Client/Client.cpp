@@ -8,6 +8,7 @@ char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
 Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[28];
+Client::GAME_STATE * Client::gameState = new GAME_STATE();
 //std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
 
@@ -156,13 +157,19 @@ int Client::run()
 		}
 		case ID_INCOMING_PACKET:
 		{
-			recievePackets();
+			receivePackets();
 			result = 2;
 			break;
 		}
 		case ID_SERVER_CLOSURE:
 		{
 			sendStop();
+			break;
+		}
+		case ID_INCOMING_STATE:
+		{
+			receiveGameState();
+			result = 4;
 			break;
 		}
 		}
@@ -310,7 +317,7 @@ void Client::sendPacket()
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
 
-void Client::recievePackets()
+void Client::receivePackets()
 {
 	if (clientStates)
 	{
@@ -344,4 +351,14 @@ Client::CLIENT_GAME_STATE Client::getState(unsigned int index)
 {
 	// return the state of the obj at index
 	return *myState;
+}
+
+void Client::receiveGameState()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	bIn.Read(gameState->scoreA);
+	bIn.Read(gameState->scoreB);
+	bIn.Read(gameState->time);
 }

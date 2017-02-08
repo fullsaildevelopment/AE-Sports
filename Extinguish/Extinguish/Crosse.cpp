@@ -57,7 +57,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 3.0f;
+	const float throwSpeed = 20.0f;
 
 	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
 	if (ball->GetHolder() == GetGameObject())

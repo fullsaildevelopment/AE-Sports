@@ -96,6 +96,7 @@ public:
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
 	int GetNumObjects() { return (int)gameObjects.size(); };
+	GameObject* const GetUIByName(string name);
 
 	void set2DRenderTarget(ID2D1HwndRenderTarget * renderTarget) { pRT = renderTarget; }
 

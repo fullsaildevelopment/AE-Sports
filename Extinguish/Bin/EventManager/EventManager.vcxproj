@@ -144,6 +144,7 @@
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="HashStringCopy.h" />
     <ClInclude Include="InputDownEvent.h" />
+    <ClInclude Include="ScoreEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventDispatcher.cpp" />
