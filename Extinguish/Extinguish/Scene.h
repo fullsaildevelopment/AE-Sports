@@ -16,6 +16,7 @@
 // in regards to shaders and what not, if we want multiple ones, we can have an enum and a member to choose which num from enum we want
 
 class GameObject;
+class HashString;
 
 class Scene
 {
@@ -41,7 +42,9 @@ private:
 
 	//ResourceManager* resourceManager;
 	//vector<AnimatedRenderNode*> renderNodes;
+
 	vector<GameObject*> gameObjects;
+	HashString* gameObjectsTable;
 	vector<GameObject*> uiObjects;
 	unsigned int curFrame;
 
@@ -93,12 +96,16 @@ public:
 	void AddGameObject(GameObject* gameObject);
 	void AddUIObject(GameObject* gameObject);
 
+	//getters//
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
 	int GetNumObjects() { return (int)gameObjects.size(); };
+	GameObject* GetGameObject(std::string name);
 	GameObject* const GetUIByName(string name);
 
+	//setters//
 	void set2DRenderTarget(ID2D1HwndRenderTarget * renderTarget) { pRT = renderTarget; }
+
 
 	//setters
 	//void SetButtons(bool butts[256]) { memcpy(buttons, butts, sizeof(buttons)); }

@@ -56,6 +56,8 @@ private:
 	void UpdateServerStates();
 	void UpdateClientObjects();
 	void UpdateUI();
+
+	void LoadScene(std::string name);
 public:
 
 	//basic
@@ -65,7 +67,7 @@ public:
 	void Shutdown();
 
 	//misc
-	void LoadScene(unsigned int index);
+	//void LoadScene(unsigned int index);
 	void HandleEvent(Event* e);
 	void WindowResize(uint16_t w, uint16_t h);
 

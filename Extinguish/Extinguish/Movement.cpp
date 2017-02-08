@@ -5,6 +5,9 @@
 #include "EventDispatcher.h"
 #include "SoundEngine.h"
 #include "Game.h"
+#include "AnimatorController.h"
+#include "State.h"
+#include "Trigger.h"
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -27,8 +30,6 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 void Movement::Update(float dt)
 {
 	this->dt = dt;
-
-	cout << isMoving << endl;
 
 	//sound feedback
 	if (isMoving && (timeSincePlayed == 0 || timeSincePlayed > 18.0f))
@@ -53,52 +54,25 @@ void Movement::Update(float dt)
 	//animation feedback
 	if (isMoving)
 	{
-		Renderer* renderer = GetGameObject()->GetComponent<Renderer>();
-		if (renderer)
+		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+		if (animator)
 		{
-			Blender* blender = renderer->GetBlender();
-			if (blender)
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Run")
 			{
-				//if (!blender->GetNextInterpolator()->HasAnimation())
-
-				if (blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() == "Idle")
-				{
-					Animation* nextAnimation = blender->GetNextInterpolator()->GetAnimation();
-					bool runAnimation = false;
-
-					if (nextAnimation)
-					{
-						if (nextAnimation->GetAnimationName() != "Run")
-						{
-							runAnimation = true;
-							//GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
-						}
-					}
-					else
-					{
-						runAnimation = true;
-					}
-
-					if (runAnimation)
-					{
-						GetGameObject()->GetComponent<Renderer>()->GetBlender()->SetNextAnimation("Run");
-					}
-				}
+				GetGameObject()->GetComponent<AnimatorController>()->SetTrigger("Run");
 			}
 		}
 	}
-	else
+	else //if not moving and not already idle, set to idle... Might actually already be handled by animator controller
 	{
-		Renderer* renderer = GetGameObject()->GetComponent<Renderer>();
-		if (renderer)
+		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+		if (animator)
 		{
-			Blender* blender = renderer->GetBlender();
-			if (blender)
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle")
 			{
-				if (blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != "Idle")
-				{
-					blender->SetNextAnimation("Idle");
-				}
+				GetGameObject()->GetComponent<AnimatorController>()->SetTrigger("Idle");
 			}
 		}
 	}

@@ -144,12 +144,14 @@
     <ClInclude Include="EventHandler.h" />
     <ClInclude Include="HashStringCopy.h" />
     <ClInclude Include="InputDownEvent.h" />
+    <ClInclude Include="LoadSceneEvent.h" />
     <ClInclude Include="ScoreEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventDispatcher.cpp" />
     <ClCompile Include="HashStringCopy.cpp" />
     <ClCompile Include="InputDownEvent.cpp" />
+    <ClCompile Include="LoadSceneEvent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

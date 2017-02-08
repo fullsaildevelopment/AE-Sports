@@ -2,10 +2,15 @@
 #include "Game.h"
 #include "Server Wrapper.h"
 #include "Client Wrapper.h"
+#include "EventDispatcher.h"
+#include "LoadSceneEvent.h"
 
 void StartGame()
 {
-	Game::currentScene = 1;
+	LoadSceneEvent* event = new LoadSceneEvent();
+	event->Init("FirstLevel");
+	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+	delete event;
 }
 
 void StartServer()
