@@ -174,6 +174,8 @@ void DeviceResources::Init(HWND hwnd)
 	ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
 
 	device.As(&pDebug);
+
+	HRESULT dRes = pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 }
 
 void DeviceResources::Clear()
@@ -213,7 +215,11 @@ void DeviceResources::Shutdown()
 
 
 	if (pDebug)
-		pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	{
+		HRESULT res = pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	}
+
+
 }
 
 void DeviceResources::Present()

@@ -10,7 +10,6 @@ class Button;
 class UIRenderer : public Component
 {
 private:
-
 	DeviceResources* devResources;
 	ID2D1Factory2 * pD2DFactory;
 	IDWriteFactory * pDWriteFactory;
@@ -29,12 +28,10 @@ private:
 	Microsoft::WRL::ComPtr<IWICImagingFactory> IWICfactory;
 	Microsoft::WRL::ComPtr<IWICBitmapDecoder>  IWICdecoder;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>  pBRT;
-
+	Button * theButton;
 	D2D1_RECT_F * layoutRect;
 	bool isButton = false;
 	float left;
-
-	Button * theButton;
 
 	void RenderDebugUI(Button * theButton);
 
@@ -47,6 +44,5 @@ public:
 	void DecodeBitmap(PCWSTR address);
 	void MakeRTSize();
 	void InitMetrics();
-
 };
 
