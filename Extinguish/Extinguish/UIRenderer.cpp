@@ -78,7 +78,7 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 
 void UIRenderer::InitMetrics()
 {
-	GameObject * temp = GetGameObject();
+	//GameObject * temp = GetGameObject();
 	//Button * theButton = temp->GetComponent<Button>();
 
 	HRESULT res = pDWriteFactory->CreateTextLayout(
@@ -101,7 +101,7 @@ void UIRenderer::Update(float dt)
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
-	GameObject * temp = GetGameObject();
+	//GameObject * temp = GetGameObject();
 	//Button * theButton = temp->GetComponent<Button>();
 
 	HRESULT res = pDWriteFactory->CreateTextLayout(
@@ -127,7 +127,7 @@ void UIRenderer::Render()
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
-	GameObject * temp = GetGameObject();
+	//GameObject * temp = GetGameObject();
 	//Button * theButton = temp->GetComponent<Button>();
 	HRESULT hr;
 
@@ -276,7 +276,7 @@ void UIRenderer::DecodeBitmap(PCWSTR address)
 void UIRenderer::MakeRTSize()
 {
 	D2D1_SIZE_F rtSize = d2DevContext->GetSize();
-	GameObject * object = GetGameObject();
+	//GameObject * object = GetGameObject();
 //	Button * button = object->GetComponent<Button>();
 	theButton->setRT(rtSize);
 }
