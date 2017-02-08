@@ -59,7 +59,7 @@ public:
 	void SetView(XMFLOAT4X4 view);
 	void SetProjection(XMFLOAT4X4 projection);
 	void SetBlendInfo(BlendInfo info);
-	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4> boneOffsets);
+	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
 	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
 	//void SetBonesWorlds(std::vector<DirectX::XMFLOAT4X4> worlds) { bonesWorlds = worlds; }
 };

@@ -423,7 +423,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mageAnim1->AddParameter(idleTrigger);
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
-		idleToRun->Init(mageIdle, mageRun, -1, 5.0f);
+		idleToRun->Init(mageIdle, mageRun, -1, 0.1f);
 		idleToRun->AddCondition(runTrigger);
 		Transition* runToIdle = new Transition();
 		mageRun->AddTransition(runToIdle);
