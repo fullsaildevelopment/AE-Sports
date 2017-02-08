@@ -73,6 +73,26 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 
 }
 
+void UIRenderer::InitMetrics()
+{
+	GameObject * temp = GetGameObject();
+	Button * theButton = temp->GetComponent<Button>();
+
+	HRESULT res = pDWriteFactory->CreateTextLayout(
+		theButton->getText().c_str(),
+		theButton->getLength(),
+		pTextFormat.Get(),
+		theButton->getWidth(),
+		theButton->getHeight(),
+		&pTextLayout
+	);
+
+	ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
+	pTextLayout->GetMetrics(&textMetrics);
+	left = textMetrics.left;
+
+}
+
 
 void UIRenderer::Update(float dt)
 {
@@ -92,6 +112,12 @@ void UIRenderer::Update(float dt)
 
 	ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
 	pTextLayout->GetMetrics(&textMetrics);
+
+	if (left > textMetrics.left)
+	{
+		theButton->setOrigin(theButton->getOriginX() - (left - textMetrics.left), theButton->getOriginY());
+		left = textMetrics.left;
+	}
 }
 
 void UIRenderer::Render()

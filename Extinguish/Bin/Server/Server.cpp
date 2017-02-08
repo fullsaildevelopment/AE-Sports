@@ -1,7 +1,7 @@
 #include "Server.h"
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
-Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[28];
+Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[30];
 Server::GAME_STATE * Server::gameState = new GAME_STATE();
 
 

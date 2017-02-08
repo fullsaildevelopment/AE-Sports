@@ -31,7 +31,7 @@ Animation* AnimationSet::GetAnimation(int animationIndex)
 {
 	Animation* result = nullptr;
 
-	if (animationIndex != -1)
+	if (animationIndex >= 0)
 	{
 		result = &animations[animationIndex];
 	}

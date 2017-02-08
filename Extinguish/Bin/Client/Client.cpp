@@ -7,7 +7,7 @@ Packet * Client::packet = nullptr;
 char * Client::address = nullptr;
 
 Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
-Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[28];
+Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[30];
 Client::GAME_STATE * Client::gameState = new GAME_STATE();
 //std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
@@ -158,7 +158,8 @@ int Client::run()
 		case ID_INCOMING_PACKET:
 		{
 			receivePackets();
-			result = 2;
+			if (result != 4)
+				result = 2;
 			break;
 		}
 		case ID_SERVER_CLOSURE:

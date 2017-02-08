@@ -139,6 +139,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		PostQuitMessage(0);
 		return 0;
 		break;
+	case WM_SIZE: //lParam holds Width and Height as first 16 bits = width and last are height
+		uint16_t w = lParam;
+		uint16_t h = lParam >> 16;
+		break;
 		//default:
 		//	DefWindowProc(hwnd, message, wParam, lParam);
 		//	break;
