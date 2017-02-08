@@ -30,6 +30,8 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteFactory>		  pDWriteFactory;
 	Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> pRT;
 
+	//Microsoft::WRL::ComPtr<HWND> drawWindow;
+
 	D2D1_RECT_F layoutRect;
 	
 public:
@@ -37,6 +39,8 @@ public:
 	void Present();
 	void Clear();
 	void Shutdown();
+
+	void ResizeWindow(uint16_t w, uint16_t h);
 
 	void LoadButtonResources(HWND hwnd_);
 	//Getters
