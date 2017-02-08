@@ -5,15 +5,18 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "UIRenderer.h"
+#include "HashString.h"
+#include "AnimatorController.h"
 
 Scene::Scene()
 {
-	
+	gameObjectsTable = new HashString();
 }
 
 Scene::~Scene()
 {
 //	depthDisabledStencilState.ReleaseAndGetAddressOf();
+	delete gameObjectsTable;
 }
 
 //basic//
@@ -407,25 +410,20 @@ void Scene::Update(float dt)
 
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
-	XMFLOAT4X4 cameraCam;
-	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
 
 	int id = Game::GetClientID();
-	if (!camObject)
+
+	if (id == 0)
 	{
-
-		if (id == 0)
-		{
-			id = 1;
-		}
-
-		cameraName += to_string(id);
-
-		//update cam to get accurate view
-		camObject = gameObjects[0]->FindGameObject(cameraName);
+		id = 1;
 	}
-	camObject->Update(dt);
 
+	//get camera object
+	cameraName += to_string(id);
+	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
+
+	//get view
+	XMFLOAT4X4 cameraCam;
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
 
 	
@@ -464,14 +462,16 @@ void Scene::Update(float dt)
 			}
 
 			//don't render yourself
-			if (i + 1 != id)
+			if (i != (id - 1) * 3 + 1)
 			{
 				renderer->Render();
 			}
 
-			if (i == 1)
+			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
+
+			if (animator && i != (id - 1) * 3 + 1) //don't animate yourself
 			{
-				//cout << transform->GetVelocity().x << " " << transform->GetVelocity().y << " " << transform->GetVelocity().z << endl;
+				animator->Update(dt);
 			}
 		}
 	}
@@ -687,12 +687,27 @@ void Scene::AddGameObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	gameObjects.push_back(gameObject);
+	gameObjectsTable->Insert(gameObject->GetName());
 }
 
 void Scene::AddUIObject(GameObject* gameObject)
 {
 	gameObject->SetScene(this);
 	uiObjects.push_back(gameObject);
+}
+
+//getters//
+GameObject* Scene::GetGameObject(std::string name)
+{
+	GameObject* result = nullptr;
+	int index = gameObjectsTable->GetKey(name);
+
+	if (index != -1)
+	{
+		result = gameObjects[index];
+	}
+
+	return result;
 }
 
 GameObject* const Scene::GetUIByName(string name)

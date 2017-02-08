@@ -1,7 +1,7 @@
 #include "Server.h"
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
-Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[28];
+Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[30];
 Server::GAME_STATE * Server::gameState = new GAME_STATE();
 
 
@@ -366,4 +366,6 @@ void Server::sendState()
 	bOut.Write(gameState->scoreA);
 	bOut.Write(gameState->scoreB);
 	bOut.Write(gameState->time);
+
+	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }

@@ -2,10 +2,15 @@
 #include "Game.h"
 #include "Server Wrapper.h"
 #include "Client Wrapper.h"
+#include "EventDispatcher.h"
+#include "LoadSceneEvent.h"
 
 void StartGame()
 {
-	Game::currentScene = 1;
+	LoadSceneEvent* event = new LoadSceneEvent();
+	event->Init("FirstLevel");
+	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+	delete event;
 }
 
 void StartServer()
@@ -30,7 +35,10 @@ void JoinServer()
 	StartGame();
 }
 
-
+void ShutdownGame()
+{
+	// shutdown game
+}
 
 Button::Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 	DeviceResources * resources, unsigned int type) {
@@ -146,6 +154,7 @@ void Button::setButtonType()
 	}
 	case BUTTON_TYPE::EXIT:
 	{
+		eventFunction = ShutdownGame;
 		break;
 	}
 	case BUTTON_TYPE::RESUME_GAME:

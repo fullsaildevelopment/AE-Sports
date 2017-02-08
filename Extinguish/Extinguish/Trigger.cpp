@@ -2,6 +2,12 @@
 
 namespace Param
 {
+	void Trigger::Init(std::string triggerName, bool toggle)
+	{
+		SetName(triggerName);
+		trigger = toggle;
+	}
+
 	//if a trigger is set to true, when it's checked, it will toggle it back automatically to false
 	bool Trigger::Check()
 	{
@@ -16,8 +22,15 @@ namespace Param
 		return result;
 	}
 
-	void Trigger::SetTrigger(bool toggle)
+	//getter//
+	bool Trigger::GetTrigger() const
 	{
-		trigger = toggle;
+		return trigger;
+	}
+
+	//setter//
+	void Trigger::SetTrigger()
+	{
+		trigger = true;
 	}
 }
