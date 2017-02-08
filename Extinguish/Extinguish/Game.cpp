@@ -73,6 +73,9 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
+
+	if (gameStates.size() > 1)
+		float temp = 0.1f;
 	for (int i = 0; i < gameObjects->size(); ++i)
 	{
 		GameState* state = new GameState();
