@@ -36,6 +36,12 @@
     <ClInclude Include="HashStringCopy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScoreEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadSceneEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">
@@ -46,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="HashStringCopy.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadSceneEvent.cpp">
+      <Filter>Events</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

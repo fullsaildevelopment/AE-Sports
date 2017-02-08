@@ -53,4 +53,5 @@ public:
 	unsigned int GetNextFrame() { return nextFrame; }
 	float GetSpeed();
 	bool IsLoop();
+	bool IsFinished();
 };

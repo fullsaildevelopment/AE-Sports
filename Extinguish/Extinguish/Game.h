@@ -31,6 +31,8 @@ public:
 	static ClientWrapper client;
 	static ServerWrapper server;
 	static unsigned int currentScene;
+	int Team1Score;
+	int Team2Score;
 private:
 	std::vector<Scene*> scenes;
 	HashString scenesNamesTable;
@@ -51,14 +53,11 @@ private:
 	void CreateMenu(DeviceResources * devResources, Scene * scene);
 	void CreateLobby(DeviceResources * devResources, Scene * scene);
 
-
-	/*void StartServer();
-	void JoinServer();
-	static void StartServerStatic(void * obj) { static_cast<Game *>(obj)->StartServer(); }
-	static void JoinServerStatic(void * obj)  { static_cast<Game *>(obj)->JoinServer(); }*/
-
 	void UpdateServerStates();
 	void UpdateClientObjects();
+	void UpdateUI();
+
+	void LoadScene(std::string name);
 public:
 
 	//basic
@@ -68,7 +67,7 @@ public:
 	void Shutdown();
 
 	//misc
-	void LoadScene(unsigned int index);
+	//void LoadScene(unsigned int index);
 	void HandleEvent(Event* e);
 
 	//getters

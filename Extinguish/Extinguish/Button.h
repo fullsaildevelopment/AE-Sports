@@ -43,6 +43,7 @@ private:
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;
+	bool hovered = false;
 	unsigned int sceneIndex;
 
 	// some function pointer for event
@@ -83,11 +84,15 @@ public:
 	float getOriginX() { return originX; }
 	float getOriginY() { return originY; }
 
+	bool isHovered() { return hovered; }
+
 	/* SETTERS */
 	void setHeight(float _height) { height = _height; }
 	void setWidth(float _width) { width = _width; }
 	void setText(WCHAR * _text) { text = _text; }
-	void setText(wstring _text) { text = _text; }
+	void setText(wstring _text) {
+		text = _text; textLength = (unsigned int)text.length();
+	}
 	void setTexture(char * _textureAddress) {}
 	void setOrigin(float x, float y) { originX = x; originY = y; }
 	void setPositionMultipliers(float w, float h) { widthMult = w; heightMult = h; }
@@ -99,11 +104,23 @@ public:
 
 	void MakeRect() {
 		rect = D2D1::RectF(
-			rtSize.width * widthMult - (width * 0.5f),
-			rtSize.height * heightMult - height * 0.5f,
-			rtSize.width * widthMult + (width * 0.5f),
-			rtSize.height * heightMult + height * 0.5f
+			(rtSize.width * widthMult) - (width * 0.5f),
+			(rtSize.height * heightMult) - (height * 0.5f),
+			(rtSize.width * widthMult) + (width * 0.5f),
+			(rtSize.height * heightMult) + (height * 0.5f)
 		);
+
+		if (widthMult <= 0.0f)
+		{
+			rect.left = 0.0f;
+			rect.right = width;
+		}
+
+		if (heightMult <= 0.0f)
+		{
+			rect.top = 0.0f;
+			rect.bottom = height;
+		}
 	}
 
 	void MakeHandler();

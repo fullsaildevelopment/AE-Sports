@@ -146,6 +146,10 @@ Param::Trigger* AnimatorController::GetTrigger(std::string name)
 void AnimatorController::SetCurrentState(unsigned int curState)
 {
 	currentState = curState;
+
+	blender->GetNextInterpolator()->SetAnimation(states[currentState]->GetAnimation());
+	blender->GetNextInterpolator()->SetSpeed(states[currentState]->GetSpeed());
+	blender->GetNextInterpolator()->SetIsLoop(states[currentState]->DoesItLoop());
 }
 
 void AnimatorController::SetCurrentState(State* curState)

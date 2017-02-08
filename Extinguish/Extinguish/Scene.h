@@ -101,6 +101,7 @@ public:
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
 	int GetNumObjects() { return (int)gameObjects.size(); };
 	GameObject* GetGameObject(std::string name);
+	GameObject* const GetUIByName(string name);
 
 	//setters//
 	void set2DRenderTarget(ID2D1HwndRenderTarget * renderTarget) { pRT = renderTarget; }

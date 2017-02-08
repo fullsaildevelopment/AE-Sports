@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "UIRenderer.h"
 #include "HashString.h"
+#include "AnimatorController.h"
 
 Scene::Scene()
 {
@@ -470,10 +471,12 @@ void Scene::Update(float dt)
 			{
 				renderer->Render();
 			}
-			else
+
+			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
+
+			if (animator && i != (id - 1) * 3 + 1) //don't animate yourself
 			{
-				int breakPoint = 0;
-				breakPoint++;
+				animator->Update(dt);
 			}
 		}
 	}
@@ -710,4 +713,17 @@ GameObject* Scene::GetGameObject(std::string name)
 	}
 
 	return result;
+}
+
+GameObject* const Scene::GetUIByName(string name)
+{
+	for (unsigned int i = 0; i < uiObjects.size(); ++i)
+	{
+		if (uiObjects[i]->GetName() == name)
+		{
+			return uiObjects[i];
+		}
+	}
+
+	return nullptr;
 }
