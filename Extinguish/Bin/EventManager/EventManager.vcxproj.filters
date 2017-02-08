@@ -36,6 +36,9 @@
     <ClInclude Include="HashStringCopy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScoreEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">

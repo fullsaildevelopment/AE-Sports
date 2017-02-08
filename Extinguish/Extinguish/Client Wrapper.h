@@ -107,4 +107,7 @@ public:
 
 	int getFloorState(unsigned int i) { return newClient.getFloorState(i); }
 
+	int getScoreA() { return newClient.getScoreA(); }
+	int getScoreB() { return newClient.getScoreB(); }
+	float getTime() { return newClient.getTime(); }
 };

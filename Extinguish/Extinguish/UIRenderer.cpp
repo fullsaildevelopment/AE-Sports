@@ -81,7 +81,7 @@ void UIRenderer::Update(float dt)
 	GameObject * temp = GetGameObject();
 	Button * theButton = temp->GetComponent<Button>();
 
-	pDWriteFactory->CreateTextLayout(
+	HRESULT res = pDWriteFactory->CreateTextLayout(
 		theButton->getText().c_str(),
 		theButton->getLength(),
 		pTextFormat.Get(),
@@ -111,7 +111,10 @@ void UIRenderer::Render()
 
 		if (pBitmap)
 		{
-			d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
+			if (!theButton->isHovered() || !pBitmapHovered)
+				d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
+			else
+				d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
 		}
 
 		DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
@@ -223,11 +226,17 @@ void UIRenderer::DecodeBitmap(PCWSTR address)
 		rtp.dpiX = 96.0f;
 		rtp.dpiY = 96.0f;
 
-		//pD2DFactory->CreateWicBitmapRenderTarget(pWBitmap.Get(), rtp, &pBRT);
-
-		//IWICBitmapSource * source;
 		d2DevContext->CreateBitmapFromWicBitmap(pConvertedSource, NULL, pBitmap.GetAddressOf());
 
+	}
+	else
+	{
+
+		D2D1_RENDER_TARGET_PROPERTIES rtp = D2D1::RenderTargetProperties();
+		rtp.dpiX = 96.0f;
+		rtp.dpiY = 96.0f;
+
+		d2DevContext->CreateBitmapFromWicBitmap(pConvertedSource, NULL, pBitmapHovered.GetAddressOf());
 	}
 
 	//delete pFrame;

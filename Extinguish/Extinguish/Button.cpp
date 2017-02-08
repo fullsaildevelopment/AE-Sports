@@ -98,15 +98,24 @@ void Button::HandleEvent(Event* e)
 		{
 			InputManager * input = inputDownEvent->GetInput();
 
-			if (input->GetMouseDown()[0])
-			{
-				int mouseX = input->GetMouseX();
-				int mouseY = input->GetMouseY();
+			int mouseX = input->GetMouseX();
+			int mouseY = input->GetMouseY();
 
-				if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
+			if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
+			{
+
+				if (input->GetMouseDown()[0])
 				{
 					eventFunction();
 				}
+				else
+				{
+					hovered = true;
+				}
+			}
+			else
+			{
+				hovered = false;
 			}
 		}
 	}

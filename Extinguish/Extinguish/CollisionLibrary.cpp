@@ -279,6 +279,16 @@ bool AABBToCapsule(const AABB& box, const Capsule& cap)
 
 bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
 {
+	AABB bl;
+	AABB br;
+	bl.min = capl.m_Segment.m_Start - float3(capl.m_Radius, capl.m_Radius, capl.m_Radius);
+	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius, capl.m_Radius, capl.m_Radius);
+
+	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
+	br.max = capr.m_Segment.m_End +   float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
+
+	if (!AABBtoAABB(bl, br)) return false;
+
 	float3 cpl;
 	float3 cpr;
 
@@ -763,6 +773,17 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	//p0 = p0 + u*sc;
 	//q0 = q0 + v*tc;
 
+	AABB bl;
+	AABB br;
+	bl.min = capl.m_Segment.m_Start - float3(capl.m_Radius, capl.m_Radius, capl.m_Radius) * 2;
+	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius, capl.m_Radius, capl.m_Radius) * 2;
+
+	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius, capr.m_Radius, capr.m_Radius) * 2;
+	br.max = capr.m_Segment.m_End + float3(capr.m_Radius, capr.m_Radius, capr.m_Radius) * 2;
+
+	if (!AABBtoAABB(bl, br)) 
+		return false;
+
 	float3 p0;
 	float3 q0;
 
@@ -1001,7 +1022,6 @@ float3 SpherePlanePoint(const NewPlane& p, const Sphere& s)
 	return s.m_Center + np;
 }
 
-
 bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 {
 	float hd = hex.d * 0.5f;
@@ -1224,6 +1244,17 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 bool HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 {
+	float hd = hex.d * 0.5f;
+	AABB bounding;
+	bounding.min = float3(hex.seg.m_Start.x - hd, hex.seg.m_Start.y - hd, hex.seg.m_Start.z - hd);
+	bounding.max = float3(hex.seg.m_End.x + hd, hex.seg.m_End.y + hd, hex.seg.m_End.z + hd);
+	AABB cb;
+	cb.min = c.m_Segment.m_Start - c.m_Radius;
+	cb.max = c.m_Segment.m_End + c.m_Radius;
+
+	if (!AABBtoAABB(bounding, cb)) 
+		return false;
+
 	Sphere s;
 	s.m_Center = c.m_Segment.m_Start;
 	s.m_Radius = c.m_Radius;

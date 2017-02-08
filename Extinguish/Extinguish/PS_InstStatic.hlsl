@@ -20,9 +20,9 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	
 	if (diffuseColor.r > 0)
 	{
-		finalColor.r = (input.color & 0xFF000000) * 0.003921;
-		finalColor.g = (input.color & 0x00FF0000) * 0.003921;
-		finalColor.b = (input.color & 0x0000FF00) * 0.003921;
+		finalColor.r = (input.color & 0xFF000000) * 0.003906;
+		finalColor.g = (input.color & 0x00FF0000) * 0.003906;
+		finalColor.b = (input.color & 0x0000FF00) * 0.003906;
 		finalColor.a = 1.0;
 	}
 
