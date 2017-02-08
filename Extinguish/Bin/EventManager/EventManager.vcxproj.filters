@@ -39,6 +39,9 @@
     <ClInclude Include="ScoreEvent.h">
       <Filter>Events</Filter>
     </ClInclude>
+    <ClInclude Include="WindowResizeEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">
