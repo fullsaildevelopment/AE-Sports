@@ -413,7 +413,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(5.0f, 0.75f);
+		mageMover->Init(10.0f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
@@ -522,9 +522,50 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+
+
+	GameObject* Wall = new GameObject();
+	basic->AddGameObject(Wall);
+	Wall->Init("Wall");
+	Wall->InitTransform(identity, { 85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer = new Renderer();
+	Wall->AddComponent(WallRenderer);
+	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	Wall->AddBoxCollider(Wallboxcol);
+
+	GameObject* Wall2 = new GameObject();
+	basic->AddGameObject(Wall2);
+	Wall2->Init("Wall2");
+	Wall2->InitTransform(identity, { -85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer2 = new Renderer();
+	Wall2->AddComponent(WallRenderer2);
+	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	Wall2->AddBoxCollider(Wallboxcol2);
+
+	GameObject* Wall3 = new GameObject();
+	basic->AddGameObject(Wall3);
+	Wall3->Init("Wall3");
+	Wall3->InitTransform(identity, { 0, 0, 45 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer3 = new Renderer();
+	Wall3->AddComponent(WallRenderer3);
+	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f}, { -300,-300,-0.5f });
+	Wall3->AddBoxCollider(Wallboxcol3);
+
+	GameObject* Wall4 = new GameObject();
+	basic->AddGameObject(Wall4);
+	Wall4->Init("Wall4");
+	Wall4->InitTransform(identity, { 0, 0, -85 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer4 = new Renderer();
+	Wall4->AddComponent(WallRenderer4);
+	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol4 = new BoxCollider(Wall4, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	Wall4->AddBoxCollider(Wallboxcol4);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
