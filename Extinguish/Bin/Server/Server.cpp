@@ -366,4 +366,6 @@ void Server::sendState()
 	bOut.Write(gameState->scoreA);
 	bOut.Write(gameState->scoreB);
 	bOut.Write(gameState->time);
+
+	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }
