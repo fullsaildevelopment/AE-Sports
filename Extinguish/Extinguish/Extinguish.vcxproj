@@ -102,7 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)Assets\UI;$(SolutionDir)Bin\EventManager;$(SolutionDir)Bin\Client;$(SolutionDir)Bin\Server;$(SolutionDir)Bin\AnimationLibrary;$(SolutionDir)Bin\ShaderResources;$(SolutionDir)Bin\Wwise\include;$(SolutionDir)Bin\Wwise;E:\Program Files (x86)\Visual Leak Detector\include;$(SolutionDir)Bin\FBXLoader</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>GRAPHICS_DEBUG;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>E:\Program Files (x86)\Visual Leak Detector\lib\Win64%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
