@@ -337,26 +337,26 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
 	//create menus, levels, etc.//
+	if (GRAPHICS) {
+		Scene* menu = new Scene();
+		// ask tom
+		GameObject* camera = new GameObject();
+		menu->AddGameObject(camera);
+		camera->Init("Camera1");
+		camera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		Camera* cameraController = new Camera();
+		camera->AddComponent(cameraController);
+		cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
 
-	Scene* menu = new Scene();
-	// ask tom
-	GameObject* camera = new GameObject();
-	menu->AddGameObject(camera);
-	camera->Init("Camera1");
-	camera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Camera* cameraController = new Camera();
-	camera->AddComponent(cameraController);
-	cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+		menu->Init(devResources, input);
 
-	menu->Init(devResources, input);
+		menu->set2DRenderTarget(devResources->GetRenderTarget());
 
-	menu->set2DRenderTarget(devResources->GetRenderTarget());
+		CreateMenu(devResources, menu);
 
-	CreateMenu(devResources, menu);
-
-	scenes.push_back(menu);
-	scenesNamesTable.Insert("Menu");
-
+		scenes.push_back(menu);
+		scenesNamesTable.Insert("Menu");
+	}
 	//create basic level
 
 
@@ -594,7 +594,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
-	CreateUI(devResources, basic);
+	if (GRAPHICS) {
+		CreateUI(devResources, basic);
+	}
 
 	scenes.push_back(basic);
 	scenesNamesTable.Insert("FirstLevel");
@@ -612,7 +614,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	testScore->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
-	scoreRender->Init(true, 35.0f, devResources, theSButton, D2D1::ColorF::Black);
+	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF::Black);
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 	testScore->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
@@ -628,7 +630,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theButton->setOrigin(0.0f, 30.0f);
 	debugUI->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 30.0f, devResources, theButton, D2D1::ColorF::Black);
+	buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
 	debugUI->AddComponent(buttonRender);
 }
 
@@ -638,14 +640,14 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	GameObject * bg = new GameObject();
 	scene->AddUIObject(bg);
 	bg->Init("background");
-	Button * bgButton = new Button(true, false, L"", 0, 1024.0f, 768.0f, devResources, 0);
+	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
 	bgButton->setOrigin(0.0f, 0.0f);
 	bgButton->setPositionMultipliers(0.0f, 0.0f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
-	bgRender->Init(true, 35.0f, devResources, bgButton, D2D1::ColorF::Black);
+	bgRender->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
 	bgRender->DecodeBitmap(L"../Assets/UI/main_menu.png");
 	bg->AddComponent(bgRender);
 	bgRender->MakeRTSize();
@@ -663,7 +665,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	tButton->setPositionMultipliers(0.65f, 0.3f);
 	title->AddComponent(tButton);
 	UIRenderer * tRender = new UIRenderer();
-	tRender->Init(true, 35.0f, devResources, tButton, D2D1::ColorF::Black);
+	tRender->Init(true, 35.0f, devResources, tButton, L"", D2D1::ColorF::Black);
 	tRender->DecodeBitmap(L"../Assets/UI/newTitle.png");
 	title->AddComponent(tRender);
 	tRender->MakeRTSize();
@@ -680,7 +682,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	sButton->setPositionMultipliers(0.65f, 0.50f);
 	soloPlayer->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
-	sRender->Init(true, 25.0f, devResources, sButton, D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	sRender->Init(true, 25.0f, devResources, sButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
 	sRender->DecodeBitmap(L"../Assets/UI/button2.png");
 	sRender->DecodeBitmap(L"../Assets/UI/button3.png");
 	soloPlayer->AddComponent(sRender);
@@ -700,7 +702,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton->setPositionMultipliers(0.57f, 0.58f);
 	multiPlayer->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
-	mRender->Init(true, 25.0f, devResources, mButton, D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	mRender->Init(true, 25.0f, devResources, mButton, L"Bradley Hand ITC", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
 	mRender->DecodeBitmap(L"../Assets/UI/button4.png");
 	mRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer->AddComponent(mRender);
@@ -720,7 +722,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton2->setPositionMultipliers(0.725f, 0.58f);
 	multiPlayer2->AddComponent(mButton2);
 	UIRenderer * mRender2 = new UIRenderer();
-	mRender2->Init(true, 25.0f, devResources, mButton2, D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	mRender2->Init(true, 25.0f, devResources, mButton2, L"Bradley Hand ITC", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
 	mRender2->DecodeBitmap(L"../Assets/UI/button4.png");
 	mRender2->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer2->AddComponent(mRender2);
@@ -741,7 +743,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	cButton->setPositionMultipliers(0.57f, 0.658f);
 	credits->AddComponent(cButton);
 	UIRenderer * cRender = new UIRenderer();
-	cRender->Init(true, 25.0f, devResources, cButton, D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	cRender->Init(true, 25.0f, devResources, cButton, L"Freestyle Script", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
 	cRender->DecodeBitmap(L"../Assets/UI/button4.png");
 	cRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	credits->AddComponent(cRender);
@@ -762,7 +764,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	eButton->setPositionMultipliers(0.725f, 0.658f);
 	exit->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
-	eRender->Init(true, 25.0f, devResources, eButton, D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	eRender->Init(true, 25.0f, devResources, eButton, L"Freestyle Script", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
 	eRender->DecodeBitmap(L"../Assets/UI/button4.png");
 	eRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	exit->AddComponent(eRender);
@@ -770,6 +772,24 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	eButton->MakeRect();
 	eButton->MakeHandler();
 	eRender->InitMetrics();
+
+
+	// background 2.0
+	GameObject * bg2 = new GameObject();
+	scene->AddUIObject(bg2);
+	bg2->Init("background2");
+	Button * bg2Button = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
+	bg2Button->SetGameObject(bg2);
+	bg2Button->showFPS(false);
+	bg2Button->setOrigin(0.0f, 0.0f);
+	bg2Button->setPositionMultipliers(0.0f, 0.0f);
+	bg2->AddComponent(bg2Button);
+	UIRenderer * bg2Render = new UIRenderer();
+	bg2Render->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
+	bg2Render->DecodeBitmap(L"../Assets/UI/main_menu2.png");
+	bg2->AddComponent(bg2Render);
+	bg2Render->MakeRTSize();
+	bg2Button->MakeRect();
 
 
 	// create lobby
