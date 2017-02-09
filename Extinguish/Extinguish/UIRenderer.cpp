@@ -73,9 +73,12 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	theButton = button;
 	d2DevContext = deviceResources->Get2DContext();
 
+	HRESULT result;
+	IDWriteFontCollection* pFontCollection = NULL;
 
-	HRESULT result = pDWriteFactory->CreateTextFormat(L"Consolas",
-		NULL,
+	result = pDWriteFactory->GetSystemFontCollection(&pFontCollection);
+	result = pDWriteFactory->CreateTextFormat(L"Roman Regular",
+		pFontCollection,
 		DWRITE_FONT_WEIGHT_REGULAR,
 		DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
