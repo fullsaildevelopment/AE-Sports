@@ -61,7 +61,7 @@ UIRenderer::~UIRenderer()
 		delete theButton;
 }
 
-void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button)
+void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, D2D1::ColorF fontColor)
 {
 	pDWriteFactory = deviceResources->GetWriteFactory();
 	pD2DFactory = deviceResources->GetID2D1Factory();
@@ -93,7 +93,7 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	if (SUCCEEDED(result))
 	{
 		result = d2DevContext->CreateSolidColorBrush(
-			D2D1::ColorF(D2D1::ColorF::Black),
+			D2D1::ColorF(fontColor),
 			pBrush.GetAddressOf()
 		);
 	}
@@ -147,9 +147,11 @@ void UIRenderer::Render()
 	HRESULT hr;
 
 	if (theButton->isEnabled()) {
-		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
-		//devContext->OMSetDepthStencilState(depthStencilState, 1);
-		d2DevContext->SaveDrawingState(stateBlock.Get());
+		if (GRAPHICS) {
+			pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
+			//devContext->OMSetDepthStencilState(depthStencilState, 1);
+			d2DevContext->SaveDrawingState(stateBlock.Get());
+		}
 		d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
@@ -164,26 +166,28 @@ void UIRenderer::Render()
 		DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
 		hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
 
-		d2DevContext->DrawTextLayout(
-			D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
-			pTextLayout.Get(),
-			pBrush.Get()
-		);
+		if (GRAPHICS) {
+			d2DevContext->DrawTextLayout(
+				D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
+				pTextLayout.Get(),
+				pBrush.Get()
+			);
+		}
 
 		hr = d2DevContext->EndDraw();
 		/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
 		{
 			float t = 0;
 		}*/
-		d2DevContext->RestoreDrawingState(stateBlock.Get());
+	//	d2DevContext->RestoreDrawingState(stateBlock.Get());
 
 		if (GetGameObject()->GetName() == "debugUI") {
 			RenderDebugUI(theButton);
 		}
 
 
-
-		stateBlock.Reset();
+		if (GRAPHICS)
+			stateBlock.Reset();
 	}
 }
 
