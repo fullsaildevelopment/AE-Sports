@@ -398,7 +398,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
-		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.5f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
+		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
 
@@ -406,14 +406,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mage1->AddComponent(mageAnim1);
 		mageAnim1->Init("Mage", 0, "Idle"); //init animator
 		State* mageIdle = new State();
-		mageAnim1->AddState(mageIdle);
 		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 0.5f, "Idle");
+		mageAnim1->AddState(mageIdle);
 		State* mageRun = new State();
-		mageAnim1->AddState(mageRun);
 		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 0.75f, "Run");
+		mageAnim1->AddState(mageRun);
 		State* mageStumble = new State();
-		mageAnim1->AddState(mageStumble);
 		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("StumbleBackwards3"), false, 0.75f, "Stumble");
+		mageAnim1->AddState(mageStumble);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
@@ -426,11 +426,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mageAnim1->AddParameter(idleTrigger);
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
-		idleToRun->Init(mageIdle, mageRun, -1, 0.1f);
+		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
 		idleToRun->AddCondition(runTrigger);
 		Transition* runToIdle = new Transition();
 		mageRun->AddTransition(runToIdle);
-		runToIdle->Init(mageRun, mageIdle, -1, 0.1f);
+		runToIdle->Init(mageRun, mageIdle, -1, 0.5f);
 		runToIdle->AddCondition(idleTrigger);
 		Transition* idleToStumble = new Transition();
 		mageIdle->AddTransition(idleToStumble);
@@ -726,21 +726,28 @@ void Game::UpdateServerStates()
 		state->parentIndex = parentIndex;
 
 		int animIndex = -1;
-
+		int transitionIndex = -1;
 		AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
 
 		if (animator)
 		{
-			animIndex = animator->GetCurrentStateIndex();
-		}
+			animIndex = animator->GetNextStateIndex();
+			
+			if (animIndex >= 0)
+			{
+				transitionIndex = animator->GetState(animIndex)->GetTransitionIndex();
 
-		if (animIndex == 1)
-		{
-			int breakpoint = 0;
-			breakpoint += 69;
+				if (animIndex == 2)
+				{
+					int breakpoint = 69;
+					breakpoint += 420;
+				}
+			}
+			//animIndex = animator->GetCurrentStateIndex();
 		}
 
 		state->animationIndex = animIndex;
+		state->transitionIndex = transitionIndex;
 	}
 
 	server.SetGameStates(gameStates);
@@ -774,12 +781,6 @@ void Game::UpdateClientObjects()
 				position = client.getLocation(i);
 				rotation = client.getRotation(i);
 
-				if (i == 20)
-				{
-					int breakpoint = 0;
-					breakpoint = 5;
-				}
-
 				gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
@@ -790,47 +791,23 @@ void Game::UpdateClientObjects()
 				}
 
 				INT8 animIndex = client.GetAnimationIndex(i);
+				INT8 transitionIndex = client.GetTransitionIndex(i);
 
 				if (animIndex >= 0)
 				{
-					//Renderer* renderer = gameObject->GetComponent<Renderer>();
-
-					//if (renderer)
-					//{
-					//	Blender* blender = renderer->GetBlender();
-
-					//	if (blender)
-					//	{
-					//		/*								if (animIndex == 1)
-					//		{
-					//		int breakpoint = 0;
-					//		breakpoint += 69;
-					//		}*/
-
-					//		//if (!blender->GetNextInterpolator()->HasAnimation())
-					//		if ((blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != blender->GetAnimationSet()->GetAnimation(animIndex)->GetAnimationName()))
-					//		{
-					//			BlendInfo info;
-					//			info.totalBlendTime = 0.01f;
-
-					//			renderer->SetNextAnimation(animIndex);
-					//			renderer->SetBlendInfo(info);
-
-					//			cout << "Change in animation" << endl;
-					//		}
-					//	}
-					//}
-
 					AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
 
 					if (animator)
 					{
-						if (animator->GetCurrentStateIndex() != animIndex)
+						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transition
 						{
-							animator->SetCurrentState(animIndex);
+							cout << to_string(animIndex) << endl;
 
-
-							cout << animIndex << endl;
+							if (animIndex == 2)
+							{
+								cout << "breakkpoint";
+							}
+							animator->TransitionTo(animIndex, transitionIndex);
 						}
 					}
 				}

@@ -5,6 +5,9 @@
 #include "CapsuleCollider.h"
 #include "GameObject.h"
 #include "AnimatorController.h"
+#include "BallController.h"
+#include "Transform.h"
+#include "InputManager.h"
 
 using namespace std;
 
@@ -70,9 +73,9 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-			//cout << "Collision enter" << endl;
+			cout << "Collision enter" << endl;
 
-			otherPlayer = capsCollider->GetGameObject()->GetTransform();
+			otherPlayer = capsCollider->GetGameObject();
 		}
 	}
 }
@@ -85,9 +88,9 @@ void PlayerController::OnCollisionExit(Collider* collider)
 
 		if (capsCollider)
 		{
-			if (capsCollider->GetGameObject()->GetTransform() == otherPlayer)
+			if (capsCollider->GetGameObject() == otherPlayer)
 			{
-				//cout << "Collision exit" << endl;
+				cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
 			}
@@ -131,13 +134,21 @@ void PlayerController::Attack()
 		XMFLOAT3 back = transform->GetForward();
 		back = { -back.x, -back.y, -back.z };
 
-		otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
+		//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
 
 		//do animation
-		AnimatorController* animator = otherPlayer->GetGameObject()->GetComponent<AnimatorController>();
+		AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
 		animator->SetTrigger("Stumble");
 
 		cout << "Attack" << endl;
+
+		//make them drop ball
+		BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
+
+		if (ball->GetHolder() == otherPlayer)
+		{
+			ball->DropBall(otherPlayer);
+		}
 	}
 }

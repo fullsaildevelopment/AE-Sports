@@ -24,6 +24,11 @@ AnimatorController::~AnimatorController()
 	{
 		delete states[i];
 	}
+
+	for (int i = 0; i < parameters.size(); ++i)
+	{
+		delete parameters[i];
+	}
 }
 
 //basic//
@@ -36,7 +41,10 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 	blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(animationSetName));
 	blender->Init(curAnimName, "");
 	
-	currentState = curStateIndex;
+	curStateIndex = curStateIndex;
+	nextStateIndex = -1;
+	//curTransition = nullptr;
+	//isTransitioning = false;
 	//blender->GetCurInterpolator()->SetIsLoop(states[currentState]->DoesItLoop());
 	//blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
 }
@@ -44,7 +52,7 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 void AnimatorController::Update(float dt)
 {
 	//check states' transitions
-	states[currentState]->Update(dt);
+	states[curStateIndex]->Update(dt);
 
 	//do interpolation stuff
 	blender->Update(dt, 0);
@@ -55,8 +63,8 @@ void AnimatorController::Update(float dt)
 
 void AnimatorController::UpdateCurAnimatorsLoopAndSpeed()
 {
-	blender->GetCurInterpolator()->SetIsLoop(states[currentState]->DoesItLoop());
-	blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
+	blender->GetCurInterpolator()->SetIsLoop(states[curStateIndex]->DoesItLoop());
+	blender->GetCurInterpolator()->SetSpeed(states[curStateIndex]->GetSpeed());
 }
 
 //misc//
@@ -98,6 +106,26 @@ void AnimatorController::TransitionTo(Transition* transition)
 	blender->GetNextInterpolator()->SetAnimation(transition->GetToState()->GetAnimation());
 	blender->GetNextInterpolator()->SetSpeed(transition->GetToState()->GetSpeed());
 	blender->GetNextInterpolator()->SetIsLoop(transition->GetToState()->DoesItLoop());
+	
+	nextStateIndex = statesTable->GetKey(transition->GetToState()->GetName());
+	//curTransition = transition; // to be used by client
+}
+
+void AnimatorController::TransitionTo(unsigned int stateIndex, unsigned int transitionIndex)
+{
+	State* curState = states[curStateIndex];
+	Transition* transition = curState->GetTransition(transitionIndex);
+	State* nextState = transition->GetToState();
+
+	BlendInfo info;
+	info.totalBlendTime = transition->GetTransitionDuration();
+	blender->SetBlendInfo(info);
+	blender->GetNextInterpolator()->SetAnimation(nextState->GetAnimation());
+	blender->GetNextInterpolator()->SetSpeed(nextState->GetSpeed());
+	blender->GetNextInterpolator()->SetIsLoop(nextState->DoesItLoop());
+
+	curStateIndex = stateIndex;
+	nextStateIndex = statesTable->GetKey(nextState->GetName());
 }
 
 //getters//
@@ -119,14 +147,21 @@ State* AnimatorController::GetState(std::string name)
 	return result;
 }
 
-State* AnimatorController::GetState(unsigned int index)
+State* AnimatorController::GetState(int index)
 {
-	return states[index];
+	State* result = nullptr;
+
+	if (index >= 0)
+	{
+		result = states[index];
+	}
+
+	return result;
 }
 
 unsigned int AnimatorController::GetCurrentStateIndex()
 {
-	return currentState;
+	return curStateIndex;
 }
 
 Param::Trigger* AnimatorController::GetTrigger(std::string name)
@@ -142,14 +177,24 @@ Param::Trigger* AnimatorController::GetTrigger(std::string name)
 	return result;
 }
 
+int AnimatorController::GetNextStateIndex()
+{
+	return nextStateIndex;
+}
+
 //setters//
+//to be used by the client to set the 
 void AnimatorController::SetCurrentState(unsigned int curState)
 {
-	currentState = curState;
+	curStateIndex = curState;
 
-	blender->GetNextInterpolator()->SetAnimation(states[currentState]->GetAnimation());
-	blender->GetNextInterpolator()->SetSpeed(states[currentState]->GetSpeed());
-	blender->GetNextInterpolator()->SetIsLoop(states[currentState]->DoesItLoop());
+	//blender->GetCurInterpolator()->SetAnimation(states[currentState]->GetAnimation());
+	//blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
+	//blender->GetCurInterpolator()->SetIsLoop(states[currentState]->DoesItLoop());
+
+	//blender->GetNextInterpolator()->SetAnimation(states[currentState]->GetAnimation());
+	//blender->GetNextInterpolator()->SetSpeed(states[currentState]->GetSpeed());
+	//blender->GetNextInterpolator()->SetIsLoop(states[currentState]->DoesItLoop());
 }
 
 void AnimatorController::SetCurrentState(State* curState)
@@ -158,10 +203,14 @@ void AnimatorController::SetCurrentState(State* curState)
 	{
 		if (curState == states[i])
 		{
-			currentState = i;
+			curStateIndex = i;
 			break;
 		}
 	}
+
+	nextStateIndex = -1;
+	//curTransition = nullptr; //b/c this marks end of transition
+	//isTransitioning = false;
 }
 
 void AnimatorController::SetTrigger(std::string name)
