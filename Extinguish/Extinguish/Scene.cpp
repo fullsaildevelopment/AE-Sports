@@ -467,7 +467,7 @@ void Scene::Update(float dt)
 			}
 
 			//don't render yourself
-			if (i != (id - 1) * 3 + 1)
+			if (i != (id - 1) * 3 + 2)
 			{
 				renderer->Render();
 			}

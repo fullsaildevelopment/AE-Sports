@@ -16,11 +16,13 @@ private:
 	Transform* transform;
 
 	// 0-1 1 being complete reflection 0 no reflection
-	float bounce = 1.25f;
+	float bounce = 1.5f;
 	// 0-1  1 being all the friction 0 being no friction
 	float friction = 0.06f;
 	// 0-1 same as others
 	float airdrag = 0.03f;
+
+	float maxMoveSpeed = 30;
 
 	bool colliding = false;
 	//other
@@ -29,7 +31,7 @@ private:
 public:
 	Physics() {};
 	//original values Bounce = 1.06 friction = 0.23 airdrag = 0.08
-	Physics(float _bounce, float _friction = 0.23f, float _airdrag = 0.08f) { bounce = _bounce; friction = _friction; airdrag = _airdrag; };
+	Physics(float _bounce, float _friction = 0.23f, float _airdrag = 0.08f, float _maxMoveSpeed = 10) { bounce = _bounce; friction = _friction; airdrag = _airdrag; maxMoveSpeed = _maxMoveSpeed; };
 	void Init();
 	void Update(float dt) override;
 

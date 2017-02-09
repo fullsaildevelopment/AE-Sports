@@ -14,17 +14,35 @@ void Physics::Update(float dt)
 {
 	if (!isKinematic)
 	{
+		float3 nV = transform->GetVelocity();
 		//apply gravity
 		if (!colliding)
 		{
-			transform->AddVelocity({ 0, gravity * dt, 0 });
-			transform->AddVelocity(transform->GetVelocity() * (-airdrag * dt));
+			nV += { 0, gravity * dt, 0 };
+			nV += transform->GetVelocity() * (-airdrag * dt);
 		}
 		//apply friction if touching floor
 		else
 		{
-			transform->AddVelocity(transform->GetVelocity() * -1 * friction * dt);
+			nV += transform->GetVelocity() * -1 * friction * dt;
 		}
+		if (nV.x <= 0.057f && nV.x >= -0.057f)
+		{
+			nV.x = 0;
+		}
+		if (nV.y <= 0.057f && nV.y >= -0.057f)
+		{
+			nV.y = 0;
+		}
+		if (nV.z <= 0.057f && nV.z >= -0.057f)
+		{
+			nV.z = 0;
+		}
+		if (nV.magnitude() > maxMoveSpeed)
+		{
+			nV = nV.normalize() * maxMoveSpeed;
+		}
+		transform->SetVelocity(nV);
 	}
 	colliding = false;
 }

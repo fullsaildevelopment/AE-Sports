@@ -120,8 +120,8 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		//transform->AddVelocity({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
-		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
+		transform->AddVelocity({ forward.x * moveSpeed, forward.y * moveSpeed,  forward.z * moveSpeed });
+		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
