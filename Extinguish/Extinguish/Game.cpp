@@ -379,7 +379,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	gameBall->InitTransform(identity, { -7, 10, -20.5f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
-	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, devResources);
+	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
 	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
 	gameBall->AddSphereCollider(gameBallCollider);
 	Physics* physics = new Physics();
@@ -420,6 +420,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
+		Physics* physics = new Physics();
+		mage1->AddComponent(physics);
+		physics->Init();
 
 		AnimatorController* mageAnim1 = new AnimatorController();
 		mage1->AddComponent(mageAnim1);
