@@ -94,8 +94,14 @@ void BallController::DropBall(GameObject *person)
 	transform->SetParent(nullptr);
 
 	// add some velocity to me in the holders forward vec
-	float3 vel = person->GetTransform()->GetForwardf3() * DropSpeed;
-	transform->AddVelocity(vel);
+	//TODO: temp taken out to test... maybe might not need to re add with new physics though
+	//float3 vel = person->GetTransform()->GetForwardf3() * DropSpeed;
+	//transform->AddVelocity(vel);
+
+	//need to do this to prevent recolliding with crosse net
+	const float metersForward = 0.5f;
+	XMFLOAT3 translation = person->GetTransform()->GetForward();
+	transform->Translate({ translation.x * metersForward, translation.y * metersForward, translation.z * metersForward });
 
 	//turn on physics
 	physics->SetIsKinematic(false);
@@ -129,8 +135,7 @@ void BallController::SetHolder(GameObject *person)
 		isHeld = true;
 		holder = person;
 
-		person->GetTransform()->AddChild(me->GetTransform());
-		transform->SetParent(person->GetTransform());
+		transform->SetParent(person->GetTransform()); //set parent adds a child
 		transform->SetVelocity(float3(0, 0, 0));
 		transform->SetPosition(float3(0, 0, 0));
 

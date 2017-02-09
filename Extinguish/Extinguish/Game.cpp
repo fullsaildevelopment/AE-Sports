@@ -878,14 +878,15 @@ void Game::UpdateClientObjects()
 
 					if (animator)
 					{
-						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transition
+						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transitioning
 						{
-							cout << to_string(animIndex) << endl;
+							//cout << to_string(animIndex) << endl;
 
 							if (animIndex == 2)
 							{
-								cout << "breakkpoint";
+								//cout << "Client received stumble index" << endl;
 							}
+
 							animator->TransitionTo(animIndex, transitionIndex);
 						}
 					}
