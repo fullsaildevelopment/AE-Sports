@@ -75,9 +75,16 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	float4 toBall = input.worldPosition - camPos;
 	float doting = dot(normalize(toBall.xyz), input.normal);
-	if (doting >= -1 && doting <= 1)
+	float tbl = length(toBall);
+	if (tbl > 5)
 	{
-		finalColor = float4(1, 0, 0, 1);
+		if (doting >= tbl * -0.01f && doting <= tbl * 0.01f)
+		{
+			finalColor.r = 0;
+			finalColor.g = 1;
+			finalColor.b = 0;
+			finalColor.a = 1;
+		}
 	}
 
 	return finalColor;

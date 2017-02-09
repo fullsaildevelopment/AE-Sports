@@ -151,7 +151,6 @@ void UIRenderer::Render()
 			pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
 			//devContext->OMSetDepthStencilState(depthStencilState, 1);
 			d2DevContext->SaveDrawingState(stateBlock.Get());
-		}
 		d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
@@ -188,6 +187,7 @@ void UIRenderer::Render()
 
 		if (GRAPHICS)
 			stateBlock.Reset();
+		}
 	}
 }
 
