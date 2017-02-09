@@ -1,4 +1,6 @@
 #include "Window.h"
+#include "WindowResizeEvent.h"
+#include "EventDispatcher.h"
 #include <iostream>
 
 //function prototype
@@ -140,8 +142,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		return 0;
 		break;
 	case WM_SIZE: //lParam holds Width and Height as first 16 bits = width and last are height
-		uint16_t w = lParam;
-		uint16_t h = lParam >> 16;
+		WindowResizeEvent wre;
+		wre.w = lParam;
+		wre.h = lParam >> 16;
+		EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
 		break;
 		//default:
 		//	DefWindowProc(hwnd, message, wParam, lParam);

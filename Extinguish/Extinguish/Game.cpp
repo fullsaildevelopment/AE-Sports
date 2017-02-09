@@ -24,6 +24,7 @@
 #include "UIRenderer.h"
 #include "ScoreEvent.h"
 #include "Goal.h"
+#include "WindowResizeEvent.h"
 #include "LoadSceneEvent.h"
 
 using namespace DirectX;
@@ -41,6 +42,8 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//cache
 	soundEngine = SoundEngine::GetSingleton();
 	resourceManager = ResourceManager::GetSingleton();
+
+	Dresources = devResources;
 
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
@@ -109,23 +112,28 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
+	Dresources->ResizeWindow(w, h);
+	
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
-
+	
 	if (aspectRatio < 1.0f)
 	{
 		fovAngleY *= 2.0f;
 	}
-
+	
 	XMFLOAT4X4 projection;
 	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
 	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
-
+	
 	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
+	Renderer* R;
 	int size = go.size();
 	for (int i = 0; i < size; ++i)
 	{
-		go[i]->GetComponent<Renderer>()->SetProjection(projection);
+		R = go[i]->GetComponent<Renderer>();
+		if(R)
+			R->SetProjection(projection);
 	}
 }
 
@@ -251,15 +259,26 @@ void Game::HandleEvent(Event* e)
 
 		return;
 	}
-
-	LoadSceneEvent* loadSceneEvent = dynamic_cast<LoadSceneEvent*>(e);
-
-	if (loadSceneEvent)
+	else
 	{
-		LoadScene(loadSceneEvent->GetName());
+		WindowResizeEvent* wre = dynamic_cast<WindowResizeEvent*>(e);
+		if (wre)
+		{
+			WindowResize(wre->w, wre->h);
+		}
+		else
+		{
+			LoadSceneEvent* loadSceneEvent = dynamic_cast<LoadSceneEvent*>(e);
 
-		return;
+			if (loadSceneEvent)
+			{
+				LoadScene(loadSceneEvent->GetName());
+
+				return;
+			}
+		}
 	}
+
 }
 
 //getters//
@@ -394,7 +413,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(5.0f, 0.75f);
+		mageMover->Init(10.0f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
@@ -492,7 +511,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* meterbox6 = new GameObject();
 	basic->AddGameObject(meterbox6);
@@ -503,9 +522,50 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+
+
+	GameObject* Wall = new GameObject();
+	basic->AddGameObject(Wall);
+	Wall->Init("Wall");
+	Wall->InitTransform(identity, { 85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer = new Renderer();
+	Wall->AddComponent(WallRenderer);
+	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	Wall->AddBoxCollider(Wallboxcol);
+
+	GameObject* Wall2 = new GameObject();
+	basic->AddGameObject(Wall2);
+	Wall2->Init("Wall2");
+	Wall2->InitTransform(identity, { -85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer2 = new Renderer();
+	Wall2->AddComponent(WallRenderer2);
+	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	Wall2->AddBoxCollider(Wallboxcol2);
+
+	GameObject* Wall3 = new GameObject();
+	basic->AddGameObject(Wall3);
+	Wall3->Init("Wall3");
+	Wall3->InitTransform(identity, { 0, 0, 45 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer3 = new Renderer();
+	Wall3->AddComponent(WallRenderer3);
+	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f}, { -300,-300,-0.5f });
+	Wall3->AddBoxCollider(Wallboxcol3);
+
+	GameObject* Wall4 = new GameObject();
+	basic->AddGameObject(Wall4);
+	Wall4->Init("Wall4");
+	Wall4->InitTransform(identity, { 0, 0, -85 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer4 = new Renderer();
+	Wall4->AddComponent(WallRenderer4);
+	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol4 = new BoxCollider(Wall4, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	Wall4->AddBoxCollider(Wallboxcol4);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
@@ -549,7 +609,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	testScore->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
-	scoreRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
+	scoreRender->Init(true, 35.0f, devResources, theSButton);
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 	testScore->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
@@ -565,7 +625,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theButton->setOrigin(0.0f, 30.0f);
 	debugUI->AddComponent(theButton);
 	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 30.0f, devResources, devResources->GetDisableStencilState());
+	buttonRender->Init(true, 30.0f, devResources, theButton);
 	debugUI->AddComponent(buttonRender);
 }
 
@@ -582,7 +642,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	tButton->setPositionMultipliers(0.5f, 0.25f);
 	title->AddComponent(tButton);
 	UIRenderer * tRender = new UIRenderer();
-	tRender->Init(true, 35.0f, devResources, devResources->GetDisableStencilState());
+	tRender->Init(true, 35.0f, devResources, tButton);
 	tRender->DecodeBitmap(L"../Assets/UI/newTitle.png");
 	title->AddComponent(tRender);
 	tRender->MakeRTSize();
@@ -599,7 +659,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	sButton->setPositionMultipliers(0.5f, 0.55f);
 	soloPlayer->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
-	sRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	sRender->Init(true, 25.0f, devResources, sButton);
 	sRender->DecodeBitmap(L"../Assets/UI/button2.png");
 	sRender->DecodeBitmap(L"../Assets/UI/button3.png");
 	soloPlayer->AddComponent(sRender);
@@ -619,7 +679,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton->setPositionMultipliers(0.425f, 0.65f);
 	multiPlayer->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
-	mRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	mRender->Init(true, 25.0f, devResources, mButton);
 	mRender->DecodeBitmap(L"../Assets/UI/button4.png");
 	mRender->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer->AddComponent(mRender);
@@ -639,7 +699,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton2->setPositionMultipliers(0.575f, 0.65f);
 	multiPlayer2->AddComponent(mButton2);
 	UIRenderer * mRender2 = new UIRenderer();
-	mRender2->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	mRender2->Init(true, 25.0f, devResources, mButton2);
 	mRender2->DecodeBitmap(L"../Assets/UI/button4.png");
 	mRender2->DecodeBitmap(L"../Assets/UI/button5.png");
 	multiPlayer2->AddComponent(mRender2);
@@ -647,29 +707,48 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mButton2->MakeRect();
 	mButton2->MakeHandler();
 	mRender2->InitMetrics();
-	
+
 	// credits
 
-	/*GameObject * credits = new GameObject();
+	GameObject * credits = new GameObject();
 	scene->AddUIObject(credits);
 	credits->Init("credits");
-	Button * cButton = new Button(true, true, L"Credits", (unsigned int)strlen("Credits"), 300.0f, 60.0f, devResources, 3);
-	cButton->SetGameObject(soloPlayer);
+	Button * cButton = new Button(true, true, L"Credits", (unsigned int)strlen("Credits"), 300.0f, 60.0f, devResources, 4);
+	cButton->SetGameObject(credits);
 	cButton->showFPS(false);
 	cButton->setOrigin(350.0f, 585.0f);
-	cButton->setPositionMultipliers(0.5f, 0.55f);
+	cButton->setPositionMultipliers(0.5f, 0.75f);
 	credits->AddComponent(cButton);
 	UIRenderer * cRender = new UIRenderer();
-	cRender->Init(true, 25.0f, devResources, devResources->GetDisableStencilState());
+	cRender->Init(true, 25.0f, devResources, cButton);
 	cRender->DecodeBitmap(L"../Assets/UI/button2.png");
 	cRender->DecodeBitmap(L"../Assets/UI/button3.png");
-	credits->AddComponent(sRender);
+	credits->AddComponent(cRender);
 	cRender->MakeRTSize();
 	cButton->MakeRect();
 	cButton->MakeHandler();
-	cRender->InitMetrics();*/
+	cRender->InitMetrics();
 
 	// exit
+
+	GameObject * exit = new GameObject();
+	scene->AddUIObject(exit);
+	exit->Init("exit");
+	Button * eButton = new Button(true, true, L"Exit", (unsigned int)strlen("Exit"), 300.0f, 60.0f, devResources, 5);
+	eButton->SetGameObject(exit);
+	eButton->showFPS(false);
+	eButton->setOrigin(350.0f, 665.0f);
+	eButton->setPositionMultipliers(0.5f, 0.85f);
+	exit->AddComponent(eButton);
+	UIRenderer * eRender = new UIRenderer();
+	eRender->Init(true, 25.0f, devResources, eButton);
+	eRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	eRender->DecodeBitmap(L"../Assets/UI/button3.png");
+	exit->AddComponent(eRender);
+	eRender->MakeRTSize();
+	eButton->MakeRect();
+	eButton->MakeHandler();
+	eRender->InitMetrics();
 
 
 	// create lobby

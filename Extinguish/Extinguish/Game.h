@@ -42,6 +42,7 @@ private:
 	ResourceManager* resourceManager;
 	SoundEngine* soundEngine;
 
+	DeviceResources* Dresources;
 
 	std::vector<GameState*> gameStates;
 
