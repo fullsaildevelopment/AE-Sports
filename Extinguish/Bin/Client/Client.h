@@ -50,6 +50,7 @@ public:
 		INT8 parentIndex;
 		INT8 animationIndex;
 		int otherIndex;
+		INT8 transitionIndex;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -125,6 +126,7 @@ public:
 	bool hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	INT8 GetParentIndex(unsigned int index) { return clientStates[index].parentIndex; }
 	INT8 GetAnimationIndex(unsigned int index) { return clientStates[index].animationIndex; }
+	INT8 GetTransitionIndex(unsigned int index) { return clientStates[index].transitionIndex; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
 	int getNumPackets() { return numPackets; }

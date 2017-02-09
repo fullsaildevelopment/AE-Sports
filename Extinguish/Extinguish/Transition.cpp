@@ -61,6 +61,7 @@ bool Transition::Update(float dt)
 				doTransition = true;
 				timer = 0.0f; //reset timer because new timer will be used for transition duration
 				to->GetAnimationController()->TransitionTo(this);
+				cout << to->GetName();
 			}
 		}
 		else if (hasExitTime && to->GetAnimationController()->GetBlender()->GetCurInterpolator()->IsFinished())
@@ -70,6 +71,7 @@ bool Transition::Update(float dt)
 				doTransition = true;
 				timer = 0.0f;
 				to->GetAnimationController()->TransitionTo(this);
+				//cout << to->GetName();
 			}
 		}
 	}
@@ -85,6 +87,11 @@ bool Transition::Update(float dt)
 			timer = 0.0f;
 		}
 	}
+
+	//if (doTransition)
+	//{
+	//	cout << doTransition;
+	//}
 
 	return doTransition;
 }

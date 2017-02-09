@@ -413,11 +413,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(5.0f, 0.75f);
+		mageMover->Init(10.0f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
-		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.5f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
+		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
 
@@ -425,14 +425,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mage1->AddComponent(mageAnim1);
 		mageAnim1->Init("Mage", 0, "Idle"); //init animator
 		State* mageIdle = new State();
-		mageAnim1->AddState(mageIdle);
 		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 0.5f, "Idle");
+		mageAnim1->AddState(mageIdle);
 		State* mageRun = new State();
-		mageAnim1->AddState(mageRun);
 		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 0.75f, "Run");
+		mageAnim1->AddState(mageRun);
 		State* mageStumble = new State();
-		mageAnim1->AddState(mageStumble);
 		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("StumbleBackwards3"), false, 0.75f, "Stumble");
+		mageAnim1->AddState(mageStumble);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
@@ -445,11 +445,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mageAnim1->AddParameter(idleTrigger);
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
-		idleToRun->Init(mageIdle, mageRun, -1, 0.1f);
+		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
 		idleToRun->AddCondition(runTrigger);
 		Transition* runToIdle = new Transition();
 		mageRun->AddTransition(runToIdle);
-		runToIdle->Init(mageRun, mageIdle, -1, 0.1f);
+		runToIdle->Init(mageRun, mageIdle, -1, 0.5f);
 		runToIdle->AddCondition(idleTrigger);
 		Transition* idleToStumble = new Transition();
 		mageIdle->AddTransition(idleToStumble);
@@ -522,9 +522,50 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
-	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+
+
+	GameObject* Wall = new GameObject();
+	basic->AddGameObject(Wall);
+	Wall->Init("Wall");
+	Wall->InitTransform(identity, { 85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer = new Renderer();
+	Wall->AddComponent(WallRenderer);
+	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	Wall->AddBoxCollider(Wallboxcol);
+
+	GameObject* Wall2 = new GameObject();
+	basic->AddGameObject(Wall2);
+	Wall2->Init("Wall2");
+	Wall2->InitTransform(identity, { -85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer2 = new Renderer();
+	Wall2->AddComponent(WallRenderer2);
+	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	Wall2->AddBoxCollider(Wallboxcol2);
+
+	GameObject* Wall3 = new GameObject();
+	basic->AddGameObject(Wall3);
+	Wall3->Init("Wall3");
+	Wall3->InitTransform(identity, { 0, 0, 45 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer3 = new Renderer();
+	Wall3->AddComponent(WallRenderer3);
+	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f}, { -300,-300,-0.5f });
+	Wall3->AddBoxCollider(Wallboxcol3);
+
+	GameObject* Wall4 = new GameObject();
+	basic->AddGameObject(Wall4);
+	Wall4->Init("Wall4");
+	Wall4->InitTransform(identity, { 0, 0, -85 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer4 = new Renderer();
+	Wall4->AddComponent(WallRenderer4);
+	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol4 = new BoxCollider(Wall4, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	Wall4->AddBoxCollider(Wallboxcol4);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
@@ -776,21 +817,28 @@ void Game::UpdateServerStates()
 		state->parentIndex = parentIndex;
 
 		int animIndex = -1;
-
+		int transitionIndex = -1;
 		AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
 
 		if (animator)
 		{
-			animIndex = animator->GetCurrentStateIndex();
-		}
+			animIndex = animator->GetNextStateIndex();
+			
+			if (animIndex >= 0)
+			{
+				transitionIndex = animator->GetState(animIndex)->GetTransitionIndex();
 
-		if (animIndex == 1)
-		{
-			int breakpoint = 0;
-			breakpoint += 69;
+				if (animIndex == 2)
+				{
+					int breakpoint = 69;
+					breakpoint += 420;
+				}
+			}
+			//animIndex = animator->GetCurrentStateIndex();
 		}
 
 		state->animationIndex = animIndex;
+		state->transitionIndex = transitionIndex;
 	}
 
 	server.SetGameStates(gameStates);
@@ -824,12 +872,6 @@ void Game::UpdateClientObjects()
 				position = client.getLocation(i);
 				rotation = client.getRotation(i);
 
-				if (i == 20)
-				{
-					int breakpoint = 0;
-					breakpoint = 5;
-				}
-
 				gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
 				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
@@ -840,47 +882,23 @@ void Game::UpdateClientObjects()
 				}
 
 				INT8 animIndex = client.GetAnimationIndex(i);
+				INT8 transitionIndex = client.GetTransitionIndex(i);
 
 				if (animIndex >= 0)
 				{
-					//Renderer* renderer = gameObject->GetComponent<Renderer>();
-
-					//if (renderer)
-					//{
-					//	Blender* blender = renderer->GetBlender();
-
-					//	if (blender)
-					//	{
-					//		/*								if (animIndex == 1)
-					//		{
-					//		int breakpoint = 0;
-					//		breakpoint += 69;
-					//		}*/
-
-					//		//if (!blender->GetNextInterpolator()->HasAnimation())
-					//		if ((blender->GetCurInterpolator()->GetAnimation()->GetAnimationName() != blender->GetAnimationSet()->GetAnimation(animIndex)->GetAnimationName()))
-					//		{
-					//			BlendInfo info;
-					//			info.totalBlendTime = 0.01f;
-
-					//			renderer->SetNextAnimation(animIndex);
-					//			renderer->SetBlendInfo(info);
-
-					//			cout << "Change in animation" << endl;
-					//		}
-					//	}
-					//}
-
 					AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
 
 					if (animator)
 					{
-						if (animator->GetCurrentStateIndex() != animIndex)
+						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transition
 						{
-							animator->SetCurrentState(animIndex);
+							cout << to_string(animIndex) << endl;
 
-
-							cout << animIndex << endl;
+							if (animIndex == 2)
+							{
+								cout << "breakkpoint";
+							}
+							animator->TransitionTo(animIndex, transitionIndex);
 						}
 					}
 				}

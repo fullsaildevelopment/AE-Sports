@@ -469,9 +469,14 @@ void Scene::Update(float dt)
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
-			if (animator && i != (id - 1) * 3 + 1) //don't animate yourself
+			//don't animate yourself or animate server which has already been animated
+			if (animator && i != (id - 1) * 3 + 1 && id != 1) 
 			{
 				animator->Update(dt);
+			}
+			else if (animator)
+			{
+				cout << i << endl;
 			}
 		}
 	}

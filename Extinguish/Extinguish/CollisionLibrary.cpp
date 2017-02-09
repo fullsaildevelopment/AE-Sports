@@ -775,16 +775,47 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 
 	AABB bl;
 	AABB br;
-	bl.min = capl.m_Segment.m_Start - float3(capl.m_Radius, capl.m_Radius, capl.m_Radius) * 2;
-	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius, capl.m_Radius, capl.m_Radius) * 2;
+	bl.min = capl.m_Segment.m_Start - float3(capl.m_Radius + capl.m_Radius, capl.m_Radius + capl.m_Radius, capl.m_Radius + capl.m_Radius);
+	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius + capl.m_Radius, capl.m_Radius + capl.m_Radius, capl.m_Radius + capl.m_Radius);
 
-	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius, capr.m_Radius, capr.m_Radius) * 2;
-	br.max = capr.m_Segment.m_End + float3(capr.m_Radius, capr.m_Radius, capr.m_Radius) * 2;
+	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius);
+	br.max = capr.m_Segment.m_End + float3(capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius);
 
 	if (!AABBtoAABB(bl, br)) 
 		return false;
 
-	float3 p0;
+
+	float3 cpol = capl.m_Segment.m_Start;
+	cpol.y = min(max(capl.m_Segment.m_Start.y, capr.m_Segment.m_Start.y),capl.m_Segment.m_End.y);
+	float3 cpor = capr.m_Segment.m_Start;
+	cpor.y = min(max(capl.m_Segment.m_Start.y, capr.m_Segment.m_Start.y), capr.m_Segment.m_End.y);
+
+	Sphere sl;
+	Sphere sr;
+	sl.m_Center = cpol;
+	sr.m_Center = cpor;
+	sl.m_Radius = capl.m_Radius;
+	sr.m_Radius = capr.m_Radius;
+	if (SphereToSphere(sl, sr))
+	{
+		float3 ml = (cpor - cpol).normalize() * (capl.m_Radius + 0.00011f);
+		float3 mr = (cpol - cpor).normalize() * (capr.m_Radius + 0.00011f);
+		float3 mid = (cpol + ml + cpor + mr) * 0.5f;
+
+		ml += (cpol - mid).normalize() * (capl.m_Radius + 0.0011f);
+		mr += (cpor - mid).normalize() * (capr.m_Radius + 0.0011f);
+
+		pos += ml;
+		opos += mr;
+
+		float3 nl = (cpor - cpol).normalize();
+		float3 nr = (cpol - cpor).normalize();
+		vell = vell - nr * 2 * dot_product(vell, nr);
+		velr = velr - nl * 2 * dot_product(velr, nl);
+		return true;
+	}
+	return false;
+	/*float3 p0;
 	float3 q0;
 
 	float3 p1 = capl.m_Segment.m_Start;
@@ -847,11 +878,9 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 		float3 nr = (p0 - q0).normalize();
 		vell = vell - nr * 2 * dot_product(vell, nr);
 		velr = velr - nl * 2 * dot_product(velr, nl);
-		vell *= 0;
-		velr *= 0;
 		return true;
 	}
-	return false;
+	return false;*/
 }
 
 bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)

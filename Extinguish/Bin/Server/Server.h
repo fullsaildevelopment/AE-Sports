@@ -44,6 +44,7 @@ public:
 		INT8 parentIndex;
 		INT8 animationIndex;
 		int otherIndex;
+		INT8 transitionIndex;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -129,7 +130,7 @@ public:
 	bool Shutdown();
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
-	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex);
+	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex);
 	void sendPackets();
 	void setObjectCount(int count);
 	int getNewState() { return lastState; }

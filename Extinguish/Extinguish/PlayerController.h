@@ -1,17 +1,17 @@
 #pragma once
 #include "Component.h"
-#include "InputManager.h"
-#include "Transform.h"
 
 class GameObject;
 class Camera;
+class Transform;
+class InputManager;
 
 class PlayerController : public Component
 {
 private:
 	//temp cache
 	InputManager* input; 
-	Transform* otherPlayer; //is set when colliding with other player
+	GameObject* otherPlayer; //is set when colliding with other player
 
 	//cache
 	Transform* transform;
