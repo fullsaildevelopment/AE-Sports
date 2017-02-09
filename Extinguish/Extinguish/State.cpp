@@ -1,6 +1,14 @@
 #include "State.h"
 #include "Transition.h"
 
+State::~State()
+{
+	for (int i = 0; i < transitions.size(); ++i)
+	{
+		delete transitions[i];
+	}
+}
+
 //basic//
 void State::Init(AnimatorController* controller, Animation* anim, bool isLooping, float animSpeed, std::string stateName)
 {
@@ -9,17 +17,21 @@ void State::Init(AnimatorController* controller, Animation* anim, bool isLooping
 	doLoop = isLooping;
 	speed = animSpeed;
 	name = stateName;
+
+	transitionIndex = -1;
 }
 
 Transition* State::Update(float dt)
 {
 	Transition* result = nullptr;
+	transitionIndex = -1;
 
 	for (int i = 0; i < transitions.size(); ++i)
 	{
 		if (transitions[i]->Update(dt))
 		{
 			result = transitions[i];
+			transitions[i]->GetToState()->SetTransitionIndex(i);
 			break;
 		}
 	}
@@ -44,6 +56,11 @@ AnimatorController* State::GetAnimationController()
 	return animController;
 }
 
+Transition* State::GetTransition(unsigned int index)
+{
+	return transitions[index];
+}
+
 bool State::DoesItLoop()
 {
 	return doLoop;
@@ -59,8 +76,18 @@ std::string& const State::GetName()
 	return name;
 }
 
+int State::GetTransitionIndex()
+{
+	return transitionIndex;
+}
+
 //setters//
 void State::SetAnimation(Animation* anim)
 {
 	animation = anim;
+}
+
+void State::SetTransitionIndex(int transitionIndex)
+{
+	this->transitionIndex = transitionIndex;
 }
