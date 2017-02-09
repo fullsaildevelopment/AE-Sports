@@ -45,7 +45,7 @@ private:
 public:
 	UIRenderer();
 	~UIRenderer();
-	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, D2D1::ColorF fontColor);
+	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor);
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
