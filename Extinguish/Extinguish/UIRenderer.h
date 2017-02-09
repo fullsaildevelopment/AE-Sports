@@ -1,4 +1,11 @@
 #pragma once
+
+#ifdef GRAPHICS_DEBUG
+#define GRAPHICS 0
+#else
+#define GRAPHICS 1
+#endif
+
 #include "Includes.h"
 #include "DeviceResources.h"
 #include "ResourceManager.h"
@@ -38,7 +45,7 @@ private:
 public:
 	UIRenderer();
 	~UIRenderer();
-	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button);
+	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor);
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);

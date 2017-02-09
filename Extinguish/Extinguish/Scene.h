@@ -64,6 +64,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pointLightConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> spotLightConstantBuffer;
 
+	Microsoft::WRL::ComPtr<ID3D11Buffer> BallConstantBuffer;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthDisabledStencilState;
