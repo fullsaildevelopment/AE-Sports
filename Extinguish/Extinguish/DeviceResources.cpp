@@ -2,7 +2,7 @@
 
 void DeviceResources::Init(HWND hwnd)
 {
-
+	//drawWindow = hwnd;
 	//create swapchainDesc
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 
@@ -174,6 +174,160 @@ void DeviceResources::Init(HWND hwnd)
 	ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
 
 	device.As(&pDebug);
+
+	HRESULT dRes = pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+}
+
+void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
+{
+	ID3D11RenderTargetView* nullViews[] = { nullptr };
+	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	renderTargetView = nullptr;
+	shadowMapRTV = nullptr;
+	p2DDeviceContext->SetTarget(nullptr);
+	depthStencilView = nullptr;
+	swapChainBuffer = nullptr;
+	shadowMapBuffer = nullptr;
+
+	deviceContext->Flush();
+
+	//create swapchain
+	swapChain->ResizeBuffers(1,lround(w), lround(h), DXGI_FORMAT_B8G8R8A8_UNORM,0);
+
+	//Set up back buffer
+	HRESULT scBufferResult = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
+
+	device->CreateRenderTargetView(swapChainBuffer.Get(), nullptr, &renderTargetView);
+	
+	CD3D11_TEXTURE2D_DESC depthStencilDesc(
+		DXGI_FORMAT_D24_UNORM_S8_UINT,
+		lround(w),
+		lround(h),
+		1, // This depth stencil view has only one texture.
+		1, // Use a single mipmap level.
+		D3D11_BIND_DEPTH_STENCIL
+	);
+
+	device->CreateTexture2D(
+		&depthStencilDesc,
+		nullptr,
+		&depthStencilBuffer
+	);
+
+	CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
+	HRESULT dsvResult = device->CreateDepthStencilView(depthStencilBuffer.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
+
+	viewPort = CD3D11_VIEWPORT(
+		0.0f,
+		0.0f,
+		w,
+		h
+	);
+
+	deviceContext->RSSetViewports(1, &viewPort);
+
+	
+	/*D2D1_BITMAP_PROPERTIES1 bp;
+	bp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	bp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
+	bp.dpiX = DEFAULT_DPI;
+	bp.dpiY = DEFAULT_DPI;
+	bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+	bp.colorContext = nullptr;*/
+	
+	// Direct2D needs the dxgi version of the back buffer
+	Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
+	Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
+
+	swapChain->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
+	
+	p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), NULL, d2dTargetBitmap.GetAddressOf());
+	
+	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
+	
+	//create shadow map buffer
+	/*D3D11_TEXTURE2D_DESC smTextDesc;
+	ZeroMemory(&smTextDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	
+	smTextDesc.Width = w;
+	smTextDesc.Height = h;
+	smTextDesc.MipLevels = 1;
+	smTextDesc.ArraySize = 1;
+	smTextDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	smTextDesc.SampleDesc.Count = 1;
+	smTextDesc.Usage = D3D11_USAGE_DEFAULT;
+	smTextDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	smTextDesc.CPUAccessFlags = 0;
+	smTextDesc.MiscFlags = 0;
+	*/
+	//HRESULT smBufferResult = device->CreateTexture2D(&smTextDesc, NULL, shadowMapBuffer.GetAddressOf());
+	
+	//create render target view by linking with back buffer
+	//HRESULT rtvResult = device->CreateRenderTargetView(swapChainBuffer.Get(), nullptr, renderTargetView.GetAddressOf());
+	
+	//create shadowMapRTV by linking with shadowMapBuffer
+	//HRESULT smRtvResult = device->CreateRenderTargetView(shadowMapBuffer.Get(), nullptr, shadowMapRTV.GetAddressOf());
+	
+	//create depth stencil buffer 
+	//CD3D11_TEXTURE2D_DESC dsDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, lround((float)w), lround((float)h), 1, 1, D3D11_BIND_DEPTH_STENCIL);
+	//HRESULT dsvBufferResult = device->CreateTexture2D(&dsDesc, nullptr, depthStencilBuffer.GetAddressOf());
+	
+	//create shadow map stv buffer
+	//CD3D11_TEXTURE2D_DESC smDsDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, lround((float)w), lround((float)h), 1, 1, D3D11_BIND_DEPTH_STENCIL);
+	//HRESULT smDsvBufferResult = device->CreateTexture2D(&smDsDesc, nullptr, shadowMapDepthStencilBuffer.GetAddressOf());
+	
+	
+	// Clear the second depth stencil state before setting the parameters.
+	
+	//CD3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	//ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+	//
+	//// Now create a second depth stencil state which turns off the Z buffer for 2D rendering.  The only difference is 
+	//// that DepthEnable is set to false, all other parameters are the same as the other depth stencil state.
+	//depthDisabledStencilDesc.DepthEnable = false;
+	//depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	//depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	//depthDisabledStencilDesc.StencilEnable = true;
+	//depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	//depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	//depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	//depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	//depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	//depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	//depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	//depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	//depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	//depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	//
+	//device->CreateDepthStencilState(&depthDisabledStencilDesc, depthDisabledStencilState.GetAddressOf());
+	
+	
+	//create depth stencil view now that depth stencil buffer is done created
+	
+	//create shadow map DSV
+	//CD3D11_DEPTH_STENCIL_VIEW_DESC smDepthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
+	//HRESULT smDvResult = device->CreateDepthStencilView(shadowMapDepthStencilBuffer.Get(), &smDepthStencilViewDesc, shadowMapDSV.GetAddressOf());
+	
+	//create shadow SRV
+	//CD3D11_SHADER_RESOURCE_VIEW_DESC smSRVDesc(D3D11_SRV_DIMENSION_TEXTURE2D);
+	//HRESULT smSRVResult = device->CreateShaderResourceView(shadowMapBuffer.Get(), &smSRVDesc, shadowMapSRV.GetAddressOf());
+	
+	//set render target view and link depth stencil view with rtv
+	//deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+
+	//set up mvp constant buffer
+	//CD3D11_BUFFER_DESC mvpBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	//HRESULT mvpResult = device->CreateBuffer(&mvpBufferDesc, NULL, mvpConstantBuffer.GetAddressOf());
+	//
+	////set up bone offset buffer
+	//CD3D11_BUFFER_DESC boneBufferDesc(sizeof(BoneOffsetConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+	//HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
+	//int temp = sizeof(BoneOffsetConstantBuffer);
+
+	//LoadButtonResources(*drawWindow.Get());
+	//ImGui_ImplDX11_Init(*drawWindow.Get(), device.Get(), deviceContext.Get());
+
+	//device.As(&pDebug);
 }
 
 void DeviceResources::Clear()
@@ -213,7 +367,11 @@ void DeviceResources::Shutdown()
 
 
 	if (pDebug)
-		pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	{
+		HRESULT res = pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	}
+
+
 }
 
 void DeviceResources::Present()

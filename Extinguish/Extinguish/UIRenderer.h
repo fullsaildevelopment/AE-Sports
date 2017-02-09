@@ -10,7 +10,6 @@ class Button;
 class UIRenderer : public Component
 {
 private:
-
 	DeviceResources* devResources;
 	ID2D1Factory2 * pD2DFactory;
 	IDWriteFactory * pDWriteFactory;
@@ -29,7 +28,7 @@ private:
 	Microsoft::WRL::ComPtr<IWICImagingFactory> IWICfactory;
 	Microsoft::WRL::ComPtr<IWICBitmapDecoder>  IWICdecoder;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>  pBRT;
-
+	Button * theButton;
 	D2D1_RECT_F * layoutRect;
 	bool isButton = false;
 	float left;
@@ -39,12 +38,11 @@ private:
 public:
 	UIRenderer();
 	~UIRenderer();
-	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, ID3D11DepthStencilState * state);
+	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button);
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
 	void MakeRTSize();
 	void InitMetrics();
-
 };
 
