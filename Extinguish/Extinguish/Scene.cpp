@@ -273,6 +273,9 @@ void Scene::CreateLights()
 
 	//spotLight.CreateSpotlight({ 2, 3.0f, 2, 0 }, { 1, 0, 0, 0 }, 5.0f);
 
+	CD3D11_BUFFER_DESC BallConstantBufferDesc(sizeof(float) * 4, D3D11_BIND_CONSTANT_BUFFER);
+	device->CreateBuffer(&BallConstantBufferDesc, nullptr, &BallConstantBuffer);
+
 	//spotLights.push_back(spotLight);
 
 	//create directional light constant buffer
@@ -454,6 +457,8 @@ void Scene::Update(float dt)
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
+			
+
 			if (transform)
 			{
 				XMFLOAT4X4 world;
@@ -465,6 +470,14 @@ void Scene::Update(float dt)
 			if (i != (id - 1) * 3 + 1)
 			{
 				renderer->Render();
+			}
+			else
+			{
+				float3 tp = transform->GetPosition();
+				XMFLOAT4 cps = {tp.x,tp.y + 5,tp.z + 1 ,1 };
+
+				devContext->UpdateSubresource(BallConstantBuffer.Get(), NULL, NULL, &cps, NULL, NULL);
+				devContext->PSSetConstantBuffers(2, 1, BallConstantBuffer.GetAddressOf());
 			}
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();

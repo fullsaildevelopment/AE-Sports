@@ -15,11 +15,29 @@ void Physics::Update(float dt)
 	if (!isKinematic)
 	{
 		//apply gravity
-		transform->AddVelocity({ 0.0f, gravity * dt, 0.0f });
-
+		if (!colliding)
+		{
+			transform->AddVelocity({ 0, gravity * dt, 0 });
+			transform->AddVelocity(transform->GetVelocity() * (-airdrag * dt));
+		}
 		//apply friction if touching floor
-		//transform->AddVelocity({
+		else
+		{
+			transform->AddVelocity(transform->GetVelocity() * -1 * friction * dt);
+		}
 	}
+	colliding = false;
+}
+
+void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b = false)
+{
+	if (b)
+	{
+		nV *= bounce;
+	}
+	tt->SetVelocity(nV);
+	tt->SetPosition(nP);
+	colliding = true;
 }
 
 //getters//
