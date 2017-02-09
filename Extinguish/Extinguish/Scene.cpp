@@ -469,6 +469,16 @@ void Scene::Update(float dt)
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
+			if (i == 7)
+			{
+				//cout << animator->GetCurrentStateIndex() << endl;
+
+				if (animator->GetCurrentStateIndex() == 2)
+				{
+					//cout << "Breakpoint";
+				}
+			}
+
 			//don't animate yourself or animate server which has already been animated
 			if (animator && i != (id - 1) * 3 + 1 && id != 1) 
 			{
@@ -476,7 +486,7 @@ void Scene::Update(float dt)
 			}
 			else if (animator)
 			{
-				cout << i << endl;
+				//cout << i << endl;
 			}
 		}
 	}
