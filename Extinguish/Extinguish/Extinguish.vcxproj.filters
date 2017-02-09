@@ -31,8 +31,8 @@
     <FxCompile Include="PS_InstStatic.hlsl">
       <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="VS_DepthPreShadow.hlsl">
-      <Filter>Shaders\VertexShaders</Filter>
+    <FxCompile Include="PS_Ball.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
