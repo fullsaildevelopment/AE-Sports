@@ -80,7 +80,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	{
 		if (doting >= tbl * -0.01f && doting <= tbl * 0.01f)
 		{
-			finalColor.r = 0;
+			finalColor.r = 0.50f;
 			finalColor.g = 1;
 			finalColor.b = 0;
 			finalColor.a = 1;

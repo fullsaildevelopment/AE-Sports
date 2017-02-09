@@ -395,6 +395,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		string playerName = "Mage";
 		playerName += to_string(i);
 
+		GameObject* crosse = new GameObject();
+		basic->AddGameObject(crosse);
 		GameObject* mage1 = new GameObject();
 		basic->AddGameObject(mage1);
 		mage1->Init(playerName);
@@ -420,7 +422,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics();
+		Physics* physics = new Physics(0,5.0f,0.07f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -477,8 +479,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
 
-		GameObject* crosse = new GameObject();
-		basic->AddGameObject(crosse);
 		crosse->Init(crosseName);
 		crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
