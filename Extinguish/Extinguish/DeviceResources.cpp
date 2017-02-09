@@ -60,11 +60,14 @@ void DeviceResources::Init(HWND hwnd)
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
 
 	// specify the desired bitmap properties
-	/*D2D1_BITMAP_PROPERTIES1 bp;
-	bp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	// gives E_INVALIDARG, don't use
+	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(
+		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);;
+	/*bp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	bp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-	bp.dpiX = DEFAULT_DPI;
-	bp.dpiY = DEFAULT_DPI;
+	bp.dpiX = 96.0f;
+	bp.dpiY = 96.0f;
 	bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
 	bp.colorContext = nullptr;*/
 
@@ -73,7 +76,7 @@ void DeviceResources::Init(HWND hwnd)
 
 	res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
 
-	res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), NULL, d2dTargetBitmap.GetAddressOf());
+	res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
 
 	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
 
