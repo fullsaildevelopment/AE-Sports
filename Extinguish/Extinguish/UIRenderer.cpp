@@ -61,7 +61,7 @@ UIRenderer::~UIRenderer()
 		delete theButton;
 }
 
-void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, D2D1::ColorF fontColor)
+void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor)
 {
 	pDWriteFactory = deviceResources->GetWriteFactory();
 	pD2DFactory = deviceResources->GetID2D1Factory();
@@ -73,34 +73,35 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	theButton = button;
 	d2DevContext = deviceResources->Get2DContext();
 
-	HRESULT result;
-	IDWriteFontCollection* pFontCollection = NULL;
+	if (font != L"") {
+		HRESULT result;
+		IDWriteFontCollection* pFontCollection = NULL;
 
-	result = pDWriteFactory->GetSystemFontCollection(&pFontCollection);
-	result = pDWriteFactory->CreateTextFormat(L"Roman Regular",
-		pFontCollection,
-		DWRITE_FONT_WEIGHT_REGULAR,
-		DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		fontSize,
-		L"en-us",
-		pTextFormat.GetAddressOf()
-	);
-
-	if (SUCCEEDED(result))
-	{
-		result = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-		result = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	}
-
-	if (SUCCEEDED(result))
-	{
-		result = d2DevContext->CreateSolidColorBrush(
-			D2D1::ColorF(fontColor),
-			pBrush.GetAddressOf()
+		result = pDWriteFactory->GetSystemFontCollection(&pFontCollection);
+		result = pDWriteFactory->CreateTextFormat(font.c_str(),
+			pFontCollection,
+			DWRITE_FONT_WEIGHT_REGULAR,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			fontSize,
+			L"en-us",
+			pTextFormat.GetAddressOf()
 		);
-	}
 
+		if (SUCCEEDED(result))
+		{
+			result = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+			result = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+		}
+
+		if (SUCCEEDED(result))
+		{
+			result = d2DevContext->CreateSolidColorBrush(
+				D2D1::ColorF(fontColor),
+				pBrush.GetAddressOf()
+			);
+		}
+	}
 }
 
 void UIRenderer::InitMetrics()
@@ -122,24 +123,26 @@ void UIRenderer::InitMetrics()
 
 void UIRenderer::Update(float dt)
 {
-	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+	if (theButton->getText() != L"") {
+		ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
-	HRESULT res = pDWriteFactory->CreateTextLayout(
-		theButton->getText().c_str(),
-		theButton->getLength(),
-		pTextFormat.Get(),
-		theButton->getWidth(),
-		theButton->getHeight(),
-		&pTextLayout
-	);
+		HRESULT res = pDWriteFactory->CreateTextLayout(
+			theButton->getText().c_str(),
+			theButton->getLength(),
+			pTextFormat.Get(),
+			theButton->getWidth(),
+			theButton->getHeight(),
+			&pTextLayout
+		);
 
-	ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
-	pTextLayout->GetMetrics(&textMetrics);
+		ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
+		pTextLayout->GetMetrics(&textMetrics);
 
-	if (left > textMetrics.left)
-	{
-		theButton->setOrigin(theButton->getOriginX() - (left - textMetrics.left), theButton->getOriginY());
-		left = textMetrics.left;
+		if (left > textMetrics.left)
+		{
+			theButton->setOrigin(theButton->getOriginX() - (left - textMetrics.left), theButton->getOriginY());
+			left = textMetrics.left;
+		}
 	}
 }
 
@@ -150,11 +153,11 @@ void UIRenderer::Render()
 	HRESULT hr;
 
 	if (theButton->isEnabled()) {
-		if (GRAPHICS) {
+		
 			pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
 			//devContext->OMSetDepthStencilState(depthStencilState, 1);
 			d2DevContext->SaveDrawingState(stateBlock.Get());
-		}
+		
 		d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
@@ -166,30 +169,29 @@ void UIRenderer::Render()
 				d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
 		}
 
-		DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
-		hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
+		if (theButton->getText() != L"") {
 
-		if (GRAPHICS) {
-			d2DevContext->DrawTextLayout(
-				D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
-				pTextLayout.Get(),
-				pBrush.Get()
-			);
+			DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
+			hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
+
+				d2DevContext->DrawTextLayout(
+					D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
+					pTextLayout.Get(),
+					pBrush.Get()
+				);
 		}
-
 		hr = d2DevContext->EndDraw();
 		/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
 		{
 			float t = 0;
 		}*/
-	//	d2DevContext->RestoreDrawingState(stateBlock.Get());
+		//	d2DevContext->RestoreDrawingState(stateBlock.Get());
 
 		if (GetGameObject()->GetName() == "debugUI") {
 			RenderDebugUI(theButton);
 		}
 
 
-		if (GRAPHICS)
 			stateBlock.Reset();
 	}
 }
