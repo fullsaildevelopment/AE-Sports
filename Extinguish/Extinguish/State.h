@@ -15,8 +15,10 @@ private:
 	std::vector<Transition*> transitions;
 	bool doLoop;
 	float speed;
+	int transitionIndex;
 
 public:
+	~State();
 	//basic//
 	void Init(AnimatorController* controller, Animation* anim, bool doLoop, float animSpeed, std::string stateName);
 	Transition* Update(float dt);
@@ -27,10 +29,13 @@ public:
 	//getters//
 	Animation* GetAnimation();
 	AnimatorController* GetAnimationController();
+	Transition* GetTransition(unsigned int index);
 	bool DoesItLoop();
 	float GetSpeed();
 	std::string& const GetName();
+	int GetTransitionIndex();
 
 	//setters//
 	void SetAnimation(Animation* anim);
+	void SetTransitionIndex(int transitionIndex);
 };

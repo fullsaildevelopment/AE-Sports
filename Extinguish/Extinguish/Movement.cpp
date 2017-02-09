@@ -58,21 +58,25 @@ void Movement::Update(float dt)
 
 		if (animator)
 		{
-			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Run")
+			int nextStateIndex = animator->GetNextStateIndex();
+
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Run" && !animator->GetState(animator->GetNextStateIndex()))
 			{
-				GetGameObject()->GetComponent<AnimatorController>()->SetTrigger("Run");
+				animator->SetTrigger("Run");
+				//cout << "Run" << endl;
 			}
 		}
 	}
-	else //if not moving and not already idle, set to idle... Might actually already be handled by animator controller
+	else 
 	{
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 		if (animator)
 		{
-			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle")
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle" && !animator->GetState(animator->GetNextStateIndex()))
 			{
-				GetGameObject()->GetComponent<AnimatorController>()->SetTrigger("Idle");
+				animator->SetTrigger("Idle");
+				//cout << "Idle" << endl;
 			}
 		}
 	}
@@ -116,7 +120,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		//transform->AddVelocity({ 0.0f, 0.0f, moveSpeed});
+		//transform->AddVelocity({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
