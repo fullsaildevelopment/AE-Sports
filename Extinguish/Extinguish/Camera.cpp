@@ -146,6 +146,7 @@ void Camera::MoveCamera(InputDownEvent* e)
 	if (input->GetMouseX() && input->GetMouseY())
 	{
 		if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
+		//if (!input->GetMouseButton(0) && prevMouseX && prevMouseY)
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 
