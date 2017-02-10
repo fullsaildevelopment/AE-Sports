@@ -123,23 +123,26 @@ void AnimatorController::TransitionTo(unsigned int stateIndex, unsigned int tran
 	if (stateIndex != curStateIndex) //don't do if it's already been done
 	{
 		State* curState = states[curStateIndex];
-		Transition* transition = curState->GetTransition(transitionIndex);
+		
+		if (transitionIndex < curState->GetTransitionsCount())
+		{
+			Transition* transition = curState->GetTransition(transitionIndex);
 
-		TransitionTo(transition);
-		//State* nextState = transition->GetToState();
+			TransitionTo(transition);
+			//State* nextState = transition->GetToState();
 
-		//BlendInfo info;
-		//info.totalBlendTime = transition->GetTransitionDuration();
-		//blender->SetBlendInfo(info);
-		//blender->GetNextInterpolator()->SetAnimation(nextState->GetAnimation());
-		//blender->GetNextInterpolator()->SetSpeed(nextState->GetSpeed());
-		//blender->GetNextInterpolator()->SetIsLoop(nextState->DoesItLoop());
+			//BlendInfo info;
+			//info.totalBlendTime = transition->GetTransitionDuration();
+			//blender->SetBlendInfo(info);
+			//blender->GetNextInterpolator()->SetAnimation(nextState->GetAnimation());
+			//blender->GetNextInterpolator()->SetSpeed(nextState->GetSpeed());
+			//blender->GetNextInterpolator()->SetIsLoop(nextState->DoesItLoop());
 
-	//	curStateIndex = stateIndex;
-		nextStateIndex = stateIndex;
-		transition->SetDoTransition(true);
-		transition->SetTimer(0.0f);
-
+		//	curStateIndex = stateIndex;
+			nextStateIndex = stateIndex;
+			transition->SetDoTransition(true);
+			transition->SetTimer(0.0f);
+		}
 	}
 	//else
 	//{

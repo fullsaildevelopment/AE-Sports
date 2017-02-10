@@ -34,6 +34,7 @@ public:
 	float GetSpeed();
 	std::string& const GetName();
 	int GetTransitionIndex();
+	unsigned int GetTransitionsCount();
 
 	//setters//
 	void SetAnimation(Animation* anim);
