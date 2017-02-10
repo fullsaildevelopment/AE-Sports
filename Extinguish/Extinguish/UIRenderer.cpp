@@ -154,9 +154,9 @@ void UIRenderer::Render()
 
 	if (theButton->isEnabled()) {
 		
-			pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
-			//devContext->OMSetDepthStencilState(depthStencilState, 1);
-			d2DevContext->SaveDrawingState(stateBlock.Get());
+		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
+		//devContext->OMSetDepthStencilState(depthStencilState, 1);
+		d2DevContext->SaveDrawingState(stateBlock.Get());
 		
 		d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
@@ -174,11 +174,11 @@ void UIRenderer::Render()
 			DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
 			hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
 
-				d2DevContext->DrawTextLayout(
-					D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
-					pTextLayout.Get(),
-					pBrush.Get()
-				);
+			d2DevContext->DrawTextLayout(
+				D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
+				pTextLayout.Get(),
+				pBrush.Get()
+			);
 		}
 		hr = d2DevContext->EndDraw();
 		/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
