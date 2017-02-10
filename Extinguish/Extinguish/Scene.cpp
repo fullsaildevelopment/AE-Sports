@@ -273,6 +273,9 @@ void Scene::CreateLights()
 
 	//spotLight.CreateSpotlight({ 2, 3.0f, 2, 0 }, { 1, 0, 0, 0 }, 5.0f);
 
+	CD3D11_BUFFER_DESC BallConstantBufferDesc(sizeof(float) * 4, D3D11_BIND_CONSTANT_BUFFER);
+	device->CreateBuffer(&BallConstantBufferDesc, nullptr, &BallConstantBuffer);
+
 	//spotLights.push_back(spotLight);
 
 	//create directional light constant buffer
@@ -410,25 +413,20 @@ void Scene::Update(float dt)
 
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
-	XMFLOAT4X4 cameraCam;
-	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
 
 	int id = Game::GetClientID();
-	if (!camObject)
+
+	if (id == 0)
 	{
-
-		if (id == 0)
-		{
-			id = 1;
-		}
-
-		cameraName += to_string(id);
-
-		//update cam to get accurate view
-		camObject = gameObjects[0]->FindGameObject(cameraName);
+		id = 1;
 	}
-	camObject->Update(dt);
 
+	//get camera object
+	cameraName += to_string(id);
+	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
+
+	//get view
+	XMFLOAT4X4 cameraCam;
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
 
 	
@@ -459,6 +457,8 @@ void Scene::Update(float dt)
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
+			
+
 			if (transform)
 			{
 				XMFLOAT4X4 world;
@@ -467,16 +467,39 @@ void Scene::Update(float dt)
 			}
 
 			//don't render yourself
-			if (i != (id - 1) * 3 + 1)
+			if (i != (id - 1) * 3 + 2)
 			{
 				renderer->Render();
+			}
+			else
+			{
+				float3 tp = transform->GetPosition();
+				XMFLOAT4 cps = {tp.x,tp.y + 5,tp.z + 1 ,1 };
+
+				devContext->UpdateSubresource(BallConstantBuffer.Get(), NULL, NULL, &cps, NULL, NULL);
+				devContext->PSSetConstantBuffers(2, 1, BallConstantBuffer.GetAddressOf());
 			}
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
-			if (animator && i != (id - 1) * 3 + 1) //don't animate yourself
+			if (i == 7)
+			{
+				//cout << animator->GetCurrentStateIndex() << endl;
+
+				if (animator->GetCurrentStateIndex() == 2)
+				{
+					//cout << "Breakpoint";
+				}
+			}
+
+			//don't animate yourself or animate server which has already been animated
+			if (animator && i != (id - 1) * 3 + 1 && id != 1) 
 			{
 				animator->Update(dt);
+			}
+			else if (animator)
+			{
+				//cout << i << endl;
 			}
 		}
 	}

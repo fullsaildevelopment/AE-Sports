@@ -84,6 +84,11 @@ public:
 		return newClient.GetAnimationIndex(index);
 	}
 
+	INT8 GetTransitionIndex(unsigned int index)
+	{
+		return newClient.GetTransitionIndex(index);
+	}
+
 	XMFLOAT3 getLocation(unsigned int index)
 	{
 		return newClient.getLocation(index);

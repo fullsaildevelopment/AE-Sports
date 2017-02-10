@@ -21,10 +21,11 @@ private:
 	Renderer* renderer;
 	std::vector<State*> states;
 	std::vector<Parameter*> parameters;
-	unsigned int currentState;
+	unsigned int curStateIndex;
+	int nextStateIndex;
 	HashString* parametersTable;
 	HashString* statesTable;
-
+	//Transition* curTransition;
 public:
 	AnimatorController();
 	~AnimatorController();
@@ -35,18 +36,20 @@ public:
 	void UpdateCurAnimatorsLoopAndSpeed();
 
 	//misc//
-	//void CreateAndAddState(std::string animName, bool doLoop, float animSpeed);
 	void AddState(State* state);
 	void AddParameter(Parameter* parameter);
-	//void AddTrigger(std::string name, bool toggle);
 	void TransitionTo(Transition* transition);
+	void TransitionTo(unsigned int stateIndex, unsigned int transitionIndex); //used by client in game.cpp
+	//void CreateAndAddState(std::string animName, bool doLoop, float animSpeed);
+	//void AddTrigger(std::string name, bool toggle);
 
 	//getters//
 	Blender* GetBlender();
 	State* GetState(std::string name);
-	State* GetState(unsigned int index);
+	State* GetState(int index);
 	unsigned int GetCurrentStateIndex();
 	Param::Trigger* GetTrigger(std::string name);
+	int GetNextStateIndex();
 
 	//setters//
 	void SetCurrentState(unsigned int curState);
