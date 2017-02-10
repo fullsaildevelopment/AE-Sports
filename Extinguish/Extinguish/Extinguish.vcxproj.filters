@@ -34,6 +34,7 @@
     <FxCompile Include="PS_Ball.hlsl">
       <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="VS_DepthPreShadow.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
