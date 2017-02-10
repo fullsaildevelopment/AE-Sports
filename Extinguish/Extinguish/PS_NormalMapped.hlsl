@@ -118,5 +118,16 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	//return float4(bumpNormal, 1);
 
+	float4 toOthers = input.worldPosition - cameraposW;
+	float doting = dot(normalize(toOthers.xyz), input.normal);
+	float tbl = length(toOthers);
+	if (doting >= tbl * -0.007f && doting <= tbl * 0.007f)
+	{
+		finalColor.r = 1;
+		finalColor.g = 0;
+		finalColor.b = 0;
+		finalColor.a = 1;
+	}
+
 	return finalColor;
 }
