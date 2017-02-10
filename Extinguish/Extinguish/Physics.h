@@ -16,13 +16,13 @@ private:
 	Transform* transform;
 
 	// 0-1 1 being complete reflection 0 no reflection
-	float bounce = 1.5f;
+	float bounce = 1.0f;
 	// 0-1  1 being all the friction 0 being no friction
-	float friction = 0.06f;
+	float friction = 0.00f;
 	// 0-1 same as others
-	float airdrag = 0.03f;
+	float airdrag = 0.00f;
 
-	float maxMoveSpeed = 30;
+	float maxMoveSpeed = 50;
 
 	bool colliding = false;
 	//other
