@@ -379,7 +379,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	gameBall->InitTransform(identity, { -7, 10, -20.5f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
-	gameBallRenderer->Init("Ball", "Static", "Static", "", "", projection, devResources);
+	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
 	SphereCollider* gameBallCollider = new SphereCollider(0.125f, gameBall, false);
 	gameBall->AddSphereCollider(gameBallCollider);
 	Physics* physics = new Physics();
@@ -395,6 +395,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		string playerName = "Mage";
 		playerName += to_string(i);
 
+		GameObject* crosse = new GameObject();
+		basic->AddGameObject(crosse);
 		GameObject* mage1 = new GameObject();
 		basic->AddGameObject(mage1);
 		mage1->Init(playerName);
@@ -420,6 +422,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
+		Physics* physics = new Physics(0,5.0f,0.07f);
+		mage1->AddComponent(physics);
+		physics->Init();
 
 		AnimatorController* mageAnim1 = new AnimatorController();
 		mage1->AddComponent(mageAnim1);
@@ -474,8 +479,6 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
 
-		GameObject* crosse = new GameObject();
-		basic->AddGameObject(crosse);
 		crosse->Init(crosseName);
 		crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
@@ -946,14 +949,15 @@ void Game::UpdateClientObjects()
 
 					if (animator)
 					{
-						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transition
+						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transitioning
 						{
-							cout << to_string(animIndex) << endl;
+							//cout << to_string(animIndex) << endl;
 
 							if (animIndex == 2)
 							{
-								cout << "breakkpoint";
+								//cout << "Client received stumble index" << endl;
 							}
+
 							animator->TransitionTo(animIndex, transitionIndex);
 						}
 					}

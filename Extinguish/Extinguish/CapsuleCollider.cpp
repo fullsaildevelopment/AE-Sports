@@ -74,10 +74,19 @@ void CapsuleCollider::Update(float dt)
 				float3 vel = tgt->GetVelocity();
 				if (AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos))
 				{
-					tgt->SetPosition(pos);
-					tgt->SetVelocity(vel);
-					tg->OnCollisionEnter(box);
-					box->GetGameObject()->OnCollisionEnter(this);
+					vel.y = 0;
+					Physics* op = tg->GetComponent<Physics>();
+					if (op)
+					{
+						op->HandlePhysics(tgt, vel, pos, false);
+					}
+					else
+					{
+						tgt->SetPosition(pos);
+						tgt->SetVelocity(vel);
+						tg->OnCollisionEnter(box);
+						box->GetGameObject()->OnCollisionEnter(this);
+					}
 				}
 			}
 			continue;

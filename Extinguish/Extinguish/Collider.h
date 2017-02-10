@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Transform.h"
 #include "CollisionLibrary.h"
+#include "Physics.h"
 
 class GameObject;
 
