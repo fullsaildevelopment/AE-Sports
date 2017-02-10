@@ -148,6 +148,7 @@ void PlayerController::Attack()
 
 		if (ball->GetHolder() == otherPlayer->GetTransform()->GetChild(1)->GetGameObject()) //if crosse == crosse
 		{
+			ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
 			ball->DropBall(otherPlayer);
 		}
 	}

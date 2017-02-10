@@ -26,8 +26,9 @@ void AI::OnTriggerEnter(Collider *obj)
 	// if i bump into a player and they are intentionally attacking me
 	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
 	{
-		// drop the ball and 'stumble' in the way they pushed me
-		ballClass->DropBall(me);
+		// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
+		if (ballClass->GetIsHeld() && ballClass->GetHolder() == me)
+			ballClass->DropBall(me);
 
 		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
 		me->GetTransform()->AddVelocity(vel);
@@ -108,12 +109,14 @@ void AI::Init()
 
 	switch (fakeTeam)
 	{
+
 	case 0: // if I'm the only AI
 	{
 		currState = tank;
 
 		break;
 	}
+
 	case 1: // if there is one other AI
 	{
 		bool bgoalie = false;
@@ -130,6 +133,7 @@ void AI::Init()
 
 		break;
 	}
+
 	case 2: // if there are two other AI
 	{
 		bool bgoalie = false;
@@ -154,6 +158,7 @@ void AI::Init()
 
 		break;
 	}
+
 	case 3: // if there are three other AI
 	{
 		bool bgoalie = false;
@@ -183,6 +188,7 @@ void AI::Init()
 
 		break;
 	}
+
 	default: break;
 
 	}
@@ -196,7 +202,7 @@ void AI::Update(float dt)
 	// if I'm the goalie
 	if (currState == goalie || currState == playboy)
 	{
-		float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+		float3 dist = ball->GetTransform()->GetPosition() - myGoal->GetTransform()->GetPosition();
 
 		// if the ball gets close
 		if (dist.magnitude() < 15)
@@ -213,7 +219,8 @@ void AI::Update(float dt)
 			Paranoia();
 		}
 		
-		else
+		// if the ball is too far from the goal
+		else if (dist.magnitude() > 15)
 		{
 			if (currState == playboy)
 			{
@@ -268,12 +275,16 @@ void AI::Update(float dt)
 			// if they're on the enemy team
 			else
 			{
-				
+				Attack(ballClass->GetHolder());
 			}
 		}
 
 		// if nobody has the ball
+		else
+		{
 			// Attack a random dude
+
+		}
 
 	}
 		

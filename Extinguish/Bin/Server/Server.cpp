@@ -327,10 +327,10 @@ void Server::sendPackets()
 		{
 			//bOut.Write(GetTime());
 			bOut.Write(clientStates[i].clientID);
-//			bOut.Write(clientStates[i].nameLength);
-//			bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
+			//bOut.Write(clientStates[i].nameLength);
+			//bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
 			bOut.Write(clientStates[i].hasBall);
-	//		bOut.Write(clientStates[i].world);
+			//bOut.Write(clientStates[i].world);
 			bOut.Write(clientStates[i].position);
 			bOut.Write(clientStates[i].rotation);
 			bOut.Write(clientStates[i].parentIndex);
