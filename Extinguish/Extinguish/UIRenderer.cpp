@@ -143,6 +143,11 @@ void UIRenderer::Update(float dt)
 			theButton->setOrigin(theButton->getOriginX() - (left - textMetrics.left), theButton->getOriginY());
 			left = textMetrics.left;
 		}
+		if (left < textMetrics.left)
+		{
+			theButton->setOrigin(theButton->getOriginX() + (left - textMetrics.left), theButton->getOriginY());
+			left = textMetrics.left;
+		}
 	}
 }
 
