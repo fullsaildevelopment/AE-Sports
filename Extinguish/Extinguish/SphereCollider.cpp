@@ -56,11 +56,19 @@ void SphereCollider::Update(float dt)
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c.x == 1 || c.y == 1)
 				{
-					tgt->SetPosition(s.m_Center);
-					vel *= c;
-					tgt->SetVelocity(vel / dt);
-					box->GetGameObject()->OnCollisionEnter(this);
-					tg->OnCollisionEnter(box);
+					Physics* op = tg->GetComponent<Physics>();
+					if (op)
+					{
+						op->HandlePhysics(tgt, vel * c / dt, s.m_Center, true);
+					}
+					else
+					{
+						tgt->SetPosition(s.m_Center);
+						vel *= c;
+						tgt->SetVelocity(vel / dt);
+						box->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(box);
+					}
 				}
 				else if (!bvel.isEquil(vel))
 					tgt->SetVelocity(vel / dt);
