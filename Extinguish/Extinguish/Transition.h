@@ -19,6 +19,7 @@ private:
 
 	//how long will we transition (aka blend between states)
 	float transitionDuration;
+
 	float timer;
 	bool doTransition;
 public:
@@ -39,6 +40,8 @@ public:
 	State* GetToState();
 
 	//setters//
+	void SetDoTransition(bool toggle);
+	void SetTimer(float time);
 	//void SetTransitionDuration(float duration);
 
 };

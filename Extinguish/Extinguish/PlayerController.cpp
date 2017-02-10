@@ -146,7 +146,7 @@ void PlayerController::Attack()
 		//make them drop ball
 		BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
 
-		if (ball->GetHolder() == otherPlayer)
+		if (ball->GetHolder() == otherPlayer->GetTransform()->GetChild(1)->GetGameObject()) //if crosse == crosse
 		{
 			ball->DropBall(otherPlayer);
 		}

@@ -153,11 +153,10 @@ void UIRenderer::Render()
 	HRESULT hr;
 
 	if (theButton->isEnabled()) {
-		
 		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
 		//devContext->OMSetDepthStencilState(depthStencilState, 1);
 		d2DevContext->SaveDrawingState(stateBlock.Get());
-		
+
 		d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
@@ -192,8 +191,9 @@ void UIRenderer::Render()
 		}
 
 
-			stateBlock.Reset();
+		stateBlock.Reset();
 	}
+
 }
 
 void UIRenderer::RenderDebugUI(Button * theButton)

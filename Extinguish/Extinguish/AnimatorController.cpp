@@ -113,19 +113,39 @@ void AnimatorController::TransitionTo(Transition* transition)
 
 void AnimatorController::TransitionTo(unsigned int stateIndex, unsigned int transitionIndex)
 {
-	State* curState = states[curStateIndex];
-	Transition* transition = curState->GetTransition(transitionIndex);
-	State* nextState = transition->GetToState();
+	//cout << curStateIndex << " " << stateIndex << " " << nextStateIndex << endl;
 
-	BlendInfo info;
-	info.totalBlendTime = transition->GetTransitionDuration();
-	blender->SetBlendInfo(info);
-	blender->GetNextInterpolator()->SetAnimation(nextState->GetAnimation());
-	blender->GetNextInterpolator()->SetSpeed(nextState->GetSpeed());
-	blender->GetNextInterpolator()->SetIsLoop(nextState->DoesItLoop());
+	//if (stateIndex == 2)
+	//{
+	//	cout << "Breakpoint" << endl;
+	//}
 
-	curStateIndex = stateIndex;
-	nextStateIndex = statesTable->GetKey(nextState->GetName());
+	if (stateIndex != curStateIndex) //don't do if it's already been done
+	{
+		State* curState = states[curStateIndex];
+		Transition* transition = curState->GetTransition(transitionIndex);
+
+		TransitionTo(transition);
+		//State* nextState = transition->GetToState();
+
+		//BlendInfo info;
+		//info.totalBlendTime = transition->GetTransitionDuration();
+		//blender->SetBlendInfo(info);
+		//blender->GetNextInterpolator()->SetAnimation(nextState->GetAnimation());
+		//blender->GetNextInterpolator()->SetSpeed(nextState->GetSpeed());
+		//blender->GetNextInterpolator()->SetIsLoop(nextState->DoesItLoop());
+
+	//	curStateIndex = stateIndex;
+		nextStateIndex = stateIndex;
+		transition->SetDoTransition(true);
+		transition->SetTimer(0.0f);
+
+	}
+	//else
+	//{
+	//	cout << "Breakpoint" << endl;
+	//}
+
 }
 
 //getters//
@@ -187,6 +207,7 @@ int AnimatorController::GetNextStateIndex()
 void AnimatorController::SetCurrentState(unsigned int curState)
 {
 	curStateIndex = curState;
+	nextStateIndex = -1;
 
 	//blender->GetCurInterpolator()->SetAnimation(states[currentState]->GetAnimation());
 	//blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
