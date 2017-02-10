@@ -615,7 +615,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 		theSButton->setPositionMultipliers(0.5f, 0.0f);
 		scoreA->AddComponent(theSButton);
 		UIRenderer * scoreRender = new UIRenderer();
-		scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF::Black);
+		scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f,0.8f,0.8f,1.0f));
 		scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
 		scoreA->AddComponent(scoreRender);
 		scoreRender->MakeRTSize();
@@ -629,11 +629,11 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 		Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
 		theSButtonB->SetGameObject(scoreB);
 		theSButtonB->showFPS(false);
-		theSButtonB->setOrigin(369.0f, 66.0f);
+		theSButtonB->setOrigin(369.0f, 70.0f);
 		theSButtonB->setPositionMultipliers(0.40f, 0.11f);
 		scoreB->AddComponent(theSButtonB);
 		UIRenderer * scoreBRender = new UIRenderer();
-		scoreBRender->Init(true, 35.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
+		scoreBRender->Init(true, 30.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
 		scoreBRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
 		scoreB->AddComponent(scoreBRender);
 		scoreBRender->MakeRTSize();
@@ -647,11 +647,11 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 		Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
 		theSButtonC->SetGameObject(scoreC);
 		theSButtonC->showFPS(false);
-		theSButtonC->setOrigin(569.0f, 66.0f);
+		theSButtonC->setOrigin(569.0f, 70.0f);
 		theSButtonC->setPositionMultipliers(0.6f, 0.11f);
 		scoreC->AddComponent(theSButtonC);
 		UIRenderer * scoreCRender = new UIRenderer();
-		scoreCRender->Init(true, 35.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
+		scoreCRender->Init(true, 30.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
 		scoreCRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
 		scoreC->AddComponent(scoreCRender);
 		scoreCRender->MakeRTSize();
