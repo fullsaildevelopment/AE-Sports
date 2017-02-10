@@ -485,7 +485,7 @@ void Scene::Update(float dt)
 			//if (i == 7)
 			//{
 			//	//cout << animator->GetCurrentStateIndex() << endl;
-			//
+
 			//	if (animator->GetCurrentStateIndex() == 2)
 			//	{
 			//		//cout << "Breakpoint";
