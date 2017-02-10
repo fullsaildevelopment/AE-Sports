@@ -81,6 +81,12 @@ int State::GetTransitionIndex()
 	return transitionIndex;
 }
 
+unsigned int State::GetTransitionsCount()
+{
+	return transitions.size();
+}
+
+
 //setters//
 void State::SetAnimation(Animation* anim)
 {
