@@ -422,7 +422,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0,10.0f,0.07f);
+		Physics* physics = new Physics(0,13.0f,0.07f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
