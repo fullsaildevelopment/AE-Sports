@@ -125,8 +125,9 @@ void UIRenderer::Update(float dt)
 {
 	if (theButton->getText() != L"") {
 		ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+		HRESULT res = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
-		HRESULT res = pDWriteFactory->CreateTextLayout(
+		res = pDWriteFactory->CreateTextLayout(
 			theButton->getText().c_str(),
 			theButton->getLength(),
 			pTextFormat.Get(),
@@ -137,17 +138,6 @@ void UIRenderer::Update(float dt)
 
 		ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
 		pTextLayout->GetMetrics(&textMetrics);
-
-		if (left > textMetrics.left)
-		{
-			theButton->setOrigin(theButton->getOriginX() - (left - textMetrics.left), theButton->getOriginY());
-			left = textMetrics.left;
-		}
-		if (left < textMetrics.left)
-		{
-			theButton->setOrigin(theButton->getOriginX() + (left - textMetrics.left), theButton->getOriginY());
-			left = textMetrics.left;
-		}
 	}
 }
 
