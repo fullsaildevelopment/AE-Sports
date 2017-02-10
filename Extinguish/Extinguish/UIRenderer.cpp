@@ -153,7 +153,6 @@ void UIRenderer::Render()
 	HRESULT hr;
 
 	if (theButton->isEnabled()) {
-
 		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
 		//devContext->OMSetDepthStencilState(depthStencilState, 1);
 		d2DevContext->SaveDrawingState(stateBlock.Get());
