@@ -38,9 +38,11 @@ void Physics::Update(float dt)
 		{
 			nV.z = 0;
 		}
-		if (nV.magnitude() > maxMoveSpeed)
+		if ((nV * float3(1,0,1)).magnitude() > maxMoveSpeed)
 		{
-			nV = nV.normalize() * maxMoveSpeed;
+			float3 tm = (nV * float3(1, 0, 1)).normalize() * maxMoveSpeed;
+			nV.x = tm.x;
+			nV.z = tm.z;
 		}
 		transform->SetVelocity(nV);
 	}
