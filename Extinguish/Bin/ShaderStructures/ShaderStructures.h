@@ -107,6 +107,7 @@ struct GameState
 	int8_t parentIndex;
 	int8_t animationIndex;
 	int otherIndex;
+	int8_t transitionIndex;
 };
 #pragma pack(pop)
 

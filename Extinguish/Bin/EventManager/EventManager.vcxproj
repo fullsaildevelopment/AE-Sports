@@ -146,6 +146,7 @@
     <ClInclude Include="InputDownEvent.h" />
     <ClInclude Include="LoadSceneEvent.h" />
     <ClInclude Include="ScoreEvent.h" />
+    <ClInclude Include="WindowResizeEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventDispatcher.cpp" />

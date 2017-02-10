@@ -162,8 +162,18 @@ void HexagonCollider::Update(float dt)
 									{
 										if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
 										{
-											sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
-											sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											Physics* op = (*Others)[f]->GetComponent<Physics>();
+											if (op)
+											{
+												op->HandlePhysics((*Others)[f]->GetTransform(), vel, s.m_Center, true);
+												tg->OnCollisionEnter(sphere);
+												sphere->GetGameObject()->OnCollisionEnter(this);
+											}
+											else
+											{
+												sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+												sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											}
 										}
 									}
 								}
@@ -183,8 +193,18 @@ void HexagonCollider::Update(float dt)
 									{
 										if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
 										{
-											sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
-											sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											Physics* op = (*Others)[f]->GetComponent<Physics>();
+											if (op)
+											{
+												op->HandlePhysics((*Others)[f]->GetTransform(), vel, s.m_Center, true);
+												tg->OnCollisionEnter(sphere);
+												sphere->GetGameObject()->OnCollisionEnter(this);
+											}
+											else
+											{
+												sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+												sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											}
 										}
 									}
 								}
@@ -208,8 +228,18 @@ void HexagonCollider::Update(float dt)
 									{
 										if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
 										{
-											sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
-											sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											Physics* op = (*Others)[f]->GetComponent<Physics>();
+											if (op)
+											{
+												op->HandlePhysics((*Others)[f]->GetTransform(), vel, s.m_Center, true);
+												tg->OnCollisionEnter(sphere);
+												sphere->GetGameObject()->OnCollisionEnter(this);
+											}
+											else
+											{
+												sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+												sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											}
 										}
 									}
 								}
@@ -229,8 +259,18 @@ void HexagonCollider::Update(float dt)
 									{
 										if (HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel))
 										{
-											sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
-											sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											Physics* op = (*Others)[f]->GetComponent<Physics>();
+											if (op)
+											{
+												op->HandlePhysics((*Others)[f]->GetTransform(), vel, s.m_Center, true);
+												tg->OnCollisionEnter(sphere);
+												sphere->GetGameObject()->OnCollisionEnter(this);
+											}
+											else
+											{
+												sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+												sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
+											}
 										}
 									}
 								}
@@ -268,8 +308,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -289,8 +339,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -314,8 +374,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -335,8 +405,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -364,8 +444,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -385,8 +475,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -410,8 +510,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}
@@ -431,8 +541,18 @@ void HexagonCollider::Update(float dt)
 										{
 											if (HexagonToCapsule(*GetWorldHex(i * col + j), c, vel))
 											{
-												cap->GetGameObject()->GetTransform()->SetVelocity(vel);
-												cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												Physics* op = (*Others)[f]->GetComponent<Physics>();
+												if (op)
+												{
+													op->HandlePhysics((*Others)[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													tg->OnCollisionEnter(cap);
+													cap->GetGameObject()->OnCollisionEnter(this);
+												}
+												else
+												{
+													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
+													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
+												}
 											}
 										}
 									}

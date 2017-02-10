@@ -38,10 +38,6 @@ void Camera::Update(float dt)
 {
 	//this->input = input;
 	this->dt = dt;
-
-	//ClampTo();
-	//MoveCamera();
-	//transform->RotateY(0.001f);
 }
 
 void Camera::HandleEvent(Event* e)

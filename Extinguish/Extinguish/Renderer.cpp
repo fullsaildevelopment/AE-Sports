@@ -242,7 +242,7 @@ void Renderer::SetBlendInfo(BlendInfo info)
 	blender->SetBlendInfo(info);
 }
 
-void Renderer::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4> boneOffsets)
+void Renderer::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets)
 {
 	this->boneOffsets = boneOffsets;
 }
