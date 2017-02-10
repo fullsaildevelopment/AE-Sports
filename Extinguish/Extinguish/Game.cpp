@@ -601,22 +601,59 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 {
-	GameObject * testScore = new GameObject();
-	basic->AddUIObject(testScore);
-	testScore->Init("gameScore");
-	Button * theSButton = new Button(true, true, L"0 : 0", (unsigned int)strlen("0 : 0"), 500.0f, 100.0f, devResources, 0);
-	theSButton->SetGameObject(testScore);
-	theSButton->showFPS(false);
-	theSButton->setOrigin(250.0f, 30.0f);
-	theSButton->setPositionMultipliers(0.5f, 0.0f);
-	testScore->AddComponent(theSButton);
-	UIRenderer * scoreRender = new UIRenderer();
-	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF::Black);
-	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
-	testScore->AddComponent(scoreRender);
-	scoreRender->MakeRTSize();
-	theSButton->MakeRect();
-	scoreRender->InitMetrics();
+	// trapezoid backing
+	GameObject * scoreA = new GameObject();
+	basic->AddUIObject(scoreA);
+	scoreA->Init("gameScoreBase");
+		Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
+		theSButton->SetGameObject(scoreA);
+		theSButton->showFPS(false);
+		theSButton->setOrigin(250.0f, 30.0f);
+		theSButton->setPositionMultipliers(0.5f, 0.0f);
+		scoreA->AddComponent(theSButton);
+		UIRenderer * scoreRender = new UIRenderer();
+		scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF::Black);
+		scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+		scoreA->AddComponent(scoreRender);
+		scoreRender->MakeRTSize();
+		theSButton->MakeRect();
+		scoreRender->InitMetrics();
+
+
+	GameObject * scoreB = new GameObject();
+	basic->AddUIObject(scoreB);
+	scoreB->Init("gameScoreA");
+		Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+		theSButtonB->SetGameObject(scoreB);
+		theSButtonB->showFPS(false);
+		theSButtonB->setOrigin(369.0f, 66.0f);
+		theSButtonB->setPositionMultipliers(0.40f, 0.11f);
+		scoreB->AddComponent(theSButtonB);
+		UIRenderer * scoreBRender = new UIRenderer();
+		scoreBRender->Init(true, 35.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
+		scoreBRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+		scoreB->AddComponent(scoreBRender);
+		scoreBRender->MakeRTSize();
+		theSButtonB->MakeRect();
+		scoreBRender->InitMetrics();
+
+
+	GameObject * scoreC = new GameObject();
+	basic->AddUIObject(scoreC);
+	scoreC->Init("gameScoreB");
+		Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+		theSButtonC->SetGameObject(scoreC);
+		theSButtonC->showFPS(false);
+		theSButtonC->setOrigin(569.0f, 66.0f);
+		theSButtonC->setPositionMultipliers(0.6f, 0.11f);
+		scoreC->AddComponent(theSButtonC);
+		UIRenderer * scoreCRender = new UIRenderer();
+		scoreCRender->Init(true, 35.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
+		scoreCRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+		scoreC->AddComponent(scoreCRender);
+		scoreCRender->MakeRTSize();
+		theSButtonC->MakeRect();
+		scoreCRender->InitMetrics();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
@@ -649,7 +686,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	bg->AddComponent(bgRender);
 	bgRender->MakeRTSize();
 	bgButton->MakeRect();
-
 
 	// title
 	GameObject * title = new GameObject();
@@ -929,11 +965,13 @@ void Game::UpdateClientObjects()
 
 void Game::UpdateUI()
 {
-	wstring newScore = to_wstring(Team1Score) + L" : " + to_wstring(Team2Score);
+	GameObject * scoreA = scenes[currentScene]->GetUIByName("gameScoreA");
+	Button * buttonA = scoreA->GetComponent<Button>();
+	buttonA->setText(to_wstring(Team1Score));
 
-	GameObject * score = scenes[currentScene]->GetUIByName("gameScore");
-	Button * button = score->GetComponent<Button>();
-	button->setText(newScore);
+	GameObject * scoreB = scenes[currentScene]->GetUIByName("gameScoreB");
+	Button * buttonB = scoreB->GetComponent<Button>();
+	buttonB->setText(to_wstring(Team2Score));
 }
 
 //if scenes are already all loaded, then this should be setscene instead
