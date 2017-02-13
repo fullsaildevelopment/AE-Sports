@@ -457,8 +457,6 @@ void Scene::Update(float dt)
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
-			
-
 			if (transform)
 			{
 				XMFLOAT4X4 world;

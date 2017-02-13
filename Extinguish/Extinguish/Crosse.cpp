@@ -63,8 +63,8 @@ void Crosse::Throw()
 	if (ball->GetHolder() == GetGameObject())
 	{
 		//detach ball
-		ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 });
-		ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z });
+		ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 }); //set ball's position to real ball position
+		//ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z }); //set balls's rotation to camera's rotation
 		ballTransform->SetParent(nullptr);
 		transform->RemoveChild(ballTransform);
 		ball->Throw();
@@ -73,10 +73,10 @@ void Crosse::Throw()
 		ballTransform->GetWorld();
 
 		//add force to ball
-		XMFLOAT3 ballForward = ballTransform->GetForward();
-		ballForward = { -ballForward.x, -ballForward.y, -ballForward.z };
+		XMFLOAT3 ballForward = transform->GetParent()->GetForward();
+		//ballForward = { -ballForward.x, -ballForward.y, -ballForward.z };
 		//ballForward = { 0, 0, 1 };
-		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
+		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed * 2.0f, ballForward.z * throwSpeed });
 
 		//cout << ballTransform->GetVelocity().x << " " << ballTransform->GetVelocity().y << " " << ballTransform->GetVelocity().z << endl;
 
@@ -135,28 +135,28 @@ void Crosse::HandleInput(InputDownEvent* e)
 			float radians = 0;
 			float yRadians = 0;
 			bool doubleY = false;
-			const int xWiggleRoom = 20;
+			const int xWiggleRoom = 20; // to prevent it from rotating when cursor is in middle of screen
 			float ratio = xPos / (CLIENT_WIDTH / 2);
 			float yRatio = yPos / (CLIENT_HEIGHT / 2);
 
 			if (xPos > xWiggleRoom && yPos > 0)
 			{
-				radians = 135.0f / 180.0f * XM_PI;
+				//radians = 135.0f / 180.0f * XM_PI;
 				doubleY = true;
 				//yPos *= 2.2f;
 			}
 			else if (xPos > xWiggleRoom && yPos < 0)
 			{
-				radians = 45.0f / 180.0f * XM_PI;
+				//radians = 45.0f / 180.0f * XM_PI;
 			}
 			else if (xPos < -xWiggleRoom && yPos < 0)
 			{
-				radians = 45.0f / 180.0f * XM_PI;
+				//radians = 45.0f / 180.0f * XM_PI;
 				yRatio = -yRatio;
 			}
 			else if (xPos < -xWiggleRoom && yPos > 0)
 			{
-				radians = 135.0f / 180.0f * XM_PI;
+				//radians = 135.0f / 180.0f * XM_PI;
 				doubleY = true;
 				yRatio = -yRatio;
 				//yPos *= 2.2f;
@@ -164,38 +164,18 @@ void Crosse::HandleInput(InputDownEvent* e)
 
 			if (xPos > xWiggleRoom || xPos < -xWiggleRoom)
 			{
-				radians = 90.0f / 180.0f * XM_PI;
-				yRadians = 45.0f / 180.0f * XM_PI;
+				radians = -90.0f / 180.0f * XM_PI;
+				yRadians = -45.0f / 180.0f * XM_PI;
 			}
-
-			//cout << xPos << endl;
-
-			//cout << xPos << " " << yPos << endl;
-			//cout << xPos * -0.001f << " " << yPos * -0.001f << endl;
-
-			//rotate crosse
-
-			//float degreesRatio = ratio * yRatio / 135.0f;
-
-			//cout << ratio << " " << yRatio << endl;
-			//cout << degreesRatio << endl;
-			//cout << radians << " " << yRadians << endl;
 
 			if (doubleY)
 			{
-				yPos *= 2.2f;
+				yPos *= 2.2f; //added because crosse would go halfway down y
 			}
 
-			//cout << doubleY;
-			//cout << radians;
-
-			transform->SetPosition({ xPos * -0.001f * 1.8f, yPos * -0.001f + minY, transform->GetPosition().z }); // * 1.8 because * 2 is too much. And it was only travelling half
+			transform->SetPosition({ xPos * 0.001f * 1.8f, yPos * -0.001f + minY, transform->GetPosition().z }); // * 1.8 because * 2 is too much. And it was only travelling half
 			transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (yRatio * yRadians) });
 			//transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * degrees) + (yRatio * 45.0f) });
-
-			//cout << (ratio * radians / XM_PI * 180.0f) + (yRatio * yRadians / XM_PI * 180.0f) << endl;
-			//cout << ratio * (radians / XM_PI * 180.0f) << " " << yRatio * (yRadians / XM_PI * 180.0f) << endl;
-			//cout << (ratio * degrees) << " " << (ratio * degrees) + (yRatio * 45.0f) << endl;
 		}
 	}
 

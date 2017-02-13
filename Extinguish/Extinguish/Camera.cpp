@@ -67,29 +67,29 @@ void Camera::HandleEvent(Event* e)
 	}
 }
 
-void Camera::UpdateCamsRotation(float x, float y)
-{
-	XMFLOAT4X4 world = transform->GetWorld();
-
-	world._41 = 0;
-	world._42 = 0;
-	world._43 = 0;
-
-	XMMATRIX rotX = XMMatrixRotationX(x * rotateSpeed);
-	XMMATRIX rotY = XMMatrixRotationY(y * rotateSpeed);
-
-	XMMATRIX tempView = XMLoadFloat4x4(&world);
-	tempView = XMMatrixMultiply(rotX, tempView);
-	tempView = XMMatrixMultiply(tempView, rotY);
-	XMStoreFloat4x4(&world, tempView);
-
-	//change position to where it was earlier
-	world._41 = transform->GetPosition().x;
-	world._42 = transform->GetPosition().y;
-	world._43 = transform->GetPosition().z;
-
-	transform->SetLocal(world);
-}
+//void Camera::UpdateCamsRotation(float x, float y)
+//{
+//	XMFLOAT4X4 world = transform->GetWorld();
+//
+//	world._41 = 0;
+//	world._42 = 0;
+//	world._43 = 0;
+//
+//	XMMATRIX rotX = XMMatrixRotationX(x * rotateSpeed);
+//	XMMATRIX rotY = XMMatrixRotationY(y * rotateSpeed);
+//
+//	XMMATRIX tempView = XMLoadFloat4x4(&world);
+//	tempView = XMMatrixMultiply(rotX, tempView);
+//	tempView = XMMatrixMultiply(tempView, rotY);
+//	XMStoreFloat4x4(&world, tempView);
+//
+//	//change position to where it was earlier
+//	world._41 = transform->GetPosition().x;
+//	world._42 = transform->GetPosition().y;
+//	world._43 = transform->GetPosition().z;
+//
+//	transform->SetLocal(world);
+//}
 
 //private helper functions
 
@@ -97,56 +97,11 @@ void Camera::MoveCamera(InputDownEvent* e)
 {
 	input = e->GetInput();
 
-	//cout << "Input!" << endl;
-
-	//if (input->GetKey('W'))
-	//{
-	//	XMFLOAT3 forward = transform->GetForward();
-	//	//forward = { -forward.x, -forward.y, -forward.z };
-	//	transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
-	////	cout << "Forward!" << endl;
-	//}
-
-	//if (input->GetKey('S'))
-	//{
-	//	XMFLOAT3 forward = transform->GetForward();
-	//	//forward = { -forward.x, -forward.y, -forward.z };
-	//	transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
-	//}
-
-	//if (input->GetKey('A'))
-	//{
-	//	XMFLOAT3 right = transform->GetRight();
-	//	//right = { -right.x, -right.y, -right.z };
-	//	transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
-	//}
-
-	//if (input->GetKey('D'))
-	//{
-	//	XMFLOAT3 right = transform->GetRight();
-	//	//right = { -right.x, -right.y, -right.z };
-	//	transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
-	//}
-
-	//if (input->GetKey('Q')) //up
-	//{
-	//	XMFLOAT3 up = transform->GetUp();
-	//	//up = { -up.x, -up.y, -up.z };
-	//	transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
-	//}
-
-	//if (input->GetKey('E')) //down
-	//{
-	//	XMFLOAT3 up = transform->GetUp();
-	//	//up = { -up.x, -up.y, -up.z };
-	//	transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
-	//}
-
 #if _DEBUG
 	if (input->GetMouseX() && input->GetMouseY())
 	{
-		if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
 		//if (!input->GetMouseButton(0) && prevMouseX && prevMouseY)
+		if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 
@@ -175,10 +130,8 @@ void Camera::MoveCamera(InputDownEvent* e)
 
 			curRotY += degY;
 
-			//cout << curRotX << " " << curRotY << endl;
-
-			//transform->RotateX(degX);
-			//transform->RotateY(degY);
+			transform->RotateX(degX);
+			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
 			playerTransform->RotateY(degY);
 		}
 	}
@@ -261,10 +214,10 @@ XMFLOAT4X4 Camera::GetView()
 
 	//XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up )));
 	XMFLOAT3 translation = { 0, 5, 1 };
-	transform->Translate({ translation.x, translation.y, translation.z });
+	//transform->Translate({ translation.x, translation.y, translation.z });
 	//transform->RotateY(XM_PI);
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMLoadFloat4x4(&transform->GetWorld())));
-	transform->Translate({ -translation.x, -translation.y, -translation.z });
+	//transform->Translate({ -translation.x, -translation.y, -translation.z });
 	//transform->RotateY(-XM_PI);
 
 	return view;
