@@ -36,7 +36,7 @@ public:
 	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel);
 	void Update(float dt) override;
 	void HandleEvent(Event* e);
-	void UpdateCamsRotation(float x, float y);
+	//void UpdateCamsRotation(float x, float y);
 
 	//setters
 	//void SetClampMatrix(DirectX::XMFLOAT4X4 matrix);

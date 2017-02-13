@@ -34,12 +34,14 @@ void Movement::Update(float dt)
 	//sound feedback
 	if (isMoving && (timeSincePlayed == 0 || timeSincePlayed > 18.0f))
 	{
-		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, Game::GetClientID());
+		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, Game::GetClientID());
+		cout << "play sand" << endl;
 		timeSincePlayed = 0;
 	}
 	else if (!isMoving && timeSincePlayed)
 	{
-		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, Game::GetClientID());
+		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, Game::GetClientID());
+		cout << "stop sand" << endl;
 	}
 
 	if (isMoving)

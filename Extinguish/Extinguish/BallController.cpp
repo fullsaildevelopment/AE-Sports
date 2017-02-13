@@ -32,7 +32,7 @@ void BallController::Init()
 
 void BallController::Update(float dt)
 {
-	printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
+	//printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
 	timer.Signal();
 
 	if (!isHeld && transform->GetParent())
