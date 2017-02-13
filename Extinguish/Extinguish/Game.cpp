@@ -413,6 +413,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+		if(i <= 4)
+			mageRenderer1->SetTeamColor({ 1,0,0,1 });
+		else
+			mageRenderer1->SetTeamColor({ 0,0,1,1 });
+
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
 		mageMover->Init(7.5f, 0.75f);

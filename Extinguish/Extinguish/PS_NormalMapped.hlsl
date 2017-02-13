@@ -9,6 +9,7 @@ struct PS_BasicInput
 	float3 tangent : TANGENT;
 	float4 worldPosition : POSITION0;
 };
+
 cbuffer DirectionalLightCB : register(b0)
 {
 	float4 dirLightNorm;
@@ -37,10 +38,16 @@ cbuffer CameraPosition : register(b2)
 	float4 cameraposW;
 }
 
+cbuffer TeamColorCB : register(b3)
+{
+	float4 TeamColorB;
+}
+
 
 texture2D baseTexture : register(t0);
 texture2D normalMap : register(t1);
 texture2D specularMap : register(t2);
+texture2D teamcolorMap : register(t3);
 
 SamplerState filter : register(s0);
 
@@ -92,9 +99,10 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	float specDirScale = pow(dirRdotV, 32);
 	float3 dirSpecColor = saturate( specMap *  specDirScale * dirColor);
 
+	float4 pointDir;
 
-		float4 pointDir;
-	for (int i = 0; i < NUMOFPOINTLIGHTS; ++i) {
+	for (int i = 0; i < NUMOFPOINTLIGHTS; ++i) 
+	{
 		float pointRatio;
 		float pointAttenuation;
 
@@ -105,6 +113,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 		pointColor += pLights[i].pointLightColor.xyz * saturate(pointRatio * pointAttenuation) * black;
 	}
+
 	//Specular point
 	float3 pointRefelection = normalize(reflect(-pointDir.xyz, bumpNormal));
 	float pointRdotV = max(0, dot(pointRefelection, ViewVector));
@@ -117,15 +126,15 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	finalColor.xyz = saturate(finalColor.xyz + pointSpecColor + dirSpecColor);
 
 	//return float4(bumpNormal, 1);
-
+	float4 tcm = teamcolorMap.Sample(filter, input.uv.xy);
 	float4 toOthers = input.worldPosition - cameraposW;
 	float doting = dot(normalize(toOthers.xyz), input.normal);
 	float tbl = length(toOthers);
-	if (doting >= tbl * -0.007f && doting <= tbl * 0.007f)
+	if (tcm.r >= 0.96f && tcm.g >= 0.96f && tcm.b >= 0.96f)
 	{
-		finalColor.r = 1;
-		finalColor.g = 0;
-		finalColor.b = 0;
+		finalColor.r = TeamColorB.r;
+		finalColor.g = TeamColorB.g;
+		finalColor.b = TeamColorB.b;
 		finalColor.a = 1;
 	}
 
