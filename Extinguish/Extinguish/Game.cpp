@@ -184,14 +184,17 @@ void Game::Update(float dt)
 
 	//render audio
 	vector<GameObject*>* objects = scenes[1]->GetGameObjects();
-	vector<XMFLOAT4> objectsPos;
+	vector<XMFLOAT3> objectsPos, forwards;
 	objectsPos.resize(objects->size());
+	forwards.resize(objects->size());
 
 	for (int i = 0; i < objects->size(); ++i)
 	{
 		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
 		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
 		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+
+		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
 	}
 
 	if (clientID == 0)
@@ -199,8 +202,8 @@ void Game::Update(float dt)
 		clientID = 1;
 	}
 
-	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2]);
-	soundEngine->UpdatePositions(objectsPos);
+	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
+	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
 }
 

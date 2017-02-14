@@ -78,24 +78,24 @@ bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std
 	return result;
 }
 
-void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT4> const & positions)
+void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT3> const & positions, std::vector<DirectX::XMFLOAT3> const & forwards)
 {
 	for (int i = 0; i < positions.size(); ++i)
 	{
 		AkSoundPosition soundPos;
 		soundPos.SetPosition(positions[i].x, positions[i].y, positions[i].z);
-		soundPos.SetOrientation(-1, 0, 0, -1, 0, 0);
+		soundPos.SetOrientation(forwards[i].x, forwards[i].y, forwards[i].z, -1, 0, 0);
 		AK::SoundEngine::SetPosition(i, soundPos);
 	}
 }
 
-void SoundEngine::UpdateListener(DirectX::XMFLOAT4 const & position)
+void SoundEngine::UpdateListener(DirectX::XMFLOAT3 const & position, DirectX::XMFLOAT3 const & forward)
 {
 	AkListenerPosition listener;
 
 	listener.SetPosition(position.x, position.y, position.z);
-	listener.SetOrientation(-1, 0, 0, -1, 0, 0);
-	AK::SoundEngine::SetListenerPosition(listener, 0);
+	listener.SetOrientation(forward.x, forward.y, forward.z, -1, 0, 0);
+	AKRESULT akResult = AK::SoundEngine::SetListenerPosition(listener, 0);
 	//AK::SoundEngine::SetListenerPosition(listener, index);
 }
 
