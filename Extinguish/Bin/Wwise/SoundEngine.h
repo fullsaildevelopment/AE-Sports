@@ -28,8 +28,8 @@ public:
 
 	//basic//
 	bool InitSoundEngine(std::vector<unsigned int> ids, std::vector<std::string> names);
-	void UpdatePositions(std::vector<DirectX::XMFLOAT4> const & positions);
-	void UpdateListener(DirectX::XMFLOAT4 const & position);
+	void UpdatePositions(std::vector<DirectX::XMFLOAT3> const & positions, std::vector<DirectX::XMFLOAT3> const & forwards);
+	void UpdateListener(DirectX::XMFLOAT3 const & position, DirectX::XMFLOAT3 const & forward);
 	void ProcessAudio();
 	void Terminate();
 
