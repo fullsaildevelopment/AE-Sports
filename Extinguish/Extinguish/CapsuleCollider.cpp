@@ -108,20 +108,33 @@ void CapsuleCollider::Update(float dt)
 				Capsule c = GetWorldCapsule();
 				Capsule o = capsule->GetWorldCapsule();
 				float3 pos = tgt->GetPosition();
-				float3 opos = capsule->GetGameObject()->GetTransform()->GetPosition();
+				float3 opos = (*Others)[i]->GetTransform()->GetPosition();
 				float3 vel = tgt->GetVelocity();
-				float3 ovel = capsule->GetGameObject()->GetTransform()->GetVelocity();
+				float3 ovel = (*Others)[i]->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
-					tgt->SetPosition(pos);
-					tgt->SetVelocity(vel * 0.6f);
-					capsule->GetGameObject()->GetTransform()->SetPosition(opos);
-					//TODO: Turned off because I need to attack
-					capsule->GetGameObject()->GetTransform()->SetVelocity(ovel * 0.6f);
-					capsule->GetGameObject()->OnCollisionEnter(this);
-					tg->OnCollisionEnter(capsule);
-					capsule->checked.push_back(this);
-					otherCapsule = capsule;
+					Physics* op = tg->GetComponent<Physics>();
+					if (op)
+					{
+						op->HandlePhysics(tgt, vel, pos, true);
+						Physics* nop = (*Others)[i]->GetComponent<Physics>();
+						if (nop)
+						{
+							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos, true);
+						}
+					}
+					else
+					{
+						tgt->SetPosition(pos);
+						tgt->SetVelocity(vel * 0.6f);
+						(*Others)[i]->GetTransform()->SetPosition(opos);
+						//TODO: Turned off because I need to attack
+						(*Others)[i]->GetTransform()->SetVelocity(ovel * 0.6f);
+						(*Others)[i]->OnCollisionEnter(this);
+						tg->OnCollisionEnter(capsule);
+						capsule->checked.push_back(this);
+						otherCapsule = capsule;
+					}
 				}
 				else
 				{

@@ -9,6 +9,7 @@
 #include "../Bin/FBXLoader/FBXLoader.h"
 #include "FriendlyIOTransformNode.h"
 #include "vec3.h"
+#include "vec4.h"
 
 
 //class Animation;
@@ -122,6 +123,29 @@ public:
 		// Create the instance buffer.
 		device->CreateBuffer(&instanceBufferDesc, &instancedData, &m_instanceBuffer);
 		return m_instanceBuffer;
+	}
+
+	template <typename T>
+	ID3D11Buffer* CreateConstantBuffer(T* data)
+	{
+		ID3D11Buffer* m_constantBuffer;
+		D3D11_BUFFER_DESC BufferDesc;
+		D3D11_SUBRESOURCE_DATA Data;
+
+		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		BufferDesc.ByteWidth = sizeof(T);
+		BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		BufferDesc.CPUAccessFlags = 0;
+		BufferDesc.MiscFlags = 0;
+		BufferDesc.StructureByteStride = 0;
+
+		Data.pSysMem = data;
+		Data.SysMemPitch = 0;
+		Data.SysMemSlicePitch = 0;
+
+		// Create the instance buffer.
+		device->CreateBuffer(&BufferDesc, &Data, &m_constantBuffer);
+		return m_constantBuffer;
 	}
 
 	//unsigned int GetPixelShaderIndex(std::string name);

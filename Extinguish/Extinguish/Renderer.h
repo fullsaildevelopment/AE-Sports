@@ -8,6 +8,7 @@
 #include "DeviceResources.h"
 #include "../ShaderStructures/ShaderStructures.h"
 #include "Button.h"
+#include "vec4.h"
 
 class GameObject;
 
@@ -16,16 +17,20 @@ class Renderer : public Component
 private:
 	Blender* blender;
 
+	float4 TeamColor = { 1,1,1,1 };
+
 	DeviceResources* devResources;
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* instancedBuffer;
 	ID3D11Buffer* instancedBuffer2;
 	ID3D11Buffer* indexBuffer;
+	ID3D11Buffer* teamcolorBuffer;
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vertexShader;
 	ID3D11PixelShader* pixelShader;
 	ID3D11ComputeShader* computeShader;
 	ID3D11ShaderResourceView* diffuseSRV;
+	ID3D11ShaderResourceView* teamcolorSRV;
 	ModelViewProjectionConstantBuffer mvpData;
 	
 	unsigned int vertexStride;
@@ -60,6 +65,7 @@ public:
 	void SetProjection(XMFLOAT4X4 projection);
 	void SetBlendInfo(BlendInfo info);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
+	void SetTeamColor(float4 c);
 	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
 	//void SetBonesWorlds(std::vector<DirectX::XMFLOAT4X4> worlds) { bonesWorlds = worlds; }
 };
