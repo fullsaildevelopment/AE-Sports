@@ -94,10 +94,18 @@ void SphereCollider::Update(float dt)
 				float3 vel = tgt->GetVelocity();
 				if (CapsuleToSphereReact(capsule->GetWorldCapsule(), s, vel))
 				{
-					tgt->SetPosition(s.m_Center);
-					tgt->SetVelocity(vel);
-					capsule->GetGameObject()->OnCollisionEnter(this);
-					tg->OnCollisionEnter(capsule);
+					Physics* op = tg->GetComponent<Physics>();
+					if (op)
+					{
+						op->HandlePhysics(tgt, vel, s.m_Center, true);
+					}
+					else
+					{
+						tgt->SetPosition(s.m_Center);
+						tgt->SetVelocity(vel);
+						capsule->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(capsule);
+					}
 				}
 
 			}
