@@ -8,6 +8,7 @@
 #include "AK/Tools/Common/AkPlatformFuncs.h"
 #include "AK/MusicEngine/Common/AkMusicEngine.h"
 #include "AkFilePackageLowLevelIOBlocking.h"
+//#include "AK/SoundEngine/Common/AkTypes.h"
 
 #ifndef AK_OPTIMIZED
 	#include <AK/Comm/AkCommunication.h>
@@ -77,6 +78,17 @@ bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std
 	return result;
 }
 
+void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT4> const & positions)
+{
+	for (int i = 0; i < positions.size(); ++i)
+	{
+		AkSoundPosition soundPos;
+		soundPos.SetPosition(positions[i].x, positions[i].y, positions[i].z);
+		soundPos.SetOrientation(-1, 0, 0, -1, 0, 0);
+		AK::SoundEngine::SetPosition(i, soundPos);
+	}
+}
+
 void SoundEngine::ProcessAudio()
 {
 	AK::SoundEngine::RenderAudio();
@@ -130,34 +142,6 @@ bool SoundEngine::PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID)
 
 	return result;
 }
-
-//bool SoundEngine::PlaySpearSound(AkGameObjectID gameObjectID)
-//bool SoundEngine::PlaySpearSound()
-//{
-//	bool result = true;
-//
-//	AkPlayingID playId =  AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
-//
-//	return result;
-//}
-//
-//bool SoundEngine::PlayWalkingSound()
-//{
-//	bool result = true;
-//
-//	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, 1);
-//
-//	return result;
-//}
-//
-//bool SoundEngine::StopWalkingSound()
-//{
-//	bool result = true;
-//
-//	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, 1);
-//
-//	return result;
-//}
 
 //private helper functions//
 bool SoundEngine::InitSettings()

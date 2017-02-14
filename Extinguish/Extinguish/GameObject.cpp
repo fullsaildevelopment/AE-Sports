@@ -96,6 +96,24 @@ GameObject* GameObject::FindGameObject(std::string name)
 	return result;
 }
 
+int GameObject::FindIndexOfGameObject(GameObject* object)
+{
+	int result = -1;
+
+	std::vector<GameObject*>* gameObjects = GetGameObjects();
+
+	for (int i = 0; i < gameObjects->size(); ++i)
+	{
+		if ((*gameObjects)[i] == object)
+		{
+			result = i;
+			break;
+		}
+	}
+
+	return result;
+}
+
 //setters//
 void GameObject::SetScene(Scene* tempScene)
 {

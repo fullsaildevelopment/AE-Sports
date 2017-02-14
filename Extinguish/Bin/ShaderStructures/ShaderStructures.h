@@ -108,6 +108,8 @@ struct GameState
 	int8_t animationIndex;
 	int otherIndex;
 	int8_t transitionIndex;
+	int32_t soundID;
+	bool hasSound;
 };
 #pragma pack(pop)
 
