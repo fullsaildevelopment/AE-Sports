@@ -147,6 +147,8 @@ void CapsuleCollider::Update(float dt)
 			}
 			continue;
 		}
+
+		/*
 		///////////////////////////////////////Capsule vs Sphere///////////////////////////////////////
 		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
 		if (sphere)
@@ -163,6 +165,7 @@ void CapsuleCollider::Update(float dt)
 				}
 			}
 		}
+		*/
 	}
 	checked.clear();
 }

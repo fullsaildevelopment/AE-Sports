@@ -94,6 +94,8 @@ void BoxCollider::Update(float dt)
 			}
 			continue;
 		}
+
+		/*
 		///////////////////////////////////////AABB vs Capsule///////////////////////////////////////
 		CapsuleCollider* capsule = (*Others)[i]->GetComponent<CapsuleCollider>();
 		if (capsule)
@@ -121,6 +123,8 @@ void BoxCollider::Update(float dt)
 				}
 			}
 		}
+		*/
+
 		continue;
 	}
 }
