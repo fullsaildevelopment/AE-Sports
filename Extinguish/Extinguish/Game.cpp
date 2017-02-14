@@ -26,6 +26,7 @@
 #include "Goal.h"
 #include "WindowResizeEvent.h"
 #include "LoadSceneEvent.h"
+#include "SoundEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -95,8 +96,9 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	std::vector<unsigned int> ids;
 	std::vector<std::string> names;
 
-	ids.resize(scenes[currentScene]->GetNumObjects());
-	names.resize(scenes[currentScene]->GetNumObjects());
+	ids.resize(scenes[1]->GetNumObjects());
+	names.resize(scenes[1]->GetNumObjects());
+	gameObjects = scenes[1]->GetGameObjects();
 
 	for (int i = 0; i < gameObjects->size(); ++i)
 	{
@@ -181,7 +183,15 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	//render audio
-	soundEngine->ProcessAudio();
+	//vector<GameObject*>* objects = scenes[1]->GetGameObjects();
+
+	//for (int i = 0; i < objects->size(); ++i)
+	//{
+
+	//}
+
+	//soundEngine->UpdatePositions(
+		soundEngine->ProcessAudio();
 }
 
 void Game::Render()
@@ -279,12 +289,28 @@ void Game::HandleEvent(Event* e)
 		}
 	}
 
+	SoundEvent* soundEvent = dynamic_cast<SoundEvent*>(e);
+
+	if (soundEvent)
+	{
+		soundEngine->PostEvent(soundEvent->GetSoundID(), soundEvent->GetObjectID());
+		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
+		gameStates[soundEvent->GetObjectID()]->hasSound = true;
+
+		return;
+	}
+
 }
 
 //getters//
 int Game::GetClientID()
 {
 	return clientID;
+}
+
+int Game::GetPlayerObjectID()
+{
+	return (clientID - 1) * 3 + 2;
 }
 
 //setters//
@@ -859,6 +885,7 @@ void Game::UpdateServerStates()
 		state->position = { position.x, position.y, position.z };
 		state->rotation = { rotation.x, rotation.y, rotation.z };
 
+		//parent info
 		int parentIndex = -1;
 		Transform* parent = gameObject->GetTransform()->GetParent();
 
@@ -877,6 +904,7 @@ void Game::UpdateServerStates()
 
 		state->parentIndex = parentIndex;
 
+		//animation info
 		int animIndex = -1;
 		int transitionIndex = -1;
 		AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
@@ -900,6 +928,10 @@ void Game::UpdateServerStates()
 
 		state->animationIndex = animIndex;
 		state->transitionIndex = transitionIndex;
+
+		//sound info is handled by event
+		//state->soundID = -1;
+		//state->hasSound = false;
 	}
 
 	server.SetGameStates(gameStates);
@@ -963,6 +995,17 @@ void Game::UpdateClientObjects()
 							animator->TransitionTo(animIndex, transitionIndex);
 						}
 					}
+				}
+
+				bool hasSound = client.HasSound(i);
+
+				if (hasSound)
+				{
+					INT32 soundID = client.GetSoundID(i);
+					soundEngine->PostEvent(soundID, i);
+
+					gameStates[i]->soundID = -1;
+					gameStates[i]->hasSound = false;
 				}
 			}
 		}
