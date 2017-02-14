@@ -935,11 +935,16 @@ void Game::UpdateServerStates()
 		state->transitionIndex = transitionIndex;
 
 		//sound info is handled by event
-		//state->soundID = -1;
-		//state->hasSound = false;
 	}
 
 	server.SetGameStates(gameStates);
+
+	//reset sound info after server sets game states
+	for (int i = 0; i < gameStates.size(); ++i)
+	{
+		gameStates[i]->soundID = -1;
+		gameStates[i]->hasSound = false;
+	}
 }
 
 void Game::UpdateClientObjects()
