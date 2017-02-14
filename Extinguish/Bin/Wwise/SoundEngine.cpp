@@ -89,6 +89,16 @@ void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT4> const & positio
 	}
 }
 
+void SoundEngine::UpdateListener(DirectX::XMFLOAT4 const & position)
+{
+	AkListenerPosition listener;
+
+	listener.SetPosition(position.x, position.y, position.z);
+	listener.SetOrientation(-1, 0, 0, -1, 0, 0);
+	AK::SoundEngine::SetListenerPosition(listener, 0);
+	//AK::SoundEngine::SetListenerPosition(listener, index);
+}
+
 void SoundEngine::ProcessAudio()
 {
 	AK::SoundEngine::RenderAudio();
