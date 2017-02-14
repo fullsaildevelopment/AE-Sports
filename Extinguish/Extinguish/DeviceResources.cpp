@@ -336,7 +336,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 void DeviceResources::Clear()
 {
 	//clear views
-	deviceContext->ClearRenderTargetView(renderTargetView.Get(), DirectX::Colors::SkyBlue);
+	deviceContext->ClearRenderTargetView(renderTargetView.Get(), DirectX::Colors::DimGray);
 	deviceContext->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
