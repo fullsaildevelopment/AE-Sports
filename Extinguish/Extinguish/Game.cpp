@@ -453,9 +453,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
 		if(i <= 4)
-			mageRenderer1->SetTeamColor({ 1,0,0,1 });
+			mageRenderer1->SetTeamColor({ 1,0,0,0 });
 		else
-			mageRenderer1->SetTeamColor({ 0,0,1,1 });
+			mageRenderer1->SetTeamColor({ 0,0,1,0 });
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
@@ -531,7 +531,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
-		crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, devResources);
+		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources);
+		if (i <= 4)
+			crosseRenderer->SetTeamColor({ 1,0,0,0 });
+		else
+			crosseRenderer->SetTeamColor({ 0,0,1,0 });
 		Crosse* crosseController = new Crosse();
 		crosse->AddComponent(crosseController);
 		crosseController->Init();

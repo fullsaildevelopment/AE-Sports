@@ -7,6 +7,7 @@
 #include "Includes.h"
 #include "GameObject.h"
 #include "SoundEvent.h"
+#include "Renderer.h"
 
 using namespace std;
 
@@ -37,8 +38,6 @@ void Crosse::Init()
 
 void Crosse::Update(float dt)
 {
-	this->dt = dt;
-
 	//catchAgainTimer += dt;
 }
 
@@ -49,6 +48,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 		if (!ballC->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
 			ballC->SetHolder(GetGameObject());
+			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
 			//catchAgainTimer = 0.0f;
 		}
 	}
@@ -67,9 +67,12 @@ void Crosse::Throw()
 		ballTransform->SetPosition({ ballworld._41 + ballForward.x * 0.2f, ballworld._42 + ballForward.y * 0.2f, ballworld._43 + ballForward.z * 0.2f }); //set ball's position to real ball position
 
 		ballC->Throw();
+		GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
+
 		//update ball after set position
 		ballTransform->GetWorld();
 
+		ballTransform->AddVelocity(transform->GetParent()->GetParent()->GetVelocity());
 		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 		//cout << ballTransform->GetVelocity().x << " " << ballTransform->GetVelocity().y << " " << ballTransform->GetVelocity().z << endl;

@@ -49,8 +49,8 @@ void BallController::Update(float dt)
 	}
 #endif
 
-	//if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3(0,0,0)))
-	//	transform->SetPosition(float3(0, 0, 0));
+	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)
 	{
@@ -148,14 +148,14 @@ void BallController::SetHolder(GameObject *person)
 		isHeld = true;
 		holder = person;
 
+		//turn off physics
+		physics->SetIsKinematic(true);
+		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+
 		transform->SetParent(person->GetTransform()); //set parent adds a child
 		transform->GetWorld();
 		transform->SetVelocity(float3(0, 0, 0));
 		transform->SetPosition(float3(0, 0, 0));
-
-		//turn off physics
-		physics->SetIsKinematic(true);
-		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 	}
 	else
 	{
