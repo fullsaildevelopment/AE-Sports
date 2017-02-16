@@ -45,8 +45,8 @@ void Physics::Update(float dt)
 			nV.z = tm.z;
 		}
 		transform->SetVelocity(nV);
+		colliding = false;
 	}
-	colliding = false;
 }
 
 void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b = false)
