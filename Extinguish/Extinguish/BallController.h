@@ -18,6 +18,7 @@ private:
 	XTime timer;
 	Transform* transform;
 	Physics* physics;
+	void SetIsHeld(bool ans);
 
 public:
 	BallController(GameObject* obj);
@@ -36,6 +37,5 @@ public:
 	GameObject* GetHolder();
 
 	// mutators
-	void SetIsHeld(bool ans);
 	void SetHolder(GameObject *person);
 };

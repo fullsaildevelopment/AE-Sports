@@ -27,6 +27,7 @@ void Crosse::Init()
 	minX = transform->GetPosition().x;
 	minY = transform->GetPosition().y;
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
+	ballC = ballTransform->GetGameObject()->GetComponent<BallController>();
 
 	//register crosse event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
@@ -45,11 +46,9 @@ void Crosse::OnTriggerEnter(Collider* collider)
 {
 	if (collider->GetGameObject()->GetName() == "GameBall")
 	{
-		BallController* ballController = collider->GetGameObject()->GetComponent<BallController>();
-
-		if (!ballController->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
+		if (!ballC->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
-			ballController->SetHolder(GetGameObject());
+			ballC->SetHolder(GetGameObject());
 			//catchAgainTimer = 0.0f;
 		}
 	}
@@ -60,24 +59,18 @@ void Crosse::Throw()
 {
 	const float throwSpeed = 25.0f;
 
-	BallController* ball = ballTransform->GetGameObject()->GetComponent<BallController>();
-	if (ball->GetHolder() == GetGameObject())
+	if (ballC->GetHolder() == GetGameObject())
 	{
+		XMFLOAT4X4 ballworld = ballTransform->GetWorld();
 		//detach ball
-		ballTransform->SetPosition({ ballTransform->GetWorld()._41, ballTransform->GetWorld()._42, ballTransform->GetWorld()._43 }); //set ball's position to real ball position
-		//ballTransform->SetRotation({ transform->GetParent()->GetRotation().x, transform->GetParent()->GetRotation().y, transform->GetParent()->GetRotation().z }); //set balls's rotation to camera's rotation
-		ballTransform->SetParent(nullptr);
-		transform->RemoveChild(ballTransform);
-		ball->Throw();
+		XMFLOAT3 ballForward = transform->GetParent()->GetForward();
+		ballTransform->SetPosition({ ballworld._41 + ballForward.x * 0.2f, ballworld._42 + ballForward.y * 0.2f, ballworld._43 + ballForward.z * 0.2f }); //set ball's position to real ball position
 
+		ballC->Throw();
 		//update ball after set position
 		ballTransform->GetWorld();
 
-		//add force to ball
-		XMFLOAT3 ballForward = transform->GetParent()->GetForward();
-		//ballForward = { -ballForward.x, -ballForward.y, -ballForward.z };
-		//ballForward = { 0, 0, 1 };
-		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed * 2.0f, ballForward.z * throwSpeed });
+		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 		//cout << ballTransform->GetVelocity().x << " " << ballTransform->GetVelocity().y << " " << ballTransform->GetVelocity().z << endl;
 
