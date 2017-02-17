@@ -49,7 +49,7 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 	//blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
 }
 
-void AnimatorController::Update(float dt)
+void AnimatorController::FixedUpdate(float dt)
 {
 	//check states' transitions
 	states[curStateIndex]->Update(dt);
