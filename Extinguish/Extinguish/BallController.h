@@ -27,6 +27,7 @@ public:
 	void Init();
 	void LateInit();
 	void Update(float dt) override;
+	void FixedUpdate(float dt) override;
 	void OnTriggerEnter(Collider *obj) override;
 	void OnCollisionEnter(Collider* obj) override;
 

@@ -12,7 +12,7 @@ private:
 public:
 	SphereCollider(float r, GameObject* o, bool t);
 	SphereCollider(float r, GameObject* o, bool t, float3 v);
-	void Update(float dt) override;
+	void FixedUpdate(float dt) override;
 	Sphere GetSphere();
 	Sphere GetWorldSphere();
 };

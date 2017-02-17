@@ -67,6 +67,7 @@ public:
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);
 	void Update(float dt);
+	void FixedUpdate(float dt);
 	void Render();
 	void Shutdown();
 

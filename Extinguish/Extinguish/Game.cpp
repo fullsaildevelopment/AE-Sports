@@ -219,6 +219,11 @@ void Game::Update(float dt)
 	soundEngine->ProcessAudio();
 }
 
+void Game::FixedUpdate(float dt)
+{
+	scenes[currentScene]->FixedUpdate(dt);
+}
+
 void Game::Render()
 {
 	scenes[currentScene]->Render();
@@ -588,7 +593,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,20,3 }, { -3,0,0 });
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 5,20,5 }, { -5,0,0 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);

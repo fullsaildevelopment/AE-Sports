@@ -16,7 +16,7 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Colli
 	GetGameObject()->GetTransform()->AddVelocity(v * 3);
 }
 
-void SphereCollider::Update(float dt)
+void SphereCollider::FixedUpdate(float dt)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 	GameObject* tg = GetGameObject();

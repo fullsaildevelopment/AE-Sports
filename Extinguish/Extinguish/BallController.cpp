@@ -88,22 +88,18 @@ void BallController::Update(float dt)
 			holder = nullptr;
 		}
 	}
-
-	//Add a slight magnetic effect to the crosse closest to the ball
-	SlightMagEff();
-
 	//cout << isHeld;
 }
 
-void BallController::SlightMagEff()
+void BallController::FixedUpdate(float dt)
 {
 	if (!isHeld && !isThrown)
 	{
 		int s = nets.size();
 		for (int i = 0; i < s; ++i)
 		{
-			XMFLOAT4X4 ball = me->GetTransform()->GetWorld();
-			XMFLOAT4X4 net = nets[i]->GetWorld();
+			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
+			XMFLOAT4X4 net = *nets[i]->GetWorldP();
 			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
 			float l = ball2net.magnitude();
 			if (l < 3)

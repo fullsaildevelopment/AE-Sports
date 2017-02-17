@@ -50,6 +50,16 @@ void GameObject::Update(float deltaTime)
 	transform->Update(deltaTime);
 }
 
+void GameObject::FixedUpdate(float deltaTime)
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		if (components[i]->isEnabled())
+			components[i]->FixedUpdate(deltaTime);
+	}
+	transform->FixedUpdate(deltaTime);
+}
+
 //misc//
 
 //automatically sets component's game object pointer
