@@ -26,10 +26,13 @@ void BallController::OnTriggerEnter(Collider *obj)
 void BallController::OnCollisionEnter(Collider* obj)
 {
 	//play sound when it hits floor, so I can test 3D sound
-	SoundEvent* soundEvent = new SoundEvent();
-	soundEvent->Init(AK::EVENTS::PLAY_BOING, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-	delete soundEvent;
+	if (obj->GetGameObject()->GetName() == "MeterBox6")
+	{
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::PLAY_BOING, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+	}
 }
 
 BallController::BallController(GameObject* obj) : Component(obj)
@@ -145,7 +148,6 @@ void BallController::DropBall(GameObject *person)
 {
 
 	// add some velocity to me in the holders forward vec
-	//TODO: temp taken out to test... maybe might not need to re add with new physics though
 	float3 vel = holder->GetTransform()->GetForwardf3() * 1;
 	vel.y += 1.0f;
 	transform->AddVelocity(vel);
