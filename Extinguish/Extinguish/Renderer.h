@@ -66,6 +66,9 @@ public:
 	void SetBlendInfo(BlendInfo info);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
 	void SetTeamColor(float4 c);
-	//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
+	void SetCatch(float c);
+	void SetCatch(float4 c);
+
+		//void SetInverseBindPoses(std::vector<DirectX::XMFLOAT4X4> poses) { boneOffsets = poses; }
 	//void SetBonesWorlds(std::vector<DirectX::XMFLOAT4X4> worlds) { bonesWorlds = worlds; }
 };
