@@ -148,6 +148,13 @@ public:
 		return m_constantBuffer;
 	}
 
+	template <typename T>
+	void UpdateConstantBuffer(ID3D11Buffer* cb, T* data)
+	{
+		if(cb)
+			devContext->UpdateSubresource(cb, NULL, NULL, &data, NULL, NULL);
+	}
+
 	//unsigned int GetPixelShaderIndex(std::string name);
 	//unsigned int GetVertexShaderIndex(std::string name);
 	//unsigned int GetComputeShaderIndex(std::string name);
