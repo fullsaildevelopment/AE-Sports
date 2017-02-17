@@ -540,6 +540,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
 	}
+	ballController->LateInit();
 
 	GameObject* goal = new GameObject();
 	basic->AddGameObject(goal);
