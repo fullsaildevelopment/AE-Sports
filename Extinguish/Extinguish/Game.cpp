@@ -218,7 +218,7 @@ void Game::Update(float dt)
 	{
 		clientID = 1;
 	}
-	int index = 0;// (clientID - 1) * 3 + 2;
+	int index = (clientID - 1) * 3 + 2;
 
 	/*if (currentScene < 2)
 		index = 0;*/

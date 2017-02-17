@@ -190,7 +190,7 @@ void Button::HandleEvent(Event* e)
 				{
 					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
 					{
-						clickCooldown = 5.0f;
+						clickCooldown = 1.0f;
 					}
 					eventFunction();
 
