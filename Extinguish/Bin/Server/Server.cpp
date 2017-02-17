@@ -20,7 +20,7 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
-	delete[] clientStates;
+//	delete[] clientStates;
 }
 
 int Server::init(uint16_t port)
@@ -399,4 +399,9 @@ void Server::sendState()
 	bOut.Write(gameState->time);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+}
+
+void Server::StartGame()
+{
+	sendMessage(UINT8(0), ID_START_GAME, true);
 }
