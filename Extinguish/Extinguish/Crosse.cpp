@@ -199,5 +199,6 @@ void Crosse::SetHolder(GameObject* object)
 	if (ballController)
 	{
 		ballController->SetHolder(object);
+		object->GetComponent<Renderer>()->SetCatch(1.0f);
 	}
 }
