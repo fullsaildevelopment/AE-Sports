@@ -60,6 +60,8 @@ void SphereCollider::Update(float dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel * c / dt, s.m_Center, true);
+						box->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(box);
 					}
 					else
 					{
@@ -98,6 +100,8 @@ void SphereCollider::Update(float dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel, s.m_Center, true);
+						capsule->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(capsule);
 					}
 					else
 					{
@@ -173,7 +177,7 @@ Sphere SphereCollider::GetSphere()
 }
 Sphere SphereCollider::GetWorldSphere()
 {
-	XMFLOAT4X4 m = GetGameObject()->GetTransform()->GetWorld();
+	XMFLOAT4X4 m = *GetGameObject()->GetTransform()->GetWorldP();
 	Sphere s;
 	s.m_Center = float3(m._41, m._42, m._43);
 	s.m_Radius = radius;

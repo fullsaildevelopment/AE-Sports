@@ -49,6 +49,7 @@ public:
 	void AddVelocity(float3 a);
 
 	//getters
+	DirectX::XMFLOAT4X4* GetWorldP();
 	DirectX::XMFLOAT4X4 GetWorld();
 	DirectX::XMFLOAT4X4 GetLocal();
 	bool GetBDirty();
