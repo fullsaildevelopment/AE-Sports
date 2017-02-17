@@ -29,6 +29,10 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	{
 		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Mage");
 	}
+	if (mesh == "Crosse")
+	{
+		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Crosse");
+	}
 
 	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
 	numVerts = ResourceManager::GetSingleton()->GetNumVertices(mesh);
@@ -117,9 +121,12 @@ void Renderer::Update(float dt)
 		}
 	}
 
-	//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
+	if (teamcolorBuffer)
+	{
+		devContext->UpdateSubresource(teamcolorBuffer, NULL, NULL, &TeamColor, NULL, NULL);
 
-	devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
+		devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
+	}
 
 	//set vertex buffer
 	UINT offset = 0;
@@ -214,6 +221,18 @@ void Renderer::SetTeamColor(float4 c)
 { 
 	TeamColor = c;
 	teamcolorBuffer = ResourceManager::GetSingleton()->CreateConstantBuffer(&TeamColor);
+}
+
+void Renderer::SetCatch(float c)
+{
+	TeamColor.w = c;
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer,&TeamColor);
+}
+
+void Renderer::SetCatch(float4 c)
+{
+	TeamColor = c;
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer, &TeamColor);
 }
 
 

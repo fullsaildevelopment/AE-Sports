@@ -2,6 +2,7 @@
 #include "BallController.h"
 #include "Physics.h"
 #include "GameObject.h"
+#include "InputManager.h"
 
 using namespace std;
 
@@ -40,11 +41,16 @@ void BallController::Update(float dt)
 		SetHolder(transform->GetParent()->GetGameObject());
 	}
 
-	//if (isHeld && !isThrown)
-	//	transform->SetVelocity(float3(0, 0, 0));
 
-	//else
-		//transform->AddVelocity(float3(0, -9.8f * dt, 0));
+#if _DEBUG
+	if (InputManager::GetSingleton()->GetKey(17))
+	{
+		SetHolder(GetGameObject()->FindGameObject("Crosse1"));
+	}
+#endif
+
+	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)
 	{
@@ -142,13 +148,14 @@ void BallController::SetHolder(GameObject *person)
 		isHeld = true;
 		holder = person;
 
-		transform->SetParent(person->GetTransform()); //set parent adds a child
-		transform->SetVelocity(float3(0, 0, 0));
-		transform->SetPosition(float3(0, 0, 0));
-
 		//turn off physics
 		physics->SetIsKinematic(true);
 		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+
+		transform->SetParent(person->GetTransform()); //set parent adds a child
+		transform->GetWorld();
+		transform->SetVelocity(float3(0, 0, 0));
+		transform->SetPosition(float3(0, 0, 0));
 	}
 	else
 	{
