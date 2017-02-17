@@ -143,7 +143,7 @@ void Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
-		if (currentScene > 2) {
+		if (currentScene >= 2) {
 			if (server.getObjCount() == 0)
 				server.setObjCount(scenes[currentScene]->GetNumObjects());
 
@@ -269,12 +269,12 @@ void Game::HandleEvent(Event* e)
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
 		}
 		//TODO: need to make this work for in-game menu if we ever add
-		//else if (currentScene < 2 && !inputDownEvent->IsServer()) //if it's a HUD scene, let it handle the input itself
-		//{
-		//	inputDownEvent->SetIsServer(true);
-		//	EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
-		//	cout << "HUD stuff" << endl;
-		//}
+		else if (scenesNamesTable.GetKey("Lobby") == currentScene && !inputDownEvent->IsServer()) //if it's a HUD scene, let it handle the input itself
+		{
+			inputDownEvent->SetIsServer(true);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			cout << "HUD stuff" << endl;
+		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
 			client.sendInput(inputDownEvent);
