@@ -28,13 +28,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	freopen_s(&hf_out, "CONOUT$", "w", stdout);
 #endif
-
+	float fixedTime = 0;
 	XTime timer;
 	timer.Restart();
 	timer.Signal();
 	while (run)
 	{
 		run = app.Update(timer.Delta());
+		fixedTime += timer.Delta();
+		if (fixedTime >= 0.03333f)
+		{
+			app.FixedUpdate(fixedTime);
+			fixedTime = 0;
+		}
 		timer.Signal();
 	}
 

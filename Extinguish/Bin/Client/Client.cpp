@@ -23,7 +23,8 @@ Client::Client()
 Client::~Client()
 {
 	delete myState;
-	/*for (unsigned int i = 0; i < objects; ++i)
+	delete gameState;
+	/*for (unsigned int i = 0; i < 30; ++i)
 	{
 		delete &clientStates[i];
 	}*/
@@ -38,7 +39,7 @@ int Client::init(char* _address, UINT16 port)
 
 	StartupResult res = peer->Startup(1, &sd, 1);
 
-		UINT16 newPort = port;
+	UINT16 newPort = port;
 	if (res == SOCKET_PORT_ALREADY_IN_USE)
 	{
 
@@ -127,6 +128,7 @@ int Client::run()
 		case ID_CONNECTION_LOST:
 		{
 			printf("Connection lost.\n");
+			peer->Shutdown(100);
 			return 0;
 		break;
 		}
@@ -151,6 +153,7 @@ int Client::run()
 		}
 		case ID_REMOVE_CLIENT:
 		{
+			peer->Shutdown(100);
 			stop();
 			return 0;
 			break;
@@ -158,7 +161,7 @@ int Client::run()
 		case ID_INCOMING_PACKET:
 		{
 			receivePackets();
-			if (result != 4)
+			if (result != 4 || result != 5)
 				result = 2;
 			break;
 		}
@@ -172,6 +175,18 @@ int Client::run()
 			receiveGameState();
 			result = 4;
 			break;
+		}
+		case ID_NEW_CLIENT:
+		{
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			bIn.Read(curNumOfClients);
+			result = 5;
+			break;
+		}
+		case ID_START_GAME:
+		{
+			return 6;
 		}
 		}
 	}
@@ -289,6 +304,7 @@ void Client::sendStop()
 	bsOut.Write(clientID);
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 
+	
 	peer->CloseConnection(peer->GetGUIDFromIndex(0), true, '\000', IMMEDIATE_PRIORITY);
 }
 

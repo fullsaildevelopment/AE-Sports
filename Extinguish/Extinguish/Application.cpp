@@ -55,6 +55,12 @@ bool Application::Update(float dt)
 	return result;
 }
 
+bool Application::FixedUpdate(float dt)
+{
+	game.FixedUpdate(dt);
+	return true;
+}
+
 void Application::Shutdown()
 {
 	//clean up any memory application dynamically allocated

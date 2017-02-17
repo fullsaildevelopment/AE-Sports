@@ -57,14 +57,18 @@ private:
 
 	void UpdateServerStates();
 	void UpdateClientObjects();
-	void UpdateUI();
+	void UpdateScoreUI();
+	void UpdateLobbyUI(int _amount);
 
 	void LoadScene(std::string name);
+	int UpdateLobby();
+	void EnableButton(std::string name, bool toggle);
 public:
-
+	~Game();
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);
 	void Update(float dt);
+	void FixedUpdate(float dt);
 	void Render();
 	void Shutdown();
 

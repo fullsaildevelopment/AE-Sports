@@ -125,4 +125,6 @@ public:
 	int getScoreA() { return newClient.getScoreA(); }
 	int getScoreB() { return newClient.getScoreB(); }
 	float getTime() { return newClient.getTime(); }
+
+	UINT8 getNumClients() { return newClient.getNumClients(); }
 };

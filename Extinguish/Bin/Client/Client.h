@@ -84,7 +84,9 @@ private:
 		ID_INCOMING_PACKET,
 		ID_REMOVE_CLIENT,
 		ID_INCOMING_INPUT,
-		ID_INCOMING_STATE
+		ID_INCOMING_STATE,
+		ID_NEW_CLIENT,
+		ID_START_GAME
 	};
 
 	static RakPeerInterface * peer;
@@ -94,6 +96,8 @@ private:
 	static CLIENT_GAME_STATE * clientStates;
 	static GAME_STATE * gameState;
 //	static std::vector<CLIENT_GAME_STATE> * states;
+
+	UINT8 curNumOfClients;
 public:
 
 #pragma pack(push, 1)
@@ -140,6 +144,7 @@ public:
 	UINT8 getScoreA() { return gameState->scoreA; }
 	UINT8 getScoreB() { return gameState->scoreB; }
 	float getTime() { return gameState->time; }
+	UINT8 getNumClients() { return curNumOfClients; }
 
 private:
 	UINT8 objects;

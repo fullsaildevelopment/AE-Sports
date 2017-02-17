@@ -22,6 +22,8 @@ public:
 
 	int init(char * address, UINT16 port)
 	{
+		noPeer = false;
+		shutdown = false;
 		return newServer.init(port);
 	}
 	int run()
@@ -153,4 +155,5 @@ public:
 	void setTime(float time) { newServer.setTime(time); }
 
 	void sendGameState() { newServer.sendState(); }
+	void StartGame() { newServer.StartGame(); }
 };

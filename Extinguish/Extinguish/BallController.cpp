@@ -3,6 +3,10 @@
 #include "Physics.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Crosse.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
+#include "EventDispatcher.h"
 
 using namespace std;
 
@@ -19,6 +23,18 @@ void BallController::OnTriggerEnter(Collider *obj)
 	//	SetHolder(obj->GetGameObject());
 }
 
+void BallController::OnCollisionEnter(Collider* obj)
+{
+	//play sound when it hits floor, so I can test 3D sound
+	if (obj->GetGameObject()->GetName() == "MeterBox6")
+	{
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::PLAY_BOING, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+	}
+}
+
 BallController::BallController(GameObject* obj) : Component(obj)
 {
 	me = obj;
@@ -29,6 +45,20 @@ void BallController::Init()
 	//cache
 	transform = GetGameObject()->GetTransform();
 	physics = GetGameObject()->GetComponent<Physics>();
+}
+
+void BallController::LateInit()
+{
+	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		Crosse* c = go[i]->GetComponent<Crosse>();
+		if (c)
+		{
+			nets.push_back(c->GetGameObject()->GetTransform());
+		}
+	}
 }
 
 void BallController::Update(float dt)
@@ -61,9 +91,30 @@ void BallController::Update(float dt)
 			holder = nullptr;
 		}
 	}
-
 	//cout << isHeld;
 }
+
+void BallController::FixedUpdate(float dt)
+{
+	if (!isHeld && !isThrown)
+	{
+		int s = nets.size();
+		for (int i = 0; i < s; ++i)
+		{
+			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
+			XMFLOAT4X4 net = *nets[i]->GetWorldP();
+			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
+			float l = ball2net.magnitude();
+			if (l < 3)
+			{
+				float s = 1 / l;
+				s > 1.5f ? s = 1.5f : s < 0.0f ? s = 0.0f : s = s;
+				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
+			}
+		}
+	}
+}
+
 
 void BallController::Throw()
 {
@@ -97,7 +148,6 @@ void BallController::DropBall(GameObject *person)
 {
 
 	// add some velocity to me in the holders forward vec
-	//TODO: temp taken out to test... maybe might not need to re add with new physics though
 	float3 vel = holder->GetTransform()->GetForwardf3() * 1;
 	vel.y += 1.0f;
 	transform->AddVelocity(vel);
