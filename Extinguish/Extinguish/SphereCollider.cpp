@@ -60,6 +60,8 @@ void SphereCollider::Update(float dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel * c / dt, s.m_Center, true);
+						box->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(box);
 					}
 					else
 					{
@@ -98,6 +100,8 @@ void SphereCollider::Update(float dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel, s.m_Center, true);
+						capsule->GetGameObject()->OnCollisionEnter(this);
+						tg->OnCollisionEnter(capsule);
 					}
 					else
 					{
