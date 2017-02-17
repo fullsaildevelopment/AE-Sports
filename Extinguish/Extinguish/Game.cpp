@@ -38,6 +38,11 @@ ClientWrapper Game::client;
 ServerWrapper Game::server;
 unsigned int Game::currentScene;
 
+Game::~Game()
+{
+	
+}
+
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
 	//cache
@@ -213,10 +218,14 @@ void Game::Update(float dt)
 	{
 		clientID = 1;
 	}
+	int index = 0;// (clientID - 1) * 3 + 2;
 
-//	soundEngine->UpdatePositions(objectsPos, forwards);
-	//soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
-	//soundEngine->ProcessAudio();
+	/*if (currentScene < 2)
+		index = 0;*/
+
+	soundEngine->UpdatePositions(objectsPos, forwards);
+	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
+	soundEngine->ProcessAudio();
 }
 
 void Game::Render()
@@ -920,7 +929,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	scene->AddUIObject(bg);
 	bg->Init("background");
 	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
-	bgButton->setSceneIndex(scenes.size());
+	bgButton->setSceneIndex((unsigned int)scenes.size());
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
 	bgButton->setOrigin(0.0f, 0.0f);
@@ -938,7 +947,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	scene->AddUIObject(startGame);
 	startGame->Init("Start");
 	Button * sButton = new Button(true, true, L"Play Game", (unsigned int)strlen("Play Game"), 300.0f, 60.0f, devResources, 3);
-	sButton->setSceneIndex(scenes.size());
+	sButton->setSceneIndex((unsigned int)scenes.size());
 	sButton->SetGameObject(startGame);
 	sButton->showFPS(false);
 	sButton->setOrigin(500.0f, 385.0f);
@@ -959,10 +968,10 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	scene->AddUIObject(exitGame);
 	exitGame->Init("Exit");
 	Button * eButton = new Button(true, true, L"Exit Lobby", (unsigned int)strlen("Exit Lobby"), 300.0f, 60.0f, devResources, 6);
-	eButton->setSceneIndex(scenes.size());
+	eButton->setSceneIndex((unsigned int)scenes.size());
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setOrigin(500.0f, 455.0f);
+	eButton->setOrigin(500.0f, 465.0f);
 	eButton->setPositionMultipliers(0.65f, 0.60f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
@@ -979,8 +988,8 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	GameObject * numPlayers = new GameObject();
 	scene->AddUIObject(numPlayers);
 	numPlayers->Init("Players");
-	Button * nButton = new Button(true, false, L"0/4", (unsigned int)strlen("0/4"), 300.0f, 100.0f, devResources, 0);
-	nButton->setSceneIndex(scenes.size());
+	Button * nButton = new Button(true, false, L"1/4", (unsigned int)strlen("1/4"), 300.0f, 100.0f, devResources, 0);
+	nButton->setSceneIndex((unsigned int)scenes.size());
 	nButton->SetGameObject(numPlayers);
 	nButton->showFPS(false);
 	nButton->setOrigin(500.0f, 200.0f);
@@ -998,7 +1007,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	scene->AddUIObject(bg2);
 	bg2->Init("background2");
 	Button * bg2Button = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
-	bg2Button->setSceneIndex(scenes.size());
+	bg2Button->setSceneIndex((unsigned int)scenes.size());
 	bg2Button->SetGameObject(bg2);
 	bg2Button->showFPS(false);
 	bg2Button->setOrigin(0.0f, 0.0f);

@@ -51,7 +51,9 @@ private:
 	// some function pointer for event
 	void (*eventFunction)(void);
 
+
 public:
+	//~Button() {}
 	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 		DeviceResources * resources, unsigned int type);
 

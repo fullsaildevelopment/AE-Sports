@@ -20,7 +20,7 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
-	delete[] clientStates;
+//	delete[] clientStates;
 }
 
 int Server::init(uint16_t port)

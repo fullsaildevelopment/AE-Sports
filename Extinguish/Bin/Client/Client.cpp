@@ -23,7 +23,8 @@ Client::Client()
 Client::~Client()
 {
 	delete myState;
-	/*for (unsigned int i = 0; i < objects; ++i)
+	delete gameState;
+	/*for (unsigned int i = 0; i < 30; ++i)
 	{
 		delete &clientStates[i];
 	}*/

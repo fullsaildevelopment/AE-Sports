@@ -64,7 +64,7 @@ private:
 	int UpdateLobby();
 	void EnableButton(std::string name, bool toggle);
 public:
-
+	~Game();
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);
 	void Update(float dt);
