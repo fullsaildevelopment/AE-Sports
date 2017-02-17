@@ -18,7 +18,6 @@
 #include "..\RakNet\GetTime.h"
 #include <DirectXMath.h>
 
-
 using namespace RakNet;
 using namespace std;
 using namespace DirectX;
@@ -121,6 +120,8 @@ private:
 	UINT8  nameSizes[MAX_PLAYERS];
 	UINT8  openIDs[MAX_PLAYERS];
 	bool newInput[MAX_PLAYERS];
+	//DataStructures::List<RakNetSocket2*> sockets;
+	SOCKET serverSocket;
 public:
 	Server();
 	~Server();

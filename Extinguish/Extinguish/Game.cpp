@@ -179,7 +179,13 @@ void Game::Update(float dt)
 		}
 		else
 		{
-			UpdateLobby();
+			int result = UpdateLobby();
+			if (result == 0)
+			{
+				LoadScene("Menu");
+				ResourceManager::GetSingleton()->SetMultiplayer(false);
+				ResourceManager::GetSingleton()->SetServer(true);
+			}
 		}
 	}
 
@@ -238,9 +244,6 @@ void Game::HandleEvent(Event* e)
 		{
 			client.sendInput(inputDownEvent);
 		}
-
-		if ((currentScene < 2) && !ResourceManager::GetSingleton()->IsServer())
-			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
 
 		return;
 	}
@@ -1142,5 +1145,5 @@ int Game::UpdateLobby()
 		UpdateLobbyUI(client.getNumClients());
 	
 
-	return 1;
+	return clientState;
 }
