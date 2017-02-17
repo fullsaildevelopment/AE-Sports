@@ -3,6 +3,7 @@
 #include "Physics.h"
 #include "GameObject.h"
 #include "InputManager.h"
+#include "Crosse.h"
 
 using namespace std;
 
@@ -29,6 +30,20 @@ void BallController::Init()
 	//cache
 	transform = GetGameObject()->GetTransform();
 	physics = GetGameObject()->GetComponent<Physics>();
+}
+
+void BallController::LateInit()
+{
+	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		Crosse* c = go[i]->GetComponent<Crosse>();
+		if (c)
+		{
+			nets.push_back(c->GetGameObject()->GetTransform());
+		}
+	}
 }
 
 void BallController::Update(float dt)
@@ -62,8 +77,31 @@ void BallController::Update(float dt)
 		}
 	}
 
+	//Add a slight magnetic effect to the crosse closest to the ball
+	SlightMagEff();
+
 	//cout << isHeld;
 }
+
+void BallController::SlightMagEff()
+{
+	if (!isHeld && !isThrown)
+	{
+		int s = nets.size();
+		for (int i = 0; i < s; ++i)
+		{
+			XMFLOAT4X4 ball = me->GetTransform()->GetWorld();
+			XMFLOAT4X4 net = nets[i]->GetWorld();
+			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
+			float l = ball2net.magnitude();
+			if (l < 3)
+			{
+				me->GetTransform()->AddVelocity(ball2net.normalize() * 1 / l);
+			}
+		}
+	}
+}
+
 
 void BallController::Throw()
 {

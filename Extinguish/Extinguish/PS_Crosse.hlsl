@@ -62,7 +62,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 		finalColor.b = TeamColorB.b;
 	}
 
-	if (netc.r >= 0.5f && TeamColorB.a > 0.1f)
+	if (netc.r >= 0.2f && TeamColorB.a > 0)
 	{
 		finalColor.g = 1.0f;
 	}
