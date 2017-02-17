@@ -21,6 +21,7 @@ private:
 		PLAY,
 		CREDITS,
 		EXIT,
+		RETURN,
 		RESUME_GAME
 	};
 
@@ -40,6 +41,7 @@ private:
 	string fps;
 	wstring text;
 	float time = 300.0f;
+	float clickCooldown = 2.0f;
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;

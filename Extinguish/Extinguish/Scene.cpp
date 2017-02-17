@@ -416,7 +416,7 @@ void Scene::Update(float dt)
 
 	int id = Game::GetClientID();
 
-	if (id == 0)
+	if (id == 0 || Game::currentScene < 2)
 	{
 		id = 1;
 	}

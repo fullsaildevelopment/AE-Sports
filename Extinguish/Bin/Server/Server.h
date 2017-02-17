@@ -18,7 +18,6 @@
 #include "..\RakNet\GetTime.h"
 #include <DirectXMath.h>
 
-
 using namespace RakNet;
 using namespace std;
 using namespace DirectX;
@@ -79,7 +78,8 @@ private:
 		ID_INCOMING_PACKET,
 		ID_REMOVE_CLIENT,
 		ID_INCOMING_INPUT,
-		ID_INCOMING_STATE
+		ID_INCOMING_STATE,
+		ID_NEW_CLIENT
 	};
 
 
@@ -115,13 +115,15 @@ private:
 	InputEventStruct clientInput[4];
 	static GAME_STATE * gameState;
 	//static CLIENT_GAME_STATE * aiStates;
-	UINT16 numPlayers = 0;
+	UINT8 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
 	char * names[MAX_PLAYERS];
 	UINT8  nameSizes[MAX_PLAYERS];
 	UINT8  openIDs[MAX_PLAYERS];
 	bool newInput[MAX_PLAYERS];
+	//DataStructures::List<RakNetSocket2*> sockets;
+	SOCKET serverSocket;
 public:
 	Server();
 	~Server();
@@ -164,6 +166,7 @@ private:
 	int shutdowntimer = 0;
 	void sendMessage(char * message, GameMessages ID, bool broadcast);
 	void sendMessage(char * message, unsigned int length, GameMessages ID, bool broadcast);
+	void sendMessage(UINT8 message, GameMessages ID, bool broadcast);
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();

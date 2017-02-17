@@ -57,9 +57,11 @@ private:
 
 	void UpdateServerStates();
 	void UpdateClientObjects();
-	void UpdateUI();
+	void UpdateScoreUI();
+	void UpdateLobbyUI(int _amount);
 
 	void LoadScene(std::string name);
+	int UpdateLobby();
 public:
 
 	//basic

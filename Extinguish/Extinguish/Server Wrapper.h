@@ -22,6 +22,8 @@ public:
 
 	int init(char * address, UINT16 port)
 	{
+		noPeer = false;
+		shutdown = false;
 		return newServer.init(port);
 	}
 	int run()
