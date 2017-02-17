@@ -6,6 +6,7 @@
 #include "InputDownEvent.h"
 
 class GameObject;
+class BallController;
 
 class Crosse : public Component
 {
@@ -13,6 +14,7 @@ private:
 	Transform* transform;
 	Transform* ballTransform;
 	InputManager* input;
+	BallController* ballC;
 
 	int prevMouseX, prevMouseY;
 	const float maxRotZ = 70.0f;

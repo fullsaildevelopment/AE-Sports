@@ -51,6 +51,8 @@ public:
 		INT8 animationIndex;
 		int otherIndex;
 		INT8 transitionIndex;
+		UINT32 soundID;
+		bool hasSound;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -130,6 +132,8 @@ public:
 	INT8 GetParentIndex(unsigned int index) { return clientStates[index].parentIndex; }
 	INT8 GetAnimationIndex(unsigned int index) { return clientStates[index].animationIndex; }
 	INT8 GetTransitionIndex(unsigned int index) { return clientStates[index].transitionIndex; }
+	UINT32 GetSoundID(unsigned int index) { return clientStates[index].soundID; }
+	bool HasSound(unsigned int index) { return clientStates[index].hasSound; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
 	int getNumPackets() { return numPackets; }

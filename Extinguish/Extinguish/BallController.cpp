@@ -2,6 +2,8 @@
 #include "BallController.h"
 #include "Physics.h"
 #include "GameObject.h"
+#include "InputManager.h"
+#include "Crosse.h"
 
 using namespace std;
 
@@ -30,9 +32,23 @@ void BallController::Init()
 	physics = GetGameObject()->GetComponent<Physics>();
 }
 
+void BallController::LateInit()
+{
+	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
+	int size = go.size();
+	for (int i = 0; i < size; ++i)
+	{
+		Crosse* c = go[i]->GetComponent<Crosse>();
+		if (c)
+		{
+			nets.push_back(c->GetGameObject()->GetTransform());
+		}
+	}
+}
+
 void BallController::Update(float dt)
 {
-	printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
+	//printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
 	timer.Signal();
 
 	if (!isHeld && transform->GetParent())
@@ -40,11 +56,16 @@ void BallController::Update(float dt)
 		SetHolder(transform->GetParent()->GetGameObject());
 	}
 
-	//if (isHeld && !isThrown)
-	//	transform->SetVelocity(float3(0, 0, 0));
 
-	//else
-		//transform->AddVelocity(float3(0, -9.8f * dt, 0));
+#if _DEBUG
+	if (InputManager::GetSingleton()->GetKey(17))
+	{
+		SetHolder(GetGameObject()->FindGameObject("Crosse1"));
+	}
+#endif
+
+	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)
 	{
@@ -56,8 +77,31 @@ void BallController::Update(float dt)
 		}
 	}
 
+	//Add a slight magnetic effect to the crosse closest to the ball
+	SlightMagEff();
+
 	//cout << isHeld;
 }
+
+void BallController::SlightMagEff()
+{
+	if (!isHeld && !isThrown)
+	{
+		int s = nets.size();
+		for (int i = 0; i < s; ++i)
+		{
+			XMFLOAT4X4 ball = me->GetTransform()->GetWorld();
+			XMFLOAT4X4 net = nets[i]->GetWorld();
+			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
+			float l = ball2net.magnitude();
+			if (l < 3)
+			{
+				me->GetTransform()->AddVelocity(ball2net.normalize() * 1 / l);
+			}
+		}
+	}
+}
+
 
 void BallController::Throw()
 {
@@ -142,13 +186,14 @@ void BallController::SetHolder(GameObject *person)
 		isHeld = true;
 		holder = person;
 
-		transform->SetParent(person->GetTransform()); //set parent adds a child
-		transform->SetVelocity(float3(0, 0, 0));
-		transform->SetPosition(float3(0, 0, 0));
-
 		//turn off physics
 		physics->SetIsKinematic(true);
 		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+
+		transform->SetParent(person->GetTransform()); //set parent adds a child
+		transform->GetWorld();
+		transform->SetVelocity(float3(0, 0, 0));
+		transform->SetPosition(float3(0, 0, 0));
 	}
 	else
 	{

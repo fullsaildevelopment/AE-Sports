@@ -24,6 +24,16 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	vertexShader = ResourceManager::GetSingleton()->GetVertexShader(vsName);
 	computeShader = ResourceManager::GetSingleton()->GetComputeShader(csName);
 	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
+
+	if (mesh == "Mage")
+	{
+		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Mage");
+	}
+	if (mesh == "Crosse")
+	{
+		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Crosse");
+	}
+
 	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
 	numVerts = ResourceManager::GetSingleton()->GetNumVertices(mesh);
 	numIndices = ResourceManager::GetSingleton()->GetNumIndices(mesh);
@@ -59,6 +69,8 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 	instancedBuffer = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, instanced);
 	instancedBuffer2 = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, color);
 	
+
+
 	SetProjection(projection);
 
 	if (!curAnimName.empty())
@@ -109,9 +121,12 @@ void Renderer::Update(float dt)
 		}
 	}
 
-	//devContext->UpdateSubresource(lightMvpConstantBuffer.Get(), NULL, NULL, &lightMVPData, NULL, NULL);
+	if (teamcolorBuffer)
+	{
+		devContext->UpdateSubresource(teamcolorBuffer, NULL, NULL, &TeamColor, NULL, NULL);
 
-	//devContext->VSSetConstantBuffers(2, 1, lightMvpConstantBuffer.GetAddressOf());
+		devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
+	}
 
 	//set vertex buffer
 	UINT offset = 0;
@@ -120,7 +135,8 @@ void Renderer::Update(float dt)
 
 	//set shader resource view
 	devContext->PSSetShaderResources(0, 1, &diffuseSRV);
-	//devContext->PSSetShaderResources(1, 1, normalSRV.GetAddressOf());
+	if(teamcolorSRV)
+		devContext->PSSetShaderResources(3, 1, &teamcolorSRV);
 	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 
@@ -201,6 +217,25 @@ Blender* Renderer::GetBlender()
 }
 
 //setters//
+void Renderer::SetTeamColor(float4 c) 
+{ 
+	TeamColor = c;
+	teamcolorBuffer = ResourceManager::GetSingleton()->CreateConstantBuffer(&TeamColor);
+}
+
+void Renderer::SetCatch(float c)
+{
+	TeamColor.w = c;
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer,&TeamColor);
+}
+
+void Renderer::SetCatch(float4 c)
+{
+	TeamColor = c;
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer, &TeamColor);
+}
+
+
 void Renderer::SetModel(XMMATRIX& model)
 {
 	XMFLOAT4X4 tempModel;

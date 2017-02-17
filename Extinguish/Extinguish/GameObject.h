@@ -47,6 +47,7 @@ public:
 	void AddSphereCollider(SphereCollider* s);
 	void AddCapsuleCollider(CapsuleCollider* c);
 	GameObject* FindGameObject(std::string name);
+	int FindIndexOfGameObject(GameObject* object);
 
 	void OnCollisionEnter(Collider*);
 	void OnCollisionStay(Collider*);

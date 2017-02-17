@@ -362,12 +362,14 @@ void Server::sendPackets()
 			bOut.Write(clientStates[i].animationIndex);
 			bOut.Write(clientStates[i].otherIndex);
 			bOut.Write(clientStates[i].transitionIndex);
+			bOut.Write(clientStates[i].soundID);
+			bOut.Write(clientStates[i].hasSound);
 		}
 		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 	}
 }
 
-void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex)
+void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound)
 {
 	//if (serverObjs > 0) {
 		//	memcpy(clientStates[index].animationName, animationName, length);
@@ -381,6 +383,8 @@ void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 
 		clientStates[index].animationIndex = animIndex;
 		clientStates[index].otherIndex = oIndex;
 		clientStates[index].transitionIndex = transitionIndex;
+		clientStates[index].soundID = soundID;
+		clientStates[index].hasSound = hasSound;
 
 	//}
 }

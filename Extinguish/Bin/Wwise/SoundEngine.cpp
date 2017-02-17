@@ -8,6 +8,7 @@
 #include "AK/Tools/Common/AkPlatformFuncs.h"
 #include "AK/MusicEngine/Common/AkMusicEngine.h"
 #include "AkFilePackageLowLevelIOBlocking.h"
+//#include "AK/SoundEngine/Common/AkTypes.h"
 
 #ifndef AK_OPTIMIZED
 	#include <AK/Comm/AkCommunication.h>
@@ -77,6 +78,27 @@ bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std
 	return result;
 }
 
+void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT3> const & positions, std::vector<DirectX::XMFLOAT3> const & forwards)
+{
+	for (int i = 0; i < positions.size(); ++i)
+	{
+		AkSoundPosition soundPos;
+		soundPos.SetPosition(positions[i].x, positions[i].y, positions[i].z);
+		soundPos.SetOrientation(forwards[i].x, forwards[i].y, forwards[i].z, -1, 0, 0);
+		AK::SoundEngine::SetPosition(i, soundPos);
+	}
+}
+
+void SoundEngine::UpdateListener(DirectX::XMFLOAT3 const & position, DirectX::XMFLOAT3 const & forward)
+{
+	AkListenerPosition listener;
+
+	listener.SetPosition(position.x, position.y, position.z);
+	listener.SetOrientation(forward.x, forward.y, forward.z, -1, 0, 0);
+	AKRESULT akResult = AK::SoundEngine::SetListenerPosition(listener, 0);
+	//AK::SoundEngine::SetListenerPosition(listener, index);
+}
+
 void SoundEngine::ProcessAudio()
 {
 	AK::SoundEngine::RenderAudio();
@@ -130,34 +152,6 @@ bool SoundEngine::PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID)
 
 	return result;
 }
-
-//bool SoundEngine::PlaySpearSound(AkGameObjectID gameObjectID)
-//bool SoundEngine::PlaySpearSound()
-//{
-//	bool result = true;
-//
-//	AkPlayingID playId =  AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
-//
-//	return result;
-//}
-//
-//bool SoundEngine::PlayWalkingSound()
-//{
-//	bool result = true;
-//
-//	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, 1);
-//
-//	return result;
-//}
-//
-//bool SoundEngine::StopWalkingSound()
-//{
-//	bool result = true;
-//
-//	AkPlayingID playId = AK::SoundEngine::PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, 1);
-//
-//	return result;
-//}
 
 //private helper functions//
 bool SoundEngine::InitSettings()

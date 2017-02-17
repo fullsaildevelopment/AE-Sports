@@ -1275,11 +1275,15 @@ bool HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 {
 	float hd = hex.d * 0.5f;
 	AABB bounding;
+	AABB cb;
 	bounding.min = float3(hex.seg.m_Start.x - hd, hex.seg.m_Start.y - hd, hex.seg.m_Start.z - hd);
 	bounding.max = float3(hex.seg.m_End.x + hd, hex.seg.m_End.y + hd, hex.seg.m_End.z + hd);
-	AABB cb;
-	cb.min = c.m_Segment.m_Start - c.m_Radius;
-	cb.max = c.m_Segment.m_End + c.m_Radius;
+	cb.min.x = c.m_Segment.m_Start.x - c.m_Radius;
+	cb.min.y = c.m_Segment.m_Start.y - c.m_Radius;
+	cb.min.z = c.m_Segment.m_Start.z - c.m_Radius;
+	cb.max.x = c.m_Segment.m_End.x + c.m_Radius;
+	cb.max.y = c.m_Segment.m_End.y + c.m_Radius;
+	cb.max.z = c.m_Segment.m_End.z + c.m_Radius;
 
 	if (!AABBtoAABB(bounding, cb)) 
 		return false;

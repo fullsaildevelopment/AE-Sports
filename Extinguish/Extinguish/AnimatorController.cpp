@@ -124,7 +124,7 @@ void AnimatorController::TransitionTo(unsigned int stateIndex, unsigned int tran
 	{
 		State* curState = states[curStateIndex];
 		
-		if (transitionIndex < curState->GetTransitionsCount())
+		if (transitionIndex < curState->GetTransitionsCount()) //crappy fix
 		{
 			Transition* transition = curState->GetTransition(transitionIndex);
 

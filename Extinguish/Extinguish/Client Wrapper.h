@@ -89,6 +89,16 @@ public:
 		return newClient.GetTransitionIndex(index);
 	}
 
+	UINT32 GetSoundID(unsigned int index)
+	{
+		return newClient.GetSoundID(index);
+	}
+
+	bool HasSound(unsigned int index)
+	{
+		return newClient.HasSound(index);
+	}
+
 	XMFLOAT3 getLocation(unsigned int index)
 	{
 		return newClient.getLocation(index);

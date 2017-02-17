@@ -146,6 +146,7 @@
     <ClInclude Include="InputDownEvent.h" />
     <ClInclude Include="LoadSceneEvent.h" />
     <ClInclude Include="ScoreEvent.h" />
+    <ClInclude Include="SoundEvent.h" />
     <ClInclude Include="WindowResizeEvent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClCompile Include="HashStringCopy.cpp" />
     <ClCompile Include="InputDownEvent.cpp" />
     <ClCompile Include="LoadSceneEvent.cpp" />
+    <ClCompile Include="SoundEvent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

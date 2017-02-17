@@ -356,6 +356,8 @@ void Client::receivePackets()
 			bIn.Read(clientStates[i].animationIndex);
 			bIn.Read(clientStates[i].otherIndex);
 			bIn.Read(clientStates[i].transitionIndex);
+			bIn.Read(clientStates[i].soundID);
+			bIn.Read(clientStates[i].hasSound);
 		}
 	}
 }
