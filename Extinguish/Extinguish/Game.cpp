@@ -106,14 +106,19 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//names.resize(scenes[loadSceneIndex]->GetNumObjects());
 	gameObjects = scenes[loadSceneIndex]->GetGameObjects();
 
-	for (int i = 0; i < gameObjects->size(); ++i)
+	int id = 0;
+	for (int i = 0; i < gameObjects->size(); ++i, ++id)
 	{
 		if (i != GetPlayerObjectID())
 		{
 			GameObject* gameObject = (*gameObjects)[i];
 
-			ids.push_back(i);
+			ids.push_back(id);
 			names.push_back(gameObject->GetName());
+		}
+		else
+		{
+			id -= 1;
 		}
 	}
 
