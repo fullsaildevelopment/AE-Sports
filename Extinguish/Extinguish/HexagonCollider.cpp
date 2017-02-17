@@ -81,7 +81,7 @@ bool HexagonCollider::CheckCapsuleAABB(AABB test, Capsule s)
 	return AABBtoAABB(test, cap);
 }
 
-void HexagonCollider::Update(float dt)
+void HexagonCollider::FixedUpdate(float dt)
 {
 	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
 	GameObject* tg = GetGameObject();
