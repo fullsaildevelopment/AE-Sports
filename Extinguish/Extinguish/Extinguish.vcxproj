@@ -203,6 +203,7 @@
     <ClInclude Include="Movement.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="PowerUp.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="AI.h" />
     <ClInclude Include="Application.h" />
