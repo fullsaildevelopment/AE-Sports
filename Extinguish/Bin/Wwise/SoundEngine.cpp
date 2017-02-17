@@ -256,9 +256,6 @@ void SoundEngine::InitBank()
 	//init bank must be loaded first before anything!
 	AKRESULT eResult = AK::SoundEngine::LoadBank(L"Init.bnk", AK_DEFAULT_POOL_ID, bankID);
 	eResult = AK::SoundEngine::LoadBank(L"TitansWithSticks.bnk", AK_DEFAULT_POOL_ID, bankID);
-	//eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
-	//eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
-	//eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
 }
 
 void SoundEngine::InitGameObjects(std::vector<unsigned int> ids, std::vector<std::string> names)
