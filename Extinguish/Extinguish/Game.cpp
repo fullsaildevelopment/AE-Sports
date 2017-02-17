@@ -202,8 +202,8 @@ void Game::Update(float dt)
 		clientID = 1;
 	}
 
-	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
+	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->ProcessAudio();
 }
 

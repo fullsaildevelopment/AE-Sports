@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" SchemaVersion="75">
+	<Events>
+		<WorkUnit Name="Default Work Unit" ID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" PersistMode="Standalone">
+			<ChildrenList>
+				<Event Name="Play_Boing" ID="{2387FEB5-5381-4B02-8073-7EAEAD4FC73B}">
+					<ChildrenList>
+						<Action Name="Play" ID="{BC5392C2-5BDA-409C-85FC-50AFBBCA5551}" ShortID="395084955" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{63C896EF-5E57-45FE-A925-133E5589F05A}" Global="false">
+									<ObjectRef Name="Boing" ID="{7EB22989-D9BB-446A-8328-87CFB260AFA8}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>
