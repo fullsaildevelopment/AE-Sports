@@ -157,10 +157,11 @@ void BallController::SetHolder(GameObject *person)
 		transform->SetVelocity(float3(0, 0, 0));
 		transform->SetPosition(float3(0, 0, 0));
 	}
+
 	else
 	{
 		isHeld = false;
-		holder = person;
+		holder = nullptr;
 		if (transform->GetParent())
 			transform->GetParent()->RemoveChild(transform);
 		transform->SetParent(nullptr);
