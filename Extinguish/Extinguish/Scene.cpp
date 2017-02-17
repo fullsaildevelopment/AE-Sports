@@ -457,8 +457,6 @@ void Scene::Update(float dt)
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
-			
-
 			if (transform)
 			{
 				XMFLOAT4X4 world;
@@ -482,24 +480,10 @@ void Scene::Update(float dt)
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
-			//if (i == 7)
-			//{
-			//	//cout << animator->GetCurrentStateIndex() << endl;
-
-			//	if (animator->GetCurrentStateIndex() == 2)
-			//	{
-			//		//cout << "Breakpoint";
-			//	}
-			//}
-
 			//don't animate yourself or animate server which has already been animated
 			if (animator && i != (id - 1) * 3 + 2 && id != 1) 
 			{
 				animator->Update(dt);
-			}
-			else if (animator)
-			{
-				//cout << i << endl;
 			}
 		}
 	}

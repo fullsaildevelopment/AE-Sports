@@ -77,4 +77,5 @@ public:
 
 	//getters
 	static int GetClientID();
+	static int GetPlayerObjectID();
 };

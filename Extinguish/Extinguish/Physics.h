@@ -9,7 +9,7 @@ class Physics : public Component
 {
 private:
 	//const
-	const float gravity = -9.8f;
+	float gravity = -9.8f;
 	//const float friction 
 	bool applyGravity = true;
 	//cache
@@ -31,7 +31,7 @@ private:
 public:
 	Physics() {};
 	//original values Bounce = 1.06 friction = 0.23 airdrag = 0.08
-	Physics(float _bounce, float _friction = 0.23f, float _airdrag = 0.08f, float _maxMoveSpeed = 20) { bounce = _bounce; friction = _friction; airdrag = _airdrag; maxMoveSpeed = _maxMoveSpeed; };
+	Physics(float _bounce, float _friction = 0.23f, float _airdrag = 0.08f, float _maxMoveSpeed = 20, float _grav = -9.8f) { bounce = _bounce; friction = _friction; airdrag = _airdrag; maxMoveSpeed = _maxMoveSpeed; gravity = _grav; };
 	void Init();
 	void Update(float dt) override;
 

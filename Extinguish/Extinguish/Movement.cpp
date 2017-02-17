@@ -3,11 +3,12 @@
 #include "GameObject.h"
 #include "InputDownEvent.h"
 #include "EventDispatcher.h"
-#include "SoundEngine.h"
 #include "Game.h"
 #include "AnimatorController.h"
 #include "State.h"
 #include "Trigger.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -34,12 +35,24 @@ void Movement::Update(float dt)
 	//sound feedback
 	if (isMoving && (timeSincePlayed == 0 || timeSincePlayed > 18.0f))
 	{
-		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, Game::GetClientID());
+		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, Game::GetClientID());
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::PLAY_3D_FOOTSTEPSSAND, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+		//SoundEngine::GetSingleton()->PostEvent(, Game::GetPlayerObjectID());
+		//cout << "play sand" << endl;
 		timeSincePlayed = 0;
 	}
 	else if (!isMoving && timeSincePlayed)
 	{
-		SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, Game::GetClientID());
+		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, Game::GetClientID());
+		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, Game::GetPlayerObjectID());
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::STOP_3D_FOOTSTEPSSAND, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+		//cout << "stop sand" << endl;
 	}
 
 	if (isMoving)

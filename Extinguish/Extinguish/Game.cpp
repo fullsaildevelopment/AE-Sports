@@ -26,6 +26,7 @@
 #include "Goal.h"
 #include "WindowResizeEvent.h"
 #include "LoadSceneEvent.h"
+#include "SoundEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -95,8 +96,9 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	std::vector<unsigned int> ids;
 	std::vector<std::string> names;
 
-	ids.resize(scenes[currentScene]->GetNumObjects());
-	names.resize(scenes[currentScene]->GetNumObjects());
+	ids.resize(scenes[1]->GetNumObjects());
+	names.resize(scenes[1]->GetNumObjects());
+	gameObjects = scenes[1]->GetGameObjects();
 
 	for (int i = 0; i < gameObjects->size(); ++i)
 	{
@@ -193,6 +195,27 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	//render audio
+	vector<GameObject*>* objects = scenes[1]->GetGameObjects();
+	vector<XMFLOAT3> objectsPos, forwards;
+	objectsPos.resize(objects->size());
+	forwards.resize(objects->size());
+
+	for (int i = 0; i < objects->size(); ++i)
+	{
+		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+
+		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+	}
+
+	if (clientID == 0)
+	{
+		clientID = 1;
+	}
+
+	soundEngine->UpdatePositions(objectsPos, forwards);
+	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->ProcessAudio();
 }
 
@@ -292,12 +315,28 @@ void Game::HandleEvent(Event* e)
 		}
 	}
 
+	SoundEvent* soundEvent = dynamic_cast<SoundEvent*>(e);
+
+	if (soundEvent)
+	{
+		soundEngine->PostEvent(soundEvent->GetSoundID(), soundEvent->GetObjectID());
+		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
+		gameStates[soundEvent->GetObjectID()]->hasSound = true;
+
+		return;
+	}
+
 }
 
 //getters//
 int Game::GetClientID()
 {
 	return clientID;
+}
+
+int Game::GetPlayerObjectID()
+{
+	return (clientID - 1) * 3 + 2;
 }
 
 //setters//
@@ -445,16 +484,21 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+		if(i <= 4)
+			mageRenderer1->SetTeamColor({ 1,0,0,0 });
+		else
+			mageRenderer1->SetTeamColor({ 0,0,1,0 });
+
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(7.5f, 0.75f);
+		mageMover->Init(1.5f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0,10.0f,0.07f);
+		Physics* physics = new Physics(0,13.0f,0.07f, 20,-14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -502,7 +546,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		GameObject* camera1 = new GameObject();
 		basic->AddGameObject(camera1);
 		camera1->Init(cameraName);
-		camera1->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 5, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		//camera1->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//camera1->InitTransform(identity, { 0, 0, -15.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
@@ -512,16 +557,22 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		crosseName += to_string(i);
 
 		crosse->Init(crosseName);
-		crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
+		//crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
-		crosseRenderer->Init("Crosse", "Static", "Static", "", "", projection, devResources);
+		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources);
+		if (i <= 4)
+			crosseRenderer->SetTeamColor({ 1,0,0,0 });
+		else
+			crosseRenderer->SetTeamColor({ 0,0,1,0 });
 		Crosse* crosseController = new Crosse();
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
 	}
+	ballController->LateInit();
 
 	GameObject* goal = new GameObject();
 	basic->AddGameObject(goal);
@@ -542,7 +593,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 3,20,3 }, { -3,0,0 });
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 5,20,5 }, { -5,0,0 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
@@ -977,6 +1028,7 @@ void Game::UpdateServerStates()
 		state->position = { position.x, position.y, position.z };
 		state->rotation = { rotation.x, rotation.y, rotation.z };
 
+		//parent info
 		int parentIndex = -1;
 		Transform* parent = gameObject->GetTransform()->GetParent();
 
@@ -995,6 +1047,7 @@ void Game::UpdateServerStates()
 
 		state->parentIndex = parentIndex;
 
+		//animation info
 		int animIndex = -1;
 		int transitionIndex = -1;
 		AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
@@ -1018,9 +1071,18 @@ void Game::UpdateServerStates()
 
 		state->animationIndex = animIndex;
 		state->transitionIndex = transitionIndex;
+
+		//sound info is handled by event
 	}
 
 	server.SetGameStates(gameStates);
+
+	//reset sound info after server sets game states
+	for (int i = 0; i < gameStates.size(); ++i)
+	{
+		gameStates[i]->soundID = -1;
+		gameStates[i]->hasSound = false;
+	}
 }
 
 void Game::UpdateClientObjects()
@@ -1081,6 +1143,17 @@ void Game::UpdateClientObjects()
 							animator->TransitionTo(animIndex, transitionIndex);
 						}
 					}
+				}
+
+				bool hasSound = client.HasSound(i);
+
+				if (hasSound)
+				{
+					INT32 soundID = client.GetSoundID(i);
+					soundEngine->PostEvent(soundID, i);
+
+					gameStates[i]->soundID = -1;
+					gameStates[i]->hasSound = false;
 				}
 			}
 		}
