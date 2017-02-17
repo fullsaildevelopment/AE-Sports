@@ -95,17 +95,21 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//init sound engine
 	std::vector<unsigned int> ids;
 	std::vector<std::string> names;
+	int loadSceneIndex = scenesNamesTable.GetKey("FirstLevel");
 
-	ids.resize(scenes[1]->GetNumObjects());
-	names.resize(scenes[1]->GetNumObjects());
-	gameObjects = scenes[1]->GetGameObjects();
+	//ids.resize(scenes[loadSceneIndex]->GetNumObjects());
+	//names.resize(scenes[loadSceneIndex]->GetNumObjects());
+	gameObjects = scenes[loadSceneIndex]->GetGameObjects();
 
 	for (int i = 0; i < gameObjects->size(); ++i)
 	{
-		GameObject* gameObject = (*gameObjects)[i];
+		if (i != GetPlayerObjectID())
+		{
+			GameObject* gameObject = (*gameObjects)[i];
 
-		ids[i] = i;
-		names[i] = gameObject->GetName();
+			ids.push_back(i);
+			names.push_back(gameObject->GetName());
+		}
 	}
 
 	soundEngine->InitSoundEngine(ids, names);
@@ -195,27 +199,36 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	//render audio
-	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-	vector<XMFLOAT3> objectsPos, forwards;
-	objectsPos.resize(objects->size());
-	forwards.resize(objects->size());
-
-	for (int i = 0; i < objects->size(); ++i)
-	{
-		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
-
-		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-	}
-
 	if (clientID == 0)
 	{
 		clientID = 1;
 	}
 
-	soundEngine->UpdatePositions(objectsPos, forwards);
+	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+	vector<XMFLOAT3> objectsPos, forwards;
+	//objectsPos.resize(objects->size() - 1);
+	//forwards.resize(objects->size() - 1);
+
+	for (int i = 0; i < objects->size(); ++i)
+	{
+		if (i != GetPlayerObjectID())
+		{
+			XMFLOAT3 objectPos;
+
+			objectPos.x = (*objects)[i]->GetTransform()->GetPosition().x;
+			objectPos.y = (*objects)[i]->GetTransform()->GetPosition().y;
+			objectPos.z = (*objects)[i]->GetTransform()->GetPosition().z;
+
+			objectsPos.push_back(objectPos);
+
+			XMFLOAT3 forward;
+			forward = (*objects)[i]->GetTransform()->GetForward();
+			forwards.push_back(forward);
+		}
+	}
+
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
+	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
 }
 
