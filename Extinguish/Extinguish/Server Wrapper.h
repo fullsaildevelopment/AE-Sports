@@ -155,4 +155,5 @@ public:
 	void setTime(float time) { newServer.setTime(time); }
 
 	void sendGameState() { newServer.sendState(); }
+	void StartGame() { newServer.StartGame(); }
 };

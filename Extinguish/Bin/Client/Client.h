@@ -85,7 +85,8 @@ private:
 		ID_REMOVE_CLIENT,
 		ID_INCOMING_INPUT,
 		ID_INCOMING_STATE,
-		ID_NEW_CLIENT
+		ID_NEW_CLIENT,
+		ID_START_GAME
 	};
 
 	static RakPeerInterface * peer;

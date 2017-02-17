@@ -7,6 +7,9 @@
 
 void StartGame()
 {
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::server.StartGame();
+
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("FirstLevel");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
@@ -43,11 +46,6 @@ void JoinServer()
 
 void ShutdownGame()
 {
-	// shutdown game
-}
-
-void ReturnToMenu()
-{
 	if (ResourceManager::GetSingleton()->IsServer())
 	{
 		Game::server.stop();
@@ -62,12 +60,56 @@ void ReturnToMenu()
 
 		while (Game::client.run() != 0) {}
 	}
+}
 
+void ReturnToMenu()
+{
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			Game::server.stop();
+			while (Game::server.run() != 0) {
+				if (Game::client.run() == 0)
+					break;
+			}
+		}
+		else
+		{
+			Game::client.sendStop();
+
+			while (Game::client.run() != 0) {}
+		}
+	}
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("Menu");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
 	delete event;
 }
+
+//Button::~Button()
+//{
+//	if (buttonType == EXIT)
+//	{
+//		if (ResourceManager::GetSingleton()->IsMultiplayer())
+//		{
+//			if (ResourceManager::GetSingleton()->IsServer())
+//			{
+//				Game::server.stop();
+//				while (Game::server.run() != 0) {
+//					if (Game::client.run() == 0)
+//						break;
+//				}
+//			}
+//			else
+//			{
+//				Game::client.sendStop();
+//
+//				while (Game::client.run() != 0) {}
+//			}
+//		}
+//	}
+//}
 
 Button::Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 	DeviceResources * resources, unsigned int type) {
@@ -148,7 +190,7 @@ void Button::HandleEvent(Event* e)
 				{
 					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
 					{
-						clickCooldown = 5.0f;
+						clickCooldown = 1.0f;
 					}
 					eventFunction();
 
