@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ValidationCache Version="1" SchemaVersion="75">
-	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Actor-Mixer Hierarchy\Default Work Unit.wwu" DateLow="1589636170" DateHigh="30574899"/>
-	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Attenuations\Default Work Unit.wwu" DateLow="438171633" DateHigh="30574897"/>
+	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Actor-Mixer Hierarchy\Default Work Unit.wwu" DateLow="800946998" DateHigh="30574939"/>
+	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Attenuations\Default Work Unit.wwu" DateLow="801181871" DateHigh="30574939"/>
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Audio Devices\Default Work Unit.wwu" DateLow="437486152" DateHigh="30574897"/>
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Control Surface Sessions\Default Work Unit.wwu" DateLow="437801390" DateHigh="30574897"/>
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Conversion Settings\Default Work Unit.wwu" DateLow="437751357" DateHigh="30574897"/>
@@ -22,7 +22,7 @@
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Soundcaster Sessions\Default Work Unit.wwu" DateLow="438266699" DateHigh="30574897"/>
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\States\Default Work Unit.wwu" DateLow="437541215" DateHigh="30574897"/>
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Switches\Default Work Unit.wwu" DateLow="437916458" DateHigh="30574897"/>
-	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Titans with Sticks.Thyasianman.wsettings" DateLow="3516166644" DateHigh="30574938"/>
-	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Titans with Sticks.wproj" DateLow="1814154357" DateHigh="30574897"/>
+	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Titans with Sticks.Thyasianman.wsettings" DateLow="3551387238" DateHigh="30574939"/>
+	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Titans with Sticks.wproj" DateLow="3538343306" DateHigh="30574939"/>
 	<ValidationCacheItem File="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\Triggers\Default Work Unit.wwu" DateLow="438126604" DateHigh="30574897"/>
 </ValidationCache>
