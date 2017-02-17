@@ -79,7 +79,8 @@ private:
 		ID_REMOVE_CLIENT,
 		ID_INCOMING_INPUT,
 		ID_INCOMING_STATE,
-		ID_NEW_CLIENT
+		ID_NEW_CLIENT,
+		ID_START_GAME
 	};
 
 
@@ -158,6 +159,7 @@ public:
 	void sendState();
 	void setScores(int scoreA, int scoreB) { gameState->scoreA = scoreA; gameState->scoreB = scoreB; }
 	void setTime(float time) { gameState->time = time; }
+	void StartGame();
 private:
 	int lastState = 0;
 	int packRec = 0;
