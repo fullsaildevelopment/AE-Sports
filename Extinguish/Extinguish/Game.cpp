@@ -459,7 +459,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(3.0f, 0.75f);
+		mageMover->Init(1.5f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();

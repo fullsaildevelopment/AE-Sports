@@ -173,7 +173,7 @@ Sphere SphereCollider::GetSphere()
 }
 Sphere SphereCollider::GetWorldSphere()
 {
-	XMFLOAT4X4 m = GetGameObject()->GetTransform()->GetWorld();
+	XMFLOAT4X4 m = *GetGameObject()->GetTransform()->GetWorldP();
 	Sphere s;
 	s.m_Center = float3(m._41, m._42, m._43);
 	s.m_Radius = radius;
