@@ -83,8 +83,8 @@ void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT3> const & positio
 	for (int i = 0; i < positions.size(); ++i)
 	{
 		AkSoundPosition soundPos;
-		soundPos.SetPosition(positions[i].x, positions[i].y, positions[i].z);
-		soundPos.SetOrientation(forwards[i].x, forwards[i].y, forwards[i].z, -1, 0, 0);
+		soundPos.SetPosition(positions[i].x * 100, positions[i].y * 100, positions[i].z * 100);
+		soundPos.SetOrientation(forwards[i].x, forwards[i].y, forwards[i].z, 0, 1, 0);
 		AK::SoundEngine::SetPosition(i, soundPos);
 	}
 }
@@ -93,8 +93,8 @@ void SoundEngine::UpdateListener(DirectX::XMFLOAT3 const & position, DirectX::XM
 {
 	AkListenerPosition listener;
 
-	listener.SetPosition(position.x, position.y, position.z);
-	listener.SetOrientation(forward.x, forward.y, forward.z, -1, 0, 0);
+	listener.SetPosition(position.x * 100, position.y * 100, position.z * 100);
+	listener.SetOrientation(forward.x, forward.y, forward.z, 0, 1, 0);
 	AKRESULT akResult = AK::SoundEngine::SetListenerPosition(listener, 0);
 	//AK::SoundEngine::SetListenerPosition(listener, index);
 }
@@ -228,7 +228,7 @@ void SoundEngine::InitBank()
 	
 	//init bank must be loaded first before anything!
 	AKRESULT eResult = AK::SoundEngine::LoadBank(L"Init.bnk", AK_DEFAULT_POOL_ID, bankID);
-	eResult = AK::SoundEngine::LoadBank(L"SoundBank.bnk", AK_DEFAULT_POOL_ID, bankID);
+	eResult = AK::SoundEngine::LoadBank(L"TitansWithSticks.bnk", AK_DEFAULT_POOL_ID, bankID);
 	//eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
 	//eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
 	//eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);

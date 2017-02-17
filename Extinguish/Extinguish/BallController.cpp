@@ -2,6 +2,9 @@
 #include "BallController.h"
 #include "Physics.h"
 #include "GameObject.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
+#include "EventDispatcher.h"
 
 using namespace std;
 
@@ -16,6 +19,15 @@ void BallController::OnTriggerEnter(Collider *obj)
 	// if i collide with a crosse
 	//if (scol)
 	//	SetHolder(obj->GetGameObject());
+}
+
+void BallController::OnCollisionEnter(Collider* obj)
+{
+	//play sound when it hits floor, so I can test 3D sound
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::PLAY_BOING, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
 }
 
 BallController::BallController(GameObject* obj) : Component(obj)
