@@ -38,7 +38,7 @@ int Client::init(char* _address, UINT16 port)
 
 	StartupResult res = peer->Startup(1, &sd, 1);
 
-		UINT16 newPort = port;
+	UINT16 newPort = port;
 	if (res == SOCKET_PORT_ALREADY_IN_USE)
 	{
 
@@ -127,6 +127,7 @@ int Client::run()
 		case ID_CONNECTION_LOST:
 		{
 			printf("Connection lost.\n");
+			peer->Shutdown(100);
 			return 0;
 		break;
 		}
@@ -151,6 +152,7 @@ int Client::run()
 		}
 		case ID_REMOVE_CLIENT:
 		{
+			peer->Shutdown(100);
 			stop();
 			return 0;
 			break;
@@ -297,6 +299,7 @@ void Client::sendStop()
 	bsOut.Write(clientID);
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 
+	
 	peer->CloseConnection(peer->GetGUIDFromIndex(0), true, '\000', IMMEDIATE_PRIORITY);
 }
 

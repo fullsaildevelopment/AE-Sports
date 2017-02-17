@@ -25,15 +25,18 @@ Server::~Server()
 
 int Server::init(uint16_t port)
 {
+	shutdown = false;
+
 	peer = RakNet::RakPeerInterface::GetInstance();
 
 	SocketDescriptor sd(port, 0);
 	sd.socketFamily = AF_INET;
 	StartupResult res = peer->Startup(MAX_PLAYERS, &sd, 1);
-
+	serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_UDP);
+//	peer->GetSocket(peer->GetMyBoundAddress());
 	if (res == SOCKET_PORT_ALREADY_IN_USE)
 		return 0;
-
+	
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);
 
@@ -43,6 +46,9 @@ int Server::init(uint16_t port)
 		names[i] = new char[8];
 		openIDs[i] = i + 1;
 	}
+
+	peer->SetOccasionalPing(true);
+
 	return 1;
 }
 
@@ -154,6 +160,12 @@ bool Server::Shutdown()
 	sendMessage("", ID_SERVER_CLOSURE, true);
 	if (numPlayers == 0)
 	{
+		//peer->CloseConnection(peer->GetMyGUID(), false, '\000', IMMEDIATE_PRIORITY);
+		peer->Shutdown(100);
+		DataStructures::List<RakNetSocket2*> socs;
+		peer->GetSockets(socs);
+		peer->ReleaseSockets(socs);
+		//closesocket(serverSocket);
 		shutdown = true;
 		return true;
 	}

@@ -50,11 +50,17 @@ void ReturnToMenu()
 {
 	if (ResourceManager::GetSingleton()->IsServer())
 	{
-		//Game::server.closeServer();
+		Game::server.stop();
+		while (Game::server.run() != 0) {
+			if (Game::client.run() == 0)
+				break;
+		}
 	}
 	else
 	{
-		//Game::client.leaveLobby();
+		Game::client.sendStop();
+
+		while (Game::client.run() != 0) {}
 	}
 
 	LoadSceneEvent* event = new LoadSceneEvent();
@@ -140,7 +146,12 @@ void Button::HandleEvent(Event* e)
 
 				if (input->GetMouseDown()[0] && clickCooldown <= 0.0f)
 				{
+					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
+					{
+						clickCooldown = 5.0f;
+					}
 					eventFunction();
+
 				}
 				else
 				{
