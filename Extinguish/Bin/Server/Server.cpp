@@ -98,7 +98,8 @@ int  Server::update()
 			memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
 
 			printf(newMessage);
-			sendMessage(newMessage, ID_SERVER_MESSAGE, true);
+			//sendMessage(newMessage, ID_SERVER_MESSAGE, true);
+			sendMessage(numPlayers, ID_NEW_CLIENT, true);
 			break;
 		}
 		case ID_REQUEST:
@@ -161,6 +162,18 @@ bool Server::Shutdown()
 }
 
 void Server::sendMessage(char * message, GameMessages ID, bool broadcast)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(message);
+	if (!broadcast)
+		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
+	else if (broadcast && ID != ID_SERVER_CLOSURE)
+		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), broadcast);
+	else
+		peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), broadcast);
+}
+void Server::sendMessage(UINT8 message, GameMessages ID, bool broadcast)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);

@@ -318,6 +318,9 @@
     <ClInclude Include="Goal.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="PowerUp.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />

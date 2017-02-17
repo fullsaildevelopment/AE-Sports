@@ -158,7 +158,7 @@ int Client::run()
 		case ID_INCOMING_PACKET:
 		{
 			receivePackets();
-			if (result != 4)
+			if (result != 4 || result != 5)
 				result = 2;
 			break;
 		}
@@ -171,6 +171,14 @@ int Client::run()
 		{
 			receiveGameState();
 			result = 4;
+			break;
+		}
+		case ID_NEW_CLIENT:
+		{
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			bIn.Read(curNumOfClients);
+			result = 5;
 			break;
 		}
 		}

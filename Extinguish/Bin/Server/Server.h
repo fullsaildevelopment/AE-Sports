@@ -77,7 +77,8 @@ private:
 		ID_INCOMING_PACKET,
 		ID_REMOVE_CLIENT,
 		ID_INCOMING_INPUT,
-		ID_INCOMING_STATE
+		ID_INCOMING_STATE,
+		ID_NEW_CLIENT
 	};
 
 
@@ -113,7 +114,7 @@ private:
 	InputEventStruct clientInput[4];
 	static GAME_STATE * gameState;
 	//static CLIENT_GAME_STATE * aiStates;
-	UINT16 numPlayers = 0;
+	UINT8 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
 	char * names[MAX_PLAYERS];
@@ -162,6 +163,7 @@ private:
 	int shutdowntimer = 0;
 	void sendMessage(char * message, GameMessages ID, bool broadcast);
 	void sendMessage(char * message, unsigned int length, GameMessages ID, bool broadcast);
+	void sendMessage(UINT8 message, GameMessages ID, bool broadcast);
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();
