@@ -200,7 +200,7 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	//render audio
-	vector<GameObject*>* objects = scenes[1]->GetGameObjects();
+	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
 	vector<XMFLOAT3> objectsPos, forwards;
 	objectsPos.resize(objects->size());
 	forwards.resize(objects->size());
@@ -271,6 +271,13 @@ void Game::HandleEvent(Event* e)
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+		}
+		//TODO: need to make this work for in-game menu if we ever add
+		else if (scenesNamesTable.GetKey("Lobby") == currentScene && !inputDownEvent->IsServer()) //if it's a HUD scene, let it handle the input itself
+		{
+			inputDownEvent->SetIsServer(true);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			cout << "HUD stuff" << endl;
 		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{

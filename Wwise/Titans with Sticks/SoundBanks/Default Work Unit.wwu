@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{58FF50C9-C393-4C49-8B14-E1088947A5AF}" SchemaVersion="75">
+	<SoundBanks>
+		<WorkUnit Name="Default Work Unit" ID="{58FF50C9-C393-4C49-8B14-E1088947A5AF}" PersistMode="Standalone">
+			<ChildrenList>
+				<SoundBank Name="TitansWithSticks" ID="{79C66171-59B0-47B6-9D9F-7B109BF2A81F}">
+					<ObjectInclusionList>
+						<ObjectRef Name="Play_Boing" ID="{2387FEB5-5381-4B02-8073-7EAEAD4FC73B}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+					</ObjectInclusionList>
+					<ObjectExclusionList/>
+					<GameSyncExclusionList/>
+				</SoundBank>
+			</ChildrenList>
+		</WorkUnit>
+	</SoundBanks>
+</WwiseDocument>
