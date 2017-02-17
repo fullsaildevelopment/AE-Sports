@@ -33,7 +33,7 @@ public:
 	//original values Bounce = 1.06 friction = 0.23 airdrag = 0.08
 	Physics(float _bounce, float _friction = 0.23f, float _airdrag = 0.08f, float _maxMoveSpeed = 20, float _grav = -9.8f) { bounce = _bounce; friction = _friction; airdrag = _airdrag; maxMoveSpeed = _maxMoveSpeed; gravity = _grav; };
 	void Init();
-	void Update(float dt) override;
+	void FixedUpdate(float dt) override;
 
 	void HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b);
 	//getters//

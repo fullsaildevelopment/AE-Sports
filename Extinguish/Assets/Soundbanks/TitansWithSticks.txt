@@ -1,0 +1,6 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3698997709	Play_Boing			\Default Work Unit\Play_Boing	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	797913072	Boing	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Boing_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Boing		81140
+

@@ -89,6 +89,7 @@ public:
 	//basics
 	void Init(DeviceResources const * devResources, InputManager* inputRef);
 	void Update(float dt);
+	void FixedUpdate(float dt);
 	void Render();
 	void Shutdown();
 

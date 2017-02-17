@@ -19,12 +19,17 @@ private:
 	Transform* transform;
 	Physics* physics;
 	void SetIsHeld(bool ans);
+	std::vector<Transform*> nets;
+	void SlightMagEff();
 
 public:
 	BallController(GameObject* obj);
 	void Init();
+	void LateInit();
 	void Update(float dt) override;
+	void FixedUpdate(float dt) override;
 	void OnTriggerEnter(Collider *obj) override;
+	void OnCollisionEnter(Collider* obj) override;
 
 	// actions
 	void ThrowTo(GameObject *target);

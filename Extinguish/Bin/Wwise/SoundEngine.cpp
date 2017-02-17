@@ -14,6 +14,11 @@
 	#include <AK/Comm/AkCommunication.h>
 #endif
 
+//****************************************READ THIS********************************************//
+//ids aren't 0 based in wwise. they're 1 based. They're sent in 0 based from engine side though//
+//so make sure you + 1 them, or bad things will happen//
+//*********************************************************************************************//
+
 // Custom alloc/free functions. These are declared as "extern" in AkMemoryMgr.h
 // and MUST be defined by the game developer.
 namespace AK
@@ -63,6 +68,7 @@ SoundEngine::~SoundEngine()
 
 }
 
+//TODO: to optimize update, just send a vector of GameObject pointers and then store them in a vector. Cast the pointer to a GameObjectID for the id instead
 bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std::string> names)
 {
 	bool result = true;
@@ -75,6 +81,8 @@ bool SoundEngine::InitSoundEngine(std::vector<unsigned int> ids, std::vector<std
 
 	InitGameObjects(ids, names);
 
+	//AK::SoundEngine::SetActiveListeners(2, 0);
+
 	return result;
 }
 
@@ -84,8 +92,14 @@ void SoundEngine::UpdatePositions(std::vector<DirectX::XMFLOAT3> const & positio
 	{
 		AkSoundPosition soundPos;
 		soundPos.SetPosition(positions[i].x, positions[i].y, positions[i].z);
-		soundPos.SetOrientation(forwards[i].x, forwards[i].y, forwards[i].z, -1, 0, 0);
-		AK::SoundEngine::SetPosition(i, soundPos);
+		soundPos.SetOrientation(forwards[i].x, forwards[i].y, forwards[i].z, 0, 1, 0);
+		AKRESULT akResult = AK::SoundEngine::SetPosition(i + 1, soundPos);
+
+		if (akResult != AKRESULT::AK_Success)
+		{
+			int a = 20;
+			a += -5;
+		}
 	}
 }
 
@@ -94,14 +108,27 @@ void SoundEngine::UpdateListener(DirectX::XMFLOAT3 const & position, DirectX::XM
 	AkListenerPosition listener;
 
 	listener.SetPosition(position.x, position.y, position.z);
-	listener.SetOrientation(forward.x, forward.y, forward.z, -1, 0, 0);
+	listener.SetOrientation(forward.x, forward.y, forward.z, 0, 1, 0);
 	AKRESULT akResult = AK::SoundEngine::SetListenerPosition(listener, 0);
+
+	if (akResult != AKRESULT::AK_Success)
+	{
+		int a = 20;
+		a += -5;
+	}
+
 	//AK::SoundEngine::SetListenerPosition(listener, index);
 }
 
 void SoundEngine::ProcessAudio()
 {
-	AK::SoundEngine::RenderAudio();
+	AKRESULT akResult = AK::SoundEngine::RenderAudio();
+
+	if (akResult != AKRESULT::AK_Success)
+	{
+		int a = 20;
+		a += -5;
+	}
 }
 
 void SoundEngine::Terminate()
@@ -228,7 +255,7 @@ void SoundEngine::InitBank()
 	
 	//init bank must be loaded first before anything!
 	AKRESULT eResult = AK::SoundEngine::LoadBank(L"Init.bnk", AK_DEFAULT_POOL_ID, bankID);
-	eResult = AK::SoundEngine::LoadBank(L"SoundBank.bnk", AK_DEFAULT_POOL_ID, bankID);
+	eResult = AK::SoundEngine::LoadBank(L"TitansWithSticks.bnk", AK_DEFAULT_POOL_ID, bankID);
 	//eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
 	//eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
 	//eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
@@ -238,7 +265,14 @@ void SoundEngine::InitGameObjects(std::vector<unsigned int> ids, std::vector<std
 {
 	for (int i = 0; i < ids.size(); ++i)
 	{
-		AkGameObjectID id = ids[i];
-		AK::SoundEngine::RegisterGameObj(id, names[i].c_str());
+		AkGameObjectID id = ids[i] + 1; //wwise doesn't like 0
+		const char* name = names[i].c_str();
+		AKRESULT akResult = AK::SoundEngine::RegisterGameObj(id, name);
+
+		if (akResult != AKRESULT::AK_Success)
+		{
+			int a = 20;
+			a += -5;
+		}
 	}
 }

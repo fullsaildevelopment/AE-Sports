@@ -20,20 +20,23 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
-	delete[] clientStates;
+//	delete[] clientStates;
 }
 
 int Server::init(uint16_t port)
 {
+	shutdown = false;
+
 	peer = RakNet::RakPeerInterface::GetInstance();
 
 	SocketDescriptor sd(port, 0);
 	sd.socketFamily = AF_INET;
 	StartupResult res = peer->Startup(MAX_PLAYERS, &sd, 1);
-
+	serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_UDP);
+//	peer->GetSocket(peer->GetMyBoundAddress());
 	if (res == SOCKET_PORT_ALREADY_IN_USE)
 		return 0;
-
+	
 	printf("Starting the server.\n");
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);
 
@@ -43,6 +46,9 @@ int Server::init(uint16_t port)
 		names[i] = new char[8];
 		openIDs[i] = i + 1;
 	}
+
+	peer->SetOccasionalPing(true);
+
 	return 1;
 }
 
@@ -98,7 +104,8 @@ int  Server::update()
 			memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
 
 			printf(newMessage);
-			sendMessage(newMessage, ID_SERVER_MESSAGE, true);
+			//sendMessage(newMessage, ID_SERVER_MESSAGE, true);
+			sendMessage(numPlayers, ID_NEW_CLIENT, true);
 			break;
 		}
 		case ID_REQUEST:
@@ -153,6 +160,12 @@ bool Server::Shutdown()
 	sendMessage("", ID_SERVER_CLOSURE, true);
 	if (numPlayers == 0)
 	{
+		//peer->CloseConnection(peer->GetMyGUID(), false, '\000', IMMEDIATE_PRIORITY);
+		peer->Shutdown(100);
+		DataStructures::List<RakNetSocket2*> socs;
+		peer->GetSockets(socs);
+		peer->ReleaseSockets(socs);
+		//closesocket(serverSocket);
 		shutdown = true;
 		return true;
 	}
@@ -161,6 +174,18 @@ bool Server::Shutdown()
 }
 
 void Server::sendMessage(char * message, GameMessages ID, bool broadcast)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID);
+	bsOut.Write(message);
+	if (!broadcast)
+		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
+	else if (broadcast && ID != ID_SERVER_CLOSURE)
+		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), broadcast);
+	else
+		peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), broadcast);
+}
+void Server::sendMessage(UINT8 message, GameMessages ID, bool broadcast)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
@@ -374,4 +399,9 @@ void Server::sendState()
 	bOut.Write(gameState->time);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+}
+
+void Server::StartGame()
+{
+	sendMessage(UINT8(0), ID_START_GAME, true);
 }

@@ -38,6 +38,11 @@ ClientWrapper Game::client;
 ServerWrapper Game::server;
 unsigned int Game::currentScene;
 
+Game::~Game()
+{
+	
+}
+
 void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 {
 	//cache
@@ -95,17 +100,21 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	//init sound engine
 	std::vector<unsigned int> ids;
 	std::vector<std::string> names;
+	int loadSceneIndex = scenesNamesTable.GetKey("FirstLevel");
 
-	ids.resize(scenes[1]->GetNumObjects());
-	names.resize(scenes[1]->GetNumObjects());
-	gameObjects = scenes[1]->GetGameObjects();
+	//ids.resize(scenes[loadSceneIndex]->GetNumObjects());
+	//names.resize(scenes[loadSceneIndex]->GetNumObjects());
+	gameObjects = scenes[loadSceneIndex]->GetGameObjects();
 
 	for (int i = 0; i < gameObjects->size(); ++i)
 	{
-		GameObject* gameObject = (*gameObjects)[i];
+		if (i != GetPlayerObjectID())
+		{
+			GameObject* gameObject = (*gameObjects)[i];
 
-		ids[i] = i;
-		names[i] = gameObject->GetName();
+			ids.push_back(i);
+			names.push_back(gameObject->GetName());
+		}
 	}
 
 	soundEngine->InitSoundEngine(ids, names);
@@ -115,26 +124,26 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
 	Dresources->ResizeWindow(w, h);
-	
+
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
-	
+
 	if (aspectRatio < 1.0f)
 	{
 		fovAngleY *= 2.0f;
 	}
-	
+
 	XMFLOAT4X4 projection;
 	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
 	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
-	
+
 	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
 	Renderer* R;
-	int size = go.size();
+	int size = (int)go.size();
 	for (int i = 0; i < size; ++i)
 	{
 		R = go[i]->GetComponent<Renderer>();
-		if(R)
+		if (R)
 			R->SetProjection(projection);
 	}
 }
@@ -143,38 +152,50 @@ void Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
-		if (server.getObjCount() == 0)
-			server.setObjCount(scenes[currentScene]->GetNumObjects());
+		if (currentScene >= 2) {
+			if (server.getObjCount() == 0)
+				server.setObjCount(scenes[currentScene]->GetNumObjects());
 
-		//set client id
-		Game::clientID = client.getID();
+			//set client id
+			Game::clientID = client.getID();
 
-		// if server, set game states
-		if (ResourceManager::GetSingleton()->IsServer())
-		{
-			UpdateServerStates();
-		}
-
-		//run server
-		if (ResourceManager::GetSingleton()->IsServer())
-		{
-			int serverState = server.run();
-		}
-
-		//run client
-		int clientState = client.run();
-
-		// if client gets server's game states, get the state's location from the client
-		// so that it can be included in update
-		if ((clientState == 2 || clientState == 4) && client.getID() > 0)
-		{
-			UpdateClientObjects();
-
-			if (clientState == 4)
+			// if server, set game states
+			if (ResourceManager::GetSingleton()->IsServer())
 			{
-				Team1Score = client.getScoreA();
-				Team2Score = client.getScoreB();
-				UpdateUI();
+				UpdateServerStates();
+			}
+
+			//run server
+			if (ResourceManager::GetSingleton()->IsServer())
+			{
+				int serverState = server.run();
+			}
+
+			//run client
+			int clientState = client.run();
+
+			// if client gets server's game states, get the state's location from the client
+			// so that it can be included in update
+			if ((clientState == 2 || clientState == 4) && client.getID() > 0)
+			{
+				UpdateClientObjects();
+
+				if (clientState == 4)
+				{
+					Team1Score = client.getScoreA();
+					Team2Score = client.getScoreB();
+					UpdateScoreUI();
+				}
+			}
+		}
+		else
+		{
+			int result = UpdateLobby();
+			if (result == 0)
+			{
+				LoadScene("Menu");
+				ResourceManager::GetSingleton()->SetMultiplayer(false);
+				ResourceManager::GetSingleton()->SetServer(true);
 			}
 		}
 	}
@@ -183,28 +204,43 @@ void Game::Update(float dt)
 	scenes[currentScene]->Update(dt);
 
 	//render audio
-	vector<GameObject*>* objects = scenes[1]->GetGameObjects();
-	vector<XMFLOAT3> objectsPos, forwards;
-	objectsPos.resize(objects->size());
-	forwards.resize(objects->size());
-
-	for (int i = 0; i < objects->size(); ++i)
-	{
-		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
-
-		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-	}
-
 	if (clientID == 0)
 	{
 		clientID = 1;
 	}
 
+	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+	vector<XMFLOAT3> objectsPos, forwards;
+	//objectsPos.resize(objects->size() - 1);
+	//forwards.resize(objects->size() - 1);
+
+	for (int i = 0; i < objects->size(); ++i)
+	{
+		if (i != GetPlayerObjectID())
+		{
+			XMFLOAT3 objectPos;
+
+			objectPos.x = (*objects)[i]->GetTransform()->GetPosition().x;
+			objectPos.y = (*objects)[i]->GetTransform()->GetPosition().y;
+			objectPos.z = (*objects)[i]->GetTransform()->GetPosition().z;
+
+			objectsPos.push_back(objectPos);
+
+			XMFLOAT3 forward;
+			forward = (*objects)[i]->GetTransform()->GetForward();
+			forwards.push_back(forward);
+		}
+	}
+	int index = (clientID - 1) * 3 + 2;
+
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
+}
+
+void Game::FixedUpdate(float dt)
+{
+	scenes[currentScene]->FixedUpdate(dt);
 }
 
 void Game::Render()
@@ -244,11 +280,19 @@ void Game::HandleEvent(Event* e)
 	if (inputDownEvent)
 	{
 		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
+		//(currentScene < 2)
 		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+		}
+		//TODO: need to make this work for in-game menu if we ever add
+		else if (scenesNamesTable.GetKey("Lobby") == currentScene && !inputDownEvent->IsServer()) //if it's a HUD scene, let it handle the input itself
+		{
+			inputDownEvent->SetIsServer(true);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			cout << "HUD stuff" << endl;
 		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
@@ -277,7 +321,7 @@ void Game::HandleEvent(Event* e)
 			server.setScores(Team1Score, Team2Score);
 			server.sendGameState();
 		}
-		UpdateUI();
+		UpdateScoreUI();
 		//Reset Game
 
 		return;
@@ -395,6 +439,25 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 		scenes.push_back(menu);
 		scenesNamesTable.Insert("Menu");
+
+
+		// create lobby
+		Scene* lobby = new Scene();
+		// ask tom
+		GameObject* lcamera = new GameObject();
+		lobby->AddGameObject(lcamera);
+		lcamera->Init("Camera1");
+		lcamera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		Camera* cameraControllerL = new Camera();
+		lcamera->AddComponent(cameraControllerL);
+		cameraControllerL->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+
+		lobby->Init(devResources, input);
+
+		lobby->set2DRenderTarget(devResources->GetRenderTarget());
+		CreateLobby(devResources, lobby);
+		scenes.push_back(lobby);
+		scenesNamesTable.Insert("Lobby");
 	}
 	//create basic level
 
@@ -488,21 +551,21 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
-		if(i <= 4)
+		if (i <= 4)
 			mageRenderer1->SetTeamColor({ 1,0,0,0 });
 		else
 			mageRenderer1->SetTeamColor({ 0,0,1,0 });
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(3.0f, 0.75f);
+		mageMover->Init(1.5f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0,13.0f,0.07f, 20,-14.8f);
+		Physics* physics = new Physics(0, 13.0f, 0.07f, 20, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -576,6 +639,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
 	}
+	ballController->LateInit();
 
 	
 	basic->AddGameObject(goal);
@@ -584,7 +648,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,20,3 }, { -3,0,0 });
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 5,20,5 }, { -5,0,0 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
@@ -595,7 +659,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 3,20,3 }, { -3,0,0 });
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 5,20,5 }, { -5,0,0 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
@@ -640,7 +704,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* WallRenderer3 = new Renderer();
 	Wall3->AddComponent(WallRenderer3);
 	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f}, { -300,-300,-0.5f });
+	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
 	Wall3->AddBoxCollider(Wallboxcol3);
 
 	GameObject* Wall4 = new GameObject();
@@ -694,55 +758,55 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	GameObject * scoreA = new GameObject();
 	basic->AddUIObject(scoreA);
 	scoreA->Init("gameScoreBase");
-		Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
-		theSButton->SetGameObject(scoreA);
-		theSButton->showFPS(false);
-		theSButton->setOrigin(250.0f, 30.0f);
-		theSButton->setPositionMultipliers(0.5f, 0.0f);
-		scoreA->AddComponent(theSButton);
-		UIRenderer * scoreRender = new UIRenderer();
-		scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF::Black);
-		scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
-		scoreA->AddComponent(scoreRender);
-		scoreRender->MakeRTSize();
-		theSButton->MakeRect();
-		scoreRender->InitMetrics();
+	Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
+	theSButton->SetGameObject(scoreA);
+	theSButton->showFPS(false);
+	theSButton->setOrigin(250.0f, 30.0f);
+	theSButton->setPositionMultipliers(0.5f, 0.0f);
+	scoreA->AddComponent(theSButton);
+	UIRenderer * scoreRender = new UIRenderer();
+	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	scoreA->AddComponent(scoreRender);
+	scoreRender->MakeRTSize();
+	theSButton->MakeRect();
+	scoreRender->InitMetrics();
 
 
 	GameObject * scoreB = new GameObject();
 	basic->AddUIObject(scoreB);
 	scoreB->Init("gameScoreA");
-		Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
-		theSButtonB->SetGameObject(scoreB);
-		theSButtonB->showFPS(false);
-		theSButtonB->setOrigin(369.0f, 66.0f);
-		theSButtonB->setPositionMultipliers(0.40f, 0.11f);
-		scoreB->AddComponent(theSButtonB);
-		UIRenderer * scoreBRender = new UIRenderer();
-		scoreBRender->Init(true, 35.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
-		scoreBRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
-		scoreB->AddComponent(scoreBRender);
-		scoreBRender->MakeRTSize();
-		theSButtonB->MakeRect();
-		scoreBRender->InitMetrics();
+	Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	theSButtonB->SetGameObject(scoreB);
+	theSButtonB->showFPS(false);
+	theSButtonB->setOrigin(369.0f, 70.0f);
+	theSButtonB->setPositionMultipliers(0.40f, 0.11f);
+	scoreB->AddComponent(theSButtonB);
+	UIRenderer * scoreBRender = new UIRenderer();
+	scoreBRender->Init(true, 30.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
+	scoreBRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+	scoreB->AddComponent(scoreBRender);
+	scoreBRender->MakeRTSize();
+	theSButtonB->MakeRect();
+	scoreBRender->InitMetrics();
 
 
 	GameObject * scoreC = new GameObject();
 	basic->AddUIObject(scoreC);
 	scoreC->Init("gameScoreB");
-		Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
-		theSButtonC->SetGameObject(scoreC);
-		theSButtonC->showFPS(false);
-		theSButtonC->setOrigin(569.0f, 66.0f);
-		theSButtonC->setPositionMultipliers(0.6f, 0.11f);
-		scoreC->AddComponent(theSButtonC);
-		UIRenderer * scoreCRender = new UIRenderer();
-		scoreCRender->Init(true, 35.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
-		scoreCRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
-		scoreC->AddComponent(scoreCRender);
-		scoreCRender->MakeRTSize();
-		theSButtonC->MakeRect();
-		scoreCRender->InitMetrics();
+	Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	theSButtonC->SetGameObject(scoreC);
+	theSButtonC->showFPS(false);
+	theSButtonC->setOrigin(569.0f, 70.0f);
+	theSButtonC->setPositionMultipliers(0.6f, 0.11f);
+	scoreC->AddComponent(theSButtonC);
+	UIRenderer * scoreCRender = new UIRenderer();
+	scoreCRender->Init(true, 30.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
+	scoreCRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+	scoreC->AddComponent(scoreCRender);
+	scoreCRender->MakeRTSize();
+	theSButtonC->MakeRect();
+	scoreCRender->InitMetrics();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
@@ -914,19 +978,115 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	bg2Button->MakeRect();
 
 
-	// create lobby
-	CreateLobby(devResources, scene);
 }
 
 void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 {
-	// input name
+	// background
+	GameObject * bg = new GameObject();
+	scene->AddUIObject(bg);
+	bg->Init("background");
+	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
+	bgButton->setSceneIndex((unsigned int)scenes.size());
+	bgButton->SetGameObject(bg);
+	bgButton->showFPS(false);
+	bgButton->setOrigin(0.0f, 0.0f);
+	bgButton->setPositionMultipliers(0.0f, 0.0f);
+	bg->AddComponent(bgButton);
+	UIRenderer * bgRender = new UIRenderer();
+	bgRender->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
+	bgRender->DecodeBitmap(L"../Assets/UI/main_menu.png");
+	bg->AddComponent(bgRender);
+	bgRender->MakeRTSize();
+	bgButton->MakeRect();
 
+	// start game, will only show if isServer
+	GameObject * startGame = new GameObject();
+	scene->AddUIObject(startGame);
+	startGame->Init("Start");
+	Button * sButton = new Button(true, true, L"Play Game", (unsigned int)strlen("Play Game"), 300.0f, 60.0f, devResources, 3);
+	sButton->setSceneIndex((unsigned int)scenes.size());
+	sButton->SetGameObject(startGame);
+	sButton->showFPS(false);
+	sButton->setOrigin(500.0f, 385.0f);
+	sButton->setPositionMultipliers(0.65f, 0.50f);
+	startGame->AddComponent(sButton);
+	UIRenderer * sRender = new UIRenderer();
+	sRender->Init(true, 25.0f, devResources, sButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	sRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	sRender->DecodeBitmap(L"../Assets/UI/button3.png");
+	startGame->AddComponent(sRender);
+	sRender->MakeRTSize();
+	sButton->MakeRect();
+	sButton->MakeHandler();
+	sRender->InitMetrics();
 
-	// lobby screen -- show current players
+	// start game, will only show if isServer
+	GameObject * exitGame = new GameObject();
+	scene->AddUIObject(exitGame);
+	exitGame->Init("Exit");
+	Button * eButton = new Button(true, true, L"Exit Lobby", (unsigned int)strlen("Exit Lobby"), 300.0f, 60.0f, devResources, 6);
+	eButton->setSceneIndex((unsigned int)scenes.size());
+	eButton->SetGameObject(exitGame);
+	eButton->showFPS(false);
+	eButton->setOrigin(500.0f, 465.0f);
+	eButton->setPositionMultipliers(0.65f, 0.60f);
+	exitGame->AddComponent(eButton);
+	UIRenderer * eRender = new UIRenderer();
+	eRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	eRender->DecodeBitmap(L"../Assets/UI/button2.png");
+	eRender->DecodeBitmap(L"../Assets/UI/button3.png");
+	exitGame->AddComponent(eRender);
+	eRender->MakeRTSize();
+	eButton->MakeRect();
+	eButton->MakeHandler();
+	eRender->InitMetrics();
 
+	// number of players
+	GameObject * numPlayers = new GameObject();
+	scene->AddUIObject(numPlayers);
+	numPlayers->Init("Players");
+	Button * nButton = new Button(true, false, L"1/4", (unsigned int)strlen("1/4"), 300.0f, 100.0f, devResources, 0);
+	nButton->setSceneIndex((unsigned int)scenes.size());
+	nButton->SetGameObject(numPlayers);
+	nButton->showFPS(false);
+	nButton->setOrigin(500.0f, 200.0f);
+	numPlayers->AddComponent(nButton);
+	UIRenderer * nRender = new UIRenderer();
+	nRender->Init(false, 40.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f, 0.412f, 0.706f, 1.0f));
+	numPlayers->AddComponent(nRender);
+	nRender->MakeRTSize();
+	nButton->MakeRect();
+	nButton->MakeHandler();
+	nRender->InitMetrics();
+
+	// background 2.0
+	GameObject * bg2 = new GameObject();
+	scene->AddUIObject(bg2);
+	bg2->Init("background2");
+	Button * bg2Button = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
+	bg2Button->setSceneIndex((unsigned int)scenes.size());
+	bg2Button->SetGameObject(bg2);
+	bg2Button->showFPS(false);
+	bg2Button->setOrigin(0.0f, 0.0f);
+	bg2Button->setPositionMultipliers(0.0f, 0.0f);
+	bg2->AddComponent(bg2Button);
+	UIRenderer * bg2Render = new UIRenderer();
+	bg2Render->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
+	bg2Render->DecodeBitmap(L"../Assets/UI/main_menu2.png");
+	bg2->AddComponent(bg2Render);
+	bg2Render->MakeRTSize();
+	bg2Button->MakeRect();
 }
 
+
+void Game::EnableButton(std::string name, bool toggle)
+{
+	GameObject * obj = scenes[currentScene]->GetUIByName(name);
+	Button * button = obj->GetComponent<Button>();
+	button->SetEnabled(toggle);
+	button->SetActive(toggle);
+}
 
 void Game::UpdateServerStates()
 {
@@ -970,7 +1130,7 @@ void Game::UpdateServerStates()
 		if (animator)
 		{
 			animIndex = animator->GetNextStateIndex();
-			
+
 			if (animIndex >= 0)
 			{
 				transitionIndex = animator->GetState(animIndex)->GetTransitionIndex();
@@ -1075,7 +1235,7 @@ void Game::UpdateClientObjects()
 	}
 }
 
-void Game::UpdateUI()
+void Game::UpdateScoreUI()
 {
 	GameObject * scoreA = scenes[currentScene]->GetUIByName("gameScoreA");
 	Button * buttonA = scoreA->GetComponent<Button>();
@@ -1097,6 +1257,14 @@ void Game::LoadScene(std::string name)
 		currentScene = index;
 	}
 
+	if (currentScene == 1)
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+			EnableButton("Start", true);
+		else
+			EnableButton("Start", false);
+	}
+
 	//resize gamestates
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	for (int i = 0; i < gameStates.size(); ++i)
@@ -1104,4 +1272,37 @@ void Game::LoadScene(std::string name)
 		GameState* state = new GameState();
 		gameStates[i] = state;
 	}
+}
+
+void Game::UpdateLobbyUI(int _amount)
+{
+	GameObject * lobby = scenes[currentScene]->GetUIByName("Players");
+	Button * button = lobby->GetComponent<Button>();
+	button->setText(to_wstring(_amount) + L"/4");
+}
+
+// updates the lobby screen
+// since the networking is different on the lobby, this keeps it from sending packages when it doesn't need to
+int Game::UpdateLobby()
+{
+	//set client id
+	Game::clientID = client.getID();
+
+	//run server
+	if (ResourceManager::GetSingleton()->IsServer())
+	{
+		int serverState = server.run();
+	}
+
+	//run client
+	int clientState = client.run();
+
+	if (clientState == 5)
+		UpdateLobbyUI(client.getNumClients());
+	else if (clientState == 6)
+		LoadScene("FirstLevel");
+	
+
+
+	return clientState;
 }

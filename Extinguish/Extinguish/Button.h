@@ -21,6 +21,7 @@ private:
 		PLAY,
 		CREDITS,
 		EXIT,
+		RETURN,
 		RESUME_GAME
 	};
 
@@ -40,6 +41,7 @@ private:
 	string fps;
 	wstring text;
 	float time = 300.0f;
+	float clickCooldown = 1.0f;
 	bool isActive;
 	bool isClickable;
 	bool showFps = false;
@@ -49,7 +51,9 @@ private:
 	// some function pointer for event
 	void (*eventFunction)(void);
 
+
 public:
+	//~Button() {}
 	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 		DeviceResources * resources, unsigned int type);
 
@@ -99,6 +103,7 @@ public:
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setButtonType();
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
+	void SetActive(bool active) { isActive = active; }
 
 	/* HELPERS*/
 

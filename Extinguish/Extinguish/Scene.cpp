@@ -416,7 +416,7 @@ void Scene::Update(float dt)
 
 	int id = Game::GetClientID();
 
-	if (id == 0)
+	if (id == 0 || Game::currentScene < 2)
 	{
 		id = 1;
 	}
@@ -505,6 +505,24 @@ void Scene::Update(float dt)
 	}
 
 	ImGui::EndFrame();
+}
+
+void Scene::FixedUpdate(float dt)
+{
+	int id = Game::GetClientID();
+
+	if (id == 0 || Game::currentScene < 2)
+	{
+		id = 1;
+	}
+	for (int i = 0; i < gameObjects.size(); ++i)
+	{
+		//only update game objects if this is the server
+		if (id == 1)
+		{
+			gameObjects[i]->FixedUpdate(dt);
+		}
+	}
 }
 
 void Scene::HandleInput()

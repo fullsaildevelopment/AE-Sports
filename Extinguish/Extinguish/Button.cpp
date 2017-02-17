@@ -7,6 +7,9 @@
 
 void StartGame()
 {
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::server.StartGame();
+
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("FirstLevel");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
@@ -22,7 +25,10 @@ void StartServer()
 
 		Game::client.init("127.0.0.1", 60001);
 
-		StartGame();
+		LoadSceneEvent* event = new LoadSceneEvent();
+		event->Init("Lobby");
+		EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+		delete event;
 	}
 }
 
@@ -32,13 +38,78 @@ void JoinServer()
 	ResourceManager::GetSingleton()->SetServer(false);
 	Game::client.init("127.0.0.1", 60001);
 
-	StartGame();
+	LoadSceneEvent* event = new LoadSceneEvent();
+	event->Init("Lobby");
+	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+	delete event;
 }
 
 void ShutdownGame()
 {
-	// shutdown game
+	if (ResourceManager::GetSingleton()->IsServer())
+	{
+		Game::server.stop();
+		while (Game::server.run() != 0) {
+			if (Game::client.run() == 0)
+				break;
+		}
+	}
+	else
+	{
+		Game::client.sendStop();
+
+		while (Game::client.run() != 0) {}
+	}
 }
+
+void ReturnToMenu()
+{
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			Game::server.stop();
+			while (Game::server.run() != 0) {
+				if (Game::client.run() == 0)
+					break;
+			}
+		}
+		else
+		{
+			Game::client.sendStop();
+
+			while (Game::client.run() != 0) {}
+		}
+	}
+	LoadSceneEvent* event = new LoadSceneEvent();
+	event->Init("Menu");
+	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+	delete event;
+}
+
+//Button::~Button()
+//{
+//	if (buttonType == EXIT)
+//	{
+//		if (ResourceManager::GetSingleton()->IsMultiplayer())
+//		{
+//			if (ResourceManager::GetSingleton()->IsServer())
+//			{
+//				Game::server.stop();
+//				while (Game::server.run() != 0) {
+//					if (Game::client.run() == 0)
+//						break;
+//				}
+//			}
+//			else
+//			{
+//				Game::client.sendStop();
+//
+//				while (Game::client.run() != 0) {}
+//			}
+//		}
+//	}
+//}
 
 Button::Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 	DeviceResources * resources, unsigned int type) {
@@ -79,6 +150,9 @@ void Button::Update(float dt)
 {
 	time -= dt;
 
+	if (clickCooldown >= 0.0f)
+		clickCooldown -= dt;
+
 	if (time < 0)
 	{
 		time = 300.0f;
@@ -112,9 +186,14 @@ void Button::HandleEvent(Event* e)
 			if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
 			{
 
-				if (input->GetMouseDown()[0])
+				if (input->GetMouseDown()[0] && clickCooldown <= 0.0f)
 				{
+					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
+					{
+						clickCooldown = 1.0f;
+					}
 					eventFunction();
+
 				}
 				else
 				{
@@ -155,6 +234,11 @@ void Button::setButtonType()
 	case BUTTON_TYPE::EXIT:
 	{
 		eventFunction = ShutdownGame;
+		break;
+	}
+	case BUTTON_TYPE::RETURN:
+	{
+		eventFunction = ReturnToMenu;
 		break;
 	}
 	case BUTTON_TYPE::RESUME_GAME:
