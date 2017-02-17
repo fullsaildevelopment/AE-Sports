@@ -183,6 +183,10 @@ int Client::run()
 			result = 5;
 			break;
 		}
+		case ID_START_GAME:
+		{
+			return 6;
+		}
 		}
 	}
 

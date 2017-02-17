@@ -62,6 +62,7 @@ private:
 
 	void LoadScene(std::string name);
 	int UpdateLobby();
+	void EnableButton(std::string name, bool toggle);
 public:
 
 	//basic

@@ -7,6 +7,9 @@
 
 void StartGame()
 {
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::server.StartGame();
+
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("FirstLevel");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");

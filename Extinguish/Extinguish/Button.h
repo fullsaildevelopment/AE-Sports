@@ -101,6 +101,7 @@ public:
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setButtonType();
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
+	void SetActive(bool active) { isActive = active; }
 
 	/* HELPERS*/
 

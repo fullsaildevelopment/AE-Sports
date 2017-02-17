@@ -143,7 +143,7 @@ void Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
-		if (currentScene > 2) {
+		if (currentScene >= 2) {
 			if (server.getObjCount() == 0)
 				server.setObjCount(scenes[currentScene]->GetNumObjects());
 
@@ -214,9 +214,9 @@ void Game::Update(float dt)
 		clientID = 1;
 	}
 
-	soundEngine->UpdatePositions(objectsPos, forwards);
-	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
-	soundEngine->ProcessAudio();
+//	soundEngine->UpdatePositions(objectsPos, forwards);
+	//soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
+	//soundEngine->ProcessAudio();
 }
 
 void Game::Render()
@@ -1013,6 +1013,14 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 }
 
 
+void Game::EnableButton(std::string name, bool toggle)
+{
+	GameObject * obj = scenes[currentScene]->GetUIByName(name);
+	Button * button = obj->GetComponent<Button>();
+	button->SetEnabled(toggle);
+	button->SetActive(toggle);
+}
+
 void Game::UpdateServerStates()
 {
 	// get current game states
@@ -1182,6 +1190,14 @@ void Game::LoadScene(std::string name)
 		currentScene = index;
 	}
 
+	if (currentScene == 1)
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+			EnableButton("Start", true);
+		else
+			EnableButton("Start", false);
+	}
+
 	//resize gamestates
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	for (int i = 0; i < gameStates.size(); ++i)
@@ -1216,6 +1232,8 @@ int Game::UpdateLobby()
 
 	if (clientState == 5)
 		UpdateLobbyUI(client.getNumClients());
+	else if (clientState == 6)
+		LoadScene("FirstLevel");
 	
 
 	return clientState;

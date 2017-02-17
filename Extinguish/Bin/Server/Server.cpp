@@ -400,3 +400,8 @@ void Server::sendState()
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }
+
+void Server::StartGame()
+{
+	sendMessage(UINT8(0), ID_START_GAME, true);
+}
