@@ -115,26 +115,26 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
 	Dresources->ResizeWindow(w, h);
-	
+
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
-	
+
 	if (aspectRatio < 1.0f)
 	{
 		fovAngleY *= 2.0f;
 	}
-	
+
 	XMFLOAT4X4 projection;
 	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
 	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
-	
+
 	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
 	Renderer* R;
 	int size = (int)go.size();
 	for (int i = 0; i < size; ++i)
 	{
 		R = go[i]->GetComponent<Renderer>();
-		if(R)
+		if (R)
 			R->SetProjection(projection);
 	}
 }
@@ -496,7 +496,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
-		if(i <= 4)
+		if (i <= 4)
 			mageRenderer1->SetTeamColor({ 1,0,0,0 });
 		else
 			mageRenderer1->SetTeamColor({ 0,0,1,0 });
@@ -510,7 +510,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0,13.0f,0.07f, 20,-14.8f);
+		Physics* physics = new Physics(0, 13.0f, 0.07f, 20, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -649,7 +649,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* WallRenderer3 = new Renderer();
 	Wall3->AddComponent(WallRenderer3);
 	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f}, { -300,-300,-0.5f });
+	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
 	Wall3->AddBoxCollider(Wallboxcol3);
 
 	GameObject* Wall4 = new GameObject();
@@ -703,55 +703,55 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	GameObject * scoreA = new GameObject();
 	basic->AddUIObject(scoreA);
 	scoreA->Init("gameScoreBase");
-		Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
-		theSButton->SetGameObject(scoreA);
-		theSButton->showFPS(false);
-		theSButton->setOrigin(250.0f, 30.0f);
-		theSButton->setPositionMultipliers(0.5f, 0.0f);
-		scoreA->AddComponent(theSButton);
-		UIRenderer * scoreRender = new UIRenderer();
-		scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f,0.8f,0.8f,1.0f));
-		scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
-		scoreA->AddComponent(scoreRender);
-		scoreRender->MakeRTSize();
-		theSButton->MakeRect();
-		scoreRender->InitMetrics();
+	Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
+	theSButton->SetGameObject(scoreA);
+	theSButton->showFPS(false);
+	theSButton->setOrigin(250.0f, 30.0f);
+	theSButton->setPositionMultipliers(0.5f, 0.0f);
+	scoreA->AddComponent(theSButton);
+	UIRenderer * scoreRender = new UIRenderer();
+	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	scoreA->AddComponent(scoreRender);
+	scoreRender->MakeRTSize();
+	theSButton->MakeRect();
+	scoreRender->InitMetrics();
 
 
 	GameObject * scoreB = new GameObject();
 	basic->AddUIObject(scoreB);
 	scoreB->Init("gameScoreA");
-		Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
-		theSButtonB->SetGameObject(scoreB);
-		theSButtonB->showFPS(false);
-		theSButtonB->setOrigin(369.0f, 70.0f);
-		theSButtonB->setPositionMultipliers(0.40f, 0.11f);
-		scoreB->AddComponent(theSButtonB);
-		UIRenderer * scoreBRender = new UIRenderer();
-		scoreBRender->Init(true, 30.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
-		scoreBRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
-		scoreB->AddComponent(scoreBRender);
-		scoreBRender->MakeRTSize();
-		theSButtonB->MakeRect();
-		scoreBRender->InitMetrics();
+	Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	theSButtonB->SetGameObject(scoreB);
+	theSButtonB->showFPS(false);
+	theSButtonB->setOrigin(369.0f, 70.0f);
+	theSButtonB->setPositionMultipliers(0.40f, 0.11f);
+	scoreB->AddComponent(theSButtonB);
+	UIRenderer * scoreBRender = new UIRenderer();
+	scoreBRender->Init(true, 30.0f, devResources, theSButtonB, L"Consolas", D2D1::ColorF::Black);
+	scoreBRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+	scoreB->AddComponent(scoreBRender);
+	scoreBRender->MakeRTSize();
+	theSButtonB->MakeRect();
+	scoreBRender->InitMetrics();
 
 
 	GameObject * scoreC = new GameObject();
 	basic->AddUIObject(scoreC);
 	scoreC->Init("gameScoreB");
-		Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
-		theSButtonC->SetGameObject(scoreC);
-		theSButtonC->showFPS(false);
-		theSButtonC->setOrigin(569.0f, 70.0f);
-		theSButtonC->setPositionMultipliers(0.6f, 0.11f);
-		scoreC->AddComponent(theSButtonC);
-		UIRenderer * scoreCRender = new UIRenderer();
-		scoreCRender->Init(true, 30.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
-		scoreCRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
-		scoreC->AddComponent(scoreCRender);
-		scoreCRender->MakeRTSize();
-		theSButtonC->MakeRect();
-		scoreCRender->InitMetrics();
+	Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	theSButtonC->SetGameObject(scoreC);
+	theSButtonC->showFPS(false);
+	theSButtonC->setOrigin(569.0f, 70.0f);
+	theSButtonC->setPositionMultipliers(0.6f, 0.11f);
+	scoreC->AddComponent(theSButtonC);
+	UIRenderer * scoreCRender = new UIRenderer();
+	scoreCRender->Init(true, 30.0f, devResources, theSButtonC, L"Consolas", D2D1::ColorF::Black);
+	scoreCRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+	scoreC->AddComponent(scoreCRender);
+	scoreCRender->MakeRTSize();
+	theSButtonC->MakeRect();
+	scoreCRender->InitMetrics();
 
 	GameObject * debugUI = new GameObject();
 	basic->AddUIObject(debugUI);
@@ -998,7 +998,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	nButton->setOrigin(500.0f, 200.0f);
 	numPlayers->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
-	nRender->Init(false, 40.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f,0.412f,0.706f, 1.0f));
+	nRender->Init(false, 40.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f, 0.412f, 0.706f, 1.0f));
 	numPlayers->AddComponent(nRender);
 	nRender->MakeRTSize();
 	nButton->MakeRect();
@@ -1067,7 +1067,7 @@ void Game::UpdateServerStates()
 		if (animator)
 		{
 			animIndex = animator->GetNextStateIndex();
-			
+
 			if (animIndex >= 0)
 			{
 				transitionIndex = animator->GetState(animIndex)->GetTransitionIndex();
@@ -1228,7 +1228,7 @@ int Game::UpdateLobby()
 
 	if (clientState == 5)
 		UpdateLobbyUI(client.getNumClients());
-	
+
 
 	return clientState;
 }

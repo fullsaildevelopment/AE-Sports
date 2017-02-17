@@ -104,7 +104,9 @@ void BallController::FixedUpdate(float dt)
 			float l = ball2net.magnitude();
 			if (l < 3)
 			{
-				me->GetTransform()->AddVelocity(ball2net.normalize() * 1 / l);
+				float s = 1 / l;
+				s > 1.5f ? s = 1.5f : s < 0.0f ? s = 0.0f : s = s;
+				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
 			}
 		}
 	}

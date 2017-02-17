@@ -10,7 +10,7 @@ void Physics::Init()
 	isKinematic = false;
 }
 
-void Physics::Update(float dt)
+void Physics::FixedUpdate(float dt)
 {
 	if (!isKinematic)
 	{
