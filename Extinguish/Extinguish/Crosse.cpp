@@ -81,10 +81,10 @@ void Crosse::Throw()
 		//transform->RotateX(XMConvertToRadians(45));
 
 		//play sound
-		SoundEvent* soundEvent = new SoundEvent();
-		soundEvent->Init(AK::EVENTS::PLAY_3D_SPEARBODY, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-		delete soundEvent;
+		//SoundEvent* soundEvent = new SoundEvent();
+		//soundEvent->Init(AK::EVENTS::PLAY_3D_SPEARBODY, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		//EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		//delete soundEvent;
 		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
 		
 		cout << "Throw" << endl;

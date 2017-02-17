@@ -28,6 +28,7 @@ public:
 	void LateInit();
 	void Update(float dt) override;
 	void OnTriggerEnter(Collider *obj) override;
+	void OnCollisionEnter(Collider* obj) override;
 
 	// actions
 	void ThrowTo(GameObject *target);
