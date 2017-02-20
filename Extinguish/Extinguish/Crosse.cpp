@@ -9,6 +9,8 @@
 #include "SoundEvent.h"
 #include "Renderer.h"
 #include "SoundEvent.h"
+#include "CoughtEvent.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -49,8 +51,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 		if (!ballC->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
 			ballC->SetHolder(GetGameObject());
-			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
-
+			SetColor(true);
 			//play sound
 			SoundEvent* soundEvent = new SoundEvent();
 			soundEvent->Init(AK::EVENTS::PLAY_CATCH, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
@@ -62,12 +63,31 @@ void Crosse::OnTriggerEnter(Collider* collider)
 	}
 }
 
+void Crosse::SetColor(bool b)
+{
+	if (GetGameObject())
+	{
+		if (b)
+			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
+		else
+			GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
+		if (Game::GetClientID() == 1)
+		{
+			CoughtEvent* ce = new CoughtEvent;
+			ce->holding = b;
+			ce->id = GetGameObject()->FindIndexOfGameObject(GetGameObject());
+			EventDispatcher::GetSingleton()->DispatchTo(ce, "Game");
+			delete ce;
+		}
+	}
+}
+
 //misc
 void Crosse::Throw()
 {
 	const float throwSpeed = 25.0f;
 
-	if (ballC->GetHolder() == GetGameObject())
+	if (ballC->GetCrosseHolder() == GetGameObject())
 	{
 		XMFLOAT4X4 ballworld = ballTransform->GetWorld();
 		//detach ball
@@ -75,7 +95,7 @@ void Crosse::Throw()
 		ballTransform->SetPosition({ ballworld._41 + ballForward.x * 0.2f, ballworld._42 + ballForward.y * 0.2f, ballworld._43 + ballForward.z * 0.2f }); //set ball's position to real ball position
 
 		ballC->Throw();
-		GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
+		SetColor(false);
 
 		//update ball after set position
 		ballTransform->GetWorld();

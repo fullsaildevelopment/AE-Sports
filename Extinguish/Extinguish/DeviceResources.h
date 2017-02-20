@@ -69,5 +69,4 @@ public:
 	ID2D1Factory2 * GetID2D1Factory() { return pD2DFactory.Get(); }
 	ID2D1HwndRenderTarget * GetRenderTarget() { return pRT.Get(); }
 
-
 };

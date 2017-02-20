@@ -25,6 +25,7 @@ void Goal::Score(int team)
 	ScoreEvent* se = new ScoreEvent();
 	se->SetTeam(team);
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
+	delete se;
 	Transform* bt = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 	bt->SetPosition({ -7,10,-20.5f });
 	bt->SetVelocity({ 0,0,0 });

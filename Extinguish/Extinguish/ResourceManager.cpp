@@ -26,6 +26,7 @@ ResourceManager::~ResourceManager()
 //basic//
 void ResourceManager::Init(DeviceResources const * devResources)
 {
+
 	device = devResources->GetDevice();
 	devContext = devResources->GetDeviceContext();
 	

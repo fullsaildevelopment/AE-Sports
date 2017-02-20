@@ -13,7 +13,6 @@ using namespace std;
 #define ThrowSpeed 28
 #define DropSpeed 10
 
-
 void BallController::OnTriggerEnter(Collider *obj)
 {
 	//SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
@@ -50,7 +49,7 @@ void BallController::Init()
 void BallController::LateInit()
 {
 	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
-	int size = go.size();
+	int size = (int)go.size();
 	for (int i = 0; i < size; ++i)
 	{
 		Crosse* c = go[i]->GetComponent<Crosse>();
@@ -66,16 +65,18 @@ void BallController::Update(float dt)
 	//printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
 	timer.Signal();
 
-	//if (!isHeld && transform->GetParent())
-	//{
-	//	SetHolder(transform->GetParent()->GetGameObject());
-	//}
+	if (!isHeld && transform->GetParent())
+	{
+		SetHolder(transform->GetParent()->GetGameObject());
+		holder->GetComponent<Crosse>()->SetColor(true);
+	}
 
 
 #if _DEBUG
 	if (InputManager::GetSingleton()->GetKey(17))
 	{
 		SetHolder(GetGameObject()->FindGameObject("Crosse1"));
+		holder->GetComponent<Crosse>()->SetColor(true);
 	}
 #endif
 
@@ -98,7 +99,7 @@ void BallController::FixedUpdate(float dt)
 {
 	if (!isHeld && !isThrown)
 	{
-		int s = nets.size();
+		int s = (int)nets.size();
 		for (int i = 0; i < s; ++i)
 		{
 			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
@@ -121,6 +122,7 @@ void BallController::Throw()
 	timer.Restart();
 	isThrown = true;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
+	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
 
@@ -133,6 +135,7 @@ void BallController::ThrowTo(GameObject *target)
 {
 	isHeld = false;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
+	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
 
@@ -163,6 +166,7 @@ void BallController::DropBall(GameObject *person)
 	//set ball variables
 	isHeld = false;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
+	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
 
@@ -182,6 +186,11 @@ bool BallController::GetIsThrown()
 }
 
 GameObject* BallController::GetHolder()
+{
+	return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
+}
+
+GameObject* BallController::GetCrosseHolder()
 {
 	return holder;
 }

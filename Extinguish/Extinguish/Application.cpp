@@ -31,7 +31,6 @@ bool Application::Update(float dt)
 	windowResult = window.Update(input);
 
 	//std::cout << windowResult << std::endl;
-
 	if (windowResult == WM_QUIT)
 	{
 		result = false;
@@ -42,7 +41,9 @@ bool Application::Update(float dt)
 		//TODO: make input inside of game, and only allow server to update it
 		input->Update();
 		//soundEngine.ProcessAudio();
-		game.Update(dt);
+		int gResult = game.Update(dt);
+		if (gResult == 0)
+			result = false;
 		game.Render();
 	}
 

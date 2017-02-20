@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 5
+#define RunSpeed 15
 #define AttackSpeed 15
 #define StumbleSpeed 5
 
@@ -19,19 +19,28 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
-void AI::OnTriggerEnter(Collider *obj)
+void AI::OnCollisionEnter(Collider *obj)
 {
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
 
-	// if i bump into a player and they are intentionally attacking me
-	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+	if (col)
 	{
-		// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
-		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
-			ballClass->DropBall(me);
+		// if i bump into a player and they are intentionally attacking me
+		if (obj->GetGameObject()->GetComponent<AI>())
+		{
+			if (obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+			{
+				// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
+				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
+					ballClass->DropBall(me);
 
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
-		me->GetTransform()->AddVelocity(vel);
+				float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
+				me->GetTransform()->AddVelocity(vel);
+			}
+		}
+
+		else if (obj->GetGameObject() == realTarget)
+			startTimer = true;
 	}
 }
 
@@ -190,6 +199,11 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float dt)
 {
+	if (startTimer)
+	{
+		timer -= dt;
+	}
+
 	// if I'm the goalie
 	if (currState == goalie || currState == playboy)
 	{
@@ -211,7 +225,7 @@ void AI::Update(float dt)
 		}
 
 		// if the ball is too far from the goal
-		else if (dist.magnitude() > 2)
+		else if (dist.magnitude() > 1)
 		{
 			if (currState == playboy)
 			{
@@ -285,6 +299,11 @@ void AI::Update(float dt)
 		}
 	}
 
+	if (timer <= 0)
+	{
+		timer = 2;
+		startTimer = false;
+	}
 }
 
 void AI::Idle()
@@ -351,10 +370,10 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
-	string tag = target->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetTag();
+	realTarget = target;
 
-	// if they're not on my team run into target
-	if (tag != me->GetTag())
+	// if they're not on my team and if the timer isn't going
+	if (target->GetTag() != me->GetTag() && timer == 2)
 	{
 		isAttacking = true;
 
@@ -419,7 +438,15 @@ bool AI::RunTo(GameObject *target)
 	float3 u = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1)).normalize();
 
 	//v - vector between me and destination
-	float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	float3 v;
+
+	/*if (target == myGoal || target == enemyGoal)
+	{
+		v = (((target->GetTransform()->GetForwardf3() * 3 + target->GetTransform()->GetPosition()) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	}
+
+	else*/
+		v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
 	float degRad = dot_product(u, v);// / (u.magnitude() * v.magnitude());
@@ -429,7 +456,9 @@ bool AI::RunTo(GameObject *target)
 	// run to them
 	me->GetTransform()->SetVelocity(v * RunSpeed);
 
-	if (v.magnitude() < 3)
+	float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+	if (a.magnitude() < 5)
 		return true;
 
 	return false;
@@ -437,8 +466,16 @@ bool AI::RunTo(GameObject *target)
 
 void AI::Score()
 {
-	if (RunTo(enemyGoal))
-		ballClass->ThrowTo(enemyGoal);
+	float3 a = enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+	bool trash = RunTo(enemyGoal);
+
+	if (a.magnitude() < 8)
+	{
+		if (!crosse)
+			crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
+
+		crosse->Throw();
+	}
 
 	//float3 dist = ball->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
 	// if the vector between me and the goal is clear
