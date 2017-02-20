@@ -1,8 +1,11 @@
 #include "Server.h"
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
-Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[30];
-Server::GAME_STATE * Server::gameState = new GAME_STATE();
+//Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[30];
+//Server::GAME_STATE * Server::gameState = new GAME_STATE();
+
+//std::vector<Server::CLIENT_GAME_STATE> clientStates;
+//std::vector<Server::GAME_STATE> gameState;
 
 
 void Server::setObjectCount(int count) { 
@@ -12,7 +15,8 @@ void Server::setObjectCount(int count) {
 
 Server::Server()
 {
-
+	clientStates = new std::vector<CLIENT_GAME_STATE>();
+	gameState = new std::vector<GAME_STATE>();
 }
 
 Server::~Server()
@@ -20,7 +24,11 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
+	delete clientStates;
+	delete gameState;
 //	delete[] clientStates;
+	if (peer)
+	peer->DestroyInstance(peer);
 }
 
 int Server::init(uint16_t port)
@@ -81,7 +89,7 @@ int  Server::update()
 		{
 			printf("A client has disconnected.\n");
 
-			if (numPlayers == 0)
+			if (numPlayers == 1)
 				return 0;
 			break;
 		}
@@ -116,7 +124,7 @@ int  Server::update()
 		case ID_CLIENT_DISCONNECT:
 		{
 			unregisterClient();
-			sendDisconnect();
+			sendDisconnect(false);
 
 			break;
 		}
@@ -150,7 +158,14 @@ int  Server::update()
 void Server::stop()
 {
 	shutdown = true;
-	RakPeerInterface::DestroyInstance(peer);
+	while (true)
+	{
+		sendDisconnect(true);
+		int result = update();
+		if (result == 0)
+			break;
+	}
+	//RakPeerInterface::DestroyInstance(peer);
 }
 
 bool Server::Shutdown()
@@ -277,9 +292,9 @@ void Server::unregisterClient()
 	--numPlayers;
 }
 
-void Server::sendDisconnect()
+void Server::sendDisconnect(bool broadcast)
 {
-	sendMessage("", ID_REMOVE_CLIENT, false);
+	sendMessage("", ID_REMOVE_CLIENT, broadcast);
 }
 
 void Server::recievePacket()
@@ -300,7 +315,7 @@ void Server::recievePacket()
 	bIn.Read(tempState.parentIndex);
 	bIn.Read(tempState.animationIndex);
 
-	clientStates[tempState.clientID] = tempState;
+	clientStates[0][tempState.clientID] = tempState;
 
 	lastState = (int)tempState.clientID;
 
@@ -351,19 +366,19 @@ void Server::sendPackets()
 		for (unsigned int i = 0; i < (unsigned int)serverObjs; ++i)
 		{
 			//bOut.Write(GetTime());
-			bOut.Write(clientStates[i].clientID);
+			bOut.Write(clientStates[0][i].clientID);
 			//bOut.Write(clientStates[i].nameLength);
 			//bOut.Write(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
-			bOut.Write(clientStates[i].hasBall);
+			bOut.Write(clientStates[0][i].hasBall);
 			//bOut.Write(clientStates[i].world);
-			bOut.Write(clientStates[i].position);
-			bOut.Write(clientStates[i].rotation);
-			bOut.Write(clientStates[i].parentIndex);
-			bOut.Write(clientStates[i].animationIndex);
-			bOut.Write(clientStates[i].otherIndex);
-			bOut.Write(clientStates[i].transitionIndex);
-			bOut.Write(clientStates[i].soundID);
-			bOut.Write(clientStates[i].hasSound);
+			bOut.Write(clientStates[0][i].position);
+			bOut.Write(clientStates[0][i].rotation);
+			bOut.Write(clientStates[0][i].parentIndex);
+			bOut.Write(clientStates[0][i].animationIndex);
+			bOut.Write(clientStates[0][i].otherIndex);
+			bOut.Write(clientStates[0][i].transitionIndex);
+			bOut.Write(clientStates[0][i].soundID);
+			bOut.Write(clientStates[0][i].hasSound);
 		}
 		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 	}
@@ -374,17 +389,17 @@ void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 
 	//if (serverObjs > 0) {
 		//	memcpy(clientStates[index].animationName, animationName, length);
 		//	clientStates[index].nameLength = length;
-		clientStates[index].clientID = index;
-		clientStates[index].hasBall = hasBall;
+		clientStates[0][index].clientID = index;
+		clientStates[0][index].hasBall = hasBall;
 		//	clientStates[index].world = state->world;
-		clientStates[index].position = pos;
-		clientStates[index].rotation = rot;
-		clientStates[index].parentIndex = parentIndex;
-		clientStates[index].animationIndex = animIndex;
-		clientStates[index].otherIndex = oIndex;
-		clientStates[index].transitionIndex = transitionIndex;
-		clientStates[index].soundID = soundID;
-		clientStates[index].hasSound = hasSound;
+		clientStates[0][index].position = pos;
+		clientStates[0][index].rotation = rot;
+		clientStates[0][index].parentIndex = parentIndex;
+		clientStates[0][index].animationIndex = animIndex;
+		clientStates[0][index].otherIndex = oIndex;
+		clientStates[0][index].transitionIndex = transitionIndex;
+		clientStates[0][index].soundID = soundID;
+		clientStates[0][index].hasSound = hasSound;
 
 	//}
 }
@@ -394,9 +409,9 @@ void Server::sendState()
 	BitStream bOut;
 	bOut.Write((MessageID)ID_INCOMING_STATE);
 
-	bOut.Write(gameState->scoreA);
-	bOut.Write(gameState->scoreB);
-	bOut.Write(gameState->time);
+	bOut.Write(gameState[0][0].scoreA);
+	bOut.Write(gameState[0][0].scoreB);
+	bOut.Write(gameState[0][0].time);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }

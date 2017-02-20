@@ -46,20 +46,25 @@ void JoinServer()
 
 void ShutdownGame()
 {
-	if (ResourceManager::GetSingleton()->IsServer())
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
-		Game::server.stop();
-		while (Game::server.run() != 0) {
-			if (Game::client.run() == 0)
-				break;
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			Game::server.stop();
+			while (Game::server.run() != 0) {
+				if (Game::client.run() == 0)
+					break;
+			}
+		}
+		else
+		{
+			Game::client.sendStop();
+
+			while (Game::client.run() != 0) {}
 		}
 	}
-	else
-	{
-		Game::client.sendStop();
-
-		while (Game::client.run() != 0) {}
-	}
+	
+	Game::returnResult = 0;
 }
 
 void ReturnToMenu()
@@ -148,15 +153,21 @@ Button::Button(bool active, bool clickable, char * newText, unsigned int length)
 
 void Button::Update(float dt)
 {
-	time -= dt;
+	if (isTimer)
+	{
+		time -= dt;
+		setText(getWTime());
+		if (time < 0)
+		{
+			time = 0.0f;
+		}
+	}
 
 	if (clickCooldown >= 0.0f)
 		clickCooldown -= dt;
 
-	if (time < 0)
-	{
-		time = 300.0f;
-	}
+
+
 
 
 
