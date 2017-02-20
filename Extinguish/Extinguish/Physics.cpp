@@ -64,8 +64,10 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b = false)
 	tt->SetVelocity(nV);
 	tt->SetPosition(nP);
 	colliding = true;
-	if (!nV.isEquil(float3(0, 0, 0)))
+	if (nV.y >= gravity * 0.03f && nV.y <= -gravity * 0.03f)
+	{
 		resting = false;
+	}
 }
 
 //getters//
