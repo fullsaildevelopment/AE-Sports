@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 5
+#define RunSpeed 15
 #define AttackSpeed 15
 #define StumbleSpeed 5
 
@@ -440,12 +440,12 @@ bool AI::RunTo(GameObject *target)
 	//v - vector between me and destination
 	float3 v;
 
-	if (target == myGoal || target == enemyGoal)
+	/*if (target == myGoal || target == enemyGoal)
 	{
 		v = (((target->GetTransform()->GetForwardf3() * 3 + target->GetTransform()->GetPosition()) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 	}
 
-	else
+	else*/
 		v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
@@ -466,8 +466,16 @@ bool AI::RunTo(GameObject *target)
 
 void AI::Score()
 {
-	if (RunTo(enemyGoal));
-		//ballClass->ThrowTo(enemyGoal);
+	float3 a = enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+	bool trash = RunTo(enemyGoal);
+
+	if (a.magnitude() < 8)
+	{
+		if (!crosse)
+			crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
+
+		crosse->Throw();
+	}
 
 	//float3 dist = ball->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
 	// if the vector between me and the goal is clear
