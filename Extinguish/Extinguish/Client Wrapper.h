@@ -11,10 +11,11 @@ class ClientWrapper
 private:
 	Client newClient;
 	bool isMultiplayer = false;
+	bool isServer = false;
 public:
 	~ClientWrapper()
 	{
-		if (isMultiplayer)
+		if (isMultiplayer && !isServer)
 			newClient.stop();
 	}
 	int init(char* address, UINT16 port)
@@ -22,6 +23,7 @@ public:
 		isMultiplayer = true;
 		return newClient.init(address, port);
 	}
+	void setIsServer() { isServer = true; }
 	int run() 
 	{
 		return newClient.run();
