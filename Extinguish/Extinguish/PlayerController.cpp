@@ -73,7 +73,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-			//cout << "Collision enter" << endl;
+			cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
 		}
@@ -90,7 +90,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (capsCollider->GetGameObject() == otherPlayer)
 			{
-				//cout << "Collision exit" << endl;
+				cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
 			}

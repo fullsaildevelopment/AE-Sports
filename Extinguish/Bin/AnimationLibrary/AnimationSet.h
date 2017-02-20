@@ -13,8 +13,8 @@ private:
 	Skeleton skeleton;
 	std::vector<std::vector<BlendInfo>> blendInfos;
 	unsigned int defaultAnimation;
-	//should make a hashstring for every animation set. When animation is added.
 	HashString animationsTable;
+
 public:
 	void AddAnimation(Animation animation, std::string animationName);
 

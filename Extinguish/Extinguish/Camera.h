@@ -21,6 +21,7 @@ private:
 	float rotateSpeed;
 	int prevMouseX, prevMouseY;
 	float dt;
+	float sensitivityX, sensitivityY;
 
 	float curRotX, curRotY;
 	const float maxRotX, maxRotY;

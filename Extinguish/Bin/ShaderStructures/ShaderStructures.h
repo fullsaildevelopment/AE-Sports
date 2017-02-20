@@ -94,7 +94,7 @@ struct Vertex
 
 
 #pragma pack(push, 1)
-struct GameState
+struct GameState //practically an object state
 {
 	uint8_t clientID;
 	uint8_t nameLength;

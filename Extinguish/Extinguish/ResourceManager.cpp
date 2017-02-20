@@ -6,7 +6,7 @@
 //#include <Windows.h>
 #include "ForFBX.h"
 #include "ResourceManager.h"
-
+#include "Skeleton.h"
 
 ResourceManager* ResourceManager::singleton = 0;
 
