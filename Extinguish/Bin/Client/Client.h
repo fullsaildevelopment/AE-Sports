@@ -95,9 +95,9 @@ private:
 //	static CLIENT_GAME_STATE * myState;
 //	static CLIENT_GAME_STATE * clientStates;
 //	static GAME_STATE * gameState;
-	std::vector<CLIENT_GAME_STATE> clientStates;
-	std::vector<CLIENT_GAME_STATE> myState;
-	std::vector<GAME_STATE> gameState;
+	std::vector<CLIENT_GAME_STATE> * clientStates;
+	std::vector<CLIENT_GAME_STATE> * myState;
+	std::vector<GAME_STATE> * gameState;
 
 	UINT8 curNumOfClients;
 public:
@@ -131,21 +131,21 @@ public:
 	UINT8 getID() { return clientID; }
 	CLIENT_GAME_STATE getState(unsigned int index);
 	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
-	bool hasBall(unsigned int index) { return clientStates[index].hasBall; }
-	INT8 GetParentIndex(unsigned int index) { return clientStates[index].parentIndex; }
-	INT8 GetAnimationIndex(unsigned int index) { return clientStates[index].animationIndex; }
-	INT8 GetTransitionIndex(unsigned int index) { return clientStates[index].transitionIndex; }
-	UINT32 GetSoundID(unsigned int index) { return clientStates[index].soundID; }
-	bool HasSound(unsigned int index) { return clientStates[index].hasSound; }
-	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
-	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
+	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
+	INT8 GetParentIndex(unsigned int index) { return clientStates[0][index].parentIndex; }
+	INT8 GetAnimationIndex(unsigned int index) { return clientStates[0][index].animationIndex; }
+	INT8 GetTransitionIndex(unsigned int index) { return clientStates[0][index].transitionIndex; }
+	UINT32 GetSoundID(unsigned int index) { return clientStates[0][index].soundID; }
+	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
 	int getNumPackets() { return numPackets; }
-	void setLocation(XMFLOAT3 loc) { myState[0].position = loc; }
-	void setRotation(XMFLOAT3 rot) { myState[0].rotation = rot; }
-	int getFloorState(unsigned int i) { return clientStates[i].otherIndex; }
-	UINT8 getScoreA() { return gameState[0].scoreA; }
-	UINT8 getScoreB() { return gameState[0].scoreB; }
-	float getTime() { return gameState[0].time; }
+	void setLocation(XMFLOAT3 loc) { myState[0][0].position = loc; }
+	void setRotation(XMFLOAT3 rot) { myState[0][0].rotation = rot; }
+	int getFloorState(unsigned int i) { return clientStates[0][i].otherIndex; }
+	UINT8 getScoreA() { return gameState[0][0].scoreA; }
+	UINT8 getScoreB() { return gameState[0][0].scoreB; }
+	float getTime() { return gameState[0][0].time; }
 	UINT8 getNumClients() { return curNumOfClients; }
 
 private:

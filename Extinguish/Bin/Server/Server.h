@@ -29,7 +29,7 @@ using namespace DirectX;
 class SERVERDLL_API Server
 {
 public:
-
+	
 #pragma pack(push, 1)
 	struct CLIENT_GAME_STATE
 	{
@@ -126,8 +126,8 @@ private:
 	UINT8  nameSizes[MAX_PLAYERS];
 	UINT8  openIDs[MAX_PLAYERS];
 	bool newInput[MAX_PLAYERS];
-	std::vector<Server::CLIENT_GAME_STATE> clientStates;
-	std::vector<Server::GAME_STATE> gameState;
+	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
+	std::vector<Server::GAME_STATE> * gameState;
 	SOCKET serverSocket;
 public:
 	Server();
@@ -137,14 +137,14 @@ public:
 	int update();
 	void stop();
 	bool Shutdown();
-	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
-	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
 	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound);
 	void sendPackets();
 	void setObjectCount(int count);
 	int getNewState() { return lastState; }
 	InputEventStruct * getInputEvent(unsigned int index) { return &clientInput[index]; }
-	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[i]; }
+	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[0][i]; }
 	bool isInput(unsigned int index) { return newInput[index]; }
 	void resetInput() {
 		newInput[0] = false;
@@ -155,15 +155,15 @@ public:
 
 	unsigned int getPlayerCount() { return numPlayers; }
 
-	void setStateSize(unsigned int size) { clientStates.clear(); clientStates.resize(size);}
+	void setStateSize(unsigned int size) { clientStates[0].clear(); clientStates[0].resize(size);}
 	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
-		clientStates[index].position = position;
-	clientStates[index].rotation = rotation;
+		clientStates[0][index].position = position;
+	clientStates[0][index].rotation = rotation;
 	}
 
 	void sendState();
-	void setScores(int scoreA, int scoreB) { gameState[0].scoreA = scoreA; gameState[0].scoreB = scoreB; }
-	void setTime(float time) { gameState[0].time = time; }
+	void setScores(int scoreA, int scoreB) { gameState[0][0].scoreA = scoreA; gameState[0][0].scoreB = scoreB; }
+	void setTime(float time) { gameState[0][0].time = time; }
 	void StartGame();
 private:
 	int lastState = 0;

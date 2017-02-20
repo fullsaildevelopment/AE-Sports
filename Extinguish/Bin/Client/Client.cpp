@@ -9,15 +9,13 @@ char * Client::address = nullptr;
 //Client::CLIENT_GAME_STATE * Client::myState = new CLIENT_GAME_STATE();
 //Client::CLIENT_GAME_STATE * Client::clientStates = new CLIENT_GAME_STATE[30];
 //Client::GAME_STATE * Client::gameState = new GAME_STATE();
-//std::vector<Client::CLIENT_GAME_STATE> * states = new std::vector<Client::CLIENT_GAME_STATE>();
 
 
 Client::Client()
 {
-	//XMStoreFloat4x4(&myState->world, XMMatrixIdentity());
-	//memcpy(myState->animationName, "name here", strlen("name here"));
-//	myState[0].nameLength = (UINT8)strlen("name here");
-	//states->resize(16);
+	myState = new std::vector<CLIENT_GAME_STATE>();
+	clientStates = new std::vector<CLIENT_GAME_STATE>();
+	gameState = new std::vector<GAME_STATE>();
 }
 
 Client::~Client()
@@ -318,27 +316,27 @@ void Client::sendMessage(char * newMessage)
 void Client::sendPacket()
 {
 	BitStream bOut;
-	myState[0].clientID = clientID;
+	myState[0][0].clientID = clientID;
 	//clientState->timeStamp = RakNet::GetTime();
 	bOut.Write((MessageID)ID_INCOMING_PACKET);
 	//bOut.Write(clientState->timeStamp);
 	bOut.Write(clientID);
 //	bOut.Write(myState->nameLength);
 //	bOut.Write(myState->animationName, myState->nameLength);
-	bOut.Write(myState[0].hasBall);
+	bOut.Write(myState[0][0].hasBall);
 
 	//bOut.Write(myState->world);
-	bOut.Write(myState[0].position);
-	bOut.Write(myState[0].rotation);
-	bOut.Write(myState[0].parentIndex);
-	bOut.Write(myState[0].animationIndex);
+	bOut.Write(myState[0][0].position);
+	bOut.Write(myState[0][0].rotation);
+	bOut.Write(myState[0][0].parentIndex);
+	bOut.Write(myState[0][0].animationIndex);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
 
 void Client::receivePackets()
 {
-	if (clientStates.size() >= 0)
+	if (clientStates[0].size() >= 0)
 	{
 		BitStream bIn(packet->data, packet->length, false);
 		bIn.IgnoreBytes(sizeof(MessageID));
@@ -348,25 +346,25 @@ void Client::receivePackets()
 		bIn.Read(objects);
 
 		numPackets = (int)objects;
-		clientStates.clear();
-		clientStates.resize(numPackets);
+		clientStates[0].clear();
+		clientStates[0].resize(numPackets);
 		// for each game object, read in the data of the object state
 
 		for (unsigned int i = 0; i < (unsigned int)objects; ++i)
 		{
-			bIn.Read(clientStates[i].clientID);
+			bIn.Read(clientStates[0][i].clientID);
 			//		bIn.Read(clientStates[i].nameLength);
 			//		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
-			bIn.Read(clientStates[i].hasBall);
+			bIn.Read(clientStates[0][i].hasBall);
 			//	bIn.Read(clientStates[i].world);
-			bIn.Read(clientStates[i].position);
-			bIn.Read(clientStates[i].rotation);
-			bIn.Read(clientStates[i].parentIndex);
-			bIn.Read(clientStates[i].animationIndex);
-			bIn.Read(clientStates[i].otherIndex);
-			bIn.Read(clientStates[i].transitionIndex);
-			bIn.Read(clientStates[i].soundID);
-			bIn.Read(clientStates[i].hasSound);
+			bIn.Read(clientStates[0][i].position);
+			bIn.Read(clientStates[0][i].rotation);
+			bIn.Read(clientStates[0][i].parentIndex);
+			bIn.Read(clientStates[0][i].animationIndex);
+			bIn.Read(clientStates[0][i].otherIndex);
+			bIn.Read(clientStates[0][i].transitionIndex);
+			bIn.Read(clientStates[0][i].soundID);
+			bIn.Read(clientStates[0][i].hasSound);
 		}
 	}
 }
@@ -374,7 +372,7 @@ void Client::receivePackets()
 Client::CLIENT_GAME_STATE Client::getState(unsigned int index)
 {
 	// return the state of the obj at index
-	return myState[0];
+	return myState[0][0];
 }
 
 void Client::receiveGameState()
@@ -382,7 +380,7 @@ void Client::receiveGameState()
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
-	bIn.Read(gameState[0].scoreA);
-	bIn.Read(gameState[0].scoreB);
-	bIn.Read(gameState[0].time);
+	bIn.Read(gameState[0][0].scoreA);
+	bIn.Read(gameState[0][0].scoreB);
+	bIn.Read(gameState[0][0].time);
 }
