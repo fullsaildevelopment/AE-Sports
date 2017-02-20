@@ -10,13 +10,16 @@ class ClientWrapper
 {
 private:
 	Client newClient;
+	bool isMultiplayer = false;
 public:
 	~ClientWrapper()
 	{
-		//newClient.stop();
+		if (isMultiplayer)
+			newClient.stop();
 	}
 	int init(char* address, UINT16 port)
 	{
+		isMultiplayer = true;
 		return newClient.init(address, port);
 	}
 	int run() 

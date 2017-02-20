@@ -347,9 +347,17 @@ void DeviceResources::Shutdown()
 
 	p2DDevice.Reset();
 	p2DDeviceContext.Reset();
-	pD2DFactory.Reset();
+	if (pD2DFactory)
+	{
+	//	delete pD2DFactory.Get();
+		pD2DFactory.Reset();
+	}
 	pDWriteFactory.Reset();
-	pRT.Reset();
+	if (pRT)
+	{
+	//	delete pRT.Get();
+		pRT.Reset();
+	}
 
 	depthDisabledStencilState.Reset();
 	shadowMapDepthStencilBuffer.Reset();

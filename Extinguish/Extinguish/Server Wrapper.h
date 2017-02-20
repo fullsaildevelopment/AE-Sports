@@ -15,13 +15,19 @@ private:
 	bool noPeer = false;
 	std::vector<GameState*> states;
 	unsigned int objCount = 0;
+	bool isMultiplayer = false;
+	bool isServer = false;
 
 public:
 	~ServerWrapper() { 
+		if (isMultiplayer && isServer)
+			newServer.stop();
 	}
 
 	int init(char * address, UINT16 port)
 	{
+		isServer = true;
+		isMultiplayer = true;
 		noPeer = false;
 		shutdown = false;
 		return newServer.init(port);

@@ -27,6 +27,11 @@ Client::~Client()
 		delete &clientStates[i];
 	}*/
 	//delete[] clientStates;
+
+	delete myState;
+	delete clientStates;
+	delete gameState;
+
 	if (peer)
 	peer->DestroyInstance(peer);
 }
@@ -153,8 +158,8 @@ int Client::run()
 		}
 		case ID_REMOVE_CLIENT:
 		{
-			peer->Shutdown(100);
 			stop();
+			peer->Shutdown(100);
 			return 0;
 			break;
 		}
@@ -196,8 +201,17 @@ int Client::run()
 
 void Client::stop()
 {
-	peer->DeallocatePacket(packet);
-	RakPeerInterface::DestroyInstance(peer);
+	if (peer) {
+		while (true)
+		{
+			sendStop();
+			int result = run();
+			if (result == 0)
+				break;
+		}
+	}
+	//peer->DeallocatePacket(packet);
+	//RakPeerInterface::DestroyInstance(peer);
 }
 
 int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer)
