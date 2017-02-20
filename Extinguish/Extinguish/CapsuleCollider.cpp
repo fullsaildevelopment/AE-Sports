@@ -113,6 +113,8 @@ void CapsuleCollider::FixedUpdate(float dt)
 				float3 ovel = (*Others)[i]->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
+					vel *= 0.3f;
+					ovel *= 0.3f;
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
@@ -120,7 +122,7 @@ void CapsuleCollider::FixedUpdate(float dt)
 						Physics* nop = (*Others)[i]->GetComponent<Physics>();
 						if (nop)
 						{
-							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos, true);
+							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos, false);
 						}
 					}
 					else
