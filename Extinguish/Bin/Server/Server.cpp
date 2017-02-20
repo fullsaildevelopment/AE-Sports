@@ -17,6 +17,7 @@ Server::Server()
 {
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
+	gameState[0].resize(1);
 }
 
 Server::~Server()
