@@ -1,8 +1,11 @@
 #include "Server.h"
 
 //Server::CLIENT_GAME_STATE * Server::clientStates = new CLIENT_GAME_STATE[8];
-Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[30];
-Server::GAME_STATE * Server::gameState = new GAME_STATE();
+//Server::CLIENT_GAME_STATE * Server::clientStates =  new CLIENT_GAME_STATE[30];
+//Server::GAME_STATE * Server::gameState = new GAME_STATE();
+
+std::vector<Server::CLIENT_GAME_STATE> clientStates;
+std::vector<Server::GAME_STATE> gameState;
 
 
 void Server::setObjectCount(int count) { 
@@ -21,6 +24,8 @@ Server::~Server()
 		delete names[i];
 
 //	delete[] clientStates;
+	if (peer)
+	peer->DestroyInstance(peer);
 }
 
 int Server::init(uint16_t port)
@@ -394,9 +399,9 @@ void Server::sendState()
 	BitStream bOut;
 	bOut.Write((MessageID)ID_INCOMING_STATE);
 
-	bOut.Write(gameState->scoreA);
-	bOut.Write(gameState->scoreB);
-	bOut.Write(gameState->time);
+	bOut.Write(gameState[0].scoreA);
+	bOut.Write(gameState[0].scoreB);
+	bOut.Write(gameState[0].time);
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }

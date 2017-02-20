@@ -92,10 +92,12 @@ private:
 	static RakPeerInterface * peer;
 	static Packet * packet;
 	static char * address;
-	static CLIENT_GAME_STATE * myState;
-	static CLIENT_GAME_STATE * clientStates;
-	static GAME_STATE * gameState;
-//	static std::vector<CLIENT_GAME_STATE> * states;
+//	static CLIENT_GAME_STATE * myState;
+//	static CLIENT_GAME_STATE * clientStates;
+//	static GAME_STATE * gameState;
+	std::vector<CLIENT_GAME_STATE> clientStates;
+	std::vector<CLIENT_GAME_STATE> myState;
+	std::vector<GAME_STATE> gameState;
 
 	UINT8 curNumOfClients;
 public:
@@ -138,12 +140,12 @@ public:
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[index].rotation; }
 	int getNumPackets() { return numPackets; }
-	void setLocation(XMFLOAT3 loc) { myState->position = loc; }
-	void setRotation(XMFLOAT3 rot) { myState->rotation = rot; }
+	void setLocation(XMFLOAT3 loc) { myState[0].position = loc; }
+	void setRotation(XMFLOAT3 rot) { myState[0].rotation = rot; }
 	int getFloorState(unsigned int i) { return clientStates[i].otherIndex; }
-	UINT8 getScoreA() { return gameState->scoreA; }
-	UINT8 getScoreB() { return gameState->scoreB; }
-	float getTime() { return gameState->time; }
+	UINT8 getScoreA() { return gameState[0].scoreA; }
+	UINT8 getScoreB() { return gameState[0].scoreB; }
+	float getTime() { return gameState[0].time; }
 	UINT8 getNumClients() { return curNumOfClients; }
 
 private:

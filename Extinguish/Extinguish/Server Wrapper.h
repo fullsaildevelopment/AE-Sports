@@ -101,6 +101,7 @@ public:
 	void SetGameStates(std::vector<GameState*> gameStates)
 	{
 		states = gameStates;
+		newServer.setStateSize(gameStates.size());
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{

@@ -17,6 +17,8 @@
 #include "..\RakNet\Router2.h"
 #include "..\RakNet\GetTime.h"
 #include <DirectXMath.h>
+#include <list>
+#include <vector>
 
 using namespace RakNet;
 using namespace std;
@@ -112,9 +114,10 @@ private:
 
 #pragma pack(pop)
 
-	static CLIENT_GAME_STATE * clientStates;
+	//static CLIENT_GAME_STATE * clientStates;
 	InputEventStruct clientInput[4];
-	static GAME_STATE * gameState;
+	//static GAME_STATE * gameState;
+	//GAME_STATE gameState;
 	//static CLIENT_GAME_STATE * aiStates;
 	UINT8 numPlayers = 0;
 	RakPeerInterface * peer;
@@ -123,7 +126,8 @@ private:
 	UINT8  nameSizes[MAX_PLAYERS];
 	UINT8  openIDs[MAX_PLAYERS];
 	bool newInput[MAX_PLAYERS];
-	//DataStructures::List<RakNetSocket2*> sockets;
+	std::vector<Server::CLIENT_GAME_STATE> clientStates;
+	std::vector<Server::GAME_STATE> gameState;
 	SOCKET serverSocket;
 public:
 	Server();
@@ -151,14 +155,15 @@ public:
 
 	unsigned int getPlayerCount() { return numPlayers; }
 
+	void setStateSize(unsigned int size) { clientStates.clear(); clientStates.resize(size);}
 	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
 		clientStates[index].position = position;
 	clientStates[index].rotation = rotation;
 	}
 
 	void sendState();
-	void setScores(int scoreA, int scoreB) { gameState->scoreA = scoreA; gameState->scoreB = scoreB; }
-	void setTime(float time) { gameState->time = time; }
+	void setScores(int scoreA, int scoreB) { gameState[0].scoreA = scoreA; gameState[0].scoreB = scoreB; }
+	void setTime(float time) { gameState[0].time = time; }
 	void StartGame();
 private:
 	int lastState = 0;
