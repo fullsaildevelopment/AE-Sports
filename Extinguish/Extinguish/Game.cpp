@@ -439,7 +439,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
 	//create menus, levels, etc.//
-	if (GRAPHICS) {
+	if (!DEBUG_GRAPHICS) {
 		Scene* menu = new Scene();
 		// ask tom
 		GameObject* camera = new GameObject();
@@ -629,6 +629,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 
+		//Transform* mageHead = new Transform();
+		//mageRenderer1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->
+
 		GameObject* camera1 = new GameObject();
 		basic->AddGameObject(camera1);
 		camera1->Init(cameraName);
@@ -763,7 +766,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
-	if (GRAPHICS) {
+	if (!DEBUG_GRAPHICS) {
 		CreateUI(devResources, basic);
 	}
 
@@ -828,17 +831,19 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButtonC->MakeRect();
 	scoreCRender->InitMetrics();
 
-	//GameObject * debugUI = new GameObject();
-	//basic->AddUIObject(debugUI);
-	//debugUI->Init("debugUI");
-	//Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
-	//theButton->SetGameObject(debugUI);
-	//theButton->showFPS(true);
-	//theButton->setOrigin(0.0f, 30.0f);
-	//debugUI->AddComponent(theButton);
-	//UIRenderer * buttonRender = new UIRenderer();
-	//buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
-	//debugUI->AddComponent(buttonRender);
+	#ifdef DEBUG
+		GameObject * debugUI = new GameObject();
+		basic->AddUIObject(debugUI);
+		debugUI->Init("debugUI");
+		Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
+		theButton->SetGameObject(debugUI);
+		theButton->showFPS(true);
+		theButton->setOrigin(0.0f, 30.0f);
+		debugUI->AddComponent(theButton);
+		UIRenderer * buttonRender = new UIRenderer();
+		buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
+		debugUI->AddComponent(buttonRender);
+	#endif
 }
 
 void Game::CreateMenu(DeviceResources * devResources, Scene * scene)

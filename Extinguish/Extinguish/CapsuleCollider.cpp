@@ -131,11 +131,11 @@ void CapsuleCollider::FixedUpdate(float dt)
 						//TODO: Turned off because I need to attack
 						(*Others)[i]->GetTransform()->SetVelocity(ovel * 0.6f);
 						capsule->checked.push_back(this);
-						otherCapsule = capsule;
 					}
 
 					(*Others)[i]->OnCollisionEnter(this);
 					tg->OnCollisionEnter(capsule);
+					otherCapsule = capsule;
 				}
 				else
 				{

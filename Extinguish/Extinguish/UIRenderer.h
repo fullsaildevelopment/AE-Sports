@@ -1,10 +1,7 @@
 #pragma once
 
-#ifdef GRAPHICS_DEBUG
-#define GRAPHICS 0
-#else
-#define GRAPHICS 1
-#endif
+#define DEBUG_GRAPHICS 0
+
 
 #include "Includes.h"
 #include "DeviceResources.h"

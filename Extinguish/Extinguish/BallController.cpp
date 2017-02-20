@@ -49,7 +49,7 @@ void BallController::Init()
 void BallController::LateInit()
 {
 	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
-	int size = go.size();
+	int size = (int)go.size();
 	for (int i = 0; i < size; ++i)
 	{
 		Crosse* c = go[i]->GetComponent<Crosse>();
@@ -99,7 +99,7 @@ void BallController::FixedUpdate(float dt)
 {
 	if (!isHeld && !isThrown)
 	{
-		int s = nets.size();
+		int s = (int)nets.size();
 		for (int i = 0; i < s; ++i)
 		{
 			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
