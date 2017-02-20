@@ -32,6 +32,15 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 
 	moveSpeed = moveVel;
 	rotateSpeed = rotateVel;
+
+	// init sensitivities... make more dynamic in future through options if we want to be cool
+#if _DEBUG
+	sensitivityX = 1.0f;
+	sensitivityY = 1.0f;
+#else
+	sensitivityX = 3.5f;
+	sensitivityY = 3.5f;
+#endif
 }
 
 void Camera::Update(float dt)
@@ -139,9 +148,9 @@ void Camera::MoveCamera(InputDownEvent* e)
 	prevMouseX = input->GetMouseX();
 	prevMouseY = input->GetMouseY();
 #else
-	if (input->GetMouseX() && input->GetMouseY())
+	if (input->GetMouseX() && input->GetMouseY() && input->GetMouseButton(2))
 	{
-		if (prevMouseX && prevMouseY && !input->GetMouseButton(2))
+		if (prevMouseX && prevMouseY)
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 
@@ -149,14 +158,10 @@ void Camera::MoveCamera(InputDownEvent* e)
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
 			//store old cam position
-			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+			float degX = dy * rotateSpeed * dt * sensitivityX;
+			float degY = dx * rotateSpeed * dt * sensitivityY;
 
-			camera._41 = 0;
-			camera._42 = 0;
-			camera._43 = 0;
-
-			float degX = dy * rotateSpeed * dt;
-			float degY = dx * rotateSpeed * dt;
+			cout << dt << endl;
 
 			if (curRotX + degX > maxRotX)
 			{
@@ -179,10 +184,10 @@ void Camera::MoveCamera(InputDownEvent* e)
 			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
 			playerTransform->RotateY(degY);
 		}
-
-		prevMouseX = input->GetMouseX();
-		prevMouseY = input->GetMouseY();
 	}
+
+	prevMouseX = input->GetMouseX();
+	prevMouseY = input->GetMouseY();
 #endif
 }
 
