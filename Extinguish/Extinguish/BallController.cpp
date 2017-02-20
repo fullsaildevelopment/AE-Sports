@@ -187,6 +187,11 @@ bool BallController::GetIsThrown()
 
 GameObject* BallController::GetHolder()
 {
+	return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
+}
+
+GameObject* BallController::GetCrosseHolder()
+{
 	return holder;
 }
 
