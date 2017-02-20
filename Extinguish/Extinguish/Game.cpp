@@ -425,7 +425,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
 	//create menus, levels, etc.//
-	if (GRAPHICS) {
+	if (!DEBUG_GRAPHICS) {
 		Scene* menu = new Scene();
 		// ask tom
 		GameObject* camera = new GameObject();
@@ -615,6 +615,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 
+		//Transform* mageHead = new Transform();
+		//mageRenderer1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->
+
 		GameObject* camera1 = new GameObject();
 		basic->AddGameObject(camera1);
 		camera1->Init(cameraName);
@@ -749,7 +752,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
-	if (GRAPHICS) {
+	if (!DEBUG_GRAPHICS) {
 		CreateUI(devResources, basic);
 	}
 
