@@ -202,13 +202,14 @@ int Client::run()
 void Client::stop()
 {
 	if (peer) {
-		while (true)
-		{
-			sendStop();
-			int result = run();
-			if (result == 0)
-				break;
-		}
+		/*while (true)
+		{*/
+			peer->Shutdown(100);
+			//int result = run();
+			//if (result == 0)
+			//	break;
+		//	sendStop();
+		//}
 	}
 	//peer->DeallocatePacket(packet);
 	//RakPeerInterface::DestroyInstance(peer);

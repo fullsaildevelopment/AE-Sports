@@ -129,6 +129,7 @@ private:
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
 	SOCKET serverSocket;
+	bool npDec = false;
 public:
 	Server();
 	~Server();

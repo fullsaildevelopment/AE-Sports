@@ -89,6 +89,9 @@ int  Server::update()
 		{
 			printf("A client has disconnected.\n");
 
+			if (!npDec)
+				--numPlayers;
+
 			if (numPlayers == 1)
 				return 0;
 			break;
@@ -125,6 +128,7 @@ int  Server::update()
 		{
 			unregisterClient();
 			sendDisconnect(false);
+			npDec = true;
 
 			break;
 		}
@@ -151,7 +155,7 @@ int  Server::update()
 	{
 		sendPackets();
 	}*/
-
+	npDec = false;
 	return result;
 }
 
@@ -162,7 +166,7 @@ void Server::stop()
 	{
 		sendDisconnect(true);
 		int result = update();
-		if (result == 0)
+		if (result == 0 || numPlayers <= 1)
 			break;
 	}
 	//RakPeerInterface::DestroyInstance(peer);
