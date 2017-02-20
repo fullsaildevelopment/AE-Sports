@@ -25,6 +25,7 @@ private:
 	float maxMoveSpeed = 50;
 
 	bool colliding = false;
+	bool resting = false;
 	//other
 	//TODO: incorporate mass. float mass;
 	bool isKinematic;

@@ -116,7 +116,7 @@ void CapsuleCollider::FixedUpdate(float dt)
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, pos, true);
+						op->HandlePhysics(tgt, vel, pos, false);
 						Physics* nop = (*Others)[i]->GetComponent<Physics>();
 						if (nop)
 						{
@@ -130,11 +130,12 @@ void CapsuleCollider::FixedUpdate(float dt)
 						(*Others)[i]->GetTransform()->SetPosition(opos);
 						//TODO: Turned off because I need to attack
 						(*Others)[i]->GetTransform()->SetVelocity(ovel * 0.6f);
-						(*Others)[i]->OnCollisionEnter(this);
-						tg->OnCollisionEnter(capsule);
 						capsule->checked.push_back(this);
 						otherCapsule = capsule;
 					}
+
+					(*Others)[i]->OnCollisionEnter(this);
+					tg->OnCollisionEnter(capsule);
 				}
 				else
 				{

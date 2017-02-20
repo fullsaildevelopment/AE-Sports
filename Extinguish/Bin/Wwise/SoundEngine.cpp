@@ -110,6 +110,7 @@ void SoundEngine::UpdateListener(DirectX::XMFLOAT3 const & position, DirectX::XM
 	listener.SetPosition(position.x, position.y, position.z);
 	listener.SetOrientation(forward.x, forward.y, forward.z, 0, 1, 0);
 	AKRESULT akResult = AK::SoundEngine::SetListenerPosition(listener, 0);
+	//AKRESULT scaleResult = AK::SoundEngine::SetListenerScalingFactor(0, 100.0f);
 
 	if (akResult != AKRESULT::AK_Success)
 	{
@@ -175,7 +176,7 @@ bool SoundEngine::PostEvent(AkUniqueID eventID, AkGameObjectID gameObjectID)
 {
 	bool result = true;
 
-	AK::SoundEngine::PostEvent(eventID, gameObjectID);
+	AkPlayingID playingID = AK::SoundEngine::PostEvent(eventID, gameObjectID + 1);
 
 	return result;
 }
@@ -255,10 +256,8 @@ void SoundEngine::InitBank()
 	
 	//init bank must be loaded first before anything!
 	AKRESULT eResult = AK::SoundEngine::LoadBank(L"Init.bnk", AK_DEFAULT_POOL_ID, bankID);
+	//eResult = AK::SoundEngine::LoadBank(L"SoundBank.bnk", AK_DEFAULT_POOL_ID, bankID);
 	eResult = AK::SoundEngine::LoadBank(L"TitansWithSticks.bnk", AK_DEFAULT_POOL_ID, bankID);
-	//eResult = AK::SoundEngine::LoadBank(L"Car.bnk", AK_DEFAULT_POOL_ID, bankID);
-	//eResult = AK::SoundEngine::LoadBank(L"Human.bnk", AK_DEFAULT_POOL_ID, bankID);
-	//eResult = AK::SoundEngine::LoadBank(L"MarkerTest.bnk", AK_DEFAULT_POOL_ID, bankID);
 }
 
 void SoundEngine::InitGameObjects(std::vector<unsigned int> ids, std::vector<std::string> names)
