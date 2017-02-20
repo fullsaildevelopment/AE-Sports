@@ -102,24 +102,24 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	std::vector<std::string> names;
 	int loadSceneIndex = scenesNamesTable.GetKey("FirstLevel");
 
-	//ids.resize(scenes[loadSceneIndex]->GetNumObjects());
-	//names.resize(scenes[loadSceneIndex]->GetNumObjects());
+	ids.resize(scenes[loadSceneIndex]->GetNumObjects());
+	names.resize(scenes[loadSceneIndex]->GetNumObjects());
 	gameObjects = scenes[loadSceneIndex]->GetGameObjects();
 
-	int id = 0;
-	for (int i = 0; i < gameObjects->size(); ++i, ++id)
+	//int id = 0;
+	for (int i = 0; i < gameObjects->size(); ++i)
 	{
-		if (i != GetPlayerObjectID())
+		//if (i != GetPlayerObjectID())
 		{
 			GameObject* gameObject = (*gameObjects)[i];
 
-			ids.push_back(id);
-			names.push_back(gameObject->GetName());
+			ids[i] = i;
+			names[i] = (gameObject->GetName());
 		}
-		else
-		{
-			id -= 1;
-		}
+		//else
+		//{
+		//	id -= 1;
+		//}
 	}
 
 	soundEngine->InitSoundEngine(ids, names);
@@ -216,24 +216,24 @@ void Game::Update(float dt)
 
 	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
 	vector<XMFLOAT3> objectsPos, forwards;
-	//objectsPos.resize(objects->size() - 1);
-	//forwards.resize(objects->size() - 1);
+	objectsPos.resize(objects->size());
+	forwards.resize(objects->size());
 
 	for (int i = 0; i < objects->size(); ++i)
 	{
-		if (i != GetPlayerObjectID())
+		//if (i != GetPlayerObjectID())
 		{
-			XMFLOAT3 objectPos;
+			//XMFLOAT3 objectPos;
 
-			objectPos.x = (*objects)[i]->GetTransform()->GetPosition().x;
-			objectPos.y = (*objects)[i]->GetTransform()->GetPosition().y;
-			objectPos.z = (*objects)[i]->GetTransform()->GetPosition().z;
+			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-			objectsPos.push_back(objectPos);
+			//objectsPos.push_back(objectPos);
 
-			XMFLOAT3 forward;
-			forward = (*objects)[i]->GetTransform()->GetForward();
-			forwards.push_back(forward);
+			//XMFLOAT3 forward;
+			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+			//forwards.push_back(forward);
 		}
 	}
 	int index = (clientID - 1) * 3 + 2;

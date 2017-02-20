@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "SoundEvent.h"
 #include "Renderer.h"
+#include "SoundEvent.h"
 
 using namespace std;
 
@@ -49,6 +50,13 @@ void Crosse::OnTriggerEnter(Collider* collider)
 		{
 			ballC->SetHolder(GetGameObject());
 			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
+
+			//play sound
+			SoundEvent* soundEvent = new SoundEvent();
+			soundEvent->Init(AK::EVENTS::PLAY_CATCH, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+			EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+			delete soundEvent;
+
 			//catchAgainTimer = 0.0f;
 		}
 	}
@@ -81,11 +89,10 @@ void Crosse::Throw()
 		//transform->RotateX(XMConvertToRadians(45));
 
 		//play sound
-		//SoundEvent* soundEvent = new SoundEvent();
-		//soundEvent->Init(AK::EVENTS::PLAY_3D_SPEARBODY, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-		//EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-		//delete soundEvent;
-		//SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_3D_SPEARBODY, 0);
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::PLAY_THROW, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
 		
 		cout << "Throw" << endl;
 	}
@@ -199,6 +206,5 @@ void Crosse::SetHolder(GameObject* object)
 	if (ballController)
 	{
 		ballController->SetHolder(object);
-		object->GetComponent<Renderer>()->SetCatch(1.0f);
 	}
 }
