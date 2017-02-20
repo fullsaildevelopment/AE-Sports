@@ -104,7 +104,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AkMemoryMgr.lib;AkSoundEngine.lib;AkMusicEngine.lib;AkStreamMgr.lib;dxguid.lib;CommunicationCentral.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>x64_vc140\$(Configuration)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
