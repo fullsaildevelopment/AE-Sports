@@ -67,7 +67,7 @@ void Crosse::Throw()
 {
 	const float throwSpeed = 25.0f;
 
-	if (ballC->GetHolder() == GetGameObject())
+	if (ballC->GetCrosseHolder() == GetGameObject())
 	{
 		XMFLOAT4X4 ballworld = ballTransform->GetWorld();
 		//detach ball

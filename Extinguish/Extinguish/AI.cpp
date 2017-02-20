@@ -370,15 +370,15 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
-	realTarget = target->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	realTarget = target;
 
 	// if they're not on my team and if the timer isn't going
-	if (realTarget->GetTag() != me->GetTag() && timer == 2)
+	if (target->GetTag() != me->GetTag() && timer == 2)
 	{
 		isAttacking = true;
 
 		float3 u = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1)).normalize();
-		float3 v = ((float3(realTarget->GetTransform()->GetWorld()._41, realTarget->GetTransform()->GetWorld()._42, realTarget->GetTransform()->GetWorld()._43) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		float3 v = ((float3(target->GetTransform()->GetWorld()._41, target->GetTransform()->GetWorld()._42, target->GetTransform()->GetWorld()._43) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
 		me->GetTransform()->RotateY(degRad);
 		me->GetTransform()->SetVelocity(v * AttackSpeed);
