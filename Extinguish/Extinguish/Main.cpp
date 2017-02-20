@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		run = app.Update(timer.Delta());
 		fixedTime += timer.Delta();
-		if (fixedTime >= 0.03333f)
+		if (fixedTime >= 0.02f)
 		{
 			app.FixedUpdate(fixedTime);
 			fixedTime = 0;
