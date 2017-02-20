@@ -678,7 +678,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.5f,300 }, { -300,-0.5f,-300 });
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0,300 }, { -300,-3,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 
 
