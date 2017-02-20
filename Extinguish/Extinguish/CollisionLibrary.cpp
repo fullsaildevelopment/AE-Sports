@@ -546,7 +546,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
-			s.m_Center = cp + float3(0, 0.001f, 0);
+			s.m_Center = cp + float3(0, 0.000f, 0);
 			return float3(1, -1, 1);
 		}
 	}
@@ -560,7 +560,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
-			s.m_Center = cp + float3(0, -0.001f, 0);
+			s.m_Center = cp + float3(0, -0.000f, 0);
 			return float3(1, -1, 1);
 		}
 	}
@@ -579,7 +579,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.y >= offset.min.y && cp.y <= offset.max.y && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
-			s.m_Center = cp + float3(0.001f, 0, 0);
+			s.m_Center = cp + float3(0.000f, 0, 0);
 			return float3(-1, 1, 1);
 		}
 	}
@@ -593,7 +593,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.y >= offset.min.y && cp.y <= offset.max.y && cp.z >= offset.min.z && cp.z <= offset.max.z)
 		{
-			s.m_Center = cp + float3(-0.001f, 0, 0);
+			s.m_Center = cp + float3(-0.000f, 0, 0);
 			return float3(-1, 1, 1);
 		}
 	}
@@ -612,7 +612,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.y >= offset.min.y && cp.y <= offset.max.y)
 		{
-			s.m_Center = cp + float3(0, 0, 0.001f);
+			s.m_Center = cp + float3(0, 0, 0.000f);
 			return float3(1, 1, -1);
 		}
 	}
@@ -626,7 +626,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		float3 cp = s.m_Center + l * df;
 		if (cp.x >= offset.min.x && cp.x <= offset.max.x && cp.y >= offset.min.y && cp.y <= offset.max.y)
 		{
-			s.m_Center = cp + float3(0, 0, -0.001f);
+			s.m_Center = cp + float3(0, 0, -0.000f);
 			return float3(1, 1, -1);
 		}
 	}
@@ -732,8 +732,8 @@ bool stuff(Capsule& capl, Capsule& capr, float3& vell, float3& velr, float3& pos
 	if (SphereToSphere(s1, s2))
 	{
 		float3 mid = (cpl + cpr) * 0.5f;
-		float3 ml = mid + (cpl - mid).normalize() * (capl.m_Radius + 0.0001f);
-		float3 mr = mid + (cpr - mid).normalize() * (capr.m_Radius + 0.0001f);
+		float3 ml = mid + (cpl - mid).normalize() * (capl.m_Radius + 0.000f);
+		float3 mr = mid + (cpr - mid).normalize() * (capr.m_Radius + 0.000f);
 
 		pos = ml;
 		opos = mr;
@@ -815,6 +815,7 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 		return true;
 	}
 	return false;
+
 	/*float3 p0;
 	float3 q0;
 
@@ -927,32 +928,32 @@ bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
 		float3 ref;
 		if (dx < dnx && dx < dy && dx < dny && dx < dz && dx < dnz)
 		{
-			cp.x = box.max.x + cap.m_Radius + 0.0001f;
+			cp.x = box.max.x + cap.m_Radius + 0.0000f;
 			ref = x;
 		}
 		else if (dnx < dx && dnx < dy && dnx < dny && dnx < dz && dnx < dnz)
 		{
-			cp.x = box.min.x - cap.m_Radius - 0.0001f;
+			cp.x = box.min.x - cap.m_Radius - 0.0000f;
 			ref = nx;
 		}
 		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
 		{
-			cp.y = box.max.y + cap.m_Radius + 0.0001f;
+			cp.y = box.max.y + cap.m_Radius + 0.0000f;
 			ref = y;
 		}
 		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
 		{
-			cp.y = box.min.y - cap.m_Radius - 0.0001f;
+			cp.y = box.min.y - cap.m_Radius - 0.0000f;
 			ref = ny;
 		}
 		else if (dz < dnx && dz < dy && dz < dny && dz < dx && dz < dnz)
 		{
-			cp.z = box.max.z + cap.m_Radius + 0.0001f;
+			cp.z = box.max.z + cap.m_Radius + 0.0000f;
 			ref = z;
 		}
 		else if (dnz < dnx && dnz < dy && dnz < dny && dnz < dz && dnz < dx)
 		{
-			cp.z = box.min.z - cap.m_Radius - 0.0001f;
+			cp.z = box.min.z - cap.m_Radius - 0.0000f;
 			ref = nz;
 		}
 		else

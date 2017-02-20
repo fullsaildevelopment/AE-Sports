@@ -522,6 +522,14 @@ void Scene::FixedUpdate(float dt)
 		{
 			gameObjects[i]->FixedUpdate(dt);
 		}
+
+		AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
+
+		//don't animate yourself or animate server which has already been animated
+		if (animator && i != (id - 1) * 3 + 2 && id != 1)
+		{
+			animator->FixedUpdate(dt);
+		}
 	}
 }
 

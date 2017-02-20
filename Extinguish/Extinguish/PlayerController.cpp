@@ -73,7 +73,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-			cout << "Collision enter" << endl;
+			//cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
 		}
@@ -90,7 +90,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (capsCollider->GetGameObject() == otherPlayer)
 			{
-				cout << "Collision exit" << endl;
+				//cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
 			}
@@ -108,7 +108,7 @@ void PlayerController::HandleInput()
 
 	if (input->GetKeyDown('F'))
 	{
-		cout << "F" << endl;
+		//cout << "F" << endl;
 		Attack();
 	}
 }
@@ -146,7 +146,7 @@ void PlayerController::Attack()
 		//make them drop ball
 		BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
 
-		if (ball->GetHolder() == otherPlayer->GetTransform()->GetChild(1)->GetGameObject()) //if crosse == crosse
+		if (ball->GetHolder() == otherPlayer->GetTransform()->GetChild(0)->GetGameObject()) //if crosse == crosse
 		{
 			//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
 			ball->DropBall(otherPlayer);

@@ -6,7 +6,13 @@
 				<Folder Name="Audio" ID="{B660FC27-632F-4016-8DA2-4F1BA1BB13F7}" ShortID="1009911803">
 					<ChildrenList>
 						<Sound Name="Boing" ID="{7EB22989-D9BB-446A-8328-87CFB260AFA8}" ShortID="182834238" Type="SoundFX">
+							<PropertyList>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
 							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
 								<Reference Name="Conversion">
 									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
 								</Reference>

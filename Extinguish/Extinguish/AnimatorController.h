@@ -32,7 +32,7 @@ public:
 
 	//basic
 	void Init(std::string animationSetName, unsigned int curStateIndex, std::string curAnimName);
-	void Update(float dt) override;
+	void FixedUpdate(float dt) override;
 	void UpdateCurAnimatorsLoopAndSpeed();
 
 	//misc//
