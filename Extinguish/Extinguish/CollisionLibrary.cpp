@@ -798,15 +798,15 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	sr.m_Radius = capr.m_Radius;
 	if (SphereToSphere(sl, sr))
 	{
-		float3 ml = (cpor - cpol).normalize() * (capl.m_Radius + 0.00011f);
-		float3 mr = (cpol - cpor).normalize() * (capr.m_Radius + 0.00011f);
+		float3 ml = (cpor - cpol).normalize() * (capl.m_Radius + 0.001f);
+		float3 mr = (cpol - cpor).normalize() * (capr.m_Radius + 0.001f);
 		float3 mid = (cpol + ml + cpor + mr) * 0.5f;
 
-		ml += (cpol - mid).normalize() * (capl.m_Radius + 0.0011f);
-		mr += (cpor - mid).normalize() * (capr.m_Radius + 0.0011f);
+		ml = mid + ((cpol - mid).normalize() * (capl.m_Radius + 0.001f));
+		mr = mid + ((cpor - mid).normalize() * (capr.m_Radius + 0.001f));
 
-		pos += ml;
-		opos += mr;
+		pos = ml;
+		opos = mr;
 
 		float3 nl = (cpor - cpol).normalize();
 		float3 nr = (cpol - cpor).normalize();
