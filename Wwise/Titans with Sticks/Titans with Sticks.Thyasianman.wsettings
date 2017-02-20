@@ -3,6 +3,7 @@
 	<UserProjectSettingsInfo>
 		<UserProjectSettings Name="" ID="{64AF3FBC-7077-4A0F-9E7C-35BE83966D16}">
 			<PropertyList>
+				<Property Name="AudioFilesImporter\Path" Type="string" Value="E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Audio"/>
 				<Property Name="ExternalSourcesInputPath" Type="string">
 					<ValueList>
 						<Value Platform="Windows"></Value>
