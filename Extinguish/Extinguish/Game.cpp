@@ -828,17 +828,19 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButtonC->MakeRect();
 	scoreCRender->InitMetrics();
 
-	//GameObject * debugUI = new GameObject();
-	//basic->AddUIObject(debugUI);
-	//debugUI->Init("debugUI");
-	//Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
-	//theButton->SetGameObject(debugUI);
-	//theButton->showFPS(true);
-	//theButton->setOrigin(0.0f, 30.0f);
-	//debugUI->AddComponent(theButton);
-	//UIRenderer * buttonRender = new UIRenderer();
-	//buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
-	//debugUI->AddComponent(buttonRender);
+	#ifdef DEBUG
+		GameObject * debugUI = new GameObject();
+		basic->AddUIObject(debugUI);
+		debugUI->Init("debugUI");
+		Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
+		theButton->SetGameObject(debugUI);
+		theButton->showFPS(true);
+		theButton->setOrigin(0.0f, 30.0f);
+		debugUI->AddComponent(theButton);
+		UIRenderer * buttonRender = new UIRenderer();
+		buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
+		debugUI->AddComponent(buttonRender);
+	#endif
 }
 
 void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
