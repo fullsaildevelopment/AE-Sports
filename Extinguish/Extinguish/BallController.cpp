@@ -66,10 +66,10 @@ void BallController::Update(float dt)
 	//printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
 	timer.Signal();
 
-	if (!isHeld && transform->GetParent())
-	{
-		SetHolder(transform->GetParent()->GetGameObject());
-	}
+	//if (!isHeld && transform->GetParent())
+	//{
+	//	SetHolder(transform->GetParent()->GetGameObject());
+	//}
 
 
 #if _DEBUG

@@ -176,7 +176,8 @@ void Camera::MoveCamera(InputDownEvent* e)
 			curRotY += degY;
 
 			transform->RotateX(degX);
-			transform->RotateY(degY);
+			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
+			playerTransform->RotateY(degY);
 		}
 
 		prevMouseX = input->GetMouseX();

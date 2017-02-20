@@ -11,6 +11,10 @@
 //#include "AK/SoundEngine/Common/AkTypes.h"
 
 #ifndef AK_OPTIMIZED
+	#pragma comment(lib, "CommunicationCentral.lib")
+#endif
+
+#ifndef AK_OPTIMIZED
 	#include <AK/Comm/AkCommunication.h>
 #endif
 
