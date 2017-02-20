@@ -18,11 +18,14 @@ private:
 	};
 
 	bool isAttacking = false;
+	bool startTimer = false;
+	float timer = 2; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
 	State currState; // the AI's current state or position that they'll take
 	GameObject *myGoal;
 	GameObject *enemyGoal;
 	GameObject *ball;
+	GameObject *realTarget; // holder for attacking
 	BallController *ballClass; // gives me access to the balls script
 	GameObject *me; // access to the gameObject stuff through me
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
@@ -33,7 +36,7 @@ public:
 	AI(GameObject *obj);
 	void Init(GameObject *goal1, GameObject *goal2);
 	void Update(float dt) override;
-	void OnTriggerEnter(Collider *obj) override;
+	void OnCollisionEnter(Collider *obj) override;
 
 	// States
 	void Idle();
