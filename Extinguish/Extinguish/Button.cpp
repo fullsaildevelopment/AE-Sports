@@ -24,6 +24,7 @@ void StartServer()
 		ResourceManager::GetSingleton()->SetServer(true);
 
 		Game::client.init("127.0.0.1", 60001);
+		Game::client.setIsServer();
 
 		LoadSceneEvent* event = new LoadSceneEvent();
 		event->Init("Lobby");
