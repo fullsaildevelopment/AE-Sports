@@ -368,6 +368,8 @@ void Game::HandleEvent(Event* e)
 		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
 		gameStates[soundEvent->GetObjectID()]->hasSound = true;
 
+		cout << "sound event received by game" << endl;
+
 		return;
 	}
 
@@ -375,6 +377,7 @@ void Game::HandleEvent(Event* e)
 	if (coughtEvent)
 	{
 		gameStates[coughtEvent->id]->hasBall = coughtEvent->holding;
+		return;
 	}
 }
 
@@ -1254,6 +1257,8 @@ void Game::UpdateClientObjects()
 
 					gameStates[i]->soundID = -1;
 					gameStates[i]->hasSound = false;
+
+					//cout << "play sound" << endl;
 				}
 				Crosse* crosse = gameObject->GetComponent<Crosse>();
 				if(crosse)
