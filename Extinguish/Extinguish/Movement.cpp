@@ -39,7 +39,7 @@ void Movement::Update(float dt)
 		soundEvent->Init(AK::EVENTS::PLAY_FOOTSTEPS__WALK____, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
-		//cout << "play sand" << endl;
+		cout << "play walk" << endl;
 		timeSincePlayed = 0;
 	}
 	else if (!isMoving && timeSincePlayed)
@@ -48,7 +48,7 @@ void Movement::Update(float dt)
 		soundEvent->Init(AK::EVENTS::STOP_FOOTSTEPS__WALK____, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
-		//cout << "stop sand" << endl;
+		cout << "stop walk" << endl;
 	}
 
 	if (isMoving)
