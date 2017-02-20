@@ -183,7 +183,7 @@ bool BallController::GetIsThrown()
 
 GameObject* BallController::GetHolder()
 {
-	return holder;
+	return holder; // ->GetTransform()->GetParent()->GetGameObject();
 }
 
 void BallController::SetIsHeld(bool ans)
