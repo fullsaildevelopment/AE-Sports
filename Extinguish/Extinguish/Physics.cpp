@@ -24,22 +24,17 @@ void Physics::FixedUpdate(float dt)
 		//apply friction if touching floor
 		else
 		{
-			nV += transform->GetVelocity() * -1 * friction;
-			if (nV.y <= 3.0f && nV.y >= -3.0f)
-			{
-				nV.y = 0;
-				resting = true;
-			}
+			nV += transform->GetVelocity() * -1 * friction * dt;
 		}
-		if (nV.x <= 0.057f && nV.x >= -0.057f)
+		if (nV.x <= 0.001f && nV.x >= -0.001f)
 		{
 			nV.x = 0;
 		}
-		if (nV.y <= 0.06f && nV.y >= -0.06f)
+		if (nV.y <= 0.001f && nV.y >= -0.001f)
 		{
 			nV.y = 0;
 		}
-		if (nV.z <= 0.057f && nV.z >= -0.057f)
+		if (nV.z <= 0.001f && nV.z >= -0.001f)
 		{
 			nV.z = 0;
 		}
@@ -64,10 +59,6 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b = false)
 	tt->SetVelocity(nV);
 	tt->SetPosition(nP);
 	colliding = true;
-	if (nV.y >= gravity * 0.03f && nV.y <= -gravity * 0.03f)
-	{
-		resting = false;
-	}
 }
 
 //getters//

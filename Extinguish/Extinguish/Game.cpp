@@ -584,7 +584,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0, 13.0f, 0.07f, 20, -14.8f);
+		Physics* physics = new Physics(0.01f, 13.0f, 0.07f, 20, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -695,7 +695,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0,300 }, { -300,-3,-300 });
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-3,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 
 
