@@ -19,7 +19,29 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
-void AI::OnTriggerEnter(Collider *obj)
+//void AI::OnTriggerEnter(Collider *obj)
+//{
+//	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
+//
+//	// if i bump into a player and they are intentionally attacking me
+//	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+//	{
+//		// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
+//		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
+//			ballClass->DropBall(me);
+//
+//		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
+//		me->GetTransform()->AddVelocity(vel);
+//	}
+//
+//	else if (col && obj->GetGameObject() == realTarget)
+//	{
+//		int blah = 0;
+//		startTimer = true;
+//	}
+//}
+
+void AI::OnCollisionEnter(Collider *obj)
 {
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
 
@@ -32,6 +54,12 @@ void AI::OnTriggerEnter(Collider *obj)
 
 		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
 		me->GetTransform()->AddVelocity(vel);
+	}
+
+	else if (col && obj->GetGameObject() == realTarget)
+	{
+		int blah = 0;
+		startTimer = true;
 	}
 }
 
@@ -190,6 +218,11 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float dt)
 {
+	if (startTimer)
+	{
+		timer -= dt;
+	}
+
 	// if I'm the goalie
 	if (currState == goalie || currState == playboy)
 	{
@@ -211,7 +244,7 @@ void AI::Update(float dt)
 		}
 
 		// if the ball is too far from the goal
-		else if (dist.magnitude() > 2)
+		else if (dist.magnitude() > 1)
 		{
 			if (currState == playboy)
 			{
@@ -285,6 +318,11 @@ void AI::Update(float dt)
 		}
 	}
 
+	if (timer <= 0)
+	{
+		timer = 2;
+		startTimer = false;
+	}
 }
 
 void AI::Idle()
@@ -351,15 +389,15 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
-	string tag = target->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetTag();
+	realTarget = target->GetTransform()->GetParent()->GetParent()->GetGameObject();
 
-	// if they're not on my team run into target
-	if (tag != me->GetTag())
+	// if they're not on my team and if the timer isn't going
+	if (realTarget->GetTag() != me->GetTag() && timer == 2)
 	{
 		isAttacking = true;
 
 		float3 u = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1)).normalize();
-		float3 v = ((float3(target->GetTransform()->GetWorld()._41, target->GetTransform()->GetWorld()._42, target->GetTransform()->GetWorld()._43) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		float3 v = ((float3(realTarget->GetTransform()->GetWorld()._41, realTarget->GetTransform()->GetWorld()._42, realTarget->GetTransform()->GetWorld()._43) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
 		me->GetTransform()->RotateY(degRad);
 		me->GetTransform()->SetVelocity(v * AttackSpeed);
