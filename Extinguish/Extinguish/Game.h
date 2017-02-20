@@ -31,6 +31,7 @@ public:
 	static ClientWrapper client;
 	static ServerWrapper server;
 	static unsigned int currentScene;
+	static int returnResult;
 
 	int Team1Score;
 	int Team2Score;
@@ -67,7 +68,7 @@ public:
 	~Game();
 	//basic
 	void Init(DeviceResources* devResources, InputManager* inputManager);
-	void Update(float dt);
+	int Update(float dt);
 	void FixedUpdate(float dt);
 	void Render();
 	void Shutdown();

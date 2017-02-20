@@ -30,6 +30,7 @@
 #include <DXGIDebug.h>
 #include <atlbase.h>
 //#include <vld.h> 
+#include <stdlib.h>
 #include "DDSTextureLoader.h"	 
 #include "../ShaderStructures/ShaderStructures.h"
 

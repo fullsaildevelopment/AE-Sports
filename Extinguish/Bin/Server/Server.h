@@ -178,7 +178,7 @@ private:
 	UINT16 registerClient();
 	void sendNew();
 	void unregisterClient();
-	void sendDisconnect();
+	void sendDisconnect(bool broadcast);
 	void recievePacket();
 	void recieveInput();
 };

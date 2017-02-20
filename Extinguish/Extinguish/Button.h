@@ -44,6 +44,7 @@ private:
 	float clickCooldown = 1.0f;
 	bool isActive;
 	bool isClickable;
+	bool isTimer = false;
 	bool showFps = false;
 	bool hovered = false;
 	unsigned int sceneIndex;
@@ -77,6 +78,26 @@ public:
 		theTime += to_string((time / 60.0f));
 		return theTime;
 	}
+
+
+	wstring getWTime() {
+		wstring theTime = L"0";
+		int min = (int)time / 60;
+		theTime += to_wstring(min);
+		theTime += L":";
+		float secf = time - (float)(min * 60);
+		int sec = (int)time - (min * 60);
+		if (sec > 9)
+		theTime += to_wstring(sec);
+		else
+		{
+			theTime += L"0";
+			theTime += to_wstring(sec);
+		}
+
+		return theTime;
+	}
+
 	unsigned int getLength() { return textLength; }
 	IDWriteTypography * getTypography() { return pTypography.Get(); }
 
@@ -104,6 +125,7 @@ public:
 	void setButtonType();
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 	void SetActive(bool active) { isActive = active; }
+	void setTimer(bool active) { isTimer = active; }
 
 	/* HELPERS*/
 
