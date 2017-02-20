@@ -83,7 +83,7 @@ int State::GetTransitionIndex()
 
 unsigned int State::GetTransitionsCount()
 {
-	return transitions.size();
+	return (unsigned int)transitions.size();
 }
 
 
