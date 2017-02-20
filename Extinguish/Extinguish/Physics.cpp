@@ -24,7 +24,7 @@ void Physics::FixedUpdate(float dt)
 		//apply friction if touching floor
 		else
 		{
-			nV += transform->GetVelocity() * -1 * friction * dt;
+			nV += transform->GetVelocity() * -1 * friction;
 			if (nV.y <= 3.0f && nV.y >= -3.0f)
 			{
 				nV.y = 0;
