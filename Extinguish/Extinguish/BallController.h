@@ -20,7 +20,6 @@ private:
 	Physics* physics;
 	void SetIsHeld(bool ans);
 	std::vector<Transform*> nets;
-	void SlightMagEff();
 
 public:
 	BallController(GameObject* obj);
@@ -39,7 +38,8 @@ public:
 	// accessors
 	bool GetIsHeld();
 	bool GetIsThrown();
-	GameObject* GetHolder();
+	GameObject *GetHolder();
+	GameObject *GetCrosseHolder();
 
 	// mutators
 	void SetHolder(GameObject *person);
