@@ -48,6 +48,9 @@
     <ClInclude Include="SoundEvent.h">
       <Filter>Events</Filter>
     </ClInclude>
+    <ClInclude Include="CoughtEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">

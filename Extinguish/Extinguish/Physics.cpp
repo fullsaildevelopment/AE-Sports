@@ -25,12 +25,17 @@ void Physics::FixedUpdate(float dt)
 		else
 		{
 			nV += transform->GetVelocity() * -1 * friction * dt;
+			if (nV.y <= 3.0f && nV.y >= -3.0f)
+			{
+				nV.y = 0;
+				resting = true;
+			}
 		}
 		if (nV.x <= 0.057f && nV.x >= -0.057f)
 		{
 			nV.x = 0;
 		}
-		if (nV.y <= 0.057f && nV.y >= -0.057f)
+		if (nV.y <= 0.06f && nV.y >= -0.06f)
 		{
 			nV.y = 0;
 		}
@@ -46,6 +51,7 @@ void Physics::FixedUpdate(float dt)
 		}
 		transform->SetVelocity(nV);
 		colliding = false;
+		transform->Translate({ nV.x * dt, nV.y * dt, nV.z * dt });
 	}
 }
 
@@ -58,6 +64,10 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b = false)
 	tt->SetVelocity(nV);
 	tt->SetPosition(nP);
 	colliding = true;
+	if (nV.y >= gravity * 0.03f && nV.y <= -gravity * 0.03f)
+	{
+		resting = false;
+	}
 }
 
 //getters//
