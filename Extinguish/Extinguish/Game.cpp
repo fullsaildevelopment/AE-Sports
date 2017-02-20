@@ -27,6 +27,7 @@
 #include "WindowResizeEvent.h"
 #include "LoadSceneEvent.h"
 #include "SoundEvent.h"
+#include "CoughtEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -362,6 +363,11 @@ void Game::HandleEvent(Event* e)
 		return;
 	}
 
+	CoughtEvent* coughtEvent = dynamic_cast<CoughtEvent*>(e);
+	if (coughtEvent)
+	{
+		gameStates[coughtEvent->id]->hasBall = coughtEvent->holding;
+	}
 }
 
 //getters//
@@ -1235,6 +1241,9 @@ void Game::UpdateClientObjects()
 					gameStates[i]->soundID = -1;
 					gameStates[i]->hasSound = false;
 				}
+				Crosse* crosse = gameObject->GetComponent<Crosse>();
+				if(crosse)
+					crosse->SetColor(client.hasBall(i));
 			}
 		}
 	}

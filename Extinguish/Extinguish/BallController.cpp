@@ -13,7 +13,6 @@ using namespace std;
 #define ThrowSpeed 28
 #define DropSpeed 10
 
-
 void BallController::OnTriggerEnter(Collider *obj)
 {
 	//SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
@@ -69,6 +68,7 @@ void BallController::Update(float dt)
 	if (!isHeld && transform->GetParent())
 	{
 		SetHolder(transform->GetParent()->GetGameObject());
+		holder->GetComponent<Crosse>()->SetColor(true);
 	}
 
 
@@ -76,6 +76,7 @@ void BallController::Update(float dt)
 	if (InputManager::GetSingleton()->GetKey(17))
 	{
 		SetHolder(GetGameObject()->FindGameObject("Crosse1"));
+		holder->GetComponent<Crosse>()->SetColor(true);
 	}
 #endif
 
@@ -121,6 +122,7 @@ void BallController::Throw()
 	timer.Restart();
 	isThrown = true;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
+	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
 
@@ -133,6 +135,7 @@ void BallController::ThrowTo(GameObject *target)
 {
 	isHeld = false;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
+	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
 
@@ -163,6 +166,7 @@ void BallController::DropBall(GameObject *person)
 	//set ball variables
 	isHeld = false;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
+	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
 
