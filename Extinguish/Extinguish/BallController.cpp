@@ -71,14 +71,11 @@ void BallController::Update(float dt)
 		holder->GetComponent<Crosse>()->SetColor(true);
 	}
 
-
-#if _DEBUG
 	if (InputManager::GetSingleton()->GetKey(17))
 	{
 		SetHolder(GetGameObject()->FindGameObject("Crosse1"));
 		holder->GetComponent<Crosse>()->SetColor(true);
 	}
-#endif
 
 	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
 		transform->SetPosition({ 0,0,0 });
