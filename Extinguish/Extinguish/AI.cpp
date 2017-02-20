@@ -19,47 +19,28 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 }
 
-//void AI::OnTriggerEnter(Collider *obj)
-//{
-//	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
-//
-//	// if i bump into a player and they are intentionally attacking me
-//	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
-//	{
-//		// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
-//		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
-//			ballClass->DropBall(me);
-//
-//		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
-//		me->GetTransform()->AddVelocity(vel);
-//	}
-//
-//	else if (col && obj->GetGameObject() == realTarget)
-//	{
-//		int blah = 0;
-//		startTimer = true;
-//	}
-//}
-
 void AI::OnCollisionEnter(Collider *obj)
 {
 	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
 
-	// if i bump into a player and they are intentionally attacking me
-	if (col && obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+	if (col)
 	{
-		// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
-		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
-			ballClass->DropBall(me);
+		// if i bump into a player and they are intentionally attacking me
+		if (obj->GetGameObject()->GetComponent<AI>())
+		{
+			if (obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
+			{
+				// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
+				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
+					ballClass->DropBall(me);
 
-		float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
-		me->GetTransform()->AddVelocity(vel);
-	}
+				float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
+				me->GetTransform()->AddVelocity(vel);
+			}
+		}
 
-	else if (col && obj->GetGameObject() == realTarget)
-	{
-		int blah = 0;
-		startTimer = true;
+		else if (obj->GetGameObject() == realTarget)
+			startTimer = true;
 	}
 }
 
@@ -457,7 +438,15 @@ bool AI::RunTo(GameObject *target)
 	float3 u = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1)).normalize();
 
 	//v - vector between me and destination
-	float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	float3 v;
+
+	if (target == myGoal || target == enemyGoal)
+	{
+		v = (((target->GetTransform()->GetForwardf3() * 3 + target->GetTransform()->GetPosition()) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	}
+
+	else
+		v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
 	float degRad = dot_product(u, v);// / (u.magnitude() * v.magnitude());
@@ -467,7 +456,9 @@ bool AI::RunTo(GameObject *target)
 	// run to them
 	me->GetTransform()->SetVelocity(v * RunSpeed);
 
-	if (v.magnitude() < 3)
+	float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+	if (a.magnitude() < 5)
 		return true;
 
 	return false;

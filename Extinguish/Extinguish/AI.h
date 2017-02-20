@@ -36,7 +36,6 @@ public:
 	AI(GameObject *obj);
 	void Init(GameObject *goal1, GameObject *goal2);
 	void Update(float dt) override;
-	//void OnTriggerEnter(Collider *obj) override;
 	void OnCollisionEnter(Collider *obj) override;
 
 	// States
