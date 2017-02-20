@@ -27,6 +27,7 @@
 #include "WindowResizeEvent.h"
 #include "LoadSceneEvent.h"
 #include "SoundEvent.h"
+#include "CoughtEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -37,6 +38,7 @@ int Game::clientID = 1;
 ClientWrapper Game::client;
 ServerWrapper Game::server;
 unsigned int Game::currentScene;
+int Game::returnResult = 1;
 
 Game::~Game()
 {
@@ -153,7 +155,7 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 	}
 }
 
-void Game::Update(float dt)
+int Game::Update(float dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
@@ -178,6 +180,11 @@ void Game::Update(float dt)
 
 			//run client
 			int clientState = client.run();
+
+			if (clientState == 0)
+			{
+				returnResult = 0;
+			}
 
 			// if client gets server's game states, get the state's location from the client
 			// so that it can be included in update
@@ -241,6 +248,8 @@ void Game::Update(float dt)
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
+
+	return returnResult;
 }
 
 void Game::FixedUpdate(float dt)
@@ -362,6 +371,11 @@ void Game::HandleEvent(Event* e)
 		return;
 	}
 
+	CoughtEvent* coughtEvent = dynamic_cast<CoughtEvent*>(e);
+	if (coughtEvent)
+	{
+		gameStates[coughtEvent->id]->hasBall = coughtEvent->holding;
+	}
 }
 
 //getters//
@@ -765,6 +779,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	scoreA->Init("gameScoreBase");
 	Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
 	theSButton->SetGameObject(scoreA);
+	theSButton->setTimer(true);
 	theSButton->showFPS(false);
 	theSButton->setOrigin(250.0f, 30.0f);
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
@@ -813,17 +828,17 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButtonC->MakeRect();
 	scoreCRender->InitMetrics();
 
-	GameObject * debugUI = new GameObject();
-	basic->AddUIObject(debugUI);
-	debugUI->Init("debugUI");
-	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
-	theButton->SetGameObject(debugUI);
-	theButton->showFPS(true);
-	theButton->setOrigin(0.0f, 30.0f);
-	debugUI->AddComponent(theButton);
-	UIRenderer * buttonRender = new UIRenderer();
-	buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
-	debugUI->AddComponent(buttonRender);
+	//GameObject * debugUI = new GameObject();
+	//basic->AddUIObject(debugUI);
+	//debugUI->Init("debugUI");
+	//Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
+	//theButton->SetGameObject(debugUI);
+	//theButton->showFPS(true);
+	//theButton->setOrigin(0.0f, 30.0f);
+	//debugUI->AddComponent(theButton);
+	//UIRenderer * buttonRender = new UIRenderer();
+	//buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
+	//debugUI->AddComponent(buttonRender);
 }
 
 void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
@@ -1235,6 +1250,9 @@ void Game::UpdateClientObjects()
 					gameStates[i]->soundID = -1;
 					gameStates[i]->hasSound = false;
 				}
+				Crosse* crosse = gameObject->GetComponent<Crosse>();
+				if(crosse)
+					crosse->SetColor(client.hasBall(i));
 			}
 		}
 	}

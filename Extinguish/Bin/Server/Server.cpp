@@ -24,6 +24,8 @@ Server::~Server()
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];
 
+	delete clientStates;
+	delete gameState;
 //	delete[] clientStates;
 	if (peer)
 	peer->DestroyInstance(peer);
@@ -87,7 +89,7 @@ int  Server::update()
 		{
 			printf("A client has disconnected.\n");
 
-			if (numPlayers == 0)
+			if (numPlayers == 1)
 				return 0;
 			break;
 		}
@@ -122,7 +124,7 @@ int  Server::update()
 		case ID_CLIENT_DISCONNECT:
 		{
 			unregisterClient();
-			sendDisconnect();
+			sendDisconnect(false);
 
 			break;
 		}
@@ -156,7 +158,14 @@ int  Server::update()
 void Server::stop()
 {
 	shutdown = true;
-	RakPeerInterface::DestroyInstance(peer);
+	while (true)
+	{
+		sendDisconnect(true);
+		int result = update();
+		if (result == 0)
+			break;
+	}
+	//RakPeerInterface::DestroyInstance(peer);
 }
 
 bool Server::Shutdown()
@@ -283,9 +292,9 @@ void Server::unregisterClient()
 	--numPlayers;
 }
 
-void Server::sendDisconnect()
+void Server::sendDisconnect(bool broadcast)
 {
-	sendMessage("", ID_REMOVE_CLIENT, false);
+	sendMessage("", ID_REMOVE_CLIENT, broadcast);
 }
 
 void Server::recievePacket()

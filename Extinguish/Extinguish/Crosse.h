@@ -45,7 +45,7 @@ public:
 	//misc
 	void Throw();
 	void HandleEvent(Event* e) override;
-
+	void SetColor(bool b);
 	//setters//
 	void SetHolder(GameObject* object);
 
