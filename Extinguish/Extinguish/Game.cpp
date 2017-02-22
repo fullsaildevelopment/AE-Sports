@@ -642,6 +642,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
 	}
+
 	ballController->LateInit();
 
 	for (int i = 0; i < ai.size(); ++i)
