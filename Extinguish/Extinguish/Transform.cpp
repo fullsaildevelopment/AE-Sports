@@ -389,6 +389,13 @@ DirectX::XMFLOAT3 Transform::GetUp()
 	return result;
 }
 
+float3 Transform::GetRightf3()
+{
+	float3 vec = float3(local._11, local._12, local._13);
+	vec.normalize();
+	return vec;
+}
+
 DirectX::XMFLOAT3 Transform::GetRight()
 {
 	XMFLOAT3 result;
