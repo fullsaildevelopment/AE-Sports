@@ -534,11 +534,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mage1->Init(playerName);
 		mage1->SetTag("Team1");
 
-		int tempCol = col;
+		int tempCol = col - 25;
 
 		if (i > 4)
 		{
-			tempCol = -tempCol;
+			tempCol = -col + 14;
 			mage1->SetTag("Team2");
 			
 			AI *mageAI = new AI(mage1);
@@ -651,7 +651,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { -7, 0, (float)-row }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -7, 0, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
@@ -662,7 +662,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { -7, 0, (float)row - 38 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -7, 0, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
@@ -680,14 +680,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-3,-300 });
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 
 
 	GameObject* Wall = new GameObject();
 	basic->AddGameObject(Wall);
 	Wall->Init("Wall");
-	Wall->InitTransform(identity, { 85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Wall->InitTransform(identity, { 57, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer = new Renderer();
 	Wall->AddComponent(WallRenderer);
 	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -697,7 +697,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall2 = new GameObject();
 	basic->AddGameObject(Wall2);
 	Wall2->Init("Wall2");
-	Wall2->InitTransform(identity, { -85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Wall2->InitTransform(identity, { -70, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer2 = new Renderer();
 	Wall2->AddComponent(WallRenderer2);
 	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -707,7 +707,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall3 = new GameObject();
 	basic->AddGameObject(Wall3);
 	Wall3->Init("Wall3");
-	Wall3->InitTransform(identity, { 0, 0, 45 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Wall3->InitTransform(identity, { 0, 0, 38.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer3 = new Renderer();
 	Wall3->AddComponent(WallRenderer3);
 	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -717,7 +717,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall4 = new GameObject();
 	basic->AddGameObject(Wall4);
 	Wall4->Init("Wall4");
-	Wall4->InitTransform(identity, { 0, 0, -85 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Wall4->InitTransform(identity, { 0, 0, -80.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer4 = new Renderer();
 	Wall4->AddComponent(WallRenderer4);
 	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
