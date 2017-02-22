@@ -63,6 +63,7 @@ public:
 	float3 GetForwardf3();
 	DirectX::XMFLOAT3 GetForward();
 	DirectX::XMFLOAT3 GetUp();
+	float3 GetRightf3();
 	DirectX::XMFLOAT3 GetRight();
 	DirectX::XMFLOAT3 GetRotationDeg();
 };
