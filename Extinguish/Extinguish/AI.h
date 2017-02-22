@@ -55,6 +55,7 @@ public:
 	void Attack(GameObject *target); // pass in the person you want to attack
 	void Paranoia(); // checks how close enemy is to them and acts on it
 	bool RunTo(GameObject *target); // returns true when near target
+	bool RunTo(GameObject *target, float dist); // returns true when near target, but you can pass in how close you want to be to target
 	void TurnTo(GameObject *target); // makes the AI turn to the desired object
 	void Score(); // throw the ball into the goal
 
