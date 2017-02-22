@@ -325,7 +325,17 @@ void AI::Update(float dt)
 		// if nobody has the ball
 		else
 		{
-			// Attack a random dude
+			GameObject *myGuy = nullptr;
+			
+			for (int i = 0; i < listOfMates.size(); ++i)
+			{
+				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+					myGuy = listOfMates[i];
+			}
+
+			// hover around guy
+			if (RunTo(myGuy, 15.0f))
+				Idle();
 		}
 	}
 
@@ -476,6 +486,25 @@ bool AI::RunTo(GameObject *target)
 		float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
 		if (a.magnitude() < 5)
+			return true;
+	}
+
+	return false;
+}
+
+bool AI::RunTo(GameObject *target, float dist)
+{
+	if (target)
+	{
+		TurnTo(target);
+		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+
+		// run to them
+		me->GetTransform()->SetVelocity(v * RunSpeed);
+
+		float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+		if (a.magnitude() < dist)
 			return true;
 	}
 
