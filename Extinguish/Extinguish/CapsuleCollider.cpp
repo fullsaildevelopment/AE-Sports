@@ -118,11 +118,11 @@ void CapsuleCollider::FixedUpdate(float dt)
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, pos, false);
+						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false);
 						Physics* nop = (*Others)[i]->GetComponent<Physics>();
 						if (nop)
 						{
-							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos, false);
+							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start, false);
 						}
 					}
 					else
