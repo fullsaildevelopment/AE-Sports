@@ -633,7 +633,32 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 
 	if (dotx <= 0 && dotnx <= 0 && doty <= 0 && dotny <= 0 && dotz <= 0 && dotnz <= 0)
 	{
-		vel = vel - move * 2 * dot_product(vel, move);
+		float3 cmax = offset.max - s.m_Center;
+		float3 cmin = s.m_Center - offset.min;
+		if (cmax.x < cmin.x && cmax.x < cmax.y && cmax.x < cmin.y && cmax.x < cmax.z && cmax.x < cmin.z)
+		{
+			s.m_Center.x = cmax.x + s.m_Radius;
+		}
+		else if (cmax.x > cmin.x && cmin.x < cmax.y && cmin.x < cmin.y && cmin.x < cmax.z && cmin.x < cmin.z)
+		{
+			s.m_Center.x = cmin.x - s.m_Radius;
+		}
+		else if (cmax.y < cmin.x && cmax.y < cmax.x && cmax.y < cmin.y && cmax.y < cmax.z && cmax.y < cmin.z)
+		{
+			s.m_Center.y = cmax.y + s.m_Radius;
+		}
+		else if (cmax.x > cmin.y && cmin.y < cmax.y && cmin.y < cmin.x && cmin.y < cmax.z && cmin.y < cmin.z)
+		{
+			s.m_Center.y = cmin.y - s.m_Radius;
+		}
+		else if (cmax.z < cmin.x && cmax.z < cmax.y && cmax.z < cmin.y && cmax.z < cmax.x && cmax.z < cmin.z)
+		{
+			s.m_Center.z = cmax.z + s.m_Radius;
+		}
+		else if (cmax.x > cmin.z && cmin.z < cmax.y && cmin.z < cmin.y && cmin.z < cmax.z && cmin.z < cmin.x)
+		{
+			s.m_Center.z = cmax.z - s.m_Radius;
+		}
 	}
 
 
