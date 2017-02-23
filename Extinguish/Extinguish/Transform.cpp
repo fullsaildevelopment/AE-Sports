@@ -148,6 +148,12 @@ void Transform::AddSibling(Transform* tempSibling)
 	//}
 }
 
+float3 Transform::GetWorldPosition()
+{
+	DirectX::XMFLOAT4X4 world = GetWorld();
+	return float3(world._41, world._42, world._43);
+}
+
 void Transform::FixedUpdate(float dt)
 {
 	//Translate({ velocity.x * dt, velocity.y * dt, velocity.z * dt });

@@ -55,6 +55,7 @@ public:
 	bool GetBDirty();
 	float3 GetVelocity();
 	float3 GetPosition();
+	float3 GetWorldPosition();
 	float3 GetRotation();
 	float3 GetScale();
 	Transform* GetParent();
