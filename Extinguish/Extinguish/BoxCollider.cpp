@@ -37,21 +37,25 @@ BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : 
 
 void BoxCollider::FixedUpdate(float dt)
 {
+	if (objects.size() == 0)
+	{
+		objects = *GetGameObject()->GetGameObjects();
+		CollidingWith.resize(objects.size());
+	}
 	GameObject* tg = GetGameObject();
-	vector<GameObject*>* Others = tg->GetGameObjects();
-	size_t size = (*Others).size();
+	size_t size = objects.size();
 
 	for (int i = 0; i < size; ++i)
 	{
-		if ((*Others)[i] == tg) continue;
+		if (objects[i] == tg) continue;
 		bool c = false;
 		for (int j = 0; j < checked.size(); ++j)
 		{
-			if ((*Others)[i]->GetComponent<Collider>() == checked[j]) c = true;
+			if (objects[i]->GetComponent<Collider>() == checked[j]) c = true;
 		}
 		if (c) continue;
 		///////////////////////////////////////AABB vs AABB///////////////////////////////////////
-		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
+		BoxCollider* box = objects[i]->GetComponent<BoxCollider>();
 		if (box)
 		{
 			GameObject* og = box->GetGameObject();
@@ -87,7 +91,7 @@ void BoxCollider::FixedUpdate(float dt)
 					vel.z = rejv.z;
 					tg->GetTransform()->SetVelocity(vel);
 					tg->OnCollisionEnter(box);
-					box->GetGameObject()->OnCollisionEnter(this);
+					objects[i]->OnCollisionEnter(this);
 				}
 
 
