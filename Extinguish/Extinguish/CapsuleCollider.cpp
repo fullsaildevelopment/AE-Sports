@@ -100,17 +100,13 @@ void CapsuleCollider::FixedUpdate(float dt)
 						}
 						continue;
 					}
+				}
 					if (CollidingWith[i])
 					{
 						CollidingWith[i] = false;
 						objects[i]->OnCollisionExit(this);
 						tg->OnCollisionExit(box);
 					}
-
-					otherBox = box;
-					tg->OnCollisionEnter(box);
-					box->GetGameObject()->OnCollisionEnter(this);
-				}
 				else if (otherBox == box)
 				{
 					otherBox->OnCollisionExit(this);
