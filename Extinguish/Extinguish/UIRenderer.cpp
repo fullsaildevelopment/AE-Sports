@@ -104,6 +104,20 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	}
 }
 
+
+void UIRenderer::Init(bool _isButton, DeviceResources* deviceResources, MeterBar * meter)
+{
+	pDWriteFactory = deviceResources->GetWriteFactory();
+	pD2DFactory = deviceResources->GetID2D1Factory();
+	layoutRect = deviceResources->GetRect();
+	pRT = deviceResources->GetRenderTarget();
+	//pTextLayout = resources->GetTextLayout();
+	devResources = deviceResources;
+	isButton = _isButton;
+	theBar = meter;
+	d2DevContext = deviceResources->Get2DContext();
+}
+
 void UIRenderer::InitMetrics()
 {
 	HRESULT res = pDWriteFactory->CreateTextLayout(
@@ -123,21 +137,23 @@ void UIRenderer::InitMetrics()
 
 void UIRenderer::Update(float dt)
 {
-	if (theButton->getText() != L"") {
-		ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
-		HRESULT res = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	if (theButton) {
+		if (theButton->getText() != L"") {
+			ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+			HRESULT res = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 
-		res = pDWriteFactory->CreateTextLayout(
-			theButton->getText().c_str(),
-			theButton->getLength(),
-			pTextFormat.Get(),
-			theButton->getWidth(),
-			theButton->getHeight(),
-			&pTextLayout
-		);
+			res = pDWriteFactory->CreateTextLayout(
+				theButton->getText().c_str(),
+				theButton->getLength(),
+				pTextFormat.Get(),
+				theButton->getWidth(),
+				theButton->getHeight(),
+				&pTextLayout
+			);
 
-		ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
-		pTextLayout->GetMetrics(&textMetrics);
+			ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
+			pTextLayout->GetMetrics(&textMetrics);
+		}
 	}
 }
 
@@ -146,48 +162,59 @@ void UIRenderer::Render()
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 	HRESULT hr;
+	
+	pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
+	//devContext->OMSetDepthStencilState(depthStencilState, 1);
+	d2DevContext->SaveDrawingState(stateBlock.Get());
 
-	if (theButton->isEnabled()) {
-		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
-		//devContext->OMSetDepthStencilState(depthStencilState, 1);
-		d2DevContext->SaveDrawingState(stateBlock.Get());
+	d2DevContext->BeginDraw();
+	d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
-		d2DevContext->BeginDraw();
-		d2DevContext->SetTransform(D2D1::IdentityMatrix());
+	if (theButton) {
+		if (theButton->getActive()) {
 
-		if (pBitmap)
-		{
-			if (!theButton->isHovered() || !pBitmapHovered)
-				d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
-			else
-				d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
+			if (pBitmap)
+			{
+				if (!theButton->isHovered() || !pBitmapHovered)
+					d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
+				else
+					d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
+			}
+
+			if (theButton->getText() != L"") {
+
+				DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
+				hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
+
+				d2DevContext->DrawTextLayout(
+					D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
+					pTextLayout.Get(),
+					pBrush.Get()
+				);
+			}
+			/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
+			{
+				float t = 0;
+			}*/
+
+			if (GetGameObject()->GetName() == "debugUI") {
+				RenderDebugUI(theButton);
+			}
 		}
-
-		if (theButton->getText() != L"") {
-
-			DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
-			hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
-
-			d2DevContext->DrawTextLayout(
-				D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
-				pTextLayout.Get(),
-				pBrush.Get()
-			);
-		}
-		hr = d2DevContext->EndDraw();
-		/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
-		{
-			float t = 0;
-		}*/
-		//	d2DevContext->RestoreDrawingState(stateBlock.Get());
-
-		if (GetGameObject()->GetName() == "debugUI") {
-			RenderDebugUI(theButton);
-		}
-
-
-		stateBlock.Reset();
 	}
+	
+	if (theBar)
+	{
+		if (theBar->getActive())
+		{
+			d2DevContext->DrawBitmap(pBitmap.Get(), theBar->getRect2());
+			d2DevContext->DrawBitmap(pBitmapHovered.Get(), theBar->getRect());
+		}
+	}
+
+	hr = d2DevContext->EndDraw();
+	d2DevContext->RestoreDrawingState(stateBlock.Get());
+	stateBlock.Reset();
 
 }
 
@@ -205,23 +232,6 @@ void UIRenderer::RenderDebugUI(Button * theButton)
 	ImGui::RenderText(ImVec2(350.0f, 2.0f), theButton->getTime().c_str());
 
 	ImGui::EndMainMenuBar();
-
-	//ImGui::SetNextWindowSize(ImVec2(180.0f, 80.0f));
-	//ImGui::Begin("Quick Networking");
-	//
-	//if (ImGui::Button("         Host         "))
-	//{
-	//	// start server
-	//	float temp = 0.0f;
-	//}
-
-	//if (ImGui::Button("         Join         "))
-	//{
-	//	if (ImGui::IsMouseDown(0))
-	//	{
-	//		// join server
-	//	}
-	//}
 
 	//ImGui::End();
 
@@ -294,5 +304,8 @@ void UIRenderer::DecodeBitmap(PCWSTR address)
 void UIRenderer::MakeRTSize()
 {
 	D2D1_SIZE_F rtSize = d2DevContext->GetSize();
-	theButton->setRT(rtSize);
+	if (theButton)
+		theButton->setRT(rtSize);
+	if (theBar)
+		theBar->setRT(rtSize);
 }

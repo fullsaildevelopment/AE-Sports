@@ -25,6 +25,8 @@ private:
 		RESUME_GAME
 	};
 
+
+
 	// for rendering
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
 	float height, width, fontSize;
@@ -48,10 +50,10 @@ private:
 	bool showFps = false;
 	bool hovered = false;
 	unsigned int sceneIndex;
+	int helperIndex;
 
 	// some function pointer for event
 	void (*eventFunction)(void);
-
 
 public:
 	//~Button() {}
@@ -110,6 +112,7 @@ public:
 	float getOriginY() { return originY; }
 
 	bool isHovered() { return hovered; }
+	bool getActive() { return isActive; }
 
 	/* SETTERS */
 	void setHeight(float _height) { height = _height; }
@@ -126,6 +129,7 @@ public:
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 	void SetActive(bool active) { isActive = active; }
 	void setTimer(bool active) { isTimer = active; }
+	void setHelper(int index) { helperIndex = index; }
 
 	/* HELPERS*/
 

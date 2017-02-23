@@ -101,7 +101,9 @@ public:
 	//getters//
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
+	GameObject* const GetUIGameObjects(int i) { return uiObjects[i]; }
 	int GetNumObjects() { return (int)gameObjects.size(); };
+	int GetNumUIObjects() { return (int)uiObjects.size(); }
 	GameObject* GetGameObject(std::string name);
 	GameObject* const GetUIByName(string name);
 
