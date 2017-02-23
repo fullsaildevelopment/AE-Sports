@@ -75,30 +75,36 @@ void CapsuleCollider::FixedUpdate(float dt)
 			{
 				Capsule c = GetWorldCapsule();
 				float3 pos = tgt->GetPosition();
+				float3 opos = tgt->GetPosition();
 				float3 vel = tgt->GetVelocity();
-				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos - GetCapsule().m_Segment.m_Start);
+				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos);
 				if (!result.isEquil(float3(0, 0, 0)))
 				{
 
 					float3 invN = result.negate();
 					invN = invN * (vel * result).magnitude();
 					vel = vel - invN;
-					
+					if (opos.isEquil(pos))
+					{
+						int i = 0;
+					}
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, pos, false);
-					}
-					else
-					{
-						tgt->SetPosition(pos);
-						tgt->SetVelocity(vel);
+						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start);
 						if (!CollidingWith[i])
 						{
 							tg->OnCollisionEnter(box);
 							objects[i]->OnCollisionEnter(this);
 							CollidingWith[i] = true;
 						}
+						continue;
+					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(box);
 					}
 				}
 			}
@@ -150,22 +156,16 @@ void CapsuleCollider::FixedUpdate(float dt)
 						tg->OnCollisionEnter(capsule);
 						CollidingWith[i] = true;
 					}
-					otherCapsule = capsule;
+					continue;
 				}
-				else
+				if (CollidingWith[i])
 				{
-					if (otherCapsule == capsule)
-					{
-						tg->OnCollisionExit(otherCapsule);
-						otherCapsule = nullptr;
-					}
+					CollidingWith[i] = false;
+					objects[i]->OnCollisionExit(this);
+					tg->OnCollisionExit(capsule);
 				}
 			}
 			continue;
-		}
-		if (CollidingWith[i])
-		{
-			CollidingWith[i] = false;
 		}
 		/*
 		///////////////////////////////////////Capsule vs Sphere///////////////////////////////////////

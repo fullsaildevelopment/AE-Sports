@@ -69,6 +69,7 @@ void SphereCollider::FixedUpdate(float dt)
 							tg->OnCollisionEnter(box);
 							CollidingWith[i] = true;
 						}
+						continue;
 					}
 					else
 					{
@@ -81,6 +82,12 @@ void SphereCollider::FixedUpdate(float dt)
 							tg->OnCollisionEnter(box);
 							CollidingWith[i] = true;
 						}
+					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(box);
 					}
 				}
 			}
@@ -114,6 +121,7 @@ void SphereCollider::FixedUpdate(float dt)
 							objects[i]->OnCollisionEnter(this);
 							tg->OnCollisionEnter(capsule);
 							CollidingWith[i] = true;
+							continue;
 						}
 					}
 					else
@@ -122,6 +130,12 @@ void SphereCollider::FixedUpdate(float dt)
 						tgt->SetVelocity(vel);
 						capsule->GetGameObject()->OnCollisionEnter(this);
 						tg->OnCollisionEnter(capsule);
+					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(capsule);
 					}
 				}
 
@@ -163,6 +177,13 @@ void SphereCollider::FixedUpdate(float dt)
 							tg->OnCollisionEnter(sphere);
 							CollidingWith[i] = true;
 						}
+						continue;
+					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(sphere);
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
@@ -181,10 +202,6 @@ void SphereCollider::FixedUpdate(float dt)
 				}
 			}
 			continue;
-		}
-		if (CollidingWith[i])
-		{
-			CollidingWith[i] = false;
 		}
 	}
 	checked.clear();
