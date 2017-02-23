@@ -772,6 +772,8 @@ void ResourceManager::DoFBXExporting()
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Goal\\Goal.fbx", "Goal");
 
+	//test models
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");
 
 #endif
 }
