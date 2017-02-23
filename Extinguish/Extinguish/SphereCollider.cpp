@@ -52,7 +52,6 @@ void SphereCollider::FixedUpdate(float dt)
 			{
 				Sphere s = GetWorldSphere();
 				float3 vel = tgt->GetVelocity() * dt;
-				float3 bvel = vel;
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c.x == 1 || c.y == 1)
 				{
@@ -72,8 +71,6 @@ void SphereCollider::FixedUpdate(float dt)
 						tg->OnCollisionEnter(box);
 					}
 				}
-				else if (!bvel.isEquil(vel))
-					tgt->SetVelocity(vel / dt);
 			}
 			continue;
 		}

@@ -183,19 +183,44 @@ void DeviceResources::Init(HWND hwnd)
 
 void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 {
-	ID3D11RenderTargetView* nullViews[] = { nullptr };
-	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
-	renderTargetView = nullptr;
-	shadowMapRTV = nullptr;
-	p2DDeviceContext->SetTarget(nullptr);
-	depthStencilView = nullptr;
-	swapChainBuffer = nullptr;
-	shadowMapBuffer = nullptr;
+	
+	//deviceContext->Flush();
+	//deviceContext->OMSetRenderTargets(0, 0, 0);
+	////shadowMapBuffer.Get()->Release();
+	//swapChainBuffer.Get()->Release();
+	//
+	////depthStencilBuffer.Get()->Release();
+	////shadowMapDepthStencilBuffer.Get()->Release();
+	//
+	////depthStencilView.Get()->Release();
+	//
+	////renderTargetView.Get()->Release();
+	//p2DDeviceContext->SetTarget(nullptr);
+	//
+	//swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+	//
+	//ID3D11Texture2D* pBuffer;
+	//
+	//swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBuffer);
+	//
+	//device->CreateRenderTargetView(pBuffer, NULL, renderTargetView.GetAddressOf());
+	//
+	//pBuffer->Release();
+	//
+	//deviceContext->OMSetRenderTargets(1, &renderTargetView, NULL);
+	//
+	//D3D11_VIEWPORT vp;
+	//vp.Width = w;
+	//vp.Height = h;
+	//vp.MinDepth = 0.0f;
+	//vp.MaxDepth = 1.0f;
+	//vp.TopLeftX = 0;
+	//vp.TopLeftY = 0;
+	//deviceContext->RSSetViewports(1, &vp);
 
-	deviceContext->Flush();
+	/*
 
-	//create swapchain
-	swapChain->ResizeBuffers(1,lround(w), lround(h), DXGI_FORMAT_B8G8R8A8_UNORM,0);
+	//swapChain->ResizeBuffers(1,lround(w), lround(h), DXGI_FORMAT_B8G8R8A8_UNORM,0);
 
 	//Set up back buffer
 	HRESULT scBufferResult = swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
@@ -236,7 +261,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	bp.dpiX = DEFAULT_DPI;
 	bp.dpiY = DEFAULT_DPI;
 	bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
-	bp.colorContext = nullptr;*/
+	bp.colorContext = nullptr;
 	
 	// Direct2D needs the dxgi version of the back buffer
 	Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
@@ -247,6 +272,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), NULL, d2dTargetBitmap.GetAddressOf());
 	
 	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
+	*/
 	
 	//create shadow map buffer
 	/*D3D11_TEXTURE2D_DESC smTextDesc;

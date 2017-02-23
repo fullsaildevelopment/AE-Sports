@@ -93,7 +93,7 @@ bool SweptSpheretoSweptSphere(Sphere& sl, Sphere& sr, float3& vell, float3& velr
 
 bool SweptCaptoSweptCap(Capsule& cl, Capsule& cr, float3& vell, float3& velr, float3& pos, float3& opos);
 
-bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos);
+float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos);
 
 bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel);
 

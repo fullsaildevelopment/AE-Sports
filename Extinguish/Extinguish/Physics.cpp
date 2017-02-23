@@ -50,15 +50,16 @@ void Physics::FixedUpdate(float dt)
 	}
 }
 
-void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b = false)
+void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, float3 bounceNormal, bool stillApplyGravity)
 {
-	if (b)
+	if (_bounce)
 	{
-		nV *= bounce;
+		nV = nV - bounceNormal * bounce * 2 * dot_product(nV, bounceNormal * bounce);
 	}
 	tt->SetVelocity(nV);
 	tt->SetPosition(nP);
-	colliding = true;
+	if(!stillApplyGravity)
+		colliding = true;
 }
 
 //getters//
