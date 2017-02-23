@@ -320,6 +320,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -351,6 +358,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -386,6 +400,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -417,6 +438,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -456,6 +484,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -487,6 +522,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -522,6 +564,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -553,6 +602,14 @@ void HexagonCollider::FixedUpdate(float dt)
 													cap->GetGameObject()->GetTransform()->SetVelocity(vel);
 													cap->GetGameObject()->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}

@@ -631,9 +631,40 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 		}
 	}
 
-	if (dotx <= 0 && dotnx <= 0 && doty <= 0 && dotny <= 0 && dotz <= 0 && dotnz <= 0)
+	else if (dotx <= 0 && dotnx <= 0 && doty <= 0 && dotny <= 0 && dotz <= 0 && dotnz <= 0)
 	{
-		vel = vel - move * 2 * dot_product(vel, move);
+		float3 cmax = offset.max - s.m_Center;
+		float3 cmin = s.m_Center - offset.min;
+		if (cmax.x < cmin.x && cmax.x < cmax.y && cmax.x < cmin.y && cmax.x < cmax.z && cmax.x < cmin.z)
+		{
+			s.m_Center.x = cmax.x + s.m_Radius;
+			return float3(-1, 1, 1);
+		}
+		else if (cmax.x > cmin.x && cmin.x < cmax.y && cmin.x < cmin.y && cmin.x < cmax.z && cmin.x < cmin.z)
+		{
+			s.m_Center.x = cmin.x - s.m_Radius;
+			return float3(-1, 1, 1);
+		}
+		else if (cmax.y < cmin.x && cmax.y < cmax.x && cmax.y < cmin.y && cmax.y < cmax.z && cmax.y < cmin.z)
+		{
+			s.m_Center.y = cmax.y + s.m_Radius;
+			return float3(1, -1, 1);
+		}
+		else if (cmax.x > cmin.y && cmin.y < cmax.y && cmin.y < cmin.x && cmin.y < cmax.z && cmin.y < cmin.z)
+		{
+			s.m_Center.y = cmin.y - s.m_Radius;
+			return float3(1, -1, 1);
+		}
+		else if (cmax.z < cmin.x && cmax.z < cmax.y && cmax.z < cmin.y && cmax.z < cmax.x && cmax.z < cmin.z)
+		{
+			s.m_Center.z = cmax.z + s.m_Radius;
+			return float3(1, 1, -1);
+		}
+		else if (cmax.x > cmin.z && cmin.z < cmax.y && cmin.z < cmin.y && cmin.z < cmax.z && cmin.z < cmin.x)
+		{
+			s.m_Center.z = cmax.z - s.m_Radius;
+			return float3(1, 1, -1);
+		}
 	}
 
 
@@ -805,13 +836,9 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 		ml = mid + ((cpol - mid).normalize() * (capl.m_Radius + 0.001f));
 		mr = mid + ((cpor - mid).normalize() * (capr.m_Radius + 0.001f));
 
-		pos = ml;
-		opos = mr;
+		pos = float3( 0, capl.m_Segment.m_Start.y - ml.y, 0) + ml;
+		opos = float3( 0, capr.m_Segment.m_Start.y - mr.y, 0) + mr;
 
-		float3 nl = (cpor - cpol).normalize();
-		float3 nr = (cpol - cpor).normalize();
-		vell = vell - nr * 2 * dot_product(vell, nr);
-		velr = velr - nl * 2 * dot_product(velr, nl);
 		return true;
 	}
 	return false;
@@ -884,7 +911,7 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	return false;*/
 }
 
-bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
+float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
 {
 	float3 Center = (box.min + box.max) * 0.5f;
 	vec3f cp = cap.m_Segment.m_End - cap.m_Segment.m_Start;
@@ -961,10 +988,9 @@ bool AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos)
 			pos.y = box.max.y;
 		}
 		pos += cp - cpb;
-		vel = vel - ref * 2 * dot_product(vel, ref);
-		return true;
+		return ref;
 	}
-	return false;
+	return float3(0,0,0);
 }
 
 bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)

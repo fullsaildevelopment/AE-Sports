@@ -87,7 +87,7 @@ void BoxCollider::FixedUpdate(float dt)
 					vel.z = rejv.z;
 					tg->GetTransform()->SetVelocity(vel);
 					tg->OnCollisionEnter(box);
-					box->GetGameObject()->OnCollisionEnter(this);
+
 				}
 
 

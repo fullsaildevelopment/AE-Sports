@@ -514,35 +514,13 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	ballController->Init();
 	gameBall->SetTag("Ball");
 
-	/*GameObject* goal = new GameObject();
-	basic->AddGameObject(goal);
-	goal->Init("Goal");
-	goal->InitTransform(identity, { -7, 0, (float)-row }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
-	Renderer* GoalRenderer = new Renderer();
-	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 3,20,3 }, { -3,0,0 });
-	goal->AddBoxCollider(Goal1col);
-	Goal* g1 = new Goal(goal);
-	goal->AddComponent(g1);
-	goal->SetTag("Goal1");
-
-	GameObject* goal2 = new GameObject();
-	basic->AddGameObject(goal2);
-	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { -7, 0, (float)row - 38 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
-	Renderer* GoalRenderer2 = new Renderer();
-	goal2->AddComponent(GoalRenderer2);
-	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 3,20,3 }, { -3,0,0 });
-	goal2->AddBoxCollider(Goal2col);
-	Goal* g2 = new Goal(goal2);
-	goal2->AddComponent(g2);
-	goal2->SetTag("Goal2");*/
+	
 	GameObject* goal = new GameObject();
 	GameObject* goal2 = new GameObject();
 	goal->SetTag("Goal1");
 	goal2->SetTag("Goal2");
+
+	vector<AI*> ai;
 
 	for (int i = 1; i <= 8; ++i)
 	{
@@ -556,16 +534,16 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		mage1->Init(playerName);
 		mage1->SetTag("Team1");
 
-		int tempCol = col;
+		int tempCol = col - 25;
 
 		if (i > 4)
 		{
-			tempCol = -tempCol;
+			tempCol = -col + 14;
 			mage1->SetTag("Team2");
 			
 			AI *mageAI = new AI(mage1);
 			mage1->AddComponent(mageAI);
-			mageAI->Init(goal, goal2);
+			ai.push_back(mageAI);
 		}
 
 		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
@@ -587,7 +565,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 19.0f, 0.07f, 20, -14.8f);
+		Physics* physics = new Physics(0.01f, 9.0f, 0.07f, 20, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -603,6 +581,12 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		State* mageStumble = new State();
 		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("StumbleBackwards3"), false, 0.75f, "Stumble");
 		mageAnim1->AddState(mageStumble);
+		State* mageJump = new State();
+		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 1.0f, "Jump");
+		mageAnim1->AddState(mageJump);
+		State* mageLand = new State();
+		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.0f, "Land");
+		mageAnim1->AddState(mageLand);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
@@ -613,6 +597,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Param::Trigger* idleTrigger = new Param::Trigger();
 		idleTrigger->Init("Idle", false);
 		mageAnim1->AddParameter(idleTrigger);
+		Param::Trigger* jumpTrigger = new Param::Trigger();
+		jumpTrigger->Init("Jump", false);
+		mageAnim1->AddParameter(jumpTrigger);
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
 		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
@@ -628,6 +615,20 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Transition* stumbleToIdle = new Transition();
 		mageStumble->AddTransition(stumbleToIdle);
 		stumbleToIdle->Init(mageStumble, mageIdle, 0, 0.01f); //exit time of 0 will make transition happen right when cur animation is done
+		Transition* idleToJump = new Transition();
+		mageIdle->AddTransition(idleToJump);
+		idleToJump->Init(mageIdle, mageJump, -1, 0.001f);
+		idleToJump->AddCondition(jumpTrigger);
+		Transition* jumpToLand = new Transition();
+		mageJump->AddTransition(jumpToLand);
+		jumpToLand->Init(mageJump, mageLand, 0, 0.0f);
+		Transition* landToIdle = new Transition();
+		mageLand->AddTransition(landToIdle);
+		landToIdle->Init(mageLand, mageIdle, 0, 0.001f);
+		Transition* runToJump = new Transition();
+		mageRun->AddTransition(runToJump);
+		runToJump->Init(mageRun, mageJump, -1, 0.001f);
+		runToJump->AddCondition(jumpTrigger);
 
 		string cameraName = "Camera";
 		cameraName += to_string(i);
@@ -638,7 +639,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		GameObject* camera1 = new GameObject();
 		basic->AddGameObject(camera1);
 		camera1->Init(cameraName);
-		camera1->InitTransform(identity, { 0, 5, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 5.0f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		//camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//camera1->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//camera1->InitTransform(identity, { 0, 0, -15.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
@@ -664,6 +666,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
 	}
+
 	ballController->LateInit();
 
 	//for max poly count
@@ -686,10 +689,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	//			mageRenderer1->SetTeamColor({ 0,0,1,0 });
 	//	}
 	//}
+	for (int i = 0; i < ai.size(); ++i)
+	{
+		ai[i]->Init(goal, goal2);
+	}
 	
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { -7, 0, (float)-row }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -7, 0, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
@@ -700,7 +707,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { -7, 0, (float)row - 38 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -7, 0, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
@@ -718,7 +725,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-3,-300 });
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 
 	GameObject* testPlayer = new GameObject();
@@ -734,7 +741,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall = new GameObject();
 	basic->AddGameObject(Wall);
 	Wall->Init("Wall");
-	Wall->InitTransform(identity, { 85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Wall->InitTransform(identity, { 57, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer = new Renderer();
 	Wall->AddComponent(WallRenderer);
 	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -744,7 +751,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall2 = new GameObject();
 	basic->AddGameObject(Wall2);
 	Wall2->Init("Wall2");
-	Wall2->InitTransform(identity, { -85, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Wall2->InitTransform(identity, { -70, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer2 = new Renderer();
 	Wall2->AddComponent(WallRenderer2);
 	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -754,7 +761,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall3 = new GameObject();
 	basic->AddGameObject(Wall3);
 	Wall3->Init("Wall3");
-	Wall3->InitTransform(identity, { 0, 0, 45 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Wall3->InitTransform(identity, { 0, 0, 38.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer3 = new Renderer();
 	Wall3->AddComponent(WallRenderer3);
 	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
@@ -764,7 +771,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	GameObject* Wall4 = new GameObject();
 	basic->AddGameObject(Wall4);
 	Wall4->Init("Wall4");
-	Wall4->InitTransform(identity, { 0, 0, -85 }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Wall4->InitTransform(identity, { 0, 0, -80.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer4 = new Renderer();
 	Wall4->AddComponent(WallRenderer4);
 	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);

@@ -82,7 +82,7 @@ void BallController::Update(float dt)
 
 	if (isThrown)
 	{
-		if (timer.TotalTime() > 0.31f)
+		if (timer.TotalTime() > 0.42f)
 		{
 			isHeld = false;
 			isThrown = false;
@@ -94,6 +94,10 @@ void BallController::Update(float dt)
 
 void BallController::FixedUpdate(float dt)
 {
+	if (transform->GetWorld()._42 < -0.3f)
+	{
+		transform->SetPosition(float3(transform->GetPosition().x, 1.5f, transform->GetPosition().z));
+	}
 	if (!isHeld && !isThrown)
 	{
 		int s = (int)nets.size();
@@ -170,6 +174,8 @@ void BallController::DropBall(GameObject *person)
 	//turn on physics
 	physics->SetIsKinematic(false);
 	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+	timer.Restart();
+	isThrown = true;
 }
 
 bool  BallController::GetIsHeld()
