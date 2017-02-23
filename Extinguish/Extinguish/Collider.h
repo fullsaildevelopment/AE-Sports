@@ -17,6 +17,8 @@ private:
 	bool IsStatic;
 protected:
 	std::vector<Collider*> checked;
+	vector<GameObject*> objects;
+	vector<bool> CollidingWith;
 public:
 	Collider(GameObject* o, bool trigger);
 	Transform GetTransform() { return transform; };
