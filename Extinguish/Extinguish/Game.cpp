@@ -368,7 +368,7 @@ void Game::HandleEvent(Event* e)
 		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
 		gameStates[soundEvent->GetObjectID()]->hasSound = true;
 
-		cout << "sound event received by game" << endl;
+		//cout << "sound event received by game" << endl;
 
 		return;
 	}
@@ -666,6 +666,26 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	}
 	ballController->LateInit();
 
+	//for max poly count
+	//for (int i = 0; i < 15; ++i)
+	//{
+	//	for (int j = 0; j < 15; ++j)
+	//	{
+	//		GameObject* mage1 = new GameObject();
+	//		basic->AddGameObject(mage1);
+	//		mage1->Init("MageCrap");
+
+	//		mage1->InitTransform(identity, { (float)0 + i * 2.0f, 10, -40.0f + j * 2.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+
+	//		Renderer* mageRenderer1 = new Renderer();
+	//		mage1->AddComponent(mageRenderer1);
+	//		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+	//		if (i <= 4)
+	//			mageRenderer1->SetTeamColor({ 1,0,0,0 });
+	//		else
+	//			mageRenderer1->SetTeamColor({ 0,0,1,0 });
+	//	}
+	//}
 	
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
@@ -700,6 +720,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-3,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
+
+	GameObject* testPlayer = new GameObject();
+	basic->AddGameObject(testPlayer);
+	testPlayer->Init("TestPlayer");
+	testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* testPlayerRenderer = new Renderer();
+	testPlayer->AddComponent(testPlayerRenderer);
+	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
+
 
 
 	GameObject* Wall = new GameObject();

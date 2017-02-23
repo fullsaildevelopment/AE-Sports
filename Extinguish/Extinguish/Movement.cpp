@@ -39,7 +39,7 @@ void Movement::Update(float dt)
 		soundEvent->Init(AK::EVENTS::PLAY_FOOTSTEPS__WALK____, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
-		cout << "play walk" << endl;
+		//cout << "play walk" << endl;
 		timeSincePlayed = 0;
 	}
 	else if (!isMoving && timeSincePlayed)
@@ -48,7 +48,7 @@ void Movement::Update(float dt)
 		soundEvent->Init(AK::EVENTS::STOP_FOOTSTEPS__WALK____, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
-		cout << "stop walk" << endl;
+		//cout << "stop walk" << endl;
 	}
 
 	if (isMoving)
@@ -163,23 +163,23 @@ void Movement::HandleInput(InputDownEvent* e)
 		isMoving = true;
 	}
 
-	if (input->GetKey(up)) //up
-	{
-		XMFLOAT3 up = transform->GetUp();
-		up = { -up.x, -up.y, -up.z };
-		transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
-		//transform->AddVelocity({ 0.0f, moveSpeed, 0.0f });
-		isMoving = true;
-	}
+	//if (input->GetKey(up)) //up
+	//{
+	//	XMFLOAT3 up = transform->GetUp();
+	//	up = { -up.x, -up.y, -up.z };
+	//	transform->Translate({ up.x * moveSpeed * dt, up.y * moveSpeed * dt,  up.z * moveSpeed * dt });
+	//	//transform->AddVelocity({ 0.0f, moveSpeed, 0.0f });
+	//	isMoving = true;
+	//}
 
-	if (input->GetKey(down)) //down
-	{
-		XMFLOAT3 up = transform->GetUp();
-		up = { -up.x, -up.y, -up.z };
-		transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
-		//transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
-		isMoving = true;
-	}
+	//if (input->GetKey(down)) //down
+	//{
+	//	XMFLOAT3 up = transform->GetUp();
+	//	up = { -up.x, -up.y, -up.z };
+	//	transform->Translate({ up.x * -moveSpeed * dt, up.y * -moveSpeed * dt,  up.z * -moveSpeed * dt });
+	//	//transform->AddVelocity({ 0.0f, -moveSpeed, 0.0f });
+	//	isMoving = true;
+	//}
 }
 
 //setters//
