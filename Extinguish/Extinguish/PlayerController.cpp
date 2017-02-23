@@ -99,6 +99,8 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 				animator->SetTrigger("Land");
+
+				cout << "Land" << endl;
 			}
 
 			floor = boxCollider->GetGameObject();
