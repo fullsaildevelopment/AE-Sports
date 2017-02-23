@@ -100,13 +100,13 @@ void CapsuleCollider::FixedUpdate(float dt)
 						}
 						continue;
 					}
+				}
 					if (CollidingWith[i])
 					{
 						CollidingWith[i] = false;
 						objects[i]->OnCollisionExit(this);
 						tg->OnCollisionExit(box);
 					}
-				}
 			}
 			continue;
 		}
