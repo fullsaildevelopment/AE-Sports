@@ -10,8 +10,6 @@ class Physics : public Component
 private:
 	//const
 	float gravity = -9.8f;
-	//const float friction 
-	bool applyGravity = true;
 	//cache
 	Transform* transform;
 
@@ -36,11 +34,11 @@ public:
 	void Init();
 	void FixedUpdate(float dt) override;
 
-	void HandlePhysics(Transform* tt, float3 nV, float3 nP, bool b);
+	void HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce = false, float3 bounceNormal = float3(0,0,0), bool stillApplyGravity = false);
+
 	//getters//
 	bool IsKinematic();
 
 	//setters//
 	void SetIsKinematic(bool toggle);
-	void ApplyGravity(bool g) { applyGravity = g; };
 };

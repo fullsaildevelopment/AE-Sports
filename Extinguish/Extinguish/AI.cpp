@@ -31,7 +31,7 @@ void AI::OnCollisionEnter(Collider *obj)
 			if (obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
 			{
 				// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
-				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)//////////////////////////////////////////////////////////////////////////////////////////////////////
+				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 					ballClass->DropBall(me);
 
 				float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
@@ -48,6 +48,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 {
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(3);
+	AIbuddies.reserve(3);
 
 	// grabbing all of the game objects
 	std::vector<GameObject*> tmp = *me->GetGameObjects();
@@ -199,45 +200,74 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float dt)
 {
+	if (!crosse)
+		crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
+
 	if (startTimer)
-	{
 		timer -= dt;
-	}
 
 	// if I'm the goalie
 	if (currState == goalie || currState == playboy)
 	{
-		float3 dist = ball->GetTransform()->GetPosition() - myGoal->GetTransform()->GetPosition();
+		float3 dist;
+
+		if (currState == goalie) dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
+		else if (currState == playboy) dist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
 		// if the ball gets close
-		if (dist.magnitude() < 2)
+		if (dist.magnitude() < 28)
 		{
 			// if no one is holding it or the enemies have it
-			if (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()) //////////////////////////////////////////////////////////////////////////////////////////////////////
+			if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
 				GetBall();
 		}
 
 		// if i have the ball
-		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me) //////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 		{
-			Score();
-			Paranoia();
+			GameObject *myGuy = nullptr;
+
+			for (int i = 0; i < AIbuddies.size(); ++i)
+			{
+				if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
+					myGuy = AIbuddies[i];
+			}
+
+			if (myGuy && !RunTo(myGuy))
+				crosse->Throw();
+
+			else
+			{
+				Score();
+				Paranoia();
+			}
 		}
 
 		// if the ball is too far from the goal
-		else if (dist.magnitude() > 1)
+		else if (dist.magnitude() > 28)
 		{
+			float3 goalDist;
+
 			if (currState == playboy)
 			{
-				if (RunTo(enemyGoal))
+				goalDist = enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+				if (RunTo(enemyGoal) && goalDist.magnitude() < 1)
+				{
+					TurnTo(myGoal);
 					Idle();
+				}
 			}
 
 			else if (currState == goalie)
 			{
-				// run to our goal and stay there
-				if (RunTo(myGoal))
+				goalDist = myGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+				if (RunTo(myGoal) && goalDist.magnitude() < 1)
+				{
+					TurnTo(enemyGoal);
 					Idle();
+				}
 			}
 		}
 	}
@@ -248,16 +278,17 @@ void AI::Update(float dt)
 		// if i have the ball or one of my teammates have the ball
 		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 		{
-			if (ballClass->GetHolder() == me) //////////////////////////////////////////////////////////////////////////////////////////////////////
+			if (ballClass->GetHolder() == me)
 			{
 				Score();
 				Paranoia();
 			}
-			
-			else if (ballClass->GetHolder()->GetTag() == me->GetTag()) //////////////////////////////////////////////////////////////////////////////////////////////////////
-			{
-				//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			}
+
+			else if (ballClass->GetHolder()->GetTag() == me->GetTag())
+				DefendTeammate();
+
+			else
+				GetBall();// Attack(ballClass->GetHolder());
 		}
 
 		else
@@ -271,10 +302,10 @@ void AI::Update(float dt)
 		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 		{
 			// if they're on my team
-			if (ballClass->GetHolder()->GetTag() == me->GetTag()) //////////////////////////////////////////////////////////////////////////////////////////////////////
+			if (ballClass->GetHolder()->GetTag() == me->GetTag())
 			{
 				// if it's me
-				if (ballClass->GetHolder() == me) //////////////////////////////////////////////////////////////////////////////////////////////////////
+				if (ballClass->GetHolder() == me)
 				{
 					Score();
 					Paranoia();
@@ -287,15 +318,23 @@ void AI::Update(float dt)
 
 			// if they're on the enemy team
 			else
-			{
-				Attack(ballClass->GetHolder()); //////////////////////////////////////////////////////////////////////////////////////////////////////
-			}
+				Attack(ballClass->GetHolder());
 		}
 
 		// if nobody has the ball
 		else
 		{
-			// Attack a random dude
+			GameObject *myGuy = nullptr;
+			
+			for (int i = 0; i < listOfMates.size(); ++i)
+			{
+				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+					myGuy = listOfMates[i];
+			}
+
+			// hover around guy
+			if (RunTo(myGuy, 15.0f))
+				Idle();
 		}
 	}
 
@@ -317,10 +356,10 @@ void AI::GetBall()
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 	{
 		// if they're not on my team
-		if (ballClass->GetHolder()->GetTag() != me->GetTag()) //////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (ballClass->GetHolder()->GetTag() != me->GetTag())
 		{
-			if (RunTo(ballClass->GetHolder())) //////////////////////////////////////////////////////////////////////////////////////////////////////
-				Attack(ballClass->GetHolder()); //////////////////////////////////////////////////////////////////////////////////////////////////////
+			if (RunTo(ballClass->GetHolder()))
+				Attack(ballClass->GetHolder());
 		}
 
 		else // he's my teammate
@@ -339,10 +378,10 @@ void AI::GetBall()
 void AI::DefendTeammate()
 {
 	// double check that my teammate has the ball
-	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder()->GetTag() == me->GetTag()) //////////////////////////////////////////////////////////////////////////////////////////////////////
+	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder()->GetTag() == me->GetTag())
 	{
 		// double check that it's not me who has the ball
-		if (ballClass->GetHolder() != me) //////////////////////////////////////////////////////////////////////////////////////////////////////
+		if (ballClass->GetHolder() != me)
 		{
 			float dist = 785; // random high number
 			GameObject *target = nullptr;
@@ -351,7 +390,7 @@ void AI::DefendTeammate()
 			for (int i = 0; i < listOfEnemies.size(); ++i)
 			{
 				// dist between enemy and my teammate
-				float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+				float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - ballClass->GetHolder()->GetTransform()->GetPosition();
 
 				// if this dist is less than last
 				if (tmp.magnitude() < dist)
@@ -377,8 +416,8 @@ void AI::Attack(GameObject *target)
 	{
 		isAttacking = true;
 
-		float3 u = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1)).normalize();
-		float3 v = ((float3(target->GetTransform()->GetWorld()._41, target->GetTransform()->GetWorld()._42, target->GetTransform()->GetWorld()._43) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
 		me->GetTransform()->RotateY(degRad);
 		me->GetTransform()->SetVelocity(v * AttackSpeed);
@@ -390,7 +429,7 @@ void AI::Attack(GameObject *target)
 void AI::Paranoia()
 {
 	// if i have the ball
-	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me) //////////////////////////////////////////////////////////////////////////////////////////////////////
+	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 	{
 		float edist = 789; // distance to enemies
 		float mdist = 0; // distance to friends
@@ -427,41 +466,58 @@ void AI::Paranoia()
 			}
 
 			// pass the ball
-			ballClass->ThrowTo(target);
+			if (RunTo(target))
+				crosse->Throw();
 		}
 	}
 }
 
 bool AI::RunTo(GameObject *target)
 {
-	//u - forward vector
-	float3 u = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1)).normalize();
-
-	//v - vector between me and destination
-	float3 v;
-
-	/*if (target == myGoal || target == enemyGoal)
+	if (target)
 	{
-		v = (((target->GetTransform()->GetForwardf3() * 3 + target->GetTransform()->GetPosition()) - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		TurnTo(target);
+		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		me->GetTransform()->SetVelocity(v * RunSpeed);
+		float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
+		if (a.magnitude() < 5)
+			return true;
 	}
 
-	else*/
-		v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	return false;
+}
 
-	//degRad - degrees/radians between me and target
-	float degRad = dot_product(u, v);// / (u.magnitude() * v.magnitude());
+bool AI::RunTo(GameObject *target, float dist)
+{
+	if (target)
+	{
+		TurnTo(target);
+		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		me->GetTransform()->SetVelocity(v * RunSpeed);
+		float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
-	me->GetTransform()->RotateY(degRad);
-
-	// run to them
-	me->GetTransform()->SetVelocity(v * RunSpeed);
-
-	float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
-	if (a.magnitude() < 5)
-		return true;
+		if (a.magnitude() < dist)
+			return true;
+	}
 
 	return false;
+}
+
+void AI::TurnTo(GameObject *target)
+{
+	if (target)
+	{
+		//u - forward vector
+		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//v - vector between me and destination
+		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+
+		//degRad - degrees/radians between me and target
+		float degRad = dot_product(u, v);
+		me->GetTransform()->RotateY(degRad);
+	}
 }
 
 void AI::Score()
@@ -469,17 +525,8 @@ void AI::Score()
 	float3 a = enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 	bool trash = RunTo(enemyGoal);
 
-	if (a.magnitude() < 8)
-	{
-		if (!crosse)
-			crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
-
+	if (a.magnitude() < 10)
 		crosse->Throw();
-	}
-
-	//float3 dist = ball->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
-	// if the vector between me and the goal is clear
-		// call the balls ThrowTo(goal) funtion
 }
 
 AI::State AI::GetCurrState() { return currState; }

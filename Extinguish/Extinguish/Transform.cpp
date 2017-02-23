@@ -148,6 +148,12 @@ void Transform::AddSibling(Transform* tempSibling)
 	//}
 }
 
+float3 Transform::GetWorldPosition()
+{
+	DirectX::XMFLOAT4X4 world = GetWorld();
+	return float3(world._41, world._42, world._43);
+}
+
 void Transform::FixedUpdate(float dt)
 {
 	//Translate({ velocity.x * dt, velocity.y * dt, velocity.z * dt });
@@ -387,6 +393,13 @@ DirectX::XMFLOAT3 Transform::GetUp()
 	XMStoreFloat3(&result, vector);
 
 	return result;
+}
+
+float3 Transform::GetRightf3()
+{
+	float3 vec = float3(local._11, local._12, local._13);
+	vec.normalize();
+	return vec;
 }
 
 DirectX::XMFLOAT3 Transform::GetRight()
