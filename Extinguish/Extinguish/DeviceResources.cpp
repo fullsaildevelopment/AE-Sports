@@ -186,19 +186,26 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	
 	//deviceContext->Flush();
 	//deviceContext->OMSetRenderTargets(0, 0, 0);
-	////shadowMapBuffer.Get()->Release();
+	//shadowMapBuffer.Get()->Release();
 	//swapChainBuffer.Get()->Release();
-	//
-	////depthStencilBuffer.Get()->Release();
-	////shadowMapDepthStencilBuffer.Get()->Release();
-	//
-	////depthStencilView.Get()->Release();
-	//
-	////renderTargetView.Get()->Release();
+	
+	//shadowMapDepthStencilBuffer.Get()->Release();
+	
+	//depthStencilView.Get()->Release();
+	
+	//renderTargetView.Get()->Release();
 	//p2DDeviceContext->SetTarget(nullptr);
-	//
-	//swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-	//
+
+	swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+	DXGI_RATIONAL hz = { 60 , 1 };
+	DXGI_MODE_DESC dmd;
+	dmd.Width = w;
+	dmd.Height = h;
+	dmd.RefreshRate = hz;
+	dmd.Format = DXGI_FORMAT_UNKNOWN;
+	dmd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	dmd.Scaling = DXGI_MODE_SCALING_CENTERED;
+	swapChain->ResizeTarget(&dmd);
 	//ID3D11Texture2D* pBuffer;
 	//
 	//swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBuffer);
