@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 15
+#define RunSpeed 5
 #define AttackSpeed 15
 #define StumbleSpeed 5
 
@@ -287,7 +287,8 @@ void AI::Update(float dt)
 			else if (ballClass->GetHolder()->GetTag() == me->GetTag())
 				DefendTeammate();
 
-			else GetBall();
+			else
+				GetBall();
 		}
 
 		else
@@ -317,9 +318,7 @@ void AI::Update(float dt)
 
 			// if they're on the enemy team
 			else
-			{
 				Attack(ballClass->GetHolder());
-			}
 		}
 
 		// if nobody has the ball
@@ -357,9 +356,9 @@ void AI::GetBall()
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 	{
 		// if they're not on my team
-		if (ballClass->GetHolder()->GetTag() != me->GetTag()) 
+		if (ballClass->GetHolder()->GetTag() != me->GetTag())
 		{
-			if (RunTo(ballClass->GetHolder())) 
+			if (RunTo(ballClass->GetHolder()))
 				Attack(ballClass->GetHolder());
 		}
 
