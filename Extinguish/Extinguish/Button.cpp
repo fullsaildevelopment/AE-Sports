@@ -79,12 +79,16 @@ void ReturnToMenu()
 				if (Game::client.run() == 0)
 					break;
 			}
+
+			ResourceManager::GetSingleton()->SetMultiplayer(false);
 		}
 		else
 		{
 			Game::client.sendStop();
 
 			while (Game::client.run() != 0) {}
+			ResourceManager::GetSingleton()->SetMultiplayer(false);
+			ResourceManager::GetSingleton()->SetServer(true);
 		}
 	}
 	LoadSceneEvent* event = new LoadSceneEvent();
@@ -92,6 +96,7 @@ void ReturnToMenu()
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
 	delete event;
 }
+
 
 //Button::~Button()
 //{
@@ -204,7 +209,16 @@ void Button::HandleEvent(Event* e)
 					{
 						clickCooldown = 1.0f;
 					}
-					eventFunction();
+					if (eventFunction)
+						eventFunction();
+					else if (buttonType == RESUME_GAME)
+					{
+						isActive = false;
+
+						GameObject * exitObj = GetGameObject()->GetUIGameObjects(helperIndex);
+						Button * exitButton = exitObj->GetComponent<Button>();
+						exitButton->SetActive(false);
+					}
 
 				}
 				else
@@ -251,10 +265,6 @@ void Button::setButtonType()
 	case BUTTON_TYPE::RETURN:
 	{
 		eventFunction = ReturnToMenu;
-		break;
-	}
-	case BUTTON_TYPE::RESUME_GAME:
-	{
 		break;
 	}
 	}

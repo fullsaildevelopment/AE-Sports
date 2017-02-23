@@ -8,6 +8,7 @@
 #include "ResourceManager.h"
 #include "Component.h"
 #include "Button.h"
+#include "MeterBar.h"
 
 class GameObject;
 class Button;
@@ -32,10 +33,13 @@ private:
 	Microsoft::WRL::ComPtr<IWICImagingFactory> IWICfactory;
 	Microsoft::WRL::ComPtr<IWICBitmapDecoder>  IWICdecoder;
 	Microsoft::WRL::ComPtr<ID2D1RenderTarget>  pBRT;
-	Button * theButton;
 	D2D1_RECT_F * layoutRect;
 	bool isButton = false;
 	float left;
+
+	/* Decides which renderer function to call in render */
+	Button * theButton;
+	MeterBar * theBar;
 
 	void RenderDebugUI(Button * theButton);
 
@@ -43,6 +47,7 @@ public:
 	UIRenderer();
 	~UIRenderer();
 	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor);
+	void Init(bool isButton, DeviceResources* deviceResources, MeterBar * meter);
 	void Update(float dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
