@@ -72,9 +72,14 @@ void CapsuleCollider::FixedUpdate(float dt)
 				Capsule c = GetWorldCapsule();
 				float3 pos = tgt->GetPosition();
 				float3 vel = tgt->GetVelocity();
-				if (AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos))
+				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos - GetCapsule().m_Segment.m_Start);
+				if (!result.isEquil(float3(0, 0, 0)))
 				{
-					vel.y = 0;
+
+					float3 invN = result.negate();
+					invN = invN * (vel * result).magnitude();
+					vel = vel - invN;
+					
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
@@ -113,16 +118,14 @@ void CapsuleCollider::FixedUpdate(float dt)
 				float3 ovel = (*Others)[i]->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
-					vel *= 0.3f;
-					ovel *= 0.3f;
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false);
+						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start);
 						Physics* nop = (*Others)[i]->GetComponent<Physics>();
 						if (nop)
 						{
-							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start, false);
+							nop->HandlePhysics((*Others)[i]->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start);
 						}
 					}
 					else
