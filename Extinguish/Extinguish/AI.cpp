@@ -283,12 +283,12 @@ void AI::Update(float dt)
 				Score();
 				Paranoia();
 			}
-			
+
 			else if (ballClass->GetHolder()->GetTag() == me->GetTag())
 				DefendTeammate();
 
 			else
-				GetBall();
+				Attack(ballClass->GetHolder());
 		}
 
 		else
