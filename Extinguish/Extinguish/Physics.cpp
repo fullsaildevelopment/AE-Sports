@@ -21,20 +21,20 @@ void Physics::FixedUpdate(float dt)
 			nV += { 0, gravity * dt, 0 };
 			nV += transform->GetVelocity() * (-airdrag * dt);
 		}
-		//apply friction if touching floor
+		//apply friction if touching
 		else
 		{
 			nV += transform->GetVelocity() * -1 * friction * dt;
 		}
-		if (nV.x <= 0.001f && nV.x >= -0.001f)
+		if (nV.x <= 0.0001f && nV.x >= -0.0001f)
 		{
 			nV.x = 0;
 		}
-		if (nV.y <= 0.001f && nV.y >= -0.001f)
+		if (nV.y <= 0.0001f && nV.y >= -0.0001f)
 		{
 			nV.y = 0;
 		}
-		if (nV.z <= 0.001f && nV.z >= -0.001f)
+		if (nV.z <= 0.0001f && nV.z >= -0.0001f)
 		{
 			nV.z = 0;
 		}
