@@ -47,7 +47,7 @@ void XTime::Signal()
 	// with our signal buffer updated, we can now compute our timing values
 	localStack.totalTime = double((*localStack.signals).QuadPart - localStack.start.QuadPart) / double(localStack.frequency.QuadPart);
 	localStack.deltaTime = double(localStack.signals[0].QuadPart - localStack.signals[1].QuadPart) / double(localStack.frequency.QuadPart);
-	if (localStack.deltaTime > 0.333) localStack.deltaTime = 0.333;
+	if (localStack.deltaTime > 0.0333) localStack.deltaTime = 0.0333;
 	// with our signal buffer updated we can compute our weighted average for a smoother delta curve.
 	double totalWeight = 0, runningWeight = 1;
 	LONGLONG totalValue = 0, sampleDelta;
