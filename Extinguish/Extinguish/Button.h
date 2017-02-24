@@ -25,6 +25,8 @@ private:
 		RESUME_GAME
 	};
 
+
+
 	// for rendering
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
 	float height, width, fontSize;
@@ -48,10 +50,10 @@ private:
 	bool showFps = false;
 	bool hovered = false;
 	unsigned int sceneIndex;
+	std::vector<int> helperIndex;
 
 	// some function pointer for event
 	void (*eventFunction)(void);
-
 
 public:
 	//~Button() {}
@@ -110,6 +112,7 @@ public:
 	float getOriginY() { return originY; }
 
 	bool isHovered() { return hovered; }
+	bool getActive() { return isActive; }
 
 	/* SETTERS */
 	void setHeight(float _height) { height = _height; }
@@ -119,13 +122,14 @@ public:
 		text = _text; textLength = (unsigned int)text.length();
 	}
 	void setTexture(char * _textureAddress) {}
-	void setOrigin(float x, float y) { originX = x; originY = y; }
+	void setOrigin() { originX = rect.left; originY = rect.top; }
 	void setPositionMultipliers(float w, float h) { widthMult = w; heightMult = h; }
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setButtonType();
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 	void SetActive(bool active) { isActive = active; }
 	void setTimer(bool active) { isTimer = active; }
+	void setHelper(int index) { helperIndex.push_back(index); }
 
 	/* HELPERS*/
 

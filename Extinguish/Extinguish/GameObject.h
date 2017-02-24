@@ -83,6 +83,7 @@ public:
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
 	GameObject* const GetGameObjects(int i);
+	GameObject* const GetUIGameObjects(int i);
 	int GetNumObjects();
 };
 

@@ -51,10 +51,12 @@ private:
 
 	//private helper functions
 	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
-	void CreateUI(DeviceResources * devResources, Scene * basic);
 
+	/* to separate all the ui */
+	void CreateUI(DeviceResources * devResources, Scene * basic);
 	void CreateMenu(DeviceResources * devResources, Scene * scene);
 	void CreateLobby(DeviceResources * devResources, Scene * scene);
+	void CreatePauseMenu(DeviceResources * devResources, Scene * scene);
 
 	void UpdateServerStates();
 	void UpdateClientObjects();
