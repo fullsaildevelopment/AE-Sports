@@ -13,10 +13,12 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID PLAY_BACKBOARD_BOUNCE_SONG = 3057195544U;
         static const AkUniqueID PLAY_BOING = 3698997709U;
         static const AkUniqueID PLAY_CATCH = 3513145267U;
         static const AkUniqueID PLAY_FOOTSTEPS__WALK____ = 1437361150U;
         static const AkUniqueID PLAY_THROW = 1977644338U;
+        static const AkUniqueID STOP_BACKBOARD_BOUNCE_SONG = 6317442U;
         static const AkUniqueID STOP_FOOTSTEPS__WALK____ = 2224425572U;
     } // namespace EVENTS
 

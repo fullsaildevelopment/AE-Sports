@@ -16,24 +16,30 @@
 			<ShortName>TitansWithSticks</ShortName>
 			<Path>TitansWithSticks.bnk</Path>
 			<IncludedEvents>
+				<Event Id="3057195544" Name="Play_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Play_Backboard_Bounce_Song"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
 				<Event Id="1437361150" Name="Play_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Walk____"/>
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
+				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
 				<Event Id="2224425572" Name="Stop_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Walk____"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
-				<File Id="83559245" Language="SFX">
-					<ShortName>Audio\Footsteps (Walk...).wav</ShortName>
-					<Path>SFX\Audio\Footsteps (Walk...)_9E69E797.wem</Path>
+				<File Id="313137093" Language="SFX">
+					<ShortName>Audio\Backboard Bounce Song.wav</ShortName>
+					<Path>SFX\Audio\Backboard Bounce Song_9E69E797.wem</Path>
 				</File>
-				<File Id="253405496" Language="SFX">
+				<File Id="508058094" Language="SFX">
 					<ShortName>Audio\Throw.wav</ShortName>
 					<Path>SFX\Audio\Throw_9E69E797.wem</Path>
 				</File>
-				<File Id="602774194" Language="SFX">
+				<File Id="527908285" Language="SFX">
 					<ShortName>Audio\Catch.wav</ShortName>
 					<Path>SFX\Audio\Catch_9E69E797.wem</Path>
+				</File>
+				<File Id="776638270" Language="SFX">
+					<ShortName>Audio\Footsteps (Walk...).wav</ShortName>
+					<Path>SFX\Audio\Footsteps (Walk...)_9E69E797.wem</Path>
 				</File>
 				<File Id="797913072" Language="SFX">
 					<ShortName>Audio\Boing.wav</ShortName>

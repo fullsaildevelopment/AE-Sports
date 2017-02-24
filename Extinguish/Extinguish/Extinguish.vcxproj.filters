@@ -118,9 +118,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Movement.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="HexagonCollider.cpp">
       <Filter>Components\Colliders</Filter>
     </ClCompile>
@@ -167,6 +164,9 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Goal.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement.cpp">
       <Filter>Components\Scripts</Filter>
     </ClCompile>
     <ClCompile Include="MeterBar.cpp" />
@@ -265,9 +265,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Movement.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Client Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
@@ -324,6 +321,9 @@
     </ClInclude>
     <ClInclude Include="PowerUp.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
     <ClInclude Include="MeterBar.h" />
   </ItemGroup>

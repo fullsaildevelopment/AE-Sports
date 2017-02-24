@@ -8,6 +8,9 @@
 #include "BallController.h"
 #include "Transform.h"
 #include "InputManager.h"
+#include "HexagonCollider.h"
+#include "BoxCollider.h"
+#include "State.h"
 
 using namespace std;
 
@@ -31,6 +34,8 @@ void PlayerController::Init()
 
 	//initialize to null
 	otherPlayer = nullptr;
+	floor = nullptr;
+	justJumped = false;
 }
 
 void PlayerController::Update(float dt)
@@ -76,7 +81,55 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 			cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
+
+			return;
 		}
+	}
+
+	BoxCollider* boxCollider = dynamic_cast<BoxCollider*>(collider);
+
+	if (boxCollider)
+	{
+		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
+		{
+			if (justJumped)
+			{
+				justJumped = false;
+
+				//do animation
+				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+				animator->SetTrigger("Land");
+
+				cout << "Land" << endl;
+			}
+
+			floor = boxCollider->GetGameObject();
+
+			cout << "box enter" << endl;
+
+			return;
+		}
+	}
+
+	HexagonCollider* hexCollider = dynamic_cast<HexagonCollider*>(collider);
+
+	if (hexCollider)
+	{
+		if (justJumped)
+		{
+			justJumped = false;
+
+			//do animation
+			AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+			animator->SetTrigger("Land");
+		}
+
+		floor = hexCollider->GetGameObject();
+		cout << "hex enter" << endl;
+
+		return;
 	}
 }
 
@@ -93,6 +146,36 @@ void PlayerController::OnCollisionExit(Collider* collider)
 				cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
+
+				return;
+			}
+		}
+	}
+
+	if (floor)
+	{
+		BoxCollider* boxCollider = dynamic_cast<BoxCollider*>(collider);
+
+		if (boxCollider)
+		{
+			if (boxCollider->GetGameObject() == floor)
+			{
+				cout << "floor exit" << endl;
+
+				floor = nullptr;
+				return;
+			}
+		}
+
+		HexagonCollider* hexCollider = dynamic_cast<HexagonCollider*>(collider);
+
+		if (hexCollider)
+		{
+			if (hexCollider->GetGameObject() == floor)
+			{
+				cout << "hex exit" << endl;
+
+				floor = nullptr;
 			}
 		}
 	}
@@ -115,13 +198,22 @@ void PlayerController::HandleInput()
 
 void PlayerController::Jump()
 {
-	//if the player is touching the ground
-	//{
-	//	maybe translate too to make the jump better?
-		//transform->AddVelocity({ 0, 20, 0 });
-	//}
+	if (floor)
+	{
+		justJumped = true;
+		transform->AddVelocity({ 0, 5.0f, 0 });
+		cout << "JUMP" << endl;
 
-	//cout << "JUMP" << endl;
+		//do animation
+		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+		animator->SetTrigger("Jump");
+		
+		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
+		{
+			animator->SetTrigger("Run");
+		}
+	}
 }
 
 void PlayerController::Attack()
