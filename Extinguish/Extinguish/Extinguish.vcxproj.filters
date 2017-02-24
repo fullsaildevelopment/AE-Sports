@@ -169,6 +169,7 @@
     <ClCompile Include="Movement.cpp">
       <Filter>Components\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="MeterBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -324,6 +325,7 @@
     <ClInclude Include="Movement.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="MeterBar.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />

@@ -288,7 +288,7 @@ void AI::Update(float dt)
 				DefendTeammate();
 
 			else
-				GetBall();// Attack(ballClass->GetHolder());
+				GetBall();
 		}
 
 		else
@@ -409,13 +409,12 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
-	realTarget = target;
-
 	// if they're not on my team and if the timer isn't going
 	if (target->GetTag() != me->GetTag() && timer == 2)
 	{
 		isAttacking = true;
 
+		realTarget = target;
 		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
@@ -464,7 +463,6 @@ void AI::Paranoia()
 					target = listOfMates[i];
 				}
 			}
-
 			// pass the ball
 			if (RunTo(target))
 				crosse->Throw();
@@ -522,10 +520,9 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	float3 a = enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 	bool trash = RunTo(enemyGoal);
 
-	if (a.magnitude() < 10)
+	if (float3(enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 10)
 		crosse->Throw();
 }
 

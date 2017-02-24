@@ -56,7 +56,9 @@ void CapsuleCollider::FixedUpdate(float dt)
 		bool c = false;
 		for (int j = 0; j < checked.size(); ++j)
 		{
-			if (objects[i]->GetComponent<Collider>() == checked[j]) c = true;
+			Collider* ch = objects[i]->GetComponent<Collider>();
+			if (objects[i]->GetComponent<Collider>() == checked[j])
+				c = true;
 		}
 		if (c) continue;
 
@@ -78,12 +80,14 @@ void CapsuleCollider::FixedUpdate(float dt)
 				float3 pos = tgt->GetPosition();
 				float3 opos = tgt->GetPosition();
 				float3 vel = tgt->GetVelocity();
-				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos - GetCapsule().m_Segment.m_Start);
+				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos);
 				if (!result.isEquil(float3(0, 0, 0)))
 				{
 					bool aG = false;
+
 					if (!result.isEquil(float3(0, 1, 0)))
 						aG = true;
+
 					float3 invN = result.negate();
 					invN = invN * (vel * result).magnitude();
 					vel = vel - invN;
@@ -101,12 +105,12 @@ void CapsuleCollider::FixedUpdate(float dt)
 						continue;
 					}
 				}
-					if (CollidingWith[i])
-					{
-						CollidingWith[i] = false;
-						objects[i]->OnCollisionExit(this);
-						tg->OnCollisionExit(box);
-					}
+				if (CollidingWith[i])
+				{
+					CollidingWith[i] = false;
+					objects[i]->OnCollisionExit(this);
+					tg->OnCollisionExit(box);
+				}
 				else if (otherBox == box)
 				{
 					otherBox->OnCollisionExit(this);
@@ -138,7 +142,7 @@ void CapsuleCollider::FixedUpdate(float dt)
 				float3 ovel = objects[i]->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
-					checked.push_back(capsule);
+					capsule->checked.push_back(this);
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
@@ -146,7 +150,7 @@ void CapsuleCollider::FixedUpdate(float dt)
 						Physics* nop = objects[i]->GetComponent<Physics>();
 						if (nop)
 						{
-							nop->HandlePhysics(objects[i]->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start,false,float3(0,0,0),true);
+							nop->HandlePhysics(objects[i]->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start, false, float3(0, 0, 0), true);
 						}
 					}
 					if (!CollidingWith[i])
