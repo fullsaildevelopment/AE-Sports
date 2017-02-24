@@ -829,12 +829,12 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	sr.m_Radius = capr.m_Radius;
 	if (SphereToSphere(sl, sr))
 	{
-		float3 ml = (cpor - cpol).normalize() * (capl.m_Radius + 0.001f);
-		float3 mr = (cpol - cpor).normalize() * (capr.m_Radius + 0.001f);
+		float3 ml = (cpor - cpol).normalize() * (capl.m_Radius);
+		float3 mr = (cpol - cpor).normalize() * (capr.m_Radius);
 		float3 mid = (cpol + ml + cpor + mr) * 0.5f;
 
-		ml = mid + ((cpol - mid).normalize() * (capl.m_Radius + 0.001f));
-		mr = mid + ((cpor - mid).normalize() * (capr.m_Radius + 0.001f));
+		ml = mid + ((cpol - mid).normalize() * (capl.m_Radius));
+		mr = mid + ((cpor - mid).normalize() * (capr.m_Radius));
 
 		pos = float3( 0, capl.m_Segment.m_Start.y - ml.y, 0) + ml;
 		opos = float3( 0, capr.m_Segment.m_Start.y - mr.y, 0) + mr;
@@ -955,32 +955,32 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 		float3 ref;
 		if (dx < dnx && dx < dy && dx < dny && dx < dz && dx < dnz)
 		{
-			cp.x = box.max.x + cap.m_Radius + 0.0001f;
+			cp.x = box.max.x + cap.m_Radius;
 			ref = x;
 		}
 		else if (dnx < dx && dnx < dy && dnx < dny && dnx < dz && dnx < dnz)
 		{
-			cp.x = box.min.x - cap.m_Radius - 0.0001f;
+			cp.x = box.min.x - cap.m_Radius;
 			ref = nx;
 		}
 		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
 		{
-			cp.y = box.max.y + cap.m_Radius + 0.0001f;
+			cp.y = box.max.y + cap.m_Radius;
 			ref = y;
 		}
 		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
 		{
-			cp.y = box.min.y - cap.m_Radius - 0.0001f;
+			cp.y = box.min.y - cap.m_Radius;
 			ref = ny;
 		}
 		else if (dz < dnx && dz < dy && dz < dny && dz < dx && dz < dnz)
 		{
-			cp.z = box.max.z + cap.m_Radius + 0.0001f;
+			cp.z = box.max.z + cap.m_Radius;
 			ref = z;
 		}
 		else if (dnz < dnx && dnz < dy && dnz < dny && dnz < dz && dnz < dx)
 		{
-			cp.z = box.min.z - cap.m_Radius - 0.0001f;
+			cp.z = box.min.z - cap.m_Radius;
 			ref = nz;
 		}
 		else
