@@ -97,9 +97,9 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 
 bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel);
 
-bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel);
+float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel);
 
-bool HexagonToCapsule(const Hexagon& hex, Capsule& s, float3& vel);
+float3 HexagonToCapsule(const Hexagon& hex, Capsule& s, float3& vel);
 
 float3 XMtoF(DirectX::XMFLOAT3 m);
 
