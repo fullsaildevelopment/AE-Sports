@@ -18,23 +18,27 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Colli
 
 void SphereCollider::FixedUpdate(float dt)
 {
-	vector<GameObject*>* Others = GetGameObject()->GetGameObjects();
+	if (objects.size() == 0)
+	{
+		objects = *GetGameObject()->GetGameObjects();
+		CollidingWith.resize(objects.size());
+	}
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
-	size_t size = (*Others).size();
+	size_t size = objects.size();
 	for (int i = 0; i < size; ++i)
 	{
 
-		if ((*Others)[i] == GetGameObject()) continue;
+		if (objects[i] == GetGameObject()) continue;
 		bool c = false;
 		for (int j = 0; j < checked.size(); ++j)
 		{
-			if ((*Others)[i]->GetComponent<Collider>() == checked[j]) c = true;
+			if (objects[i]->GetComponent<Collider>() == checked[j]) c = true;
 		}
 		if (c) continue;
 
 		///////////////////////////////////////Sphere vs AABB///////////////////////////////////////
-		BoxCollider* box = (*Others)[i]->GetComponent<BoxCollider>();
+		BoxCollider* box = objects[i]->GetComponent<BoxCollider>();
 		if (box)
 		{
 			if (box->isTrigger() || isTrigger())
@@ -59,23 +63,38 @@ void SphereCollider::FixedUpdate(float dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel * c / dt, s.m_Center, true);
-						box->GetGameObject()->OnCollisionEnter(this);
-						tg->OnCollisionEnter(box);
+						if (!CollidingWith[i])
+						{
+							objects[i]->OnCollisionEnter(this);
+							tg->OnCollisionEnter(box);
+							CollidingWith[i] = true;
+						}
+						continue;
 					}
 					else
 					{
 						tgt->SetPosition(s.m_Center);
 						vel *= c;
 						tgt->SetVelocity(vel / dt);
-						box->GetGameObject()->OnCollisionEnter(this);
-						tg->OnCollisionEnter(box);
+						if (!CollidingWith[i])
+						{
+							objects[i]->OnCollisionEnter(this);
+							tg->OnCollisionEnter(box);
+							CollidingWith[i] = true;
+						}
+					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(box);
 					}
 				}
 			}
 			continue;
 		}
 		///////////////////////////////////////Sphere vs Capsule///////////////////////////////////////
-		CapsuleCollider* capsule = (*Others)[i]->GetComponent<CapsuleCollider>();
+		CapsuleCollider* capsule = objects[i]->GetComponent<CapsuleCollider>();
 		if (capsule)
 		{
 			if (capsule->isTrigger() || isTrigger())
@@ -97,8 +116,13 @@ void SphereCollider::FixedUpdate(float dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel, s.m_Center, true);
-						capsule->GetGameObject()->OnCollisionEnter(this);
-						tg->OnCollisionEnter(capsule);
+						if (!CollidingWith[i])
+						{
+							objects[i]->OnCollisionEnter(this);
+							tg->OnCollisionEnter(capsule);
+							CollidingWith[i] = true;
+							continue;
+						}
 					}
 					else
 					{
@@ -107,13 +131,19 @@ void SphereCollider::FixedUpdate(float dt)
 						capsule->GetGameObject()->OnCollisionEnter(this);
 						tg->OnCollisionEnter(capsule);
 					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(capsule);
+					}
 				}
 
 			}
 			continue;
 		}
 		///////////////////////////////////////Sphere vs Sphere///////////////////////////////////////
-		SphereCollider* sphere = (*Others)[i]->GetComponent<SphereCollider>();
+		SphereCollider* sphere = objects[i]->GetComponent<SphereCollider>();
 		if (sphere)
 		{
 			if (sphere->isTrigger() || isTrigger())
@@ -141,8 +171,19 @@ void SphereCollider::FixedUpdate(float dt)
 					{
 						tgt->SetVelocity(vel / dt);
 						tgt->SetPosition(s.m_Center);
-						sphere->GetGameObject()->OnCollisionEnter(this);
-						tg->OnCollisionEnter(sphere);
+						if (!CollidingWith[i])
+						{
+							objects[i]->OnCollisionEnter(this);
+							tg->OnCollisionEnter(sphere);
+							CollidingWith[i] = true;
+						}
+						continue;
+					}
+					if (CollidingWith[i])
+					{
+						CollidingWith[i] = false;
+						objects[i]->OnCollisionExit(this);
+						tg->OnCollisionExit(sphere);
 					}
 				}
 				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
@@ -153,9 +194,9 @@ void SphereCollider::FixedUpdate(float dt)
 						sphere->checked.push_back((Collider*)this);
 						tgt->SetVelocity(vel / dt);
 						tgt->SetPosition(s.m_Center);
-						sphere->GetGameObject()->GetTransform()->SetVelocity(svel / dt);
-						sphere->GetGameObject()->GetTransform()->SetPosition(os.m_Center);
-						sphere->GetGameObject()->OnCollisionEnter(this);
+						objects[i]->GetTransform()->SetVelocity(svel / dt);
+						objects[i]->GetTransform()->SetPosition(os.m_Center);
+						objects[i]->OnCollisionEnter(this);
 						tg->OnCollisionEnter(sphere);
 					}
 				}
