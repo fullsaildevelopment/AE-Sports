@@ -4,6 +4,8 @@
 #include "Client Wrapper.h"
 #include "EventDispatcher.h"
 #include "LoadSceneEvent.h"
+#include "SoundEvent.h"
+#include "SoundEngine.h"
 
 void StartGame()
 {
@@ -14,6 +16,11 @@ void StartGame()
 	event->Init("FirstLevel");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
 	delete event;
+
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::STOP_BACKBOARD_BOUNCE_SONG, 1);
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
 }
 
 void StartServer()

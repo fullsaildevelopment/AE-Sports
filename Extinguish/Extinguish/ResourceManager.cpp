@@ -755,8 +755,8 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\StumbleBackwards.fbx", "Mage", "Mage_StumbleBackwards");
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\StumbleBackwards2.fbx", "Mage", "Mage_StumbleBackwards2");
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\StumbleBackwards3.fbx", "Mage", "Mage_StumbleBackwards3");
-	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Jump.fbx", "Mage", "Mage_Jump");
-	FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Land.fbx", "Mage", "Mage_Land");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Jump.fbx", "Mage", "Mage_Jump");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Mage\\Land.fbx", "Mage", "Mage_Land");
 
 	//load in plane
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");

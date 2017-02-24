@@ -1,4 +1,5 @@
 Event	ID	Name			Wwise Object Path	Notes
+	6317442	Stop_Backboard_Bounce_Song			\Default Work Unit\Stop_Backboard_Bounce_Song	
 	1437361150	Play_Footsteps__Walk____			\Default Work Unit\Play_Footsteps__Walk____	
 	1977644338	Play_Throw			\Default Work Unit\Play_Throw	
 	2224425572	Stop_Footsteps__Walk____			\Default Work Unit\Stop_Footsteps__Walk____	
