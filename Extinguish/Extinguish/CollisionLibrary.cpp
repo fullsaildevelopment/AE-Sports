@@ -965,7 +965,7 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 		}
 		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
 		{
-			cp.y = box.max.y + cap.m_Radius;
+			cp.y = box.max.y + cap.m_Radius - 0.000001f;
 			ref = y;
 		}
 		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
@@ -987,7 +987,7 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 		{
 			pos.y = box.max.y;
 		}
-		pos += cp - cpb;
+		pos = cp;
 		return ref;
 	}
 	return float3(0,0,0);
