@@ -125,6 +125,8 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	}
 
 	soundEngine->InitSoundEngine(ids, names);
+
+	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_BACKBOARD_BOUNCE_SONG, 1);
 }
 
 void Game::WindowResize(uint16_t w, uint16_t h)
@@ -385,7 +387,7 @@ void Game::HandleEvent(Event* e)
 		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
 		gameStates[soundEvent->GetObjectID()]->hasSound = true;
 
-		cout << "sound event received by game" << endl;
+		//cout << "sound event received by game" << endl;
 
 		return;
 	}
@@ -598,6 +600,12 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		State* mageStumble = new State();
 		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("StumbleBackwards3"), false, 0.75f, "Stumble");
 		mageAnim1->AddState(mageStumble);
+		State* mageJump = new State();
+		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 2.0f, "Jump");
+		mageAnim1->AddState(mageJump);
+		//State* mageLand = new State();
+		//mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 2.0f, "Land");
+		//mageAnim1->AddState(mageLand);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
@@ -608,6 +616,9 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Param::Trigger* idleTrigger = new Param::Trigger();
 		idleTrigger->Init("Idle", false);
 		mageAnim1->AddParameter(idleTrigger);
+		Param::Trigger* jumpTrigger = new Param::Trigger();
+		jumpTrigger->Init("Jump", false);
+		mageAnim1->AddParameter(jumpTrigger);
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
 		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
@@ -623,6 +634,27 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		Transition* stumbleToIdle = new Transition();
 		mageStumble->AddTransition(stumbleToIdle);
 		stumbleToIdle->Init(mageStumble, mageIdle, 0, 0.01f); //exit time of 0 will make transition happen right when cur animation is done
+		Transition* idleToJump = new Transition();
+		mageIdle->AddTransition(idleToJump);
+		idleToJump->Init(mageIdle, mageJump, -1, 0.1f);
+		idleToJump->AddCondition(jumpTrigger);
+		Transition* jumpToRun = new Transition();
+		mageJump->AddTransition(jumpToRun);
+		jumpToRun->Init(mageJump, mageRun, -1, 0.1f);
+		jumpToRun->AddCondition(runTrigger);
+		Transition* jumpToIdle = new Transition();
+		mageJump->AddTransition(jumpToIdle);
+		jumpToIdle->Init(mageJump, mageIdle, 0, 0.1f);
+		//Transition* jumpToLand = new Transition();
+		//mageJump->AddTransition(jumpToLand);
+		//jumpToLand->Init(mageJump, mageLand, 0, 0.0f);
+		//Transition* landToIdle = new Transition();
+		//mageLand->AddTransition(landToIdle);
+		//landToIdle->Init(mageLand, mageIdle, 0, 0.001f);
+		Transition* runToJump = new Transition();
+		mageRun->AddTransition(runToJump);
+		runToJump->Init(mageRun, mageJump, -1, 0.001f);
+		runToJump->AddCondition(jumpTrigger);
 
 		string cameraName = "Camera";
 		cameraName += to_string(i);
@@ -633,7 +665,8 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		GameObject* camera1 = new GameObject();
 		basic->AddGameObject(camera1);
 		camera1->Init(cameraName);
-		camera1->InitTransform(identity, { 0, 5, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 5.0f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		//camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//camera1->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//camera1->InitTransform(identity, { 0, 0, -15.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
@@ -662,6 +695,26 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	ballController->LateInit();
 
+	//for max poly count
+	//for (int i = 0; i < 15; ++i)
+	//{
+	//	for (int j = 0; j < 15; ++j)
+	//	{
+	//		GameObject* mage1 = new GameObject();
+	//		basic->AddGameObject(mage1);
+	//		mage1->Init("MageCrap");
+
+	//		mage1->InitTransform(identity, { (float)0 + i * 2.0f, 10, -40.0f + j * 2.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+
+	//		Renderer* mageRenderer1 = new Renderer();
+	//		mage1->AddComponent(mageRenderer1);
+	//		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+	//		if (i <= 4)
+	//			mageRenderer1->SetTeamColor({ 1,0,0,0 });
+	//		else
+	//			mageRenderer1->SetTeamColor({ 0,0,1,0 });
+	//	}
+	//}
 	for (int i = 0; i < ai.size(); ++i)
 	{
 		ai[i]->Init(goal, goal2);
@@ -700,6 +753,15 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
+
+	GameObject* testPlayer = new GameObject();
+	basic->AddGameObject(testPlayer);
+	testPlayer->Init("TestPlayer");
+	testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* testPlayerRenderer = new Renderer();
+	testPlayer->AddComponent(testPlayerRenderer);
+	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
+
 
 
 	GameObject* Wall = new GameObject();
@@ -1411,7 +1473,6 @@ int Game::UpdateLobby()
 		UpdateLobbyUI(client.getNumClients());
 	else if (clientState == 6)
 		LoadScene("FirstLevel");
-	
 
 
 	return clientState;

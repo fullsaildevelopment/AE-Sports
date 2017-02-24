@@ -12,6 +12,7 @@ private:
 	//temp cache
 	InputManager* input; 
 	GameObject* otherPlayer; //is set when colliding with other player
+	GameObject* floor;
 
 	//cache
 	Transform* transform;
@@ -19,7 +20,7 @@ private:
 	Transform* cameraTransform;
 
 	float dt;
-	
+	bool justJumped;
 
 	//private helper functions
 	void HandleInput();

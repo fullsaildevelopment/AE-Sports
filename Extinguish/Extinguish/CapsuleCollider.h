@@ -5,6 +5,8 @@
 #include "Collider.h"
 
 class GameObject;
+class BoxCollider;
+
 class CapsuleCollider : public Collider
 {
 private:
@@ -12,6 +14,8 @@ private:
 	DirectX::XMFLOAT3 Start;
 	DirectX::XMFLOAT3 End;
 	CapsuleCollider* otherCapsule;
+	BoxCollider* otherBox;
+
 public:
 	CapsuleCollider(float r, DirectX::XMFLOAT3 s, DirectX::XMFLOAT3 e, GameObject* o, bool t);
 	void FixedUpdate(float dt) override;

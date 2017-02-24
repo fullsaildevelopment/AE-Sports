@@ -398,19 +398,6 @@ void Scene::Update(float dt)
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
-	//update lights
-	//if (pointLights.size())
-	//{
-
-	//	pointLights[0].DoRadiusEffect(5.0f, radiusChange[0]);
-	//	pointLights[1].DoRadiusEffect(7.0f, radiusChange[1]);
-
-	//	devContext->UpdateSubresource(pointLightConstantBuffer.Get(), NULL, NULL, pointLights.data(), NULL, NULL);
-
-	//	devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
-	//}
-
-
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
 
@@ -535,36 +522,6 @@ void Scene::FixedUpdate(float dt)
 
 void Scene::HandleInput()
 {
-	//if (input->GetKeyDown('O'))
-	//{
-	//	++curFrame;
-	//}
-
-	//if (input->GetKeyDown('P'))
-	//{
-	//	--curFrame;
-	//}
-
-	//if (input->GetKeyDown('K')) // go to idle
-	//{
-	//	//BlendInfo info;
-	//	//info.totalBlendTime = 2.0f;
-
-	//	//gameObjects[1]->SetBlendInfo(info);
-	//	//gameObjects[1]->SetNextAnimation(2);
-	//	//gameObjects[1]->CreateNextAnimation(true);
-	//}
-
-	//if (input->GetKeyDown('J')) //go to run
-	//{
-	//	//BlendInfo info;
-	//	//info.totalBlendTime = 2.0f;
-
-	//	//gameObjects[1]->SetNextAnimation(3);
-	//	//gameObjects[1]->SetBlendInfo(info);
-	//	//gameObjects[1]->CreateNextAnimation(true);
-	//}
-
 }
 
 void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed)

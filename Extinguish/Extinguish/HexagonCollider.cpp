@@ -361,6 +361,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -396,6 +403,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -435,6 +449,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -470,6 +491,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -513,6 +541,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -548,6 +583,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -587,6 +629,13 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
@@ -622,6 +671,14 @@ void HexagonCollider::FixedUpdate(float dt)
 													objects[f]->GetTransform()->SetVelocity(vel);
 													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 												}
+
+												otherCapsule = cap;
+											}
+											else if (otherCapsule == cap)
+											{
+												otherCapsule->OnCollisionExit(this);
+												tg->OnCollisionExit(otherCapsule);
+												otherCapsule = nullptr;
 											}
 										}
 									}
