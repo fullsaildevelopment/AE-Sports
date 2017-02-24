@@ -438,7 +438,7 @@ void AI::Paranoia()
 		// for each enemy
 		for (int i = 0; i < listOfEnemies.size(); ++i)
 		{
-			float3 tmp = listOfEnemies[i]->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+			float3 tmp = listOfEnemies[i]->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
 
 			// if their distance is closer, switch to them
 			if (tmp.magnitude() < edist)
@@ -451,7 +451,7 @@ void AI::Paranoia()
 			// for each friend
 			for (int i = 0; i < listOfMates.size(); ++i)
 			{
-				float3 tmp2 = listOfMates[i]->GetTransform()->GetPosition() - enemyGoal->GetTransform()->GetPosition();
+				float3 tmp2 = listOfMates[i]->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
 				if (fakeTeam > 2 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
 					target = listOfMates[i];
