@@ -176,7 +176,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												{
 													tg->OnCollisionEnter(sphere);
 													sphere->GetGameObject()->OnCollisionEnter(this);
-													CollidingWith[i] = true;
+													CollidingWith[f] = true;
 												}
 												collided = true;
 											}
