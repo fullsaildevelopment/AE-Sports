@@ -955,12 +955,12 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 		float3 ref;
 		if (dx < dnx && dx < dy && dx < dny && dx < dz && dx < dnz)
 		{
-			cp.x = box.max.x + cap.m_Radius;
+			cp.x = box.max.x + cap.m_Radius - 0.000001f;
 			ref = x;
 		}
 		else if (dnx < dx && dnx < dy && dnx < dny && dnx < dz && dnx < dnz)
 		{
-			cp.x = box.min.x - cap.m_Radius;
+			cp.x = box.min.x - cap.m_Radius + 0.000001f;
 			ref = nx;
 		}
 		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
@@ -970,17 +970,17 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 		}
 		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
 		{
-			cp.y = box.min.y - cap.m_Radius;
+			cp.y = box.min.y - cap.m_Radius + 0.000001f;
 			ref = ny;
 		}
 		else if (dz < dnx && dz < dy && dz < dny && dz < dx && dz < dnz)
 		{
-			cp.z = box.max.z + cap.m_Radius;
+			cp.z = box.max.z + cap.m_Radius - 0.000001f;
 			ref = z;
 		}
 		else if (dnz < dnx && dnz < dy && dnz < dny && dnz < dz && dnz < dx)
 		{
-			cp.z = box.min.z - cap.m_Radius;
+			cp.z = box.min.z - cap.m_Radius + 0.000001f;
 			ref = nz;
 		}
 		else
@@ -1077,8 +1077,8 @@ float3 SpherePlanePoint(const NewPlane& p, const Sphere& s)
 	float3 np = p.n * (s.m_Radius - d);
 	return s.m_Center + np;
 }
-
-bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
+float3 zeroF = float3(0, 0, 0);
+float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 {
 	float hd = hex.d * 0.5f;
 	AABB bounding;
@@ -1086,7 +1086,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	bounding.max = float3(hex.seg.m_End.x + hd, hex.seg.m_End.y + hd, hex.seg.m_End.z + hd);
 	
 	if (!SphereToAABB(s, bounding))
-		return false;
+		return zeroF;
 
 	vec3f SE = hex.seg.m_End - hex.seg.m_Start;
 	float ratio = dot_product(SE, s.m_Center - hex.seg.m_Start) / dot_product(SE, SE);
@@ -1105,14 +1105,14 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	toptest.n = float3(0, 1, 0);
 	toptest.p = hex.seg.m_End;
 	int topcify = ClassifySphereToPlane(toptest, s);
-	if (topcify == 1) return false;
+	if (topcify == 1) return zeroF;
 
 	NewPlane bottomtest;
 	bottomtest.n = float3(0, -1, 0);
 	bottomtest.p = hex.seg.m_Start;
 	int bottomcify = ClassifySphereToPlane(bottomtest, s);
 
-	if (bottomcify == 1) return false;
+	if (bottomcify == 1) return zeroF;
 
 	if (bottomcify == 2 && topcify == 2)
 	{
@@ -1131,7 +1131,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		int cify = ClassifySphereToPlane(tpl, Scopy);
 		if (cify == 1)
 		{
-			return false;
+			return zeroF;
 		}
 		else if (cify == 2)
 		{
@@ -1142,7 +1142,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 			rScopy.m_Radius = s.m_Radius;
 			int rcify = ClassifySphereToPlane(rpl, rScopy);
-			if (rcify == 1) return false;
+			if (rcify == 1) return zeroF;
 			else if (rcify == 2)
 			{
 				float3 p1 = SpherePlanePoint(rpl, rScopy);
@@ -1163,9 +1163,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 					if (s.m_Center.z < SE.z)
 						rpl.n.z *= -1;
 
-					vel = vel - rpl.n * 2 * dot_product(vel, rpl.n);
-
-					return true;
+					return rpl.n;
 				}
 				else
 				{
@@ -1181,9 +1179,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 					if (s.m_Center.z < SE.z)
 						tpl.n.z *= -1;
 
-					vel = vel - tpl.n * 2 * dot_product(vel, tpl.n);
-
-					return true;
+					return tpl.n;
 				}
 			}
 			else if (rcify == 3)
@@ -1202,9 +1198,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				if (s.m_Center.z < SE.z)
 					rpl.n.z *= -1;
 
-				vel = vel - rpl.n * 2 * dot_product(vel, rpl.n);
-
-				return true;
+				return rpl.n;
 			}
 		}
 		else if (cify == 3)
@@ -1216,7 +1210,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 			rScopy.m_Radius = s.m_Radius;
 			int rcify = ClassifySphereToPlane(rpl, rScopy);
-			if (rcify == 1) return false;
+			if (rcify == 1) return zeroF;
 			if (rcify == 2)
 			{
 				float3 cc = SpherePlanePoint(tpl, rScopy);
@@ -1233,9 +1227,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				if (s.m_Center.z < SE.z)
 					tpl.n.z *= -1;
 
-				vel = vel - tpl.n * 2 * dot_product(vel, tpl.n);
-
-				return true;
+				return tpl.n;
 			}
 			if (rcify == 3)
 			{
@@ -1257,9 +1249,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 					if (s.m_Center.z < SE.z)
 						rpl.n.z *= -1;
 
-					vel = vel - rpl.n * 2 * dot_product(vel, rpl.n);
-
-					return true;
+					return rpl.n;
 				}
 				else
 				{
@@ -1275,9 +1265,7 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 					if (s.m_Center.z < SE.z)
 						tpl.n.z *= -1;
 
-					vel = vel - tpl.n * 2 * dot_product(vel, tpl.n);
-
-					return true;
+					return tpl.n;
 				}
 			}
 		}
@@ -1290,15 +1278,13 @@ bool HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 		float3 n = float3(0, 1, 0);
 
-		vel = vel - n * 2 * dot_product(vel, n);
-
-		return true;
+		return n;
 	}
 
-	return false;
+	return zeroF;
 }
 
-bool HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
+float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 {
 	float hd = hex.d * 0.5f;
 	AABB bounding;
@@ -1313,18 +1299,19 @@ bool HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 	cb.max.z = c.m_Segment.m_End.z + c.m_Radius;
 
 	if (!AABBtoAABB(bounding, cb)) 
-		return false;
+		return zeroF;
 
 	Sphere s;
 	s.m_Center = c.m_Segment.m_Start;
 	s.m_Radius = c.m_Radius;
-	if (HexagonToSphere(hex, s, vel))
+	float3 n = HexagonToSphere(hex, s, vel);
+	if (!n.isEquil(zeroF))
 	{
 		float3 diff = s.m_Center - c.m_Segment.m_Start;
 		c.m_Segment.m_Start += diff;
-		return true;
+		return n;
 	}
-	return false;
+	return zeroF;
 }
 
 float3 XMtoF(DirectX::XMFLOAT3 m)
