@@ -126,7 +126,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 
 	soundEngine->InitSoundEngine(ids, names);
 
-	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::
+	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_BACKBOARD_BOUNCE_SONG, 1);
 }
 
 void Game::WindowResize(uint16_t w, uint16_t h)
