@@ -4,6 +4,7 @@
 #include <string>
 #include "Collider.h"
 class GameObject;
+class CapsuleCollider;
 
 class HexagonCollider : public Collider
 {
@@ -13,6 +14,7 @@ private:
 	float3* poses;
 	int row;
 	int col;
+	CapsuleCollider* otherCapsule;
 	bool CheckSphereAABB(int min, int max, Sphere s);
 	bool CheckSphereAABB(AABB test, Sphere s);
 	bool CheckCapsuleAABB(int _min, int _max, Capsule s);
