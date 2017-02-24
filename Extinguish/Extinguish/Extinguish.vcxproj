@@ -153,6 +153,7 @@
     <ClCompile Include="FloorController.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
+    <ClCompile Include="MeterBar.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="HexagonCollider.h" />
     <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
+    <ClInclude Include="MeterBar.h" />
     <ClInclude Include="Movement.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PlayerController.h" />

@@ -141,6 +141,11 @@ GameObject* const GameObject::GetGameObjects(int i)
 	return scene->GetGameObjects(i);
 }
 
+GameObject* const GameObject::GetUIGameObjects(int i)
+{
+	return scene->GetUIGameObjects(i);
+}
+
 int GameObject::GetNumObjects()
 {
 	return scene->GetNumObjects();
