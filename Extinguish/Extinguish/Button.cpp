@@ -215,9 +215,11 @@ void Button::HandleEvent(Event* e)
 					{
 						isActive = false;
 
-						GameObject * exitObj = GetGameObject()->GetUIGameObjects(helperIndex);
-						Button * exitButton = exitObj->GetComponent<Button>();
-						exitButton->SetActive(false);
+						for (unsigned int i = 0; i < helperIndex.size(); ++i) {
+							GameObject * exitObj = GetGameObject()->GetUIGameObjects(helperIndex[i]);
+							Button * exitButton = exitObj->GetComponent<Button>();
+							exitButton->SetActive(false);
+						}
 					}
 
 				}

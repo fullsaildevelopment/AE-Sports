@@ -784,7 +784,6 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	theSButton->SetGameObject(scoreA);
 	theSButton->setTimer(true);
 	theSButton->showFPS(false);
-	theSButton->setOrigin(250.0f, 30.0f);
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	scoreA->AddComponent(theSButton);
 	UIRenderer * scoreRender = new UIRenderer();
@@ -794,6 +793,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	scoreRender->MakeRTSize();
 	theSButton->MakeRect();
 	scoreRender->InitMetrics();
+	theSButton->setOrigin();
 
 
 	GameObject * scoreB = new GameObject();
@@ -802,7 +802,6 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
 	theSButtonB->SetGameObject(scoreB);
 	theSButtonB->showFPS(false);
-	theSButtonB->setOrigin(369.0f, 70.0f);
 	theSButtonB->setPositionMultipliers(0.40f, 0.11f);
 	scoreB->AddComponent(theSButtonB);
 	UIRenderer * scoreBRender = new UIRenderer();
@@ -812,6 +811,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	scoreBRender->MakeRTSize();
 	theSButtonB->MakeRect();
 	scoreBRender->InitMetrics();
+	theSButtonB->setOrigin();
 
 
 	GameObject * scoreC = new GameObject();
@@ -820,7 +820,6 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
 	theSButtonC->SetGameObject(scoreC);
 	theSButtonC->showFPS(false);
-	theSButtonC->setOrigin(569.0f, 70.0f);
 	theSButtonC->setPositionMultipliers(0.6f, 0.11f);
 	scoreC->AddComponent(theSButtonC);
 	UIRenderer * scoreCRender = new UIRenderer();
@@ -829,6 +828,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	scoreC->AddComponent(scoreCRender);
 	scoreCRender->MakeRTSize();
 	theSButtonC->MakeRect();
+	theSButtonC->setOrigin();
 	scoreCRender->InitMetrics();
 
 	GameObject * meterBar = new GameObject();
@@ -856,11 +856,13 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 		Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
 		theButton->SetGameObject(debugUI);
 		theButton->showFPS(true);
-		theButton->setOrigin(0.0f, 30.0f);
+		theButton->setPositionMultipliers(0.0f, 0.2f);
 		debugUI->AddComponent(theButton);
 		UIRenderer * buttonRender = new UIRenderer();
 		buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
 		debugUI->AddComponent(buttonRender);
+		theButton->MakeRect();
+		theButton->setOrigin();
 	#endif
 }
 
@@ -873,7 +875,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
-	bgButton->setOrigin(0.0f, 0.0f);
 	bgButton->setPositionMultipliers(0.5f, 0.5f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
@@ -890,7 +891,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * tButton = new Button(true, false, L"", 0, 450.0f, 236.0f, devResources, 0);
 	tButton->SetGameObject(title);
 	tButton->showFPS(false);
-	tButton->setOrigin(0.0f, 0.0f);
 	tButton->setPositionMultipliers(0.65f, 0.25f);
 	title->AddComponent(tButton);
 	UIRenderer * tRender = new UIRenderer();
@@ -907,7 +907,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * sButton = new Button(true, true, L"", (unsigned int)strlen(""), 300.0f, 60.0f, devResources, 3);
 	sButton->SetGameObject(soloPlayer);
 	sButton->showFPS(false);
-	sButton->setOrigin(500.0f, 385.0f);
 	sButton->setPositionMultipliers(0.65f, 0.45f);
 	soloPlayer->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
@@ -927,7 +926,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 1);
 	mButton->SetGameObject(multiPlayer);
 	mButton->showFPS(false);
-	mButton->setOrigin(500.0f, 420.0f);
 	mButton->setPositionMultipliers(0.56f, 0.53f);
 	multiPlayer->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
@@ -947,7 +945,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * mButton2 = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 2);
 	mButton2->SetGameObject(multiPlayer2);
 	mButton2->showFPS(false);
-	mButton2->setOrigin(650.0f, 420.0f);
 	mButton2->setPositionMultipliers(0.725f, 0.53f);
 	multiPlayer2->AddComponent(mButton2);
 	UIRenderer * mRender2 = new UIRenderer();
@@ -968,7 +965,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * cButton = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 4);
 	cButton->SetGameObject(credits);
 	cButton->showFPS(false);
-	cButton->setOrigin(500.0f, 510.0f);
 	cButton->setPositionMultipliers(0.56f, 0.62f);
 	credits->AddComponent(cButton);
 	UIRenderer * cRender = new UIRenderer();
@@ -989,7 +985,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 5);
 	eButton->SetGameObject(exit);
 	eButton->showFPS(false);
-	eButton->setOrigin(650.0f, 510.0f);
 	eButton->setPositionMultipliers(0.725f, 0.62f);
 	exit->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
@@ -1010,7 +1005,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	Button * bg2Button = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bg2Button->SetGameObject(bg2);
 	bg2Button->showFPS(false);
-	bg2Button->setOrigin(0.0f, 0.0f);
 	bg2Button->setPositionMultipliers(0.5f, 0.5f);
 	bg2->AddComponent(bg2Button);
 	UIRenderer * bg2Render = new UIRenderer();
@@ -1033,7 +1027,6 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	bgButton->setSceneIndex((unsigned int)scenes.size());
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
-	bgButton->setOrigin(0.0f, 0.0f);
 	bgButton->setPositionMultipliers(0.5f, 0.5f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
@@ -1051,7 +1044,6 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	sButton->setSceneIndex((unsigned int)scenes.size());
 	sButton->SetGameObject(startGame);
 	sButton->showFPS(false);
-	sButton->setOrigin(500.0f, 385.0f);
 	sButton->setPositionMultipliers(0.65f, 0.50f);
 	startGame->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
@@ -1072,7 +1064,6 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	eButton->setSceneIndex((unsigned int)scenes.size());
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setOrigin(500.0f, 465.0f);
 	eButton->setPositionMultipliers(0.65f, 0.60f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
@@ -1093,13 +1084,14 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	nButton->setSceneIndex((unsigned int)scenes.size());
 	nButton->SetGameObject(numPlayers);
 	nButton->showFPS(false);
-	nButton->setOrigin(500.0f, 200.0f);
+	nButton->setPositionMultipliers(0.6f, 0.3f);
 	numPlayers->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
 	nRender->Init(false, 40.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f, 0.412f, 0.706f, 1.0f));
 	numPlayers->AddComponent(nRender);
 	nRender->MakeRTSize();
 	nButton->MakeRect();
+	nButton->setOrigin();
 	nButton->MakeHandler();
 	nRender->InitMetrics();
 
@@ -1111,7 +1103,6 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	bg2Button->setSceneIndex((unsigned int)scenes.size());
 	bg2Button->SetGameObject(bg2);
 	bg2Button->showFPS(false);
-	bg2Button->setOrigin(0.0f, 0.0f);
 	bg2Button->setPositionMultipliers(0.5f, 0.5f);
 	bg2->AddComponent(bg2Button);
 	UIRenderer * bg2Render = new UIRenderer();
@@ -1132,7 +1123,6 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	rButton->setSceneIndex((unsigned int)scenes.size());
 	rButton->SetGameObject(resumeGame);
 	rButton->showFPS(false);
-	rButton->setOrigin(500.0f, 385.0f);
 	rButton->setPositionMultipliers(0.75f, 0.30f);
 	resumeGame->AddComponent(rButton);
 	UIRenderer * rRender = new UIRenderer();
@@ -1156,7 +1146,6 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	eButton->setSceneIndex((unsigned int)scenes.size());
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setOrigin(500.0f, 385.0f);
 	eButton->setPositionMultipliers(0.75f, 0.45f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
@@ -1169,6 +1158,29 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	eButton->MakeHandler();
 	eRender->InitMetrics();
 	eButton->SetActive(false);
+
+	// exit, return to menu
+
+	GameObject * exitMenu = new GameObject();
+	scene->AddUIObject(exitMenu);
+	exitMenu->Init("pauseMenu");
+	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 250.0f, 100.0f, devResources, 6);
+	mButton->setSceneIndex((unsigned int)scenes.size());
+	mButton->SetGameObject(exitMenu);
+	mButton->showFPS(false);
+	mButton->setPositionMultipliers(0.75f, 0.80f);
+	exitMenu->AddComponent(mButton);
+	UIRenderer * mRender = new UIRenderer();
+	mRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	mRender->DecodeBitmap(L"../Assets/UI/menuButton.png");
+	mRender->DecodeBitmap(L"../Assets/UI/menuButton2.png");
+	exitMenu->AddComponent(mRender);
+	mRender->MakeRTSize();
+	mButton->MakeRect();
+	mButton->MakeHandler();
+	mRender->InitMetrics();
+	mButton->SetActive(false);
+	rButton->setHelper(scene->GetNumUIObjects());
 }
 
 
