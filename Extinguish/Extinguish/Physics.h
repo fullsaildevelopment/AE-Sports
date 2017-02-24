@@ -13,6 +13,8 @@ private:
 	//cache
 	Transform* transform;
 
+	bool stillapplygravity = true;
+
 	// 0-1 1 being complete reflection 0 no reflection
 	float bounce = 1.0f;
 	// 0-1  1 being all the friction 0 being no friction
