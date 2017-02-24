@@ -10,6 +10,7 @@
 #include "InputManager.h"
 #include "HexagonCollider.h"
 #include "BoxCollider.h"
+#include "State.h"
 
 using namespace std;
 
@@ -207,6 +208,11 @@ void PlayerController::Jump()
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 		animator->SetTrigger("Jump");
+		
+		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
+		{
+			animator->SetTrigger("Run");
+		}
 	}
 }
 

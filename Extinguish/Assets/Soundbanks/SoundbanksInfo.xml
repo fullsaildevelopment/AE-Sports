@@ -21,6 +21,7 @@
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
 				<Event Id="1437361150" Name="Play_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Walk____"/>
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
+				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
 				<Event Id="2224425572" Name="Stop_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Walk____"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
