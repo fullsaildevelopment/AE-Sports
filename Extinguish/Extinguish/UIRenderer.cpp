@@ -91,7 +91,7 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 		if (SUCCEEDED(result))
 		{
 			result = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-			result = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			result = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 		}
 
 		if (SUCCEEDED(result))

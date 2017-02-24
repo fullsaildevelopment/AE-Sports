@@ -50,7 +50,7 @@ private:
 	bool showFps = false;
 	bool hovered = false;
 	unsigned int sceneIndex;
-	int helperIndex;
+	std::vector<int> helperIndex;
 
 	// some function pointer for event
 	void (*eventFunction)(void);
@@ -122,14 +122,14 @@ public:
 		text = _text; textLength = (unsigned int)text.length();
 	}
 	void setTexture(char * _textureAddress) {}
-	void setOrigin(float x, float y) { originX = x; originY = y; }
+	void setOrigin() { originX = rect.left; originY = rect.top; }
 	void setPositionMultipliers(float w, float h) { widthMult = w; heightMult = h; }
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setButtonType();
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 	void SetActive(bool active) { isActive = active; }
 	void setTimer(bool active) { isTimer = active; }
-	void setHelper(int index) { helperIndex = index; }
+	void setHelper(int index) { helperIndex.push_back(index); }
 
 	/* HELPERS*/
 
