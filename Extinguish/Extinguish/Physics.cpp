@@ -16,13 +16,13 @@ void Physics::FixedUpdate(float dt)
 	{
 		float3 nV = transform->GetVelocity();
 		//apply gravity
-		if (!colliding)
+		if (!colliding || stillapplygravity)
 		{
 			nV += { 0, gravity * dt, 0 };
 			nV += transform->GetVelocity() * (-airdrag * dt);
 		}
 		//apply friction if touching
-		else
+		if(colliding)
 		{
 			nV += transform->GetVelocity() * -1 * friction * dt;
 		}
@@ -50,7 +50,7 @@ void Physics::FixedUpdate(float dt)
 	}
 }
 
-void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, float3 bounceNormal, bool stillApplyGravity)
+void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, float3 bounceNormal, bool _stillApplyGravity)
 {
 	if (_bounce)
 	{
@@ -58,8 +58,8 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 	}
 	tt->SetVelocity(nV);
 	tt->SetPosition(nP);
-	if(!stillApplyGravity)
-		colliding = true;
+	stillapplygravity = _stillApplyGravity;
+	colliding = true;
 }
 
 //getters//
