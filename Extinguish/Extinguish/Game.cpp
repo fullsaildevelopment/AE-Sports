@@ -320,10 +320,13 @@ void Game::HandleEvent(Event* e)
 			{
 				GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
 				GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
+				GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
 				Button * resumeButton = pauseResume->GetComponent<Button>();
 				Button * exitButton = pauseExit->GetComponent<Button>();
+				Button * menuButton = pauseMenu->GetComponent<Button>();
 				resumeButton->SetActive(true);
 				exitButton->SetActive(true);
+				menuButton->SetActive(true);
 			}
 		}
 
@@ -1084,7 +1087,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	nButton->setSceneIndex((unsigned int)scenes.size());
 	nButton->SetGameObject(numPlayers);
 	nButton->showFPS(false);
-	nButton->setPositionMultipliers(0.6f, 0.3f);
+	nButton->setPositionMultipliers(0.65f, 0.3f);
 	numPlayers->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
 	nRender->Init(false, 40.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f, 0.412f, 0.706f, 1.0f));
@@ -1119,11 +1122,11 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	GameObject * resumeGame = new GameObject();
 	scene->AddUIObject(resumeGame);
 	resumeGame->Init("pauseResume");
-	Button * rButton = new Button(true, true, L"", (unsigned int)strlen(""), 250.0f, 100.0f, devResources, 7);
+	Button * rButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 7);
 	rButton->setSceneIndex((unsigned int)scenes.size());
 	rButton->SetGameObject(resumeGame);
 	rButton->showFPS(false);
-	rButton->setPositionMultipliers(0.75f, 0.30f);
+	rButton->setPositionMultipliers(0.80f, 0.30f);
 	resumeGame->AddComponent(rButton);
 	UIRenderer * rRender = new UIRenderer();
 	rRender->Init(true, 25.0f, devResources, rButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -1138,15 +1141,14 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	rButton->setHelper(scene->GetNumUIObjects());
 
 	// exit, closes application
-
 	GameObject * exitGame = new GameObject();
 	scene->AddUIObject(exitGame);
 	exitGame->Init("pauseExit");
-	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 250.0f, 100.0f, devResources, 5);
+	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 5);
 	eButton->setSceneIndex((unsigned int)scenes.size());
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setPositionMultipliers(0.75f, 0.45f);
+	eButton->setPositionMultipliers(0.80f, 0.40f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
 	eRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -1160,18 +1162,18 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	eButton->SetActive(false);
 
 	// exit, return to menu
-
+	rButton->setHelper(scene->GetNumUIObjects());
 	GameObject * exitMenu = new GameObject();
 	scene->AddUIObject(exitMenu);
 	exitMenu->Init("pauseMenu");
-	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 250.0f, 100.0f, devResources, 6);
+	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 6);
 	mButton->setSceneIndex((unsigned int)scenes.size());
 	mButton->SetGameObject(exitMenu);
 	mButton->showFPS(false);
-	mButton->setPositionMultipliers(0.75f, 0.80f);
+	mButton->setPositionMultipliers(0.80f, 0.50f);
 	exitMenu->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
-	mRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	mRender->Init(true, 25.0f, devResources, mButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
 	mRender->DecodeBitmap(L"../Assets/UI/menuButton.png");
 	mRender->DecodeBitmap(L"../Assets/UI/menuButton2.png");
 	exitMenu->AddComponent(mRender);
@@ -1180,7 +1182,6 @@ void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 	mButton->SetActive(false);
-	rButton->setHelper(scene->GetNumUIObjects());
 }
 
 
