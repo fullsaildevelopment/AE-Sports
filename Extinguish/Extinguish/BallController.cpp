@@ -17,7 +17,7 @@ void BallController::OnTriggerEnter(Collider *obj)
 {
 	//SphereCollider *scol = dynamic_cast<SphereCollider*>(obj);
 
-	// if i collide with a crosse
+	// if i collide with a crosseds
 	//if (scol)
 	//	SetHolder(obj->GetGameObject());
 }
@@ -25,7 +25,7 @@ void BallController::OnTriggerEnter(Collider *obj)
 void BallController::OnCollisionEnter(Collider* obj)
 {
 	//play sound when it hits floor, so I can test 3D sound
-	if (obj->GetGameObject()->GetName() == "MeterBox6")
+	if (obj->GetGameObject()->GetName() == "MeterBox6" || obj->GetGameObject()->GetName() == "HexFloor")
 	{
 		SoundEvent* soundEvent = new SoundEvent();
 		soundEvent->Init(AK::EVENTS::PLAY_BOING, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
