@@ -806,10 +806,11 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
-	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	HexFloor->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
