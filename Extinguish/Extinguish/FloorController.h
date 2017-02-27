@@ -22,6 +22,9 @@ class FloorController : public Component
 	void RandomPattern(float dt);
 	void ControlMovement(float dt);
 	void ControlColors(float dt);
+	unsigned int team1color = 0xAD000000;
+	unsigned int team2color = 0x0000AD00;
+	float colortiming = 0;
 public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
 	~FloorController();
