@@ -36,11 +36,19 @@ void PlayerController::Init()
 	otherPlayer = nullptr;
 	floor = nullptr;
 	justJumped = false;
+	isSprinting = false;
 }
 
 void PlayerController::Update(float dt)
 {
 	this->dt = dt;
+
+	//if (isAttacking)
+	//{
+	//	isAttacking = true;
+
+	//	transform->SetVelocity(transform->GetForwardf3() * -chargeSpeed);
+	//}
 
 	//transform->AddVelocity(float3(0, -9.8f * dt, 0));
 }
@@ -81,6 +89,33 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 			cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
+
+			Attack();
+
+			//	const float attackForce = 1;
+
+			//	XMFLOAT3 back = transform->GetForward();
+			//	back = { -back.x, -back.y, -back.z };
+
+			//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
+
+			//	//do animation
+				//AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
+
+				//animator->SetTrigger("Stumble");
+
+				//cout << "Attack" << endl;
+
+				////make them drop ball
+				//BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
+
+				//if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+				//{
+				//	//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
+				//	ball->DropBall(otherPlayer);
+				//}
+
+				//isAttacking = false;
 
 			return;
 		}
@@ -194,6 +229,12 @@ void PlayerController::HandleInput()
 		//cout << "F" << endl;
 		Attack();
 	}
+
+	if (input->GetKey(VK_LSHIFT))
+	{
+		Sprint();
+		cout << "Sprint" << endl;
+	}
 }
 
 void PlayerController::Jump()
@@ -219,29 +260,38 @@ void PlayerController::Jump()
 void PlayerController::Attack()
 {
 	//if colliding with another player
-	if (otherPlayer)
-	{
-		const float attackForce = 1;
+	//if (otherPlayer)
+	//{
+	//	const float attackForce = 1;
 
-		XMFLOAT3 back = transform->GetForward();
-		back = { -back.x, -back.y, -back.z };
+	//	XMFLOAT3 back = transform->GetForward();
+	//	back = { -back.x, -back.y, -back.z };
 
-		//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
+	//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
 
-		//do animation
-		AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
+	//	//do animation
+	//	AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
-		animator->SetTrigger("Stumble");
+	//	animator->SetTrigger("Stumble");
 
-		cout << "Attack" << endl;
+	//	cout << "Attack" << endl;
 
-		//make them drop ball
-		BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
+	//	//make them drop ball
+	//	BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
 
-		if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
-		{
-			//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-			ball->DropBall(otherPlayer);
-		}
-	}
+	//	if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+	//	{
+	//		//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
+	//		ball->DropBall(otherPlayer);
+	//	}
+	//}
+
+	//isAttacking = true;
+
+	//transform->SetVelocity(transform->GetForwardf3() * -chargeSpeed);
+}
+
+void PlayerController::Sprint()
+{
+	isSprinting = true;
 }
