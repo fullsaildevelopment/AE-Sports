@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 15
+#define RunSpeed 5
 #define AttackSpeed 15
 #define StumbleSpeed 5
 
@@ -222,7 +222,7 @@ void AI::Update(float dt)
 				GetBall();
 		}
 
-		// if i have the ball
+		// if i have the ball pass it off to someone
 		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 		{
 			GameObject *myGuy = nullptr;
@@ -235,12 +235,6 @@ void AI::Update(float dt)
 
 			if (myGuy && !RunTo(myGuy))
 				crosse->Throw();
-
-			else
-			{
-				Score();
-				Paranoia();
-			}
 		}
 
 		// if the ball is too far from the goal
@@ -280,15 +274,15 @@ void AI::Update(float dt)
 		{
 			if (ballClass->GetHolder() == me)
 			{
-				Score();
 				Paranoia();
+				Score();
 			}
 
 			else if (ballClass->GetHolder()->GetTag() == me->GetTag())
 				DefendTeammate();
 
 			else
-				GetBall();
+				Attack(ballClass->GetHolder());
 		}
 
 		else
@@ -352,24 +346,21 @@ void AI::Idle()
 
 void AI::GetBall()
 {
+	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+
 	// if someone has the ball
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 	{
 		// if they're not on my team
 		if (ballClass->GetHolder()->GetTag() != me->GetTag())
-		{
-			if (RunTo(ballClass->GetHolder()))
-				Attack(ballClass->GetHolder());
-		}
+			Attack(ballClass->GetHolder());
 
 		else // he's my teammate
 			DefendTeammate();
 	}
 
-	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
 	// if im right next to the ball
-	if (RunTo(ball) && dist.magnitude() < 1)
+	else if (RunTo(ball) && dist.magnitude() < 1)
 	{
 		// running into the ball should pick it up
 	}
@@ -409,12 +400,13 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
+	realTarget = target;
+
 	// if they're not on my team and if the timer isn't going
 	if (target->GetTag() != me->GetTag() && timer == 2)
 	{
 		isAttacking = true;
 
-		realTarget = target;
 		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
@@ -431,7 +423,7 @@ void AI::Paranoia()
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 	{
 		float edist = 789; // distance to enemies
-		float mdist = 0; // distance to friends
+		float mdist = 789; // distance to friends
 		GameObject *target = nullptr; // the friend i'll throw to
 
 		// for each enemy
@@ -463,9 +455,10 @@ void AI::Paranoia()
 					target = listOfMates[i];
 				}
 			}
+
 			// pass the ball
-			if (RunTo(target))
-				crosse->Throw();
+			TurnTo(target);
+			crosse->Throw();
 		}
 	}
 }
