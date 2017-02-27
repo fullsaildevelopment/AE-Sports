@@ -771,7 +771,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* WallRenderer = new Renderer();
 	Wall->AddComponent(WallRenderer);
 	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
 	Wall->AddBoxCollider(Wallboxcol);
 
 	GameObject* Wall2 = new GameObject();
@@ -781,7 +781,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Renderer* WallRenderer2 = new Renderer();
 	Wall2->AddComponent(WallRenderer2);
 	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
 	Wall2->AddBoxCollider(Wallboxcol2);
 
 	GameObject* Wall3 = new GameObject();
