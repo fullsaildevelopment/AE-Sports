@@ -159,14 +159,14 @@ void FloorController::ControlColors(float dt)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			colors[i * col + j] = 0xFF000000;
+			colors[i * col + j] = team1color;
 		}
 	}
 	for (int i = tr; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			colors[i * col + j] = 0x0000FF00;
+			colors[i * col + j] = team2color;
 		}
 	}
 }
@@ -174,7 +174,7 @@ void FloorController::ControlColors(float dt)
 void FloorController::Update(float dt)
 {
 	//ControlMovement(dt);
-	//ControlColors(dt);
+	ControlColors(dt);
 }
 
 void FloorController::SetState(int state, float dt)
