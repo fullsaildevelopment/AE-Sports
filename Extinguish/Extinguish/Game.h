@@ -39,24 +39,25 @@ private:
 	std::vector<Scene*> scenes;
 	HashString scenesNamesTable;
 
+	DeviceResources* devResources;
+
 	//InputManager* input;
 	ResourceManager* resourceManager;
 	SoundEngine* soundEngine;
-
-	DeviceResources* Dresources;
 
 	std::vector<GameState*> gameStates;
 
 	static int clientID;
 
 	//private helper functions
-	void CreateScenes(DeviceResources* devResources, InputManager* inputManager);
+	void CreateScenes(InputManager* inputManager);
 
 	/* to separate all the ui */
-	void CreateUI(DeviceResources * devResources, Scene * basic);
-	void CreateMenu(DeviceResources * devResources, Scene * scene);
-	void CreateLobby(DeviceResources * devResources, Scene * scene);
-	void CreatePauseMenu(DeviceResources * devResources, Scene * scene);
+	void CreateUI(Scene * basic);
+	void CreateMenu(Scene * scene);
+	void CreateLobby(Scene * scene);
+	void CreatePauseMenu(Scene * scene);
+	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
 
 	void UpdateServerStates();
 	void UpdateClientObjects();
@@ -67,9 +68,10 @@ private:
 	int UpdateLobby();
 	void EnableButton(std::string name, bool toggle);
 public:
+	void CreateGameWrapper();
 	~Game();
 	//basic
-	void Init(DeviceResources* devResources, InputManager* inputManager);
+	void Init(DeviceResources* _devResources, InputManager* inputManager);
 	int Update(float dt);
 	void FixedUpdate(float dt);
 	void Render();
