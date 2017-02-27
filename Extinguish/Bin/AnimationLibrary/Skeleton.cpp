@@ -8,14 +8,14 @@ void Skeleton::Init(std::vector<FriendlyIOTransformNode> tempBones, std::string 
 	inverseBindPoses = invBindPoses;
 
 	//extract names from stringtable
-	int size = boneNames.find('\0');
+	int size = (int)boneNames.find('\0');
 	int index = 0;
 
 	while (true)
 	{
 		string tempName;
 
-		size = boneNames.find('\0', index + 1);
+		size = (int)boneNames.find('\0', index + 1);
 
 		if (size == string::npos)
 		{
@@ -26,7 +26,7 @@ void Skeleton::Init(std::vector<FriendlyIOTransformNode> tempBones, std::string 
 
 		strcpy(&tempName[0], boneNames.c_str() + index);
 
-		index = boneNames.find('\0', index + 1) + 1;
+		index = (int)boneNames.find('\0', index + 1) + 1;
 
 		names.push_back(tempName);
 	}
