@@ -19,8 +19,14 @@ private:
 	Camera* camera;
 	Transform* cameraTransform;
 
+	//reg members
 	float dt;
 	bool justJumped;
+	//bool isAttacking;
+	bool isSprinting;
+
+	//const members
+	const float chargeSpeed = 150.0f;
 
 	//private helper functions
 	void HandleInput();
@@ -41,4 +47,5 @@ public:
 	//actions
 	void Jump();
 	void Attack();
+	void Sprint();
 };
