@@ -45,13 +45,13 @@ Game::~Game()
 	
 }
 
-void Game::Init(DeviceResources* devResources, InputManager* inputManager)
+void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 {
 	//cache
 	soundEngine = SoundEngine::GetSingleton();
 	resourceManager = ResourceManager::GetSingleton();
 
-	Dresources = devResources;
+	devResources = _devResources;
 
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
@@ -77,9 +77,8 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 	}*/
 
 	currentScene = 0;
-
 	//create scenes
-	CreateScenes(devResources, inputManager);
+	CreateScenes(inputManager);
 
 	//set up server stuff
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -132,7 +131,7 @@ void Game::Init(DeviceResources* devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
-	Dresources->ResizeWindow(w, h);
+	devResources->ResizeWindow(w, h);
 
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -372,6 +371,10 @@ void Game::HandleEvent(Event* e)
 
 			if (loadSceneEvent)
 			{
+				if (loadSceneEvent->GetName() == "Menu")
+				{
+					CreateGameWrapper();
+				}
 				LoadScene(loadSceneEvent->GetName());
 
 				return;
@@ -441,7 +444,7 @@ float3* CreateFloor(float d, int r, int c, float3 p)
 
 //this function will create a scene and add it to the scenes vector, where I can then load any scene throughout the game based on input
 //add the component before you initialize, so you can cache from the game object (this works because init sets component's game object pointer)
-void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
+void Game::CreateScenes(InputManager* input)
 {
 
 	//set projection matrix
@@ -476,7 +479,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 		menu->set2DRenderTarget(devResources->GetRenderTarget());
 
-		CreateMenu(devResources, menu);
+		CreateMenu(menu);
 
 		scenes.push_back(menu);
 		scenesNamesTable.Insert("Menu");
@@ -496,7 +499,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		lobby->Init(devResources, input);
 
 		lobby->set2DRenderTarget(devResources->GetRenderTarget());
-		CreateLobby(devResources, lobby);
+		CreateLobby(lobby);
 		scenes.push_back(lobby);
 		scenesNamesTable.Insert("Lobby");
 	}
@@ -509,11 +512,42 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 
 	basic->set2DRenderTarget(devResources->GetRenderTarget());
 
+	CreateGame(basic, identity, projection);
+
+
+	scenes.push_back(basic);
+	scenesNamesTable.Insert("FirstLevel");
+}
+
+void Game::CreateGameWrapper()
+{
+	//set projection matrix
+	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
+	float fovAngleY = 70.0f * XM_PI / 180.0f;
+
+	if (aspectRatio < 1.0f)
+	{
+		fovAngleY *= 2.0f;
+	}
+
+	XMFLOAT4X4 projection;
+	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
+	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
+
+	XMFLOAT4X4 identity;
+	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
+	scenes[2]->Shutdown();
+	CreateGame(scenes[2], identity, projection);
+}
+
+void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
+{
+
 	//used for hexagon floor
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
 
-	//deleted inside a different class
+				  //deleted inside a different class
 	unsigned int* colors = new unsigned int[row * col];
 
 	GameObject* gameBall = new GameObject();
@@ -533,7 +567,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	ballController->Init();
 	gameBall->SetTag("Ball");
 
-	
+
 	GameObject* goal = new GameObject();
 	GameObject* goal2 = new GameObject();
 	goal->SetTag("Goal1");
@@ -559,7 +593,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 		{
 			tempCol = -col + 14;
 			mage1->SetTag("Team2");
-			
+
 			AI *mageAI = new AI(mage1);
 			mage1->AddComponent(mageAI);
 			ai.push_back(mageAI);
@@ -719,7 +753,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	{
 		ai[i]->Init(goal, goal2);
 	}
-	
+
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
 	goal->InitTransform(identity, { -7, 0, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
@@ -730,7 +764,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
-	
+
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
 	goal2->InitTransform(identity, { -7, 0, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
@@ -741,7 +775,7 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
-	
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* meterbox6 = new GameObject();
@@ -830,16 +864,14 @@ void Game::CreateScenes(DeviceResources* devResources, InputManager* input)
 	Hex->AddComponent(HexPillar);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
 	if (!DEBUG_GRAPHICS) {
-		CreateUI(devResources, basic);
+		CreateUI(basic);
 	}
-
-	scenes.push_back(basic);
-	scenesNamesTable.Insert("FirstLevel");
 }
 
-void Game::CreateUI(DeviceResources * devResources, Scene * basic)
+void Game::CreateUI(Scene * basic)
 {
 	// trapezoid backing
 	GameObject * scoreA = new GameObject();
@@ -912,7 +944,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	newMeter->setDrainTime(30.0f);
 	newMeter->setRechargeTime(50.0f);
 
-	CreatePauseMenu(devResources, basic);
+	CreatePauseMenu(basic);
 
 	#ifdef DEBUG
 		GameObject * debugUI = new GameObject();
@@ -931,7 +963,7 @@ void Game::CreateUI(DeviceResources * devResources, Scene * basic)
 	#endif
 }
 
-void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
+void Game::CreateMenu(Scene * scene)
 {
 	// background
 	GameObject * bg = new GameObject();
@@ -1023,7 +1055,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	mRender2->InitMetrics();
 
 	// credits
-
 	GameObject * credits = new GameObject();
 	scene->AddUIObject(credits);
 	credits->Init("credits");
@@ -1043,7 +1074,6 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 	cRender->InitMetrics();
 
 	// exit
-
 	GameObject * exit = new GameObject();
 	scene->AddUIObject(exit);
 	exit->Init("exit");
@@ -1082,7 +1112,7 @@ void Game::CreateMenu(DeviceResources * devResources, Scene * scene)
 
 }
 
-void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
+void Game::CreateLobby(Scene * scene)
 {
 	// background
 	GameObject * bg = new GameObject();
@@ -1109,7 +1139,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	sButton->setSceneIndex((unsigned int)scenes.size());
 	sButton->SetGameObject(startGame);
 	sButton->showFPS(false);
-	sButton->setPositionMultipliers(0.65f, 0.50f);
+	sButton->setPositionMultipliers(0.55f, 0.55f);
 	startGame->AddComponent(sButton);
 	UIRenderer * sRender = new UIRenderer();
 	sRender->Init(true, 25.0f, devResources, sButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -1129,7 +1159,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	eButton->setSceneIndex((unsigned int)scenes.size());
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setPositionMultipliers(0.65f, 0.60f);
+	eButton->setPositionMultipliers(0.55f, 0.65f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
 	eRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -1145,20 +1175,79 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	GameObject * numPlayers = new GameObject();
 	scene->AddUIObject(numPlayers);
 	numPlayers->Init("Players");
-	Button * nButton = new Button(true, false, L"1/4", (unsigned int)strlen("1/4"), 300.0f, 100.0f, devResources, 0);
+	Button * nButton = new Button(true, false, L"1/4", (unsigned int)strlen("1/4"), 150.0f, 150.0f, devResources, 0);
 	nButton->setSceneIndex((unsigned int)scenes.size());
 	nButton->SetGameObject(numPlayers);
 	nButton->showFPS(false);
-	nButton->setPositionMultipliers(0.65f, 0.3f);
+	nButton->setPositionMultipliers(0.5f, 0.3f);
 	numPlayers->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
-	nRender->Init(false, 40.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f, 0.412f, 0.706f, 1.0f));
+	nRender->Init(false, 80.0f, devResources, nButton, L"Consolas", D2D1::ColorF(1.0f, 0.412f, 0.706f, 1.0f));
 	numPlayers->AddComponent(nRender);
 	nRender->MakeRTSize();
 	nButton->MakeRect();
 	nButton->setOrigin();
 	nButton->MakeHandler();
 	nRender->InitMetrics();
+
+	// change team to A
+	GameObject * changeTeamA = new GameObject();
+	scene->AddUIObject(changeTeamA);
+	changeTeamA->Init("ChangeA");
+	Button * caButton = new Button(true, true, L"", (unsigned int)strlen(""), 90.0f, 90.0f, devResources, 8);
+	caButton->setSceneIndex((unsigned int)scenes.size());
+	caButton->SetGameObject(changeTeamA);
+	caButton->showFPS(false);
+	caButton->setPositionMultipliers(0.8f, 0.45f);
+	changeTeamA->AddComponent(caButton);
+	UIRenderer * eaRender = new UIRenderer();
+	eaRender->Init(true, 25.0f, devResources, caButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
+	changeTeamA->AddComponent(eaRender);
+	eaRender->MakeRTSize();
+	caButton->MakeRect();
+	caButton->MakeHandler();
+	eaRender->InitMetrics();
+
+	// change team to B
+	GameObject * changeTeamB = new GameObject();
+	scene->AddUIObject(changeTeamB);
+	changeTeamB->Init("ChangeB");
+	Button * cbButton = new Button(true, true, L"", (unsigned int)strlen(""), 90.0f, 90.0f, devResources, 9);
+	cbButton->setSceneIndex((unsigned int)scenes.size());
+	cbButton->SetGameObject(changeTeamB);
+	cbButton->showFPS(false);
+	cbButton->setPositionMultipliers(0.7f, 0.4f);
+	changeTeamB->AddComponent(cbButton);
+	UIRenderer * ebRender = new UIRenderer();
+	ebRender->Init(true, 25.0f, devResources, cbButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
+	changeTeamB->AddComponent(ebRender);
+	ebRender->MakeRTSize();
+	cbButton->MakeRect();
+	cbButton->MakeHandler();
+	ebRender->InitMetrics();
+
+	// change team logo
+	GameObject * changeTeam = new GameObject();
+	scene->AddUIObject(changeTeam);
+	changeTeam->Init("changeLogo");
+	Button * ctButton = new Button(true, true, L"", (unsigned int)strlen(""), 246.0f, 200.0f, devResources, 0);
+	ctButton->setSceneIndex((unsigned int)scenes.size());
+	ctButton->SetGameObject(changeTeam);
+	ctButton->showFPS(false);
+	ctButton->setPositionMultipliers(0.75f, 0.25f);
+	changeTeam->AddComponent(ctButton);
+	UIRenderer * ctRender = new UIRenderer();
+	ctRender->Init(true, 25.0f, devResources, ctButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	ctRender->DecodeBitmap(L"../Assets/UI/changeTeam.png");
+	changeTeam->AddComponent(ctRender);
+	ctRender->MakeRTSize();
+	ctButton->MakeRect();
+	ctButton->MakeHandler();
+	ctRender->InitMetrics();
 
 	// background 2.0
 	GameObject * bg2 = new GameObject();
@@ -1178,7 +1267,7 @@ void Game::CreateLobby(DeviceResources * devResources, Scene * scene)
 	bg2Button->MakeRect();
 }
 
-void Game::CreatePauseMenu(DeviceResources * devResources, Scene * scene)
+void Game::CreatePauseMenu(Scene * scene)
 {
 	// server only?
 	GameObject * resumeGame = new GameObject();

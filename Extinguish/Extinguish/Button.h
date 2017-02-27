@@ -22,7 +22,9 @@ private:
 		CREDITS,
 		EXIT,
 		RETURN,
-		RESUME_GAME
+		RESUME_GAME,
+		CHANGE_TEAM_A,
+		CHANGE_TEAM_B
 	};
 
 

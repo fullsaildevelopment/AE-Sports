@@ -22,14 +22,6 @@ Client::Client()
 
 Client::~Client()
 {
-//	delete myState;
-//	delete gameState;
-	/*for (unsigned int i = 0; i < 30; ++i)
-	{
-		delete &clientStates[i];
-	}*/
-	//delete[] clientStates;
-
 	delete myState;
 	delete clientStates;
 	delete gameState;
