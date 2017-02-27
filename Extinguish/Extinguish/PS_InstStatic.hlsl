@@ -18,12 +18,12 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	//get texture color with uvs help
 	float3 diffuseColor = (float3)baseTexture.Sample(filter, input.uv);
 	
-	if (diffuseColor.r > 0)
+	if (diffuseColor.r > 0.25f)
 	{
-		finalColor.r = (input.color & 0xFF000000) * 0.003906;
-		finalColor.g = (input.color & 0x00FF0000) * 0.003906;
-		finalColor.b = (input.color & 0x0000FF00) * 0.003906;
-		finalColor.a = 1.0;
+		finalColor.r = ((0xFF000000 & input.color) >> 24) * 0.003906;
+		finalColor.g = ((0x00FF0000 & input.color) >> 16) * 0.003906;
+		finalColor.b = ((0x0000FF00 & input.color) >> 8) * 0.003906;
+		finalColor.a = (0x000000FF & input.color) * 0.003906;
 	}
 
 	return finalColor;

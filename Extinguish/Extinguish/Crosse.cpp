@@ -100,7 +100,7 @@ void Crosse::Throw()
 		//update ball after set position
 		ballTransform->GetWorld();
 
-		ballTransform->AddVelocity(transform->GetParent()->GetParent()->GetVelocity() * 0.5f);
+		ballTransform->AddVelocity(transform->GetParent()->GetParent()->GetVelocity() * 0.3f);
 		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 		//cout << ballTransform->GetVelocity().x << " " << ballTransform->GetVelocity().y << " " << ballTransform->GetVelocity().z << endl;
