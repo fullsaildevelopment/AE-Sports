@@ -805,7 +805,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* WallRenderer = new Renderer();
 	Wall->AddComponent(WallRenderer);
 	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
 	Wall->AddBoxCollider(Wallboxcol);
 
 	GameObject* Wall2 = new GameObject();
@@ -815,7 +815,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* WallRenderer2 = new Renderer();
 	Wall2->AddComponent(WallRenderer2);
 	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -0.5f,-300,-300 });
+	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
 	Wall2->AddBoxCollider(Wallboxcol2);
 
 	GameObject* Wall3 = new GameObject();
@@ -840,10 +840,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+
 	GameObject* HexFloor = new GameObject();
 	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
-	HexFloor->InitTransform(identity, { 0,0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	HexFloor->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
