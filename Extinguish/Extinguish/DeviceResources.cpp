@@ -183,7 +183,7 @@ void DeviceResources::Init(HWND hwnd)
 
 void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 {
-	
+	/*
 	//deviceContext->Flush();
 	//deviceContext->OMSetRenderTargets(0, 0, 0);
 	//shadowMapBuffer.Get()->Release();
@@ -196,16 +196,16 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	//renderTargetView.Get()->Release();
 	//p2DDeviceContext->SetTarget(nullptr);
 
-	swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-	DXGI_RATIONAL hz = { 60 , 1 };
-	DXGI_MODE_DESC dmd;
-	dmd.Width = w;
-	dmd.Height = h;
-	dmd.RefreshRate = hz;
-	dmd.Format = DXGI_FORMAT_UNKNOWN;
-	dmd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	dmd.Scaling = DXGI_MODE_SCALING_CENTERED;
-	swapChain->ResizeTarget(&dmd);
+	//swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+	//DXGI_RATIONAL hz = { 60 , 1 };
+	//DXGI_MODE_DESC dmd;
+	//dmd.Width = w;
+	//dmd.Height = h;
+	//dmd.RefreshRate = hz;
+	//dmd.Format = DXGI_FORMAT_UNKNOWN;
+	//dmd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	//dmd.Scaling = DXGI_MODE_SCALING_CENTERED;
+	//swapChain->ResizeTarget(&dmd);
 	//ID3D11Texture2D* pBuffer;
 	//
 	//swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBuffer);
@@ -279,7 +279,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), NULL, d2dTargetBitmap.GetAddressOf());
 	
 	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
-	*/
+	
 	
 	//create shadow map buffer
 	/*D3D11_TEXTURE2D_DESC smTextDesc;
@@ -295,7 +295,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	smTextDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	smTextDesc.CPUAccessFlags = 0;
 	smTextDesc.MiscFlags = 0;
-	*/
+	
 	//HRESULT smBufferResult = device->CreateTexture2D(&smTextDesc, NULL, shadowMapBuffer.GetAddressOf());
 	
 	//create render target view by linking with back buffer
@@ -364,6 +364,8 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	//ImGui_ImplDX11_Init(*drawWindow.Get(), device.Get(), deviceContext.Get());
 
 	//device.As(&pDebug);
+*/
+	
 }
 
 void DeviceResources::Clear()
