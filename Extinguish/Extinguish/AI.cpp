@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 5
+#define RunSpeed 15
 #define AttackSpeed 15
 #define StumbleSpeed 5
 
@@ -206,13 +206,10 @@ void AI::Update(float dt)
 	if (startTimer)
 		timer -= dt;
 
-	// if I'm the goalie
-	if (currState == goalie || currState == playboy)
+#pragma region Goalie
+	if (currState == goalie)
 	{
-		float3 dist;
-
-		if (currState == goalie) dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
-		else if (currState == playboy) dist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
+		float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
 		// if the ball gets close
 		if (dist.magnitude() < 28)
@@ -240,33 +237,48 @@ void AI::Update(float dt)
 		// if the ball is too far from the goal
 		else if (dist.magnitude() > 28)
 		{
-			float3 goalDist;
+			float3 goalDist = myGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
-			if (currState == playboy)
+			if (RunTo(myGoal) && goalDist.magnitude() < 1)
 			{
-				goalDist = enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
-				if (RunTo(enemyGoal) && goalDist.magnitude() < 1)
-				{
-					TurnTo(myGoal);
-					Idle();
-				}
+				TurnTo(enemyGoal);
+				Idle();
 			}
+		}
+	}
+#pragma endregion
 
-			else if (currState == goalie)
+#pragma region Goalie2
+	if (currState == playboy)
+	{
+		float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
+
+		// if the ball gets close
+		if (ballDist.magnitude() < 28)
+		{
+			// if no one is holding it or the enemies have it
+			if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
+				GetBall();
+		}
+
+		// if i have the ball pass it off to someone
+		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
+			Score();
+
+		// if the ball is too far from the goal
+		else if (ballDist.magnitude() > 28)
+		{
+			if (RunTo(enemyGoal, 10.0f))
 			{
-				goalDist = myGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
-				if (RunTo(myGoal) && goalDist.magnitude() < 1)
-				{
-					TurnTo(enemyGoal);
-					Idle();
-				}
+				TurnTo(myGoal);
+				Idle();
 			}
 		}
 	}
 
-	// if I'm guy1
+#pragma endregion
+
+#pragma region Guy
 	else if (currState == guy)
 	{
 		// if i have the ball or one of my teammates have the ball
@@ -288,8 +300,9 @@ void AI::Update(float dt)
 		else
 			GetBall();
 	}
+#pragma endregion
 
-	// if I'm the tank
+#pragma region Tank
 	else if (currState == tank)
 	{
 		// if someone has the ball
@@ -327,10 +340,11 @@ void AI::Update(float dt)
 			}
 
 			// hover around guy
-			if (RunTo(myGuy, 15.0f))
+			if (RunTo(myGuy, 20.0f))
 				Idle();
 		}
 	}
+#pragma endregion
 	
 	if (timer <= 0)
 	{
@@ -341,7 +355,7 @@ void AI::Update(float dt)
 
 void AI::Idle()
 {
-	me->GetTransform()->SetVelocity(float3(0, 0, 0));
+	me->GetTransform()->AddVelocity(float3(0, 0, 0));
 }
 
 void AI::GetBall()
@@ -411,7 +425,7 @@ void AI::Attack(GameObject *target)
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
 		me->GetTransform()->RotateY(degRad);
-		me->GetTransform()->SetVelocity(v * AttackSpeed);
+		me->GetTransform()->AddVelocity(v * AttackSpeed);
 
 		isAttacking = false;
 	}
@@ -457,7 +471,7 @@ void AI::Paranoia()
 			}
 
 			// pass the ball
-			TurnTo(target);
+			//TurnTo(target); /////////////////////////////////////////////////////////
 			crosse->Throw();
 		}
 	}
@@ -469,7 +483,7 @@ bool AI::RunTo(GameObject *target)
 	{
 		TurnTo(target);
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
-		me->GetTransform()->SetVelocity(v * RunSpeed);
+		me->GetTransform()->AddVelocity(v * RunSpeed);
 		float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
 		if (a.magnitude() < 5)
@@ -485,7 +499,7 @@ bool AI::RunTo(GameObject *target, float dist)
 	{
 		TurnTo(target);
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
-		me->GetTransform()->SetVelocity(v * RunSpeed);
+		me->GetTransform()->AddVelocity(v * RunSpeed);
 		float3 a = target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
 		if (a.magnitude() < dist)
