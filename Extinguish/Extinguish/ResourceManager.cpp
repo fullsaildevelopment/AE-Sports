@@ -776,6 +776,7 @@ void ResourceManager::DoFBXExporting()
 
 	//test models
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\HighDetalBall\\HighDetalBall.fbx", "HighDetalBall");
 
 #endif
 }
