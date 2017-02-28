@@ -371,7 +371,7 @@ void Game::HandleEvent(Event* e)
 
 			if (loadSceneEvent)
 			{
-				if (loadSceneEvent->GetName() == "Menu")
+				if (loadSceneEvent->GetName() == "Menu" && currentScene == 2)
 				{
 					CreateGameWrapper();
 				}
@@ -521,23 +521,22 @@ void Game::CreateScenes(InputManager* input)
 
 void Game::CreateGameWrapper()
 {
-	//set projection matrix
-	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
-	float fovAngleY = 70.0f * XM_PI / 180.0f;
-
-	if (aspectRatio < 1.0f)
+	for (unsigned int i = 0; i < scenes.size(); ++i)
 	{
-		fovAngleY *= 2.0f;
+		unsigned int obj = scenes[i]->GetNumObjects();
+
+		for (unsigned int j = 0; j < obj; ++j)
+		{
+			Transform * trans = scenes[i]->GetGameObjects(j)->GetTransform();
+			if (trans)
+				trans->Reset();
+		}
 	}
 
-	XMFLOAT4X4 projection;
-	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
-	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
-
-	XMFLOAT4X4 identity;
-	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
-	scenes[2]->Shutdown();
-	CreateGame(scenes[2], identity, projection);
+	Team1Score = Team2Score = 0;
+	UpdateScoreUI();
+	Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
+	time->resetTime();
 }
 
 void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
@@ -944,7 +943,7 @@ void Game::CreateUI(Scene * basic)
 	GameObject * meterBar = new GameObject();
 	basic->AddUIObject(meterBar);
 	meterBar->Init("meterBar");
-	MeterBar * newMeter = new MeterBar(true, 200.0f, 20.0f, 0.2f, 0.95f);
+	MeterBar * newMeter = new MeterBar(false, 200.0f, 20.0f, 0.2f, 0.95f);
 	meterBar->AddComponent(newMeter);
 	newMeter->MakeHandler();
 	UIRenderer * meterRender = new UIRenderer();
@@ -954,8 +953,8 @@ void Game::CreateUI(Scene * basic)
 	meterBar->AddComponent(meterRender);
 	meterRender->MakeRTSize();
 	newMeter->MakeRects();
-	newMeter->setDrainTime(30.0f);
-	newMeter->setRechargeTime(50.0f);
+	newMeter->setDrainTime(25.0f);
+	newMeter->setRechargeTime(10.0f);
 
 	CreatePauseMenu(basic);
 

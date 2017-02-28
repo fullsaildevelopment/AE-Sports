@@ -19,33 +19,49 @@ void MeterBar::MakeHandler()
 void MeterBar::Update(float dt) 
 {
 
-	//if (isActive)
-	//{
-	//	if (drain)
-	//	{
-	//		dTime -= dt;
+	if (isActive)
+	{
+		if (drain)
+		{
+			dTime -= dt;
 
-	//		rect2 = ShrinkRect(dTime, drainTime);
+			rect2 = ShrinkRect(dTime, drainTime);
 
-	//		if (dTime <= 0.0f)
-	//		{
-	//			drain = false;
-	//			dTime = drainTime;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		rTime += dt;
-	//		rect2 = ShrinkRect(rTime, rechargeTime);
+			if (dTime <= 0.0f)
+			{
+				drain = false;
+				dTime = drainTime;
+				rTime = 0.0f;
+			}
+		}
+		else
+		{
+			rTime += dt;
 
-	//		if (rTime >= rechargeTime)
-	//		{
-	//			rTime = 0.0f;
-	//			drain = true;
-	//			isActive = false;
-	//		}
-	//	}
-	//}
+			if (rTime >= rechargeTime)
+			{
+				drain = true;
+				isActive = false;
+			}
+			else
+				rect2 = ShrinkRect(rTime, rechargeTime);
+		}
+	}
+	else
+	{
+		if (rTime < rechargeTime)
+		{
+			rTime += dt;
+
+			if (rTime >= rechargeTime)
+			{
+				drain = true;
+				isActive = false;
+			}
+			else
+				rect2 = ShrinkRect(rTime, rechargeTime);
+		}
+	}
 
 }
 
@@ -70,9 +86,35 @@ void MeterBar::UpdatePercentage(float newPercentage)
 	}
 }
 
-void MeterBar::HandleEvent(Event* e) 
+void MeterBar::HandleEvent(Event* e)
 {
-	// check for specific key press (taken from powerup or something)
-	// if true
-		// isActive = true
+	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+	if (inputDownEvent && Game::currentScene == 2)
+	{
+		// check for specific key press (taken from powerup or something)
+		InputManager * input = inputDownEvent->GetInput();
+		if (input->GetKey(16))
+		{
+			if (isActive == false)
+			{
+				dTime = rTime * (drainTime / rechargeTime);
+			}
+			isActive = true;
+		}
+		else
+		{
+			if (drain && isActive == true)
+			{
+				rTime = dTime * (rechargeTime / drainTime);
+
+				if (rTime > rechargeTime)
+					rTime = rechargeTime;
+			}
+
+			isActive = false;
+
+			
+		}
+	}
 }

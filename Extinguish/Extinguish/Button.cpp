@@ -179,11 +179,6 @@ void Button::Update(float dt)
 	if (clickCooldown >= 0.0f)
 		clickCooldown -= dt;
 
-
-
-
-
-
 	if (showFps)
 	{
 		int _fps = (int)(1 / dt);
