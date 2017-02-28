@@ -331,7 +331,7 @@ void AI::Update(float dt)
 				Idle();
 		}
 	}
-
+	
 	if (timer <= 0)
 	{
 		timer = 2;
@@ -500,7 +500,7 @@ void AI::TurnTo(GameObject *target)
 	if (target)
 	{
 		//u - forward vector
-		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize();
 
 		//v - vector between me and destination
 		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
