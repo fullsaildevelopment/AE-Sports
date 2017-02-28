@@ -81,6 +81,400 @@ bool HexagonCollider::CheckCapsuleAABB(AABB test, Capsule s)
 	return AABBtoAABB(test, cap);
 }
 
+bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* OtherObject, int f)
+{
+	Capsule c = cap->GetWorldCapsule();
+	float3 vel = OtherObject->GetTransform()->GetVelocity();
+	GameObject* tg = GetGameObject();
+	Transform* tgt = tg->GetTransform();
+	bool collided = false;
+	//Top
+	if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, row * col - 1, c))
+	{
+		//TopTop
+		if (CheckCapsuleAABB((int)(floor(row * 0.741f)) * col, row * col - 1, c))
+		{
+			//TopTopTop
+			if (CheckCapsuleAABB((int)floor(row * 0.821f) * col, row * col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.821f); i < row; ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, vel);
+							if (!n.isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+			//TopTopBottom
+			else if (CheckCapsuleAABB((int)floor(row * 0.741f) * col, (int)ceil(row * 0.839f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.741f); i < (int)ceil(row * 0.83f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+		}
+		//TopBottom
+		else if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, (int)(ceil(row * 0.759f)) * col + col - 1, c))
+		{
+			//TopBottomTop
+			if (CheckCapsuleAABB((int)floor(row * 0.621f) * col, (int)ceil(row * 0.759f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.621f); i < (int)ceil(row * 0.759f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+			//TopBottomBottom
+			else if (CheckCapsuleAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.639f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.639f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	//Bottom
+	else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.51f)) * col + col - 1, c))
+	{
+		//BottomTop
+		if (CheckCapsuleAABB((int)(floor(row * 0.241f)) * col, (int)(ceil(row * 0.51f)) * col + col - 1, c))
+		{
+			//BottomTopTop
+			if (CheckCapsuleAABB((int)floor(row * 0.371f) * col, (int)ceil(row * 0.51f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.371f); i < (int)ceil(row * 0.51f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+			//BottomTopBottom
+			if (CheckCapsuleAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.389f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.389f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+		}
+		//BottomBottom
+		else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.259f)) * col + col - 1, c))
+		{
+			//BottomBottomTop
+			if (CheckCapsuleAABB((int)floor(row * 0.121f) * col, (int)ceil(row * 0.259f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = (int)floor(row * 0.121f); i < (int)ceil(row * 0.259f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+			//BottomBottomBottom
+			if (CheckCapsuleAABB(0, (int)ceil(row * 0.121f) * col + col - 1, c))
+			{
+				AABB test;
+				for (int i = 0; i < (int)ceil(row * 0.121f); ++i)
+				{
+					test.min = poses[i * col] - float3(1, 10, 1);
+					test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+					if (AABBToCapsule(test, c))
+					{
+						for (int j = 0; j < col; ++j)
+						{
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							{
+								Physics* op = OtherObject->GetComponent<Physics>();
+								if (op)
+								{
+									op->HandlePhysics(OtherObject->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									if (!CollidingWith[f])
+									{
+										tg->OnCollisionEnter(cap);
+										OtherObject->OnCollisionEnter(this);
+										CollidingWith[f] = true;
+									}
+									collided = true;
+								}
+								else
+								{
+									OtherObject->GetTransform()->SetVelocity(vel);
+									OtherObject->GetTransform()->SetPosition(c.m_Segment.m_Start);
+								}
+
+								otherCapsule = cap;
+							}
+							else if (otherCapsule == cap)
+							{
+								otherCapsule->OnCollisionExit(this);
+								tg->OnCollisionExit(otherCapsule);
+								otherCapsule = nullptr;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if (!collided)
+	{
+		if (CollidingWith[f])
+		{
+			CollidingWith[f] = false;
+			tg->OnCollisionExit(cap);
+			OtherObject->OnCollisionExit(this);
+		}
+	}
+	return collided;
+}
+
+bool HexagonCollider::CheckCapsule(int _min, int _max, Capsule cap)
+{
+	return false;
+}
+
 void HexagonCollider::FixedUpdate(float dt)
 {
 	if (objects.size() == 0)
@@ -315,6 +709,8 @@ void HexagonCollider::FixedUpdate(float dt)
 						if (CollidingWith[f])
 						{
 							CollidingWith[f] = false;
+							tg->OnCollisionExit(sphere);
+							objects[f]->OnCollisionExit(this);
 						}
 					}
 				}
@@ -325,386 +721,7 @@ void HexagonCollider::FixedUpdate(float dt)
 			{
 				if (!cap->isTrigger() && cap->isEnabled())
 				{
-					Capsule c = cap->GetWorldCapsule();
-					float3 vel = objects[f]->GetTransform()->GetVelocity();
-
-					//Top
-					if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, row * col - 1, c))
-					{
-						//TopTop
-						if (CheckCapsuleAABB((int)(floor(row * 0.741f)) * col, row * col - 1, c))
-						{
-							//TopTopTop
-							if (CheckCapsuleAABB((int)floor(row * 0.821f) * col, row * col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.821f); i < row; ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test,c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, vel);
-											if (!n.isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-							//TopTopBottom
-							else if (CheckCapsuleAABB((int)floor(row * 0.741f) * col, (int)ceil(row * 0.839f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.741f); i < (int)ceil(row * 0.83f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-						}
-						//TopBottom
-						else if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, (int)(ceil(row * 0.759f)) * col + col - 1, c))
-						{
-							//TopBottomTop
-							if (CheckCapsuleAABB((int)floor(row * 0.621f) * col, (int)ceil(row * 0.759f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.621f); i < (int)ceil(row * 0.759f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-							//TopBottomBottom
-							else if (CheckCapsuleAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.639f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.639f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					//Bottom
-					else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.51f)) * col + col - 1, c))
-					{
-						//BottomTop
-						if (CheckCapsuleAABB((int)(floor(row * 0.241f)) * col, (int)(ceil(row * 0.51f)) * col + col - 1, c))
-						{
-							//BottomTopTop
-							if (CheckCapsuleAABB((int)floor(row * 0.371f) * col, (int)ceil(row * 0.51f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.371f); i < (int)ceil(row * 0.51f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-							//BottomTopBottom
-							if (CheckCapsuleAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.389f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.389f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-						}
-						//BottomBottom
-						else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.259f)) * col + col - 1, c))
-						{
-							//BottomBottomTop
-							if (CheckCapsuleAABB((int)floor(row * 0.121f) * col, (int)ceil(row * 0.259f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = (int)floor(row * 0.121f); i < (int)ceil(row * 0.259f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-							//BottomBottomBottom
-							if (CheckCapsuleAABB(0, (int)ceil(row * 0.121f) * col + col - 1, c))
-							{
-								AABB test;
-								for (int i = 0; i < (int)ceil(row * 0.121f); ++i)
-								{
-									test.min = poses[i * col] - float3(1, 10, 1);
-									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
-									if (AABBToCapsule(test, c))
-									{
-										for (int j = 0; j < col; ++j)
-										{
-											if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
-											{
-												Physics* op = objects[f]->GetComponent<Physics>();
-												if (op)
-												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
-													if (!CollidingWith[f])
-													{
-														tg->OnCollisionEnter(cap);
-														objects[f]->OnCollisionEnter(this);
-														CollidingWith[f] = true;
-													}
-													collided = true;
-												}
-												else
-												{
-													objects[f]->GetTransform()->SetVelocity(vel);
-													objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
-												}
-
-												otherCapsule = cap;
-											}
-											else if (otherCapsule == cap)
-											{
-												otherCapsule->OnCollisionExit(this);
-												tg->OnCollisionExit(otherCapsule);
-												otherCapsule = nullptr;
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					if (!collided)
-					{
-						if (CollidingWith[f])
-						{
-							CollidingWith[f] = false;
-						}
-					}
+					CheckFloor2Capsule(cap, objects[f], f);
 				}
 			}
 		}
