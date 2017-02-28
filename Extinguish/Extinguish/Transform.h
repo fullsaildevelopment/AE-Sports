@@ -10,6 +10,7 @@ class Transform : public Component
 private:
 	//std::string name;
 	DirectX::XMFLOAT4X4 world;
+	std::vector<float3> defaultP;
 	float3 position;
 	float3 rotation;
 	float3 scale;
@@ -36,6 +37,7 @@ public:
 	void RemoveChild(Transform* abortee);
 	void RemoveChildren();
 	void AddSibling(Transform* tempSibling);
+	void Reset();
 
 	//setters
 	void BDirty();

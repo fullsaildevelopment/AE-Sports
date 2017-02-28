@@ -133,6 +133,8 @@ public:
 	void setTimer(bool active) { isTimer = active; }
 	void setHelper(int index) { helperIndex.push_back(index); }
 
+	void resetTime() { time = 300.0f; }
+
 	/* HELPERS*/
 
 	void MakeRect() {
