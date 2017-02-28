@@ -17,6 +17,7 @@ public:
 	//basic
 	void RegisterHandler(EventHandler* handler, std::string handlerName);
 	void Shutdown();
+	void ClearHandlers() { handlers.clear(); handlersTable.Clear(); }
 
 	//sends event to all devices registere
 	void Dispatch(Event* event);

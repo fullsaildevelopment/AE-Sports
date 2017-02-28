@@ -290,7 +290,7 @@ void PlayerController::Attack()
 void PlayerController::Sprint()
 {
 	isSprinting = true;
-	chargeTimer = 0.0f;
+	//chargeTimer = 0.0f;
 
 	Physics* physics = GetGameObject()->GetComponent<Physics>();
 	//physics->SetHasMaxSpeed(false);
@@ -316,7 +316,7 @@ void PlayerController::HandleInput()
 	}
 
 	//this line will only happen once
-	if (input->GetKey(16) && !isSprinting && canSprint) //16 == Left Shift
+	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
 	{
 		Sprint();
 
@@ -325,7 +325,7 @@ void PlayerController::HandleInput()
 
 		cout << "Sprint" << endl;
 	}
-	else if (input->GetKeyUp(16) && isSprinting)
+	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
 	{
 		isSprinting = false;
 		isCharging = false;
@@ -348,14 +348,14 @@ void PlayerController::HandleSprintAndCharge()
 
 	if (isSprinting && canSprint)
 	{
-		if (isCharging)
+		if (isCharging) // wat
 		{
 			multiplier = chargeMultiplier;
 
 			//TODO: do some visual effect
 
 		}
-		else if (chargeTimer >= timeTilCharge && !isCharging)
+		else if (chargeTimer >= timeTilCharge && !isCharging) // wat
 		{
 			multiplier = chargeMultiplier;
 			//isSprinting = false;
@@ -375,20 +375,22 @@ void PlayerController::HandleSprintAndCharge()
 			multiplier = sprintMultiplier;
 		}
 
-		float percentage = meterBar->GetPercentage() - sprintCost * dt;
+	//	float percentage = meterBar->GetPercentage() - sprintCost * dt;
 
 		//if small enough, then make it 0
-		if (percentage <= 0.001f)
+		//if (percentage <= 0.001f)
+		if (!meterBar->isDraining() && meterBar->getActive()) // recharging
 		{
 			//sprintAgainTimer = 0.0f;
-			percentage = 0.0f;
+	//		percentage = 0.0f;
 			canSprint = false;
 			isCharging = false;
 		}
+		else if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
+		{
+			canSprint = true;
+		}
 
-		meterBar->UpdatePercentage(percentage);
-
-		//cout << meterBar->GetPercentage() << endl;
 
 		//set velocity to respective velocity every frame
 		transform->SetVelocity(transform->GetForwardf3() * -multiplier * 100.0f);

@@ -5,6 +5,9 @@
 #include "ResourceManager.h"
 #include "GameObject.h"
 #include "EventDispatcher.h"
+#include "InputDownEvent.h"
+#include "InputManager.h"
+#include "Game.h"
 
 class MeterBar : public Component
 {
@@ -40,11 +43,10 @@ public:
 	float getHeight() { return height; };
 	D2D1_RECT_F getRect() { return rect; }
 	D2D1_RECT_F getRect2() { return rect2; }
-	bool isDraining() { return drain; } // basically check to see if the meter is draining or recharging
-	// if recharging (drain == false), don't do powerup, sprint, etc.
-	bool getActive() { return isActive; }
-	float GetPercentage();
-	//bool IsEmpty();
+	bool getActive() { return isActive; } // if the bar is active | will render if true
+	float getDrainTime() { return dTime; } // current drain time (dTime == 0.0f -> fully drained | no energy)
+	float getRechargeTime() { return rTime; } // current time of recharge (rTime == rechargeTime -> fully charged)
+	bool isDraining() { return drain; } // if false == recharge || false && !isActive == fully charged
 
 	/* setters */
 	void setHeight(float _height) { height = _height; }
@@ -53,9 +55,8 @@ public:
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 	void SetActive(bool active) { isActive = active; }
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
-	void setRechargeTime(float time) { rechargeTime = time; rTime = 0.0f; }
+	void setRechargeTime(float time) { rechargeTime = time; rTime = time; }
 	void setDrainTime(float time) { drainTime = time; dTime = time; }
-	void UpdatePercentage(float newPercentage);
 
 	/* helpers */
 	D2D1_RECT_F MakeRect() {
