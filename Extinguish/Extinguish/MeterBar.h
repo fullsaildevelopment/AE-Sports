@@ -12,14 +12,14 @@
 class MeterBar : public Component
 {
 private:
-	/* for the bar */
+	/* for the bar rendering */
 	D2D1_SIZE_F rtSize;
 	D2D1_RECT_F rect, rectInitial; // for shrinking bar
 	D2D1_RECT_F rect2; // for bar border, stays the same
 	float height, width;
 	float widthMult, heightMult;
 	bool isActive;
-	float percentage;
+	//float percentage;
 
 	/* for cooldowns */
 	float rechargeTime, rTime; // rTime is the countdown time, rechargeTime doesn't change
@@ -31,7 +31,7 @@ private:
 
 
 public:
-	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) { percentage = 1.0f; }
+	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) { }
 	~MeterBar();
 
 	/* overrides */
