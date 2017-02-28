@@ -11,6 +11,10 @@
 #include "HexagonCollider.h"
 #include "BoxCollider.h"
 #include "State.h"
+#include "MeterBar.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
+#include "Movement.h"
 
 using namespace std;
 
@@ -37,20 +41,29 @@ void PlayerController::Init()
 	floor = nullptr;
 	justJumped = false;
 	isSprinting = false;
+	footstepsSound = 0;
+	footstepsPlayed = false;
+
+	//other initialization
+	canSprint = true;
 }
 
 void PlayerController::Update(float dt)
 {
 	this->dt = dt;
+	chargeTimer += dt;
+	//sprintAgainTimer += dt;
 
-	//if (isAttacking)
-	//{
-	//	isAttacking = true;
+	HandleSprintAndCharge();
 
-	//	transform->SetVelocity(transform->GetForwardf3() * -chargeSpeed);
-	//}
+	Movement* movement = GetGameObject()->GetComponent<Movement>();
 
-	//transform->AddVelocity(float3(0, -9.8f * dt, 0));
+	PlayFootstepsSound();
+
+	if (!movement->IsMoving() && footstepsPlayed)
+	{
+		StopFootstepsSound();
+	}
 }
 
 void PlayerController::HandleEvent(Event* e)
@@ -216,27 +229,6 @@ void PlayerController::OnCollisionExit(Collider* collider)
 	}
 }
 
-//private helper functions//
-void PlayerController::HandleInput()
-{
-	if (input->GetKeyDown(VK_SPACE))
-	{
-		Jump();
-	}
-
-	if (input->GetKeyDown('F'))
-	{
-		//cout << "F" << endl;
-		Attack();
-	}
-
-	if (input->GetKey(VK_LSHIFT))
-	{
-		Sprint();
-		cout << "Sprint" << endl;
-	}
-}
-
 void PlayerController::Jump()
 {
 	if (floor)
@@ -249,7 +241,7 @@ void PlayerController::Jump()
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 		animator->SetTrigger("Jump");
-		
+
 		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
 		{
 			animator->SetTrigger("Run");
@@ -269,21 +261,25 @@ void PlayerController::Attack()
 
 	//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
 
-	//	//do animation
-	//	AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
-	//	animator->SetTrigger("Stumble");
+	if (isCharging)
+	{
+		//do animation
+		AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
-	//	cout << "Attack" << endl;
+		animator->SetTrigger("Stumble");
 
-	//	//make them drop ball
-	//	BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
+		cout << "Attack" << endl;
 
-	//	if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
-	//	{
-	//		//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-	//		ball->DropBall(otherPlayer);
-	//	}
+		//make them drop ball
+		BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
+
+		if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+		{
+			//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
+			ball->DropBall(otherPlayer);
+		}
+	}
 	//}
 
 	//isAttacking = true;
@@ -294,4 +290,198 @@ void PlayerController::Attack()
 void PlayerController::Sprint()
 {
 	isSprinting = true;
+	chargeTimer = 0.0f;
+
+	Physics* physics = GetGameObject()->GetComponent<Physics>();
+	//physics->SetHasMaxSpeed(false);
+	originalMaxSpeed = physics->GetMaxSpeed();
+	physics->SetMaxSpeed(originalMaxSpeed * sprintMultiplier);
+
+	//play sprint footsteps sound
+	SetFootstepsSound(1);
+}
+
+//private helper functions//
+void PlayerController::HandleInput()
+{
+	if (input->GetKeyDown(VK_SPACE))
+	{
+		Jump();
+	}
+
+	if (input->GetKeyDown('F'))
+	{
+		//cout << "F" << endl;
+		Attack();
+	}
+
+	//this line will only happen once
+	if (input->GetKey(16) && !isSprinting && canSprint) //16 == Left Shift
+	{
+		Sprint();
+
+		//Play sound
+
+
+		cout << "Sprint" << endl;
+	}
+	else if (input->GetKeyUp(16) && isSprinting)
+	{
+		isSprinting = false;
+		isCharging = false;
+
+		Physics* physics = GetGameObject()->GetComponent<Physics>();
+		physics->SetMaxSpeed(originalMaxSpeed);
+		//physics->SetHasMaxSpeed(true);
+
+		cout << "Stop Sprint" << endl;
+
+		//revert back to walk footsteps
+		SetFootstepsSound(0);
+	}
+}
+
+void PlayerController::HandleSprintAndCharge()
+{
+	float multiplier;
+	MeterBar* meterBar = GetGameObject()->FindUIObject("meterBar")->GetComponent<MeterBar>();
+
+	if (isSprinting && canSprint)
+	{
+		if (isCharging)
+		{
+			multiplier = chargeMultiplier;
+
+			//TODO: do some visual effect
+
+		}
+		else if (chargeTimer >= timeTilCharge && !isCharging)
+		{
+			multiplier = chargeMultiplier;
+			//isSprinting = false;
+			isCharging = true;
+
+			cout << "Charge time" << endl;
+
+			//TODO: play charge sound
+
+			//set footsteps to charge
+			SetFootstepsSound(2);
+
+			//TODO: do some visual effect
+		}
+		else
+		{
+			multiplier = sprintMultiplier;
+		}
+
+		float percentage = meterBar->GetPercentage() - sprintCost * dt;
+
+		//if small enough, then make it 0
+		if (percentage <= 0.001f)
+		{
+			//sprintAgainTimer = 0.0f;
+			percentage = 0.0f;
+			canSprint = false;
+			isCharging = false;
+		}
+
+		meterBar->UpdatePercentage(percentage);
+
+		//cout << meterBar->GetPercentage() << endl;
+
+		//set velocity to respective velocity every frame
+		transform->SetVelocity(transform->GetForwardf3() * -multiplier * 100.0f);
+	}
+
+	//this was going to be the code for if we had the sprint bar regenerate
+
+	//else if (!canSprint)
+	//{
+	//	if (sprintAgainTimer >= timeTilSprint)
+	//	{
+	//		canSprint = true;
+
+	//		//
+	//	}
+	//}
+}
+
+void PlayerController::PlayFootstepsSound()
+{
+	AkUniqueID playID;
+
+	if (GetGameObject()->FindIndexOfGameObject(GetGameObject()) == 2)
+	{
+		cout << footstepsSound << endl;
+	}
+
+	switch (footstepsSound)
+	{
+	case 0:
+		playID = AK::EVENTS::PLAY_FOOTSTEPS__WALK____;
+
+		break;
+	case 1:
+		playID = AK::EVENTS::PLAY_FOOTSTEPS__SPRINT_;
+
+		break;
+	case 2:
+		playID = AK::EVENTS::PLAY_FOOTSTEPS__CHARGE_;
+
+		break;
+	}
+
+	Movement* movement = GetGameObject()->GetComponent<Movement>();
+
+	if (movement->IsMoving() && !footstepsPlayed)
+	{
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(playID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+		cout << "play walk" << endl;
+
+		footstepsPlayed = true;
+	}
+}
+
+void PlayerController::StopFootstepsSound()
+{
+	AkUniqueID stopID;
+
+	switch (footstepsSound)
+	{
+	case 0:
+		stopID = AK::EVENTS::STOP_FOOTSTEPS__WALK____;
+
+		break;
+	case 1:
+		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
+
+		break;
+	case 2:
+		stopID = AK::EVENTS::STOP_FOOTSTEPS__CHARGE_;
+
+		break;
+	}
+
+	Movement* movement = GetGameObject()->GetComponent<Movement>();
+
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(stopID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
+
+	cout << "stop walk" << endl;
+	footstepsPlayed = false;
+}
+
+void PlayerController::SetFootstepsSound(int sound)
+{
+	//stop playing previous footstepsSound
+	StopFootstepsSound();
+
+	//set it
+	footstepsSound = sound;
 }

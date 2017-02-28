@@ -23,7 +23,8 @@
 					</ValueList>
 				</Property>
 				<Property Name="LicenseKey" Type="string" Value="PHByb2plY3QgaWQ9IjMyMTAiIG1hc2s9IlZGRFc3NTY0IiBlbmM9IjAiPjxsaWNlbnNlIGlkPSIxIiBuYW1lPSJXd2lzZSIgdHlwZT0iMyIgcGxhdGZvcm1zPSIyLDMsNCwxMCwxMywxNCIgZXhwaXJlcz0iMjAxNy0wNi0zMCIgIC8+PGxpY2Vuc2UgaWQ9IjIxIiBuYW1lPSJNYWludGVuYW5jZSIgdHlwZT0iMyIgcGxhdGZvcm1zPSIyLDMsNCwxMCwxMywxNCIgZXhwaXJlcz0iMjAxNy0wNi0zMCIgIC8+PGxpY2Vuc2UgaWQ9IjIyIiBuYW1lPSJMZXZlbCBBIExpY2Vuc2UiIHR5cGU9IjMiIHBsYXRmb3Jtcz0iMiwzLDQsMTAsMTMsMTQiIGV4cGlyZXM9IjIwMTctMDYtMzAiICAvPjxsaWNlbnNlIGlkPSIyNSIgbmFtZT0iQWxsIFd3aXNlIFBsdWctSW5zIiB0eXBlPSIzIiAgZXhwaXJlcz0iMjAxNy0wNi0zMCIgIC8+PC9wcm9qZWN0Pg==|v1ajZwuFxDHdJbNTWS085ew1n8KPdnBILliV5QyiwT5roaY7nd8p65bnvoSlpx/AWojHIigsJefj9yGWQbXDrb41gsGF3eoRzrP2/1mnB6Nn/Qs9Es4DutmEy+y1dT9woLP4Zsj5RAeE6SdhaW5aEMQ/Xv+keys69dD1hy6fqKSr5qoGGVBO51nv4ebiVXEwG3bIpIUKYZ482EIlqrGDgRnUq/WHna/eUb6yuEF2z12n0w62An8B3jZX1fvTpZC6bpdFNwJQRBVtPX7FMrE3X5sqQSHruBxgyUlMqehqlmFuFbEKHUzZj3k/SDhW4w6hOTR/noi0236hmgpCa/z9pg=="/>
-				<Property Name="SoundBankHeaderFilePath" Type="string" Value="GeneratedSoundBanks\"/>
+				<Property Name="SoundBankGenerateHeaderFile" Type="bool" Value="True"/>
+				<Property Name="SoundBankHeaderFilePath" Type="string" Value="..\..\Extinguish\Bin\Wwise\"/>
 				<Property Name="SoundBankPaths" Type="string">
 					<ValueList>
 						<Value Platform="Windows">..\..\Extinguish\Assets\Soundbanks\</Value>

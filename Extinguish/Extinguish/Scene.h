@@ -100,6 +100,7 @@ public:
 
 	//getters//
 	vector<GameObject*>* const GetGameObjects() { return &gameObjects; };
+	vector<GameObject*>* const GetUIObjects() { return &uiObjects; };
 	GameObject* const GetGameObjects(int i) { return gameObjects[i]; };
 	GameObject* const GetUIGameObjects(int i) { return uiObjects[i]; }
 	int GetNumObjects() { return (int)gameObjects.size(); };
