@@ -755,22 +755,22 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { -7, 0, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -7, 15, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 5,20,5 }, { -5,0,0 });
+	GoalRenderer->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 7,4,2 }, { -7,-4,-3 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
 
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { -7, 0, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -7, 15, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
-	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 5,20,5 }, { -5,0,0 });
+	GoalRenderer2->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 7,4,2 }, { -7,-4,-3 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
