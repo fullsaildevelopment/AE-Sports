@@ -931,7 +931,7 @@ void Game::CreateUI(Scene * basic)
 	GameObject * meterBar = new GameObject();
 	basic->AddUIObject(meterBar);
 	meterBar->Init("meterBar");
-	MeterBar * newMeter = new MeterBar(true, 200.0f, 20.0f, 0.2f, 0.95f);
+	MeterBar * newMeter = new MeterBar(false, 200.0f, 20.0f, 0.2f, 0.95f);
 	meterBar->AddComponent(newMeter);
 	newMeter->MakeHandler();
 	UIRenderer * meterRender = new UIRenderer();
@@ -941,8 +941,8 @@ void Game::CreateUI(Scene * basic)
 	meterBar->AddComponent(meterRender);
 	meterRender->MakeRTSize();
 	newMeter->MakeRects();
-	newMeter->setDrainTime(30.0f);
-	newMeter->setRechargeTime(50.0f);
+	newMeter->setDrainTime(25.0f);
+	newMeter->setRechargeTime(10.0f);
 
 	CreatePauseMenu(basic);
 
