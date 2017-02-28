@@ -27,7 +27,7 @@ void Goal::Score(int team)
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
 	delete se;
 	Transform* bt = GetGameObject()->FindGameObject("GameBall")->GetTransform();
-	bt->SetPosition({ -7,10,-20.5f });
+	bt->SetPosition({ -7,15,-20.5f });
 	bt->SetVelocity({ 0,0,0 });
 	bt->GetGameObject()->GetComponent<BallController>()->SetHolder(nullptr);
 }

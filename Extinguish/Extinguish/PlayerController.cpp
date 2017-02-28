@@ -316,7 +316,7 @@ void PlayerController::HandleInput()
 	}
 
 	//this line will only happen once
-	if (input->GetKey(16) && !isSprinting && canSprint) //16 == Left Shift
+	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
 	{
 		Sprint();
 
@@ -325,7 +325,7 @@ void PlayerController::HandleInput()
 
 		cout << "Sprint" << endl;
 	}
-	else if (input->GetKeyUp(16) && isSprinting)
+	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
 	{
 		isSprinting = false;
 		isCharging = false;
