@@ -152,13 +152,13 @@ void HexagonCollider::FixedUpdate(float dt)
 					float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
 
 					//Top
-					if (CheckSphereAABB((int)floor(row * 0.5f) * col, row * col - 1, s))
+					if (CheckSphereAABB((int)floor(row * 0.49f) * col, row * col - 1, s))
 					{
 						//TopTop
-						if (CheckSphereAABB((int)floor(row * 0.75f) * col, row * col - 1, s))
+						if (CheckSphereAABB((int)floor(row * 0.741f) * col, row * col - 1, s))
 						{
 							AABB test;
-							for (int i = (int)floor(row * 0.75f); i < row; ++i)
+							for (int i = (int)floor(row * 0.741f); i < row; ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -189,10 +189,10 @@ void HexagonCollider::FixedUpdate(float dt)
 							}
 						}
 						//TopBottom
-						else if (CheckSphereAABB((int)floor(row * 0.5f) * col, (int)ceil(row * 0.75f) * col + col - 1, s))
+						else if (CheckSphereAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.759f) * col + col - 1, s))
 						{
 							AABB test;
-							for (int i = (int)floor(row * 0.5f); i < (int)ceil(row * 0.75f); ++i)
+							for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.759f); ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -232,10 +232,10 @@ void HexagonCollider::FixedUpdate(float dt)
 					else if (CheckSphereAABB(0, (int)ceil(row * 0.5f) * col + col - 1, s))
 					{
 						//BottomTop
-						if (CheckSphereAABB((int)floor(row * 0.25f) * col, (int)ceil(row * 0.5f) * col + col - 1, s))
+						if (CheckSphereAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.59f) * col + col - 1, s))
 						{
 							AABB test;
-							for (int i = (int)floor(row * 0.25f); i < (int)ceil(row * 0.5f); ++i)
+							for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.59f); ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -271,10 +271,10 @@ void HexagonCollider::FixedUpdate(float dt)
 							}
 						}
 						//BottomBottom
-						if (CheckSphereAABB(0, (int)ceil(row * 0.25f) * col + col - 1, s))
+						if (CheckSphereAABB(0, (int)ceil(row * 0.259f) * col + col - 1, s))
 						{
 							AABB test;
-							for (int i = 0; i < (int)ceil(row * 0.25f); ++i)
+							for (int i = 0; i < (int)ceil(row * 0.259f); ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
