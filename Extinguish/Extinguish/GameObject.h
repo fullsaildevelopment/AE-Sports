@@ -48,6 +48,7 @@ public:
 	void AddSphereCollider(SphereCollider* s);
 	void AddCapsuleCollider(CapsuleCollider* c);
 	GameObject* FindGameObject(std::string name);
+	GameObject* FindUIObject(std::string name);
 	int FindIndexOfGameObject(GameObject* object);
 
 	void OnCollisionEnter(Collider*);
@@ -82,6 +83,7 @@ public:
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
+	vector<GameObject*>* const GetUIObjects();
 	GameObject* const GetGameObjects(int i);
 	GameObject* const GetUIGameObjects(int i);
 	int GetNumObjects();
