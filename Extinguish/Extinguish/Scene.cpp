@@ -666,10 +666,12 @@ void Scene::Shutdown()
 	{
 		delete gameObjects[i];
 	}
+	gameObjects.clear();
 	for (int i = 0; i < uiObjects.size(); ++i)
 	{
 		delete uiObjects[i];
 	}
+	uiObjects.clear();
 }
 
 void Scene::CreateGameObject()
