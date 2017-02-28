@@ -10,7 +10,6 @@
 
 void Server::setObjectCount(int count) { 
 	serverObjs = count;
-//	clientStates = new CLIENT_GAME_STATE[serverObjs]();
 }
 
 Server::Server()
@@ -27,7 +26,6 @@ Server::~Server()
 
 	delete clientStates;
 	delete gameState;
-//	delete[] clientStates;
 	if (peer)
 	peer->DestroyInstance(peer);
 }
