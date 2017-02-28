@@ -25,40 +25,43 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 	//register movement event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 
-	timeSincePlayed = 0.0f;
+	//timeSincePlayed = 0.0f;
+	//footstepsPlayed = false;
 }
 
 void Movement::Update(float dt)
 {
 	this->dt = dt;
 
-	//sound feedback
-	if (isMoving && (timeSincePlayed == 0 || timeSincePlayed > 18.0f))
-	{
-		SoundEvent* soundEvent = new SoundEvent();
-		soundEvent->Init(AK::EVENTS::PLAY_FOOTSTEPS__WALK____, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-		delete soundEvent;
-		//cout << "play walk" << endl;
-		timeSincePlayed = 0;
-	}
-	else if (!isMoving && timeSincePlayed)
-	{
-		SoundEvent* soundEvent = new SoundEvent();
-		soundEvent->Init(AK::EVENTS::STOP_FOOTSTEPS__WALK____, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-		delete soundEvent;
-		//cout << "stop walk" << endl;
-	}
+	//play footsteps sound
+	//if (isMoving && !footstepsPlayed/*(timeSincePlayed == 0 || timeSincePlayed > 18.0f)*/)
+	//{
+	//	SoundEvent* soundEvent = new SoundEvent();
+	//	soundEvent->Init(eventID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	//	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	//	delete soundEvent;
+	//	//cout << "play walk" << endl;
+	//	//timeSincePlayed = 0;
+	//	footstepsPlayed = true;
+	//}
+	//else if (!isMoving)
+	//{5
+	//	SoundEvent* soundEvent = new SoundEvent();
+	//	soundEvent->Init(eventID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	//	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	//	delete soundEvent;
 
-	if (isMoving)
-	{
-		timeSincePlayed += dt;
-	}
-	else
-	{
-		timeSincePlayed = 0;
-	}
+	//	//cout << "stop walk" << endl;
+	//}
+
+	//if (isMoving)
+	//{
+	//	timeSincePlayed += dt;
+	//}
+	//else
+	//{
+	//	timeSincePlayed = 0;
+	//}
 
 	//animation feedback
 	if (isMoving)
@@ -88,9 +91,9 @@ void Movement::Update(float dt)
 				//cout << "Idle" << endl;
 			}
 		}
-	}
 
-	isMoving = false;
+		//footstepsPlayed = false;
+	}
 }
 
 void Movement::HandleEvent(Event* e)
@@ -124,6 +127,7 @@ bool Movement::IsMoving()
 void Movement::HandleInput(InputDownEvent* e)
 {
 	InputManager* input = e->GetInput();
+	isMoving = false;
 
 	if (input->GetKey(forward))
 	{

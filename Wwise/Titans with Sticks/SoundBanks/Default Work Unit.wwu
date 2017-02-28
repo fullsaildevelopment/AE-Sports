@@ -11,6 +11,7 @@
 						<ObjectRef Name="Play_Catch" ID="{7ADB84C9-9414-481F-8B44-AD9C25B82B47}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Throw" ID="{F8F957C4-4828-48A0-ABAA-942206EBA786}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Boing" ID="{2387FEB5-5381-4B02-8073-7EAEAD4FC73B}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Stop_Backboard_Bounce_Song" ID="{7E1CEE49-E896-4DA3-B7C4-1793528EC690}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 					</ObjectInclusionList>
 					<ObjectExclusionList/>
 					<GameSyncExclusionList/>

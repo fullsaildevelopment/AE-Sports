@@ -69,6 +69,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Stop_Backboard_Bounce_Song" ID="{7E1CEE49-E896-4DA3-B7C4-1793528EC690}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{48539A8E-E202-476D-AFAF-1F87F032834B}" ShortID="187610487" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{206493F6-14CE-4C70-B2BA-0B9FC09F1C4A}" Global="false">
+									<ObjectRef Name="Backboard Bounce Song" ID="{E62757B0-5ACA-44F4-8368-30A91CE80B75}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

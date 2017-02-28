@@ -14,7 +14,8 @@ private:
 	bool isMoving;
 	float dt;
 	char forward, back, left, right, up, down;
-	float timeSincePlayed;
+	//bool footstepsPlayed;
+	//float timeSincePlayed;
 
 	//private helper functions
 	void HandleInput(InputDownEvent* e);
@@ -24,6 +25,7 @@ public:
 	void Init(float moveVelocity, float rotateVelocity);
 	void Update(float dt) override;
 	void HandleEvent(Event* e);
+	//void ToggleFootstepsSound(int sound);
 
 	//getters
 	bool IsMoving();
