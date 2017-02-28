@@ -47,6 +47,7 @@ public:
 	float getDrainTime() { return dTime; } // current drain time (dTime == 0.0f -> fully drained | no energy)
 	float getRechargeTime() { return rTime; } // current time of recharge (rTime == rechargeTime -> fully charged)
 	bool isDraining() { return drain; } // if false == recharge || false && !isActive == fully charged
+	float GetPercentage();
 
 	/* setters */
 	void setHeight(float _height) { height = _height; }
