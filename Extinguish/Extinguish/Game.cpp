@@ -371,7 +371,7 @@ void Game::HandleEvent(Event* e)
 
 			if (loadSceneEvent)
 			{
-				if (loadSceneEvent->GetName() == "Menu")
+				if (loadSceneEvent->GetName() == "Menu" && currentScene == 2)
 				{
 					CreateGameWrapper();
 				}
@@ -521,23 +521,22 @@ void Game::CreateScenes(InputManager* input)
 
 void Game::CreateGameWrapper()
 {
-	//set projection matrix
-	float aspectRatio = (float)CLIENT_WIDTH / (float)CLIENT_HEIGHT;
-	float fovAngleY = 70.0f * XM_PI / 180.0f;
-
-	if (aspectRatio < 1.0f)
+	for (unsigned int i = 0; i < scenes.size(); ++i)
 	{
-		fovAngleY *= 2.0f;
+		unsigned int obj = scenes[i]->GetNumObjects();
+
+		for (unsigned int j = 0; j < obj; ++j)
+		{
+			Transform * trans = scenes[i]->GetGameObjects(j)->GetTransform();
+			if (trans)
+				trans->Reset();
+		}
 	}
 
-	XMFLOAT4X4 projection;
-	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
-	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
-
-	XMFLOAT4X4 identity;
-	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
-	scenes[2]->Shutdown();
-	CreateGame(scenes[2], identity, projection);
+	Team1Score = Team2Score = 0;
+	UpdateScoreUI();
+	Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
+	time->resetTime();
 }
 
 void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
@@ -553,7 +552,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* gameBall = new GameObject();
 	basic->AddGameObject(gameBall);
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { -7, 10, -20.5f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
+	gameBall->InitTransform(identity, { -7, 15, -20.5f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
@@ -618,7 +617,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0.6f, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 9.0f, 0.07f, 20, -14.8f);
+		Physics* physics = new Physics(0.01f, 10.0f, 0.07f, 20, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -756,22 +755,22 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
-	goal->InitTransform(identity, { -7, 0, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -7, 15, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 5,20,5 }, { -5,0,0 });
+	GoalRenderer->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 7,4,2 }, { -7,-4,-3 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
 
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { -7, 0, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -7, 15, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
-	GoalRenderer2->Init("Goal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 5,20,5 }, { -5,0,0 });
+	GoalRenderer2->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 7,4,2 }, { -7,-4,-3 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
@@ -796,7 +795,19 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	testPlayer->AddComponent(testPlayerRenderer);
 	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
-
+	//for (int j = 0; j < 11; ++j)
+	//{
+	//	for (int i = 0; i < 11; ++i)
+	//	{
+	//		GameObject* testball = new GameObject();
+	//		basic->AddGameObject(testball);
+	//		testball->Init("testball");
+	//		testball->InitTransform(identity, { 1.5f * -j + 0, 2, 1.5f * -i + 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//		Renderer* testballRenderer = new Renderer();
+	//		testball->AddComponent(testballRenderer);
+	//		testballRenderer->Init("HighDetalBall", "Static", "Static", "", "", projection, devResources);
+	//	}
+	//}
 
 	GameObject* Wall = new GameObject();
 	basic->AddGameObject(Wall);
@@ -932,7 +943,7 @@ void Game::CreateUI(Scene * basic)
 	GameObject * meterBar = new GameObject();
 	basic->AddUIObject(meterBar);
 	meterBar->Init("meterBar");
-	MeterBar * newMeter = new MeterBar(true, 200.0f, 20.0f, 0.2f, 0.95f);
+	MeterBar * newMeter = new MeterBar(false, 200.0f, 20.0f, 0.2f, 0.95f);
 	meterBar->AddComponent(newMeter);
 	newMeter->MakeHandler();
 	UIRenderer * meterRender = new UIRenderer();
@@ -942,8 +953,8 @@ void Game::CreateUI(Scene * basic)
 	meterBar->AddComponent(meterRender);
 	meterRender->MakeRTSize();
 	newMeter->MakeRects();
-	newMeter->setDrainTime(30.0f);
-	newMeter->setRechargeTime(50.0f);
+	newMeter->setDrainTime(25.0f);
+	newMeter->setRechargeTime(10.0f);
 
 	CreatePauseMenu(basic);
 

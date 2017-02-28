@@ -252,16 +252,16 @@ void Scene::CreateLights()
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -2.0f, 0.5f, 2.0f, 0 }, { 1, 0, 0, 1.0f }, 8.0f);
+	pointLight0.Create({ -7, -30, -50.5f, 0 }, { 1, 0, 0, 1.0f }, 150.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -7.f, 1.0f, -7.0f, 0 }, { 0, 1.0f, 0, 1.0f }, 10.0f);
+	pointLight1.Create({ -7, -30, 5.5f, 0 }, { 0, 0.0f, 1, 1.0f }, 150.0f);
 
 	PointLight pointLight2;
-	pointLight2.Create({ 1.0f, 1.5f, -2.0f, 0 }, { 1, 0.0f, 1.0f, 1.0f }, 10.0f);
+	pointLight2.Create({ 1.0f, 1.5f, -2.0f, 0 }, { 1, 0.0f, 1.0f, 1.0f }, 0.0f);
 
 	PointLight pointLight3;
-	pointLight3.Create({ 5.0f, 0.5f, 2.0f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, 7.0f);
+	pointLight3.Create({ 5.0f, 0.5f, 2.0f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, 0.0f);
 
 	pointLights.push_back(pointLight0);
 	pointLights.push_back(pointLight1);
@@ -666,10 +666,12 @@ void Scene::Shutdown()
 	{
 		delete gameObjects[i];
 	}
+	gameObjects.clear();
 	for (int i = 0; i < uiObjects.size(); ++i)
 	{
 		delete uiObjects[i];
 	}
+	uiObjects.clear();
 }
 
 void Scene::CreateGameObject()
