@@ -940,21 +940,21 @@ void Game::CreateUI(Scene * basic)
 	theSButtonC->setOrigin();
 	scoreCRender->InitMetrics();
 
-	GameObject * meterBar = new GameObject();
-	basic->AddUIObject(meterBar);
-	meterBar->Init("meterBar");
-	MeterBar * newMeter = new MeterBar(false, 200.0f, 20.0f, 0.2f, 0.95f);
-	meterBar->AddComponent(newMeter);
-	newMeter->MakeHandler();
-	UIRenderer * meterRender = new UIRenderer();
-	meterRender->Init(false, devResources, newMeter);
-	meterRender->DecodeBitmap(L"../Assets/UI/meterBar.png");
-	meterRender->DecodeBitmap(L"../Assets/UI/meterBorder.png");
-	meterBar->AddComponent(meterRender);
-	meterRender->MakeRTSize();
-	newMeter->MakeRects();
-	newMeter->setDrainTime(25.0f);
-	newMeter->setRechargeTime(10.0f);
+	GameObject * sprintBar = new GameObject();
+	basic->AddUIObject(sprintBar);
+	sprintBar->Init("sprintBar");
+	MeterBar * sprintMeter = new MeterBar(false, 200.0f, 20.0f, 0.2f, 0.95f);
+	sprintBar->AddComponent(sprintMeter);
+	sprintMeter->MakeHandler();
+	UIRenderer * sprintRender = new UIRenderer();
+	sprintRender->Init(false, devResources, sprintMeter);
+	sprintRender->DecodeBitmap(L"../Assets/UI/meterBar.png");
+	sprintRender->DecodeBitmap(L"../Assets/UI/meterBorder.png");
+	sprintBar->AddComponent(sprintRender);
+	sprintRender->MakeRTSize();
+	sprintMeter->MakeRects();
+	sprintMeter->setDrainTime(25.0f);
+	sprintMeter->setRechargeTime(10.0f);
 
 	CreatePauseMenu(basic);
 

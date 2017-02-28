@@ -64,11 +64,6 @@ void MeterBar::Update(float dt)
 	}
 }
 
-float MeterBar::GetPercentage()
-{
-	return percentage;
-}
-
 void MeterBar::HandleEvent(Event* e)
 {
 	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
