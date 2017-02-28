@@ -19,12 +19,22 @@
 				<Event Id="3057195544" Name="Play_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Play_Backboard_Bounce_Song"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
+				<Event Id="3977125916" Name="Play_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Charge_"/>
+				<Event Id="734068952" Name="Play_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Sprint_"/>
 				<Event Id="1437361150" Name="Play_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Walk____"/>
+				<Event Id="538781006" Name="Play_RunningPantShort" ObjectPath="\Events\Default Work Unit\Play_RunningPantShort"/>
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
 				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
+				<Event Id="2096695406" Name="Stop_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Charge_"/>
+				<Event Id="2346218314" Name="Stop_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Sprint_"/>
 				<Event Id="2224425572" Name="Stop_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Walk____"/>
+				<Event Id="1896658016" Name="Stop_RunningPantShort" ObjectPath="\Events\Default Work Unit\Stop_RunningPantShort"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
+				<File Id="42589970" Language="SFX">
+					<ShortName>Footsteps (Sprint).wav</ShortName>
+					<Path>SFX\Footsteps (Sprint)_4B8CC0C5.wem</Path>
+				</File>
 				<File Id="313137093" Language="SFX">
 					<ShortName>Audio\Backboard Bounce Song.wav</ShortName>
 					<Path>SFX\Audio\Backboard Bounce Song_9E69E797.wem</Path>
@@ -33,13 +43,21 @@
 					<ShortName>Audio\Throw.wav</ShortName>
 					<Path>SFX\Audio\Throw_9E69E797.wem</Path>
 				</File>
+				<File Id="523059377" Language="SFX">
+					<ShortName>RunningPantShort.wav</ShortName>
+					<Path>SFX\RunningPantShort_4B8CC0C5.wem</Path>
+				</File>
 				<File Id="527908285" Language="SFX">
 					<ShortName>Audio\Catch.wav</ShortName>
 					<Path>SFX\Audio\Catch_9E69E797.wem</Path>
 				</File>
+				<File Id="743215297" Language="SFX">
+					<ShortName>Footsteps (Charge).wav</ShortName>
+					<Path>SFX\Footsteps (Charge)_4B8CC0C5.wem</Path>
+				</File>
 				<File Id="776638270" Language="SFX">
 					<ShortName>Audio\Footsteps (Walk...).wav</ShortName>
-					<Path>SFX\Audio\Footsteps (Walk...)_9E69E797.wem</Path>
+					<Path>SFX\Audio\Footsteps (Walk...)_4B8CC0C5.wem</Path>
 				</File>
 				<File Id="797913072" Language="SFX">
 					<ShortName>Audio\Boing.wav</ShortName>

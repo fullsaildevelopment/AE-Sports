@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+//#include "vec3.h"
 
 class GameObject;
 class Camera;
@@ -10,7 +11,7 @@ class PlayerController : public Component
 {
 private:
 	//temp cache
-	InputManager* input; 
+	InputManager* input;
 	GameObject* otherPlayer; //is set when colliding with other player
 	GameObject* floor;
 
@@ -22,15 +23,32 @@ private:
 	//reg members
 	float dt;
 	bool justJumped;
-	//bool isAttacking;
 	bool isSprinting;
+	bool isCharging;
+	float canSprint;
+	float originalMaxSpeed;
+	float chargeTimer;
+	bool footstepsPlayed;
+	//AkUniqueID stepsPlayID;
+	//AkUniqueID stepsStopID;
+	int footstepsSound;
+	//float sprintAgainTimer;
+	//float3 originalVelocity;
 
 	//const members
-	const float chargeSpeed = 150.0f;
+	//const float chargeSpeed = 150.0f;
+	const float sprintMultiplier = 1.75f;
+	const float chargeMultiplier = 2.25f;
+	const float timeTilCharge = 2.5f;
+	//const float timeTilSprint = 3.0f;
+	const float sprintCost = 0.15f;
 
 	//private helper functions
 	void HandleInput();
-
+	void HandleSprintAndCharge();
+	void PlayFootstepsSound();
+	void StopFootstepsSound();
+	void SetFootstepsSound(int sound);
 public:
 	PlayerController();
 	~PlayerController();

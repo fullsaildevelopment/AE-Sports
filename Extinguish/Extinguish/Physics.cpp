@@ -8,6 +8,7 @@ void Physics::Init()
 	transform = GetGameObject()->GetTransform();
 
 	isKinematic = false;
+	hasMaxSpeed = true;
 }
 
 void Physics::FixedUpdate(float dt)
@@ -38,7 +39,9 @@ void Physics::FixedUpdate(float dt)
 		{
 			nV.z = 0;
 		}
-		if ((nV * float3(1,0,1)).magnitude() > maxMoveSpeed)
+
+		//prevents x and z of object going above maxSpeed (y isn't affected)
+		if ((nV * float3(1,0,1)).magnitude() > maxMoveSpeed && hasMaxSpeed)
 		{
 			float3 tm = (nV * float3(1, 0, 1)).normalize() * maxMoveSpeed;
 			nV.x = tm.x;
@@ -68,8 +71,28 @@ bool Physics::IsKinematic()
 	return isKinematic;
 }
 
+bool Physics::HasMaxSpeed()
+{
+	return hasMaxSpeed;
+}
+
+float Physics::GetMaxSpeed()
+{
+	return maxMoveSpeed;
+}
+
 //setters//
 void Physics::SetIsKinematic(bool toggle)
 {
 	isKinematic = toggle;
+}
+
+void Physics::SetHasMaxSpeed(bool toggle)
+{
+	hasMaxSpeed = toggle;
+}
+
+void Physics::SetMaxSpeed(float newMaxSpeed)
+{
+	maxMoveSpeed = newMaxSpeed;
 }
