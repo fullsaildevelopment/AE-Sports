@@ -18,32 +18,55 @@ void MeterBar::MakeHandler()
 
 void MeterBar::Update(float dt) 
 {
-	if (isActive)
+
+	//if (isActive)
+	//{
+	//	if (drain)
+	//	{
+	//		dTime -= dt;
+
+	//		rect2 = ShrinkRect(dTime, drainTime);
+
+	//		if (dTime <= 0.0f)
+	//		{
+	//			drain = false;
+	//			dTime = drainTime;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		rTime += dt;
+	//		rect2 = ShrinkRect(rTime, rechargeTime);
+
+	//		if (rTime >= rechargeTime)
+	//		{
+	//			rTime = 0.0f;
+	//			drain = true;
+	//			isActive = false;
+	//		}
+	//	}
+	//}
+
+}
+
+float MeterBar::GetPercentage()
+{
+	return percentage;
+}
+
+//bool MeterBar::IsEmpty()
+//{
+//	return (percentage == 0.0f) ? 1 : 0;
+//}
+
+//percentage should be from 0.0f - 1.0f
+void MeterBar::UpdatePercentage(float newPercentage)
+{
+	if (newPercentage >= 0.0f)
 	{
-		if (drain)
-		{
-			dTime -= dt;
+		percentage = newPercentage;
 
-			rect2 = ShrinkRect(dTime, drainTime);
-
-			if (dTime <= 0.0f)
-			{
-				drain = false;
-				dTime = drainTime;
-			}
-		}
-		else
-		{
-			rTime += dt;
-			rect2 = ShrinkRect(rTime, rechargeTime);
-
-			if (rTime >= rechargeTime)
-			{
-				rTime = 0.0f;
-				drain = true;
-				isActive = false;
-			}
-		}
+		rect2 = ShrinkRect(percentage, 1.0f);
 	}
 }
 

@@ -106,6 +106,23 @@ GameObject* GameObject::FindGameObject(std::string name)
 	return result;
 }
 
+GameObject* GameObject::FindUIObject(std::string name)
+{
+	GameObject* result = nullptr;
+	std::vector<GameObject*>* uiObjects = GetUIObjects();
+
+	for (int i = 0; i < uiObjects->size(); ++i)
+	{
+		if ((*uiObjects)[i]->GetName() == name)
+		{
+			result = (*uiObjects)[i];
+			break;
+		}
+	}
+
+	return result;
+}
+
 int GameObject::FindIndexOfGameObject(GameObject* object)
 {
 	int result = -1;
@@ -134,6 +151,11 @@ void GameObject::SetScene(Scene* tempScene)
 vector<GameObject*>* const GameObject::GetGameObjects() 
 { 
 	return scene->GetGameObjects(); 
+}
+
+vector<GameObject*>* const GameObject::GetUIObjects()
+{
+	return scene->GetUIObjects();
 }
 
 GameObject* const GameObject::GetGameObjects(int i)
