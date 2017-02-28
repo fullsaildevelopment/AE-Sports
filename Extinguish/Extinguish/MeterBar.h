@@ -16,6 +16,7 @@ private:
 	float height, width;
 	float widthMult, heightMult;
 	bool isActive;
+	float percentage;
 
 	/* for cooldowns */
 	float rechargeTime, rTime; // rTime is the countdown time, rechargeTime doesn't change
@@ -27,7 +28,7 @@ private:
 
 
 public:
-	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) {}
+	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) { percentage = 1.0f; }
 	~MeterBar();
 
 	/* overrides */
@@ -42,6 +43,8 @@ public:
 	bool isDraining() { return drain; } // basically check to see if the meter is draining or recharging
 	// if recharging (drain == false), don't do powerup, sprint, etc.
 	bool getActive() { return isActive; }
+	float GetPercentage();
+	//bool IsEmpty();
 
 	/* setters */
 	void setHeight(float _height) { height = _height; }
@@ -52,6 +55,7 @@ public:
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setRechargeTime(float time) { rechargeTime = time; rTime = 0.0f; }
 	void setDrainTime(float time) { drainTime = time; dTime = time; }
+	void UpdatePercentage(float newPercentage);
 
 	/* helpers */
 	D2D1_RECT_F MakeRect() {

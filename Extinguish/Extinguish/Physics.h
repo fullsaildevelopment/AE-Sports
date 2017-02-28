@@ -22,6 +22,7 @@ private:
 	// 0-1 same as others
 	float airdrag = 0.00f;
 
+	bool hasMaxSpeed;
 	float maxMoveSpeed = 50;
 
 	bool colliding = false;
@@ -40,7 +41,11 @@ public:
 
 	//getters//
 	bool IsKinematic();
+	bool HasMaxSpeed();
+	float GetMaxSpeed();
 
 	//setters//
 	void SetIsKinematic(bool toggle);
+	void SetHasMaxSpeed(bool toggle);
+	void SetMaxSpeed(float newMaxSpeed);
 };
