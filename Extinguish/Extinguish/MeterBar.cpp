@@ -62,7 +62,6 @@ void MeterBar::Update(float dt)
 				rect2 = ShrinkRect(rTime, rechargeTime);
 		}
 	}
-
 }
 
 float MeterBar::GetPercentage()
