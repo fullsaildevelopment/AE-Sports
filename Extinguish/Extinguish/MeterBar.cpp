@@ -70,22 +70,6 @@ float MeterBar::GetPercentage()
 	return percentage;
 }
 
-//bool MeterBar::IsEmpty()
-//{
-//	return (percentage == 0.0f) ? 1 : 0;
-//}
-
-//percentage should be from 0.0f - 1.0f
-void MeterBar::UpdatePercentage(float newPercentage)
-{
-	if (newPercentage >= 0.0f)
-	{
-		percentage = newPercentage;
-
-		rect2 = ShrinkRect(percentage, 1.0f);
-	}
-}
-
 void MeterBar::HandleEvent(Event* e)
 {
 	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);

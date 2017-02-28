@@ -348,14 +348,14 @@ void PlayerController::HandleSprintAndCharge()
 
 	if (isSprinting && canSprint)
 	{
-		if (isCharging)
+		if (isCharging) // wat
 		{
 			multiplier = chargeMultiplier;
 
 			//TODO: do some visual effect
 
 		}
-		else if (chargeTimer >= timeTilCharge && !isCharging)
+		else if (chargeTimer >= timeTilCharge && !isCharging) // wat
 		{
 			multiplier = chargeMultiplier;
 			//isSprinting = false;
@@ -391,9 +391,6 @@ void PlayerController::HandleSprintAndCharge()
 			canSprint = true;
 		}
 
-	//	meterBar->UpdatePercentage(percentage);
-
-		//cout << meterBar->GetPercentage() << endl;
 
 		//set velocity to respective velocity every frame
 		transform->SetVelocity(transform->GetForwardf3() * -multiplier * 100.0f);
