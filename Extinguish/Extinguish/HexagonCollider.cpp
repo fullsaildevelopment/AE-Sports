@@ -80,6 +80,7 @@ bool HexagonCollider::CheckCapsuleAABB(AABB test, Capsule s)
 	cap.max = s.m_Segment.m_End + float3(s.m_Radius, s.m_Radius, s.m_Radius);
 	return AABBtoAABB(test, cap);
 }
+
 void HexagonCollider::FixedUpdate(float dt)
 {
 	if (objects.size() == 0)
@@ -157,7 +158,7 @@ void HexagonCollider::FixedUpdate(float dt)
 						if (CheckSphereAABB((int)floor(row * 0.75f) * col, row * col - 1, s))
 						{
 							AABB test;
-							for (int i = (int)(row * 0.75f); i < row; ++i)
+							for (int i = (int)floor(row * 0.75f); i < row; ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -191,7 +192,7 @@ void HexagonCollider::FixedUpdate(float dt)
 						else if (CheckSphereAABB((int)floor(row * 0.5f) * col, (int)ceil(row * 0.75f) * col + col - 1, s))
 						{
 							AABB test;
-							for (int i = (int)(row * 0.5f); i < (int)(row * 0.75f); ++i)
+							for (int i = (int)floor(row * 0.5f); i < (int)ceil(row * 0.75f); ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -234,7 +235,7 @@ void HexagonCollider::FixedUpdate(float dt)
 						if (CheckSphereAABB((int)floor(row * 0.25f) * col, (int)ceil(row * 0.5f) * col + col - 1, s))
 						{
 							AABB test;
-							for (int i = (int)(row * 0.25f); i < (int)(row * 0.5f); ++i)
+							for (int i = (int)floor(row * 0.25f); i < (int)ceil(row * 0.5f); ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -273,7 +274,7 @@ void HexagonCollider::FixedUpdate(float dt)
 						if (CheckSphereAABB(0, (int)ceil(row * 0.25f) * col + col - 1, s))
 						{
 							AABB test;
-							for (int i = 0; i < (int)(row * 0.25f); ++i)
+							for (int i = 0; i < (int)ceil(row * 0.25f); ++i)
 							{
 								test.min = poses[i * col] - float3(1, 10, 1);
 								test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -328,16 +329,16 @@ void HexagonCollider::FixedUpdate(float dt)
 					float3 vel = objects[f]->GetTransform()->GetVelocity();
 
 					//Top
-					if (CheckCapsuleAABB((int)(floor(row * 0.5f)) * col, row * col - 1, c))
+					if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, row * col - 1, c))
 					{
 						//TopTop
-						if (CheckCapsuleAABB((int)(floor(row * 0.75f)) * col, row * col - 1, c))
+						if (CheckCapsuleAABB((int)(floor(row * 0.741f)) * col, row * col - 1, c))
 						{
 							//TopTopTop
-							if (CheckCapsuleAABB((int)floor(row * 0.83f) * col, row * col - 1, c))
+							if (CheckCapsuleAABB((int)floor(row * 0.821f) * col, row * col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.83f); i < row; ++i)
+								for (int i = (int)floor(row * 0.821f); i < row; ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -351,7 +352,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -378,10 +379,10 @@ void HexagonCollider::FixedUpdate(float dt)
 								}
 							}
 							//TopTopBottom
-							else if (CheckCapsuleAABB((int)floor(row * 0.75f) * col, (int)ceil(row * 0.83f) * col + col - 1, c))
+							else if (CheckCapsuleAABB((int)floor(row * 0.741f) * col, (int)ceil(row * 0.839f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.75f); i < (int)ceil(row * 0.83f); ++i)
+								for (int i = (int)floor(row * 0.741f); i < (int)ceil(row * 0.83f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -394,7 +395,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -422,13 +423,13 @@ void HexagonCollider::FixedUpdate(float dt)
 							}
 						}
 						//TopBottom
-						else if (CheckCapsuleAABB((int)(floor(row * 0.5f)) * col, (int)(ceil(row * 0.75f)) * col + col - 1, c))
+						else if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, (int)(ceil(row * 0.759f)) * col + col - 1, c))
 						{
 							//TopBottomTop
-							if (CheckCapsuleAABB((int)floor(row * 0.63f) * col, (int)ceil(row * 0.75f) * col + col - 1, c))
+							if (CheckCapsuleAABB((int)floor(row * 0.621f) * col, (int)ceil(row * 0.759f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.63f); i < (int)ceil(row * 0.75f); ++i)
+								for (int i = (int)floor(row * 0.621f); i < (int)ceil(row * 0.759f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -441,7 +442,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -468,10 +469,10 @@ void HexagonCollider::FixedUpdate(float dt)
 								}
 							}
 							//TopBottomBottom
-							else if (CheckCapsuleAABB((int)floor(row * 0.5f) * col, (int)ceil(row * 0.63f) * col + col - 1, c))
+							else if (CheckCapsuleAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.639f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.5f); i < (int)ceil(row * 0.63f); ++i)
+								for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.639f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -484,7 +485,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -513,16 +514,16 @@ void HexagonCollider::FixedUpdate(float dt)
 						}
 					}
 					//Bottom
-					else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.5f)) * col + col - 1, c))
+					else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.51f)) * col + col - 1, c))
 					{
 						//BottomTop
-						if (CheckCapsuleAABB((int)(floor(row * 0.25f)) * col, (int)(ceil(row * 0.5f)) * col + col - 1, c))
+						if (CheckCapsuleAABB((int)(floor(row * 0.241f)) * col, (int)(ceil(row * 0.51f)) * col + col - 1, c))
 						{
 							//BottomTopTop
-							if (CheckCapsuleAABB((int)floor(row * 0.38f) * col, (int)ceil(row * 0.5f) * col + col - 1, c))
+							if (CheckCapsuleAABB((int)floor(row * 0.371f) * col, (int)ceil(row * 0.51f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.38f); i < (int)ceil(row * 0.5f); ++i)
+								for (int i = (int)floor(row * 0.371f); i < (int)ceil(row * 0.51f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -535,7 +536,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -562,10 +563,10 @@ void HexagonCollider::FixedUpdate(float dt)
 								}
 							}
 							//BottomTopBottom
-							if (CheckCapsuleAABB((int)floor(row * 0.25f) * col, (int)ceil(row * 0.38f) * col + col - 1, c))
+							if (CheckCapsuleAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.389f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.25f); i < (int)ceil(row * 0.38f); ++i)
+								for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.389f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -578,7 +579,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -606,13 +607,13 @@ void HexagonCollider::FixedUpdate(float dt)
 							}
 						}
 						//BottomBottom
-						else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.25f)) * col + col - 1, c))
+						else if (CheckCapsuleAABB(0, (int)(ceil(row * 0.259f)) * col + col - 1, c))
 						{
 							//BottomBottomTop
-							if (CheckCapsuleAABB((int)floor(row * 0.13f) * col, (int)ceil(row * 0.25f) * col + col - 1, c))
+							if (CheckCapsuleAABB((int)floor(row * 0.121f) * col, (int)ceil(row * 0.259f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = (int)floor(row * 0.13f); i < (int)ceil(row * 0.25f); ++i)
+								for (int i = (int)floor(row * 0.121f); i < (int)ceil(row * 0.259f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -625,7 +626,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);
@@ -652,10 +653,10 @@ void HexagonCollider::FixedUpdate(float dt)
 								}
 							}
 							//BottomBottomBottom
-							if (CheckCapsuleAABB(0, (int)ceil(row * 0.13f) * col + col - 1, c))
+							if (CheckCapsuleAABB(0, (int)ceil(row * 0.121f) * col + col - 1, c))
 							{
 								AABB test;
-								for (int i = 0; i < (int)ceil(row * 0.13f); ++i)
+								for (int i = 0; i < (int)ceil(row * 0.121f); ++i)
 								{
 									test.min = poses[i * col] - float3(1, 10, 1);
 									test.max = poses[i * col + col - 1] + float3(1, 20, 1);
@@ -668,7 +669,7 @@ void HexagonCollider::FixedUpdate(float dt)
 												Physics* op = objects[f]->GetComponent<Physics>();
 												if (op)
 												{
-													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start, false);
+													op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 													if (!CollidingWith[f])
 													{
 														tg->OnCollisionEnter(cap);

@@ -173,8 +173,8 @@ void FloorController::ControlColors(float dt)
 
 void FloorController::Update(float dt)
 {
-	//ControlMovement(dt);
-	ControlColors(dt);
+	ControlMovement(dt);
+	//ControlColors(dt);
 }
 
 void FloorController::SetState(int state, float dt)

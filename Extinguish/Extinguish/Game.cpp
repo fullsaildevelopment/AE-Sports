@@ -618,7 +618,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0.6f, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 9.0f, 0.07f, 20, -14.8f);
+		Physics* physics = new Physics(0.01f, 10.0f, 0.07f, 20, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -796,7 +796,19 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	testPlayer->AddComponent(testPlayerRenderer);
 	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
-
+	//for (int j = 0; j < 11; ++j)
+	//{
+	//	for (int i = 0; i < 11; ++i)
+	//	{
+	//		GameObject* testball = new GameObject();
+	//		basic->AddGameObject(testball);
+	//		testball->Init("testball");
+	//		testball->InitTransform(identity, { 1.5f * -j + 0, 2, 1.5f * -i + 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//		Renderer* testballRenderer = new Renderer();
+	//		testball->AddComponent(testballRenderer);
+	//		testballRenderer->Init("HighDetalBall", "Static", "Static", "", "", projection, devResources);
+	//	}
+	//}
 
 	GameObject* Wall = new GameObject();
 	basic->AddGameObject(Wall);
