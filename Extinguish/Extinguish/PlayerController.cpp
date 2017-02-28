@@ -344,7 +344,7 @@ void PlayerController::HandleInput()
 void PlayerController::HandleSprintAndCharge()
 {
 	float multiplier;
-	MeterBar* meterBar = GetGameObject()->FindUIObject("meterBar")->GetComponent<MeterBar>();
+	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
 
 	if (isSprinting && canSprint)
 	{
