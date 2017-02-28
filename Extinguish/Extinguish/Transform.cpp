@@ -40,6 +40,17 @@ void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, fl
 	SetParent(parent);
 	AddChild(child);
 	AddSibling(sibling);
+
+	defaultP.push_back(pos);
+	defaultP.push_back(rot);
+	defaultP.push_back(tempScale);
+}
+
+void Transform::Reset()
+{
+	SetPosition(defaultP[0]);
+	SetRotation(defaultP[1]);
+	SetScale(defaultP[2]);
 }
 
 //misc
