@@ -43,12 +43,10 @@ public:
 	float getHeight() { return height; };
 	D2D1_RECT_F getRect() { return rect; }
 	D2D1_RECT_F getRect2() { return rect2; }
-	bool getActive() { return isActive; }
-	float getDrainTime() { return dTime; }
-	float getRechargeTime() { return rTime; }
+	bool getActive() { return isActive; } // if the bar is active | will render if true
+	float getDrainTime() { return dTime; } // current drain time (dTime == 0.0f -> fully drained | no energy)
+	float getRechargeTime() { return rTime; } // current time of recharge (rTime == rechargeTime -> fully charged)
 	bool isDraining() { return drain; } // if false == recharge || false && !isActive == fully charged
-	float GetPercentage();
-	//bool IsEmpty();
 
 	/* setters */
 	void setHeight(float _height) { height = _height; }
@@ -59,8 +57,6 @@ public:
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setRechargeTime(float time) { rechargeTime = time; rTime = time; }
 	void setDrainTime(float time) { drainTime = time; dTime = time; }
-	void UpdatePercentage(float newPercentage);
-	void setDrain(bool drainit) { drain = drainit; }
 
 	/* helpers */
 	D2D1_RECT_F MakeRect() {
