@@ -290,7 +290,7 @@ void PlayerController::Attack()
 void PlayerController::Sprint()
 {
 	isSprinting = true;
-	chargeTimer = 0.0f;
+	//chargeTimer = 0.0f;
 
 	Physics* physics = GetGameObject()->GetComponent<Physics>();
 	//physics->SetHasMaxSpeed(false);
@@ -375,18 +375,23 @@ void PlayerController::HandleSprintAndCharge()
 			multiplier = sprintMultiplier;
 		}
 
-		float percentage = meterBar->GetPercentage() - sprintCost * dt;
+	//	float percentage = meterBar->GetPercentage() - sprintCost * dt;
 
 		//if small enough, then make it 0
-		if (percentage <= 0.001f)
+		//if (percentage <= 0.001f)
+		if (!meterBar->isDraining() && meterBar->getActive()) // recharging
 		{
 			//sprintAgainTimer = 0.0f;
-			percentage = 0.0f;
+	//		percentage = 0.0f;
 			canSprint = false;
 			isCharging = false;
 		}
+		else if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
+		{
+			canSprint = true;
+		}
 
-		meterBar->UpdatePercentage(percentage);
+	//	meterBar->UpdatePercentage(percentage);
 
 		//cout << meterBar->GetPercentage() << endl;
 
