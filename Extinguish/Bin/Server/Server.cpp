@@ -51,8 +51,8 @@ int Server::init(uint16_t port)
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
 		names[i] = new char[8];
-		ateamIDs[i] = i + 1;
-		bteamIDs[i] = i + 5;
+		clientIDs[i] = i + 1;
+	//	bteamIDs[i] = i + 5;
 	}
 
 	peer->SetOccasionalPing(true);
@@ -160,15 +160,15 @@ int  Server::update()
 			{
 				for (unsigned int i = 0; i < 4; ++i)
 				{
-					if (ateamIDs[i] == (i + 1))
+					if (clientIDs[i] == (i + 1))
 					{
-						newID = ateamIDs[i];
-						ateamIDs[i] = 0;
-						bteamIDs[tempID - 5] = tempID;
+						newID = clientIDs[i];
+						clientIDs[i] = 0;
+				//		bteamIDs[tempID - 5] = tempID;
 						break;
 					}
 				}
-			sendNew(newID);
+			//sendNew(newID);
 			}
 
 
@@ -181,21 +181,19 @@ int  Server::update()
 			UINT8 tempID;
 			bIn.Read(tempID);
 
-			UINT8 newID;
+			UINT8 objID;
 
 			if (tempID < 5)
 			{
-				for (unsigned int i = 0; i < 4; ++i)
+			/*	for (unsigned int i = 5; i < 9; ++i)
 				{
-					if (bteamIDs[i] == (i + 5))
+					if (playerObjectIDs[i] == (i + 5))
 					{
-						newID = bteamIDs[i];
-						bteamIDs[i] = 0;
-						ateamIDs[tempID - 1] = tempID;
+						objID = playerObjectIDs[i];
 						break;
 					}
-				}
-			sendNew(newID);
+				}*/
+			sendObjID(objID);
 			}
 
 			break;
@@ -315,10 +313,10 @@ void Server::sendNew()
 	UINT8 newID;
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
-		if (ateamIDs[i] != 0)
+		if (clientIDs[i] != 0)
 		{
-			newID = ateamIDs[i];
-			ateamIDs[i] = 0;
+			newID = clientIDs[i];
+			clientIDs[i] = 0;
 			break;
 		}
 	}
@@ -329,10 +327,10 @@ void Server::sendNew()
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 
-void Server::sendNew(UINT8 id)
+void Server::sendObjID(UINT8 id)
 {
 	BitStream bsOut;
-	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
+	bsOut.Write((RakNet::MessageID)ID_CLIENT_OBJ);
 
 	bsOut.Write(id);
 	bsOut.Write(serverObjs);
@@ -350,7 +348,7 @@ void Server::unregisterClient()
 	bsIn.Read(leavingID);
 	int size = nameSizes[leavingID - 1];
 
-	ateamIDs[leavingID - 1] = leavingID;
+	clientIDs[leavingID - 1] = leavingID;
 	char message[30];
 	memcpy(&message[0], names[leavingID - 1], size);
 	memcpy(&message[size], " has left the lobby.\n", strlen(" has left the lobby.\n"));
@@ -486,4 +484,17 @@ void Server::sendState()
 void Server::StartGame()
 {
 	sendMessage(UINT8(0), ID_START_GAME, true);
+}
+
+
+void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight)
+{
+	objIDs[0].id = one;
+	objIDs[1].id = two;
+	objIDs[2].id = three;
+	objIDs[3].id = four;
+	objIDs[4].id = five;
+	objIDs[5].id = six;
+	objIDs[6].id = seven;
+	objIDs[7].id = eight;
 }
