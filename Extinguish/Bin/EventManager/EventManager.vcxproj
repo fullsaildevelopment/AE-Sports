@@ -143,6 +143,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="GamePadEvent.h" />
     <ClInclude Include="HashStringCopy.h" />
     <ClInclude Include="InputDownEvent.h" />
     <ClInclude Include="LoadSceneEvent.h" />
@@ -152,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventDispatcher.cpp" />
+    <ClCompile Include="GamePadEvent.cpp" />
     <ClCompile Include="HashStringCopy.cpp" />
     <ClCompile Include="InputDownEvent.cpp" />
     <ClCompile Include="LoadSceneEvent.cpp" />

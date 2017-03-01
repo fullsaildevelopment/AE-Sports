@@ -28,6 +28,7 @@
 #include "LoadSceneEvent.h"
 #include "SoundEvent.h"
 #include "CoughtEvent.h"
+#include "GamePadEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -39,6 +40,7 @@ ClientWrapper Game::client;
 ServerWrapper Game::server;
 unsigned int Game::currentScene;
 int Game::returnResult = 1;
+int Game::objID = 1;
 
 Game::~Game()
 {
@@ -249,7 +251,7 @@ int Game::Update(float dt)
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
-
+	
 	return returnResult;
 }
 
@@ -307,7 +309,7 @@ void Game::HandleEvent(Event* e)
 		{
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
-			cout << "HUD stuff" << endl;
+			//cout << "HUD stuff" << endl;
 		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
@@ -399,6 +401,26 @@ void Game::HandleEvent(Event* e)
 	if (coughtEvent)
 	{
 		gameStates[coughtEvent->id]->hasBall = coughtEvent->holding;
+		return;
+	}
+
+	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+	if (gamePadEvent)
+	{
+		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
+		//(currentScene < 2)
+		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		{
+			//inputDownEvent->SetID(clientID);
+			inputDownEvent->SetIsServer(true);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+		}
+		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
+		{
+			client.sendInput(inputDownEvent);
+		}
+
 		return;
 	}
 }
@@ -956,8 +978,9 @@ void Game::CreateUI(Scene * basic)
 	sprintBar->AddComponent(sprintRender);
 	sprintRender->MakeRTSize();
 	sprintMeter->MakeRects();
-	sprintMeter->setDrainTime(25.0f);
+	sprintMeter->setDrainTime(5.0f);
 	sprintMeter->setRechargeTime(10.0f);
+	sprintMeter->setCanRecharge(true);
 
 	CreatePauseMenu(basic);
 
@@ -1217,8 +1240,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamA->AddComponent(caButton);
 	UIRenderer * eaRender = new UIRenderer();
 	eaRender->Init(true, 25.0f, devResources, caButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
-	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
 	changeTeamA->AddComponent(eaRender);
 	eaRender->MakeRTSize();
 	caButton->MakeRect();
@@ -1237,8 +1260,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamB->AddComponent(cbButton);
 	UIRenderer * ebRender = new UIRenderer();
 	ebRender->Init(true, 25.0f, devResources, cbButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
-	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
 	changeTeamB->AddComponent(ebRender);
 	ebRender->MakeRTSize();
 	cbButton->MakeRect();
@@ -1350,6 +1373,27 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->SetActive(false);
 }
 
+void Game::AssignPlayers()
+{
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			// get teams of all players
+			/* rework networking to reassign id based on team */
+			// set mage ID
+			// all others become ai
+		}
+	}
+	else
+	{
+		// find team player selected
+		// set mage 1 to player if red team
+		// set mage 5 to player if blue team
+		// set ai to everything else
+	}
+	
+}
 
 void Game::EnableButton(std::string name, bool toggle)
 {
@@ -1577,6 +1621,8 @@ int Game::UpdateLobby()
 		UpdateLobbyUI(client.getNumClients());
 	else if (clientState == 6)
 		LoadScene("FirstLevel");
+	else if (clientState == 7)
+		objID = client.getObjID();
 
 
 	return clientState;

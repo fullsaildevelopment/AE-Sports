@@ -61,12 +61,10 @@ public:
 	//~Button() {}
 	Button(bool active, bool clickable, wchar_t * newText, unsigned int length, float _width, float _height,
 		DeviceResources * resources, unsigned int type);
-
-
+	
 	Button(bool active, bool clickable, char * newText, unsigned int length);
 
 	void Update(float dt) override;
-
 
 	void HandleEvent(Event* e) override;
 

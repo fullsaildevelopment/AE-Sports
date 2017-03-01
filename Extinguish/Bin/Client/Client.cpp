@@ -126,7 +126,7 @@ int Client::run()
 		}
 		case ID_CONNECTION_LOST:
 		{
-			printf("Connection lost.\n");
+			//printf("Connection lost.\n");
 			peer->Shutdown(100);
 			return 0;
 		break;
@@ -140,9 +140,9 @@ int Client::run()
 		{
 			GetID();
 			result = 3;
-			printf("Please enter a name (8 characters max): ");
-			memcpy(clientName, "Player", strlen("Player"));
-			registerName();
+			//printf("Please enter a name (8 characters max): ");
+			//memcpy(clientName, "Player", strlen("Player"));
+			//registerName();
 			break;
 		}
 		case ID_SERVER_MESSAGE:
@@ -186,6 +186,13 @@ int Client::run()
 		case ID_START_GAME:
 		{
 			return 6;
+		}
+		case ID_CLIENT_OBJ:
+		{
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			bIn.Read(objID);
+			return 7;
 		}
 		}
 	}
@@ -235,6 +242,21 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;
+}
+
+void Client::sendMessage(char * message, uint16_t stride)
+{
+	BitStream bsOut;
+
+	bsOut.Write((RakNet::MessageID)ID_INCOMING_MESSAGE);
+	bsOut.Write(stride);
+
+	for (uint16_t i = 0; i < stride; ++i)
+	{
+		bsOut.Write(message[i]);
+	}
+
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
 
 void Client::sendMessage(char * message, GameMessages ID)
@@ -392,4 +414,17 @@ void Client::receiveGameState()
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
+}
+
+
+void Client::changeTeam(UINT16 team)
+{
+	if (team == 0)
+	{
+		sendMessage(clientID, ID_CHANGE_TEAM_A, peer->GetSystemAddressFromIndex(0));
+	}
+	else
+	{
+		sendMessage(clientID, ID_CHANGE_TEAM_B, peer->GetSystemAddressFromIndex(0));
+	}
 }
