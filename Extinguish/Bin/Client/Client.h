@@ -86,7 +86,9 @@ private:
 		ID_INCOMING_INPUT,
 		ID_INCOMING_STATE,
 		ID_NEW_CLIENT,
-		ID_START_GAME
+		ID_START_GAME,
+		ID_CHANGE_TEAM_A,
+		ID_CHANGE_TEAM_B
 	};
 
 	static RakPeerInterface * peer;
@@ -124,29 +126,35 @@ public:
 	int run();
 	void stop();
 
+	// send functions
 	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer);
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendPacket();
-	UINT8 getID() { return clientID; }
-	CLIENT_GAME_STATE getState(unsigned int index);
-	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
-	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
-	INT8 GetParentIndex(unsigned int index) { return clientStates[0][index].parentIndex; }
-	INT8 GetAnimationIndex(unsigned int index) { return clientStates[0][index].animationIndex; }
-	INT8 GetTransitionIndex(unsigned int index) { return clientStates[0][index].transitionIndex; }
-	UINT32 GetSoundID(unsigned int index) { return clientStates[0][index].soundID; }
-	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
-	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
-	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
-	int getNumPackets() { return numPackets; }
+	void changeTeam(UINT16 team);
+
+	// setters
 	void setLocation(XMFLOAT3 loc) { myState[0][0].position = loc; }
 	void setRotation(XMFLOAT3 rot) { myState[0][0].rotation = rot; }
+
+	// getters
 	int getFloorState(unsigned int i) { return clientStates[0][i].otherIndex; }
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
 	UINT8 getNumClients() { return curNumOfClients; }
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
+	int getNumPackets() { return numPackets; }
+	INT8 GetParentIndex(unsigned int index) { return clientStates[0][index].parentIndex; }
+	INT8 GetAnimationIndex(unsigned int index) { return clientStates[0][index].animationIndex; }
+	INT8 GetTransitionIndex(unsigned int index) { return clientStates[0][index].transitionIndex; }
+	UINT32 GetSoundID(unsigned int index) { return clientStates[0][index].soundID; }
+	UINT8 getID() { return clientID; }
+	CLIENT_GAME_STATE getState(unsigned int index);
+	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
+	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
+	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 
 private:
 	UINT8 objects;
