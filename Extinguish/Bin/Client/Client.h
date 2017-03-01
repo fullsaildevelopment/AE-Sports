@@ -86,7 +86,8 @@ private:
 		ID_INCOMING_INPUT,
 		ID_INCOMING_STATE,
 		ID_NEW_CLIENT,
-		ID_START_GAME
+		ID_START_GAME,
+		ID_INCOMING_MESSAGE
 	};
 
 	static RakPeerInterface * peer;
@@ -127,6 +128,7 @@ public:
 	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer);
 	void sendStop();
 	void sendMessage(char * newMessage);
+	void sendMessage(char * message, uint16_t stride);
 	void sendPacket();
 	UINT8 getID() { return clientID; }
 	CLIENT_GAME_STATE getState(unsigned int index);

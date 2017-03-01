@@ -15,8 +15,15 @@
 #include "SoundEngine.h"
 #include "SoundEvent.h"
 #include "Movement.h"
+#include "GamePad.h"
+#include "Game.h"
 
 using namespace std;
+
+namespace Player
+{
+	DirectX::GamePad::State gamePadState;
+};
 
 PlayerController::PlayerController()
 {
@@ -64,6 +71,15 @@ void PlayerController::Update(float dt)
 	{
 		StopFootstepsSound();
 	}
+
+	//handle input from controller
+	std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
+	Player::gamePadState = gamePad->GetState(0);
+
+	if (Player::gamePadState.IsConnected())
+	{
+		HandleGamePad();
+	}
 }
 
 void PlayerController::HandleEvent(Event* e)
@@ -83,8 +99,11 @@ void PlayerController::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				input = inputDownEvent->GetInput();
-				HandleInput();
+				if (!Player::gamePadState.IsConnected())
+				{
+					input = inputDownEvent->GetInput();
+					HandleInput();
+				}
 			}
 		}
 	}
@@ -309,11 +328,11 @@ void PlayerController::HandleInput()
 		Jump();
 	}
 
-	if (input->GetKeyDown('F'))
-	{
-		//cout << "F" << endl;
-		Attack();
-	}
+	//if (input->GetKeyDown('F'))
+	//{
+	//	//cout << "F" << endl;
+	//	Attack();
+	//}
 
 	//this line will only happen once
 	if (input->GetKey(16) && !isSprinting && canSprint) //16 == Left Shift
@@ -339,6 +358,49 @@ void PlayerController::HandleInput()
 		//revert back to walk footsteps
 		SetFootstepsSound(0);
 	}
+}
+
+void PlayerController::HandleGamePad()
+{
+	GamePad::ButtonStateTracker tracker;
+
+	tracker.Update(Player::gamePadState);
+
+	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
+	{
+		Jump();
+	}
+
+	//if (input->GetKeyDown('F'))
+	//{
+	//	//cout << "F" << endl;
+	//	Attack();
+	//}
+
+	//this line will only happen once
+	//if ( && !isSprinting && canSprint) //16 == Left Shift
+	//{
+	//	Sprint();
+
+	//	//Play sound
+
+
+	//	cout << "Sprint" << endl;
+	//}
+	//else if (input->GetKeyUp(16) && isSprinting)
+	//{
+	//	isSprinting = false;
+	//	isCharging = false;
+
+	//	Physics* physics = GetGameObject()->GetComponent<Physics>();
+	//	physics->SetMaxSpeed(originalMaxSpeed);
+	//	//physics->SetHasMaxSpeed(true);
+
+	//	cout << "Stop Sprint" << endl;
+
+	//	//revert back to walk footsteps
+	//	SetFootstepsSound(0);
+	//}
 }
 
 void PlayerController::HandleSprintAndCharge()

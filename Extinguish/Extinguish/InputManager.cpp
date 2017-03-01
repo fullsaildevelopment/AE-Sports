@@ -2,11 +2,29 @@
 #include "InputManager.h"
 #include "EventDispatcher.h"
 #include "InputDownEvent.h"
+#include "GamePadEvent.h"
 #include "Game.h"
+//#include "GamePad.h"
 
 using namespace std;
 
 InputManager *InputManager::input = 0;
+
+InputManager::InputManager()
+{
+	//determine if keyboard or gamepad
+	std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
+	gamePadState = gamePad->GetState(0);
+
+	if (gamePadState.IsConnected())
+	{
+		isController = true;
+	}
+	else
+	{
+		isController = false;
+	}
+}
 
 InputManager::~InputManager()
 {
@@ -62,35 +80,51 @@ void InputManager::Init(bool keyboard[256], bool keyboardDown[256], bool keyboar
 
 void InputManager::Update()
 {
-	if (!alreadySent)
+	if (isController)
 	{
-		bool sendEvent = false;
+		std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
+		gamePadState = gamePad->GetState(0);
 
-		for (int i = 0; i < 3; ++i)
+		if (gamePadState.IsConnected())
 		{
-			if (mouse[i])
-			{
-				sendEvent = true;
-				break;
-			}
-		}
-
-		for (int i = 0; i < 256; ++i)
-		{
-			if (keyboard[i])
-			{
-				sendEvent = true;
-				break;
-			}
-		}
-
-		if (sendEvent)
-		{
-			SendEvent();
+			GamePadEvent* gamePadEvent = new GamePadEvent();
+			gamePadEvent->Init(&gamePadState);
+			EventDispatcher::GetSingleton()->DispatchTo(gamePadEvent, "Game");
+			delete gamePadEvent;
 		}
 	}
+	else
+	{
+		if (!alreadySent)
+		{
+			bool sendEvent = false;
 
-	alreadySent = false;
+			for (int i = 0; i < 3; ++i)
+			{
+				if (mouse[i])
+				{
+					sendEvent = true;
+					break;
+				}
+			}
+
+			for (int i = 0; i < 256; ++i)
+			{
+				if (keyboard[i])
+				{
+					sendEvent = true;
+					break;
+				}
+			}
+
+			if (sendEvent)
+			{
+				SendEvent();
+			}
+		}
+
+		alreadySent = false;
+	}
 }
 
 void InputManager::Shutdown()

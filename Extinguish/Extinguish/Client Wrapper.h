@@ -36,6 +36,12 @@ public:
 	{
 		newClient.sendMessage(message);
 	}
+
+	void sendMessage(char * message, uint16_t stride)
+	{
+		newClient.sendMessage(message, stride);
+	}
+
 	void sendPacket()
 	{
 		newClient.sendPacket();

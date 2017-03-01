@@ -9,6 +9,12 @@
 #include "Trigger.h"
 #include "SoundEngine.h"
 #include "SoundEvent.h"
+#include "GamePad.h"
+
+namespace Move
+{
+	DirectX::GamePad::State gamePadState;
+};
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -94,6 +100,15 @@ void Movement::Update(float dt)
 
 		//footstepsPlayed = false;
 	}
+
+	//handle gamePad input
+	std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
+	Move::gamePadState = gamePad->GetState(0);
+
+	if (Move::gamePadState.IsConnected())
+	{
+		HandleGamePad();
+	}
 }
 
 void Movement::HandleEvent(Event* e)
@@ -111,7 +126,11 @@ void Movement::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				HandleInput(inputDownEvent);
+				//TODO: further optimization is to make input manager send different event or not send one at all
+				if (!Move::gamePadState.IsConnected())
+				{
+					HandleInput(inputDownEvent);
+				}
 			}
 		}
 	}
@@ -121,6 +140,17 @@ void Movement::HandleEvent(Event* e)
 bool Movement::IsMoving()
 {
 	return isMoving;
+}
+
+//setters//
+void Movement::SetKeys(char forward, char back, char left, char right, char up, char down)
+{
+	this->forward = forward;
+	this->back = back;
+	this->left = left;
+	this->right = right;
+	this->up = up;
+	this->down = down;
 }
 
 //private helper functions
@@ -186,13 +216,49 @@ void Movement::HandleInput(InputDownEvent* e)
 	//}
 }
 
-//setters//
-void Movement::SetKeys(char forward, char back, char left, char right, char up, char down)
+void Movement::HandleGamePad()
 {
-	this->forward = forward;
-	this->back = back;
-	this->left = left;
-	this->right = right;
-	this->up = up;
-	this->down = down;
+	isMoving = false;
+
+	//GamePad::ButtonStateTracker tracker;
+
+	//tracker.Update(gamePadState);
+
+	if (Move::gamePadState.IsLeftThumbStickUp())
+	{
+		XMFLOAT3 forward = transform->GetForward();
+		forward = { -forward.x, -forward.y, -forward.z };
+		transform->AddVelocity({ forward.x * moveSpeed, forward.y * moveSpeed,  forward.z * moveSpeed });
+		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
+		isMoving = true;
+	}
+
+	if (Move::gamePadState.IsLeftThumbStickDown())
+	{
+		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
+		XMFLOAT3 forward = transform->GetForward();
+		forward = { -forward.x, -forward.y, -forward.z };
+		transform->AddVelocity({ forward.x * -moveSpeed, forward.y * -moveSpeed,  forward.z * -moveSpeed });
+		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
+		isMoving = true;
+	}
+
+	if (Move::gamePadState.IsLeftThumbStickLeft())
+	{
+		XMFLOAT3 right = transform->GetRight();
+		right = { -right.x, -right.y, -right.z };
+		transform->AddVelocity({ right.x * -moveSpeed, right.y * -moveSpeed,  right.z * -moveSpeed });
+		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
+		isMoving = true;
+	}
+
+	if (Move::gamePadState.IsLeftThumbStickRight())
+	{
+		XMFLOAT3 right = transform->GetRight();
+		right = { -right.x, -right.y, -right.z };
+		transform->AddVelocity({ right.x * moveSpeed, right.y * moveSpeed,  right.z * moveSpeed });
+		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
+		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
+		isMoving = true;
+	}
 }
