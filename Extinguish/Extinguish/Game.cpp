@@ -222,33 +222,35 @@ int Game::Update(float dt)
 		clientID = 1;
 	}
 
-	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-	vector<XMFLOAT3> objectsPos, forwards;
-	objectsPos.resize(objects->size());
-	forwards.resize(objects->size());
+	if (currentScene == 2) {
+		vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+		vector<XMFLOAT3> objectsPos, forwards;
+		objectsPos.resize(objects->size());
+		forwards.resize(objects->size());
 
-	for (int i = 0; i < objects->size(); ++i)
-	{
-		//if (i != GetPlayerObjectID())
+		for (int i = 0; i < objects->size(); ++i)
 		{
-			//XMFLOAT3 objectPos;
+			//if (i != GetPlayerObjectID())
+			{
+				//XMFLOAT3 objectPos;
 
-			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+				objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+				objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+				objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-			//objectsPos.push_back(objectPos);
+				//objectsPos.push_back(objectPos);
 
-			//XMFLOAT3 forward;
-			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-			//forwards.push_back(forward);
+				//XMFLOAT3 forward;
+				forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+				//forwards.push_back(forward);
+			}
 		}
-	}
 	int index = (clientID - 1) * 3 + 2;
 
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
+	}
 
 	return returnResult;
 }
@@ -546,7 +548,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
 
-				  //deleted inside a different class
+	//deleted inside a different class
 	unsigned int* colors = new unsigned int[row * col];
 
 	GameObject* gameBall = new GameObject();
@@ -603,6 +605,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+
 		if (i <= 4)
 			mageRenderer1->SetTeamColor({ 1,0,0,0 });
 		else
@@ -610,7 +613,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(1.5f, 0.75f);
+		mageMover->Init(300, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
@@ -777,15 +780,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	GameObject* meterbox6 = new GameObject();
-	basic->AddGameObject(meterbox6);
-	meterbox6->Init("MeterBox6");
-	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer6 = new Renderer();
-	meterbox6->AddComponent(meterboxRenderer6);
-	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
-	meterbox6->AddBoxCollider(meterboxcol6);
+	
 
 	GameObject* testPlayer = new GameObject();
 	basic->AddGameObject(testPlayer);
@@ -848,6 +843,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* Wallboxcol4 = new BoxCollider(Wall4, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
 	Wall4->AddBoxCollider(Wallboxcol4);
+
+	GameObject* meterbox6 = new GameObject();
+	basic->AddGameObject(meterbox6);
+	meterbox6->Init("MeterBox6");
+	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer6 = new Renderer();
+	meterbox6->AddComponent(meterboxRenderer6);
+	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
+	meterbox6->AddBoxCollider(meterboxcol6);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
@@ -955,6 +960,7 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->MakeRects();
 	sprintMeter->setDrainTime(25.0f);
 	sprintMeter->setRechargeTime(10.0f);
+	sprintMeter->setCanRecharge(false);
 
 	CreatePauseMenu(basic);
 
@@ -1214,8 +1220,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamA->AddComponent(caButton);
 	UIRenderer * eaRender = new UIRenderer();
 	eaRender->Init(true, 25.0f, devResources, caButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
-	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
 	changeTeamA->AddComponent(eaRender);
 	eaRender->MakeRTSize();
 	caButton->MakeRect();
@@ -1234,8 +1240,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamB->AddComponent(cbButton);
 	UIRenderer * ebRender = new UIRenderer();
 	ebRender->Init(true, 25.0f, devResources, cbButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
-	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
 	changeTeamB->AddComponent(ebRender);
 	ebRender->MakeRTSize();
 	cbButton->MakeRect();
@@ -1347,6 +1353,27 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->SetActive(false);
 }
 
+void Game::AssignPlayers()
+{
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			// get teams of all players
+			/* rework networking to reassign id based on team */
+			// set mage ID
+			// all others become ai
+		}
+	}
+	else
+	{
+		// find team player selected
+		// set mage 1 to player if red team
+		// set mage 5 to player if blue team
+		// set ai to everything else
+	}
+	
+}
 
 void Game::EnableButton(std::string name, bool toggle)
 {

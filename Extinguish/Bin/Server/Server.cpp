@@ -51,7 +51,8 @@ int Server::init(uint16_t port)
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
 		names[i] = new char[8];
-		openIDs[i] = i + 1;
+		ateamIDs[i] = i + 1;
+		bteamIDs[i] = i + 5;
 	}
 
 	peer->SetOccasionalPing(true);
@@ -134,7 +135,6 @@ int  Server::update()
 		case ID_INCOMING_PACKET:
 		{
 			recievePacket();
-			//sendPackets(); // for testing purposes
 			++packRec;
 			if (result != 3)
 				result = 2;
@@ -144,7 +144,60 @@ int  Server::update()
 		{
 			recieveInput();
 			result = 3;
-			// and do something with it
+			break;
+		}
+
+		case ID_CHANGE_TEAM_A:
+		{
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			UINT8 tempID;
+			bIn.Read(tempID);
+
+			UINT8 newID;
+
+			if (tempID > 4)
+			{
+				for (unsigned int i = 0; i < 4; ++i)
+				{
+					if (ateamIDs[i] == (i + 1))
+					{
+						newID = ateamIDs[i];
+						ateamIDs[i] = 0;
+						bteamIDs[tempID - 5] = tempID;
+						break;
+					}
+				}
+			sendNew(newID);
+			}
+
+
+			break;
+		}
+		case ID_CHANGE_TEAM_B:
+		{
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			UINT8 tempID;
+			bIn.Read(tempID);
+
+			UINT8 newID;
+
+			if (tempID < 5)
+			{
+				for (unsigned int i = 0; i < 4; ++i)
+				{
+					if (bteamIDs[i] == (i + 5))
+					{
+						newID = bteamIDs[i];
+						bteamIDs[i] = 0;
+						ateamIDs[tempID - 1] = tempID;
+						break;
+					}
+				}
+			sendNew(newID);
+			}
+
 			break;
 		}
 		}
@@ -262,15 +315,26 @@ void Server::sendNew()
 	UINT8 newID;
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
-		if (openIDs[i] != 0)
+		if (ateamIDs[i] != 0)
 		{
-			newID = openIDs[i];
-			openIDs[i] = 0;
+			newID = ateamIDs[i];
+			ateamIDs[i] = 0;
 			break;
 		}
 	}
 
 	bsOut.Write(newID);
+	bsOut.Write(serverObjs);
+
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+}
+
+void Server::sendNew(UINT8 id)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
+
+	bsOut.Write(id);
 	bsOut.Write(serverObjs);
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
@@ -286,7 +350,7 @@ void Server::unregisterClient()
 	bsIn.Read(leavingID);
 	int size = nameSizes[leavingID - 1];
 
-	openIDs[leavingID - 1] = leavingID;
+	ateamIDs[leavingID - 1] = leavingID;
 	char message[30];
 	memcpy(&message[0], names[leavingID - 1], size);
 	memcpy(&message[size], " has left the lobby.\n", strlen(" has left the lobby.\n"));

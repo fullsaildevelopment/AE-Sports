@@ -58,6 +58,7 @@ private:
 	void CreateLobby(Scene * scene);
 	void CreatePauseMenu(Scene * scene);
 	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
+	void AssignPlayers();
 
 	void UpdateServerStates();
 	void UpdateClientObjects();
@@ -67,6 +68,7 @@ private:
 	void LoadScene(std::string name);
 	int UpdateLobby();
 	void EnableButton(std::string name, bool toggle);
+
 public:
 	void CreateGameWrapper();
 	~Game();

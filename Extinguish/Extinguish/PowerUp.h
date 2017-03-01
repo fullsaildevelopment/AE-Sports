@@ -5,7 +5,14 @@ class PowerUp : public Component
 {
 private:
 	enum POWERUP_TYPE {
-		NOTHING
+		NOTHING,
+		LOCK_ON,
+		SUPER_JUMP,
+		MAGNET,
+		SPEED_BOOST,
+		SHIELD_BUBBLE,
+		ROCKET_BOOTS,
+		WALL_RUNNER
 	};
 
 	POWERUP_TYPE type; // for the function pointers
