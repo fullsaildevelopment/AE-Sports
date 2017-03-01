@@ -79,14 +79,17 @@ void MeterBar::HandleEvent(Event* e)
 			if (isActive == false)
 			{
 				dTime = rTime * (drainTime / rechargeTime);
+				isActive = true;
 			}
 			else if (drain == false)
 			{
 				drain = true;
 				dTime = rTime * (drainTime / rechargeTime);
+				if (dTime <= 0.0f)
+					empty = true;
+				else
+					empty = false;
 			}
-			isActive = true;
-
 		}
 		else
 		{

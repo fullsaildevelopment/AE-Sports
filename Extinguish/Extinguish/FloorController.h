@@ -5,6 +5,9 @@
 
 class FloorController : public Component
 {
+
+	static bool score;
+	static int scorer;
 	int currPattern;
 	int transState;
 	float3* floor;
@@ -22,6 +25,12 @@ class FloorController : public Component
 	void RandomPattern(float dt);
 	void ControlMovement(float dt);
 	void ControlColors(float dt);
+	void RandomColorsInRandomPlaces();
+	void ScoreColor();
+	float sinceScore = 0;
+	bool StripColor();
+	int StripCurr = 0;
+	int StripMult = 100;
 	unsigned int team1color = 0xAD000000;
 	unsigned int team2color = 0x0000AD00;
 	float colortiming = 0;
@@ -33,4 +42,5 @@ public:
 	void SetState(int state, float dt);
 	void Update(float dt) override;
 	int GetState() { return transState; };
+	static void Score(int t);
 };
