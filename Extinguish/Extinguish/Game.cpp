@@ -310,7 +310,7 @@ void Game::HandleEvent(Event* e)
 		{
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
-			cout << "HUD stuff" << endl;
+			//cout << "HUD stuff" << endl;
 		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
