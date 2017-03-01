@@ -88,7 +88,8 @@ private:
 		ID_NEW_CLIENT,
 		ID_START_GAME,
 		ID_CHANGE_TEAM_A,
-		ID_CHANGE_TEAM_B
+		ID_CHANGE_TEAM_B,
+		ID_CLIENT_OBJ
 	};
 
 	static RakPeerInterface * peer;
@@ -102,6 +103,7 @@ private:
 	std::vector<GAME_STATE> * gameState;
 
 	UINT8 curNumOfClients;
+	UINT8 objID;
 public:
 
 #pragma pack(push, 1)
@@ -155,6 +157,7 @@ public:
 	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
+	UINT8 getObjID() { return objID; }
 
 private:
 	UINT8 objects;
