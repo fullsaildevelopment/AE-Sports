@@ -154,21 +154,21 @@ int  Server::update()
 			UINT8 tempID;
 			bIn.Read(tempID);
 
-			UINT8 newID;
+			UINT8 objID;
 
 			if (tempID > 4)
 			{
 				for (unsigned int i = 0; i < 4; ++i)
 				{
-					if (clientIDs[i] == (i + 1))
+					if (!objIDs[i].inUse)
 					{
-						newID = clientIDs[i];
-						clientIDs[i] = 0;
-				//		bteamIDs[tempID - 5] = tempID;
+						objID = objIDs[i].id;
+						objIDs[i].inUse = true;
 						break;
 					}
 				}
-			//sendNew(newID);
+				
+				sendObjID(objID);
 			}
 
 
@@ -185,14 +185,15 @@ int  Server::update()
 
 			if (tempID < 5)
 			{
-			/*	for (unsigned int i = 5; i < 9; ++i)
+				for (unsigned int i = 5; i < 9; ++i)
 				{
-					if (playerObjectIDs[i] == (i + 5))
+					if (!objIDs[i].inUse)
 					{
-						objID = playerObjectIDs[i];
+						objID = objIDs[i].id;
+						objIDs[i].inUse = true;
 						break;
 					}
-				}*/
+				}
 			sendObjID(objID);
 			}
 
