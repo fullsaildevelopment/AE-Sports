@@ -15,8 +15,18 @@
 #include "SoundEngine.h"
 #include "SoundEvent.h"
 #include "Movement.h"
+#include "GamePad.h"
+#include "Game.h"
 
 using namespace std;
+
+namespace Player
+{
+	DirectX::GamePad::State gamePadState;
+};
+
+//charge is the ability to attack a player (and it makes you go faster)
+//after *blank* seconds of sprinting, you automatically charge
 
 PlayerController::PlayerController()
 {
@@ -64,6 +74,15 @@ void PlayerController::Update(float dt)
 	{
 		StopFootstepsSound();
 	}
+
+	//handle input from controller
+	std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
+	Player::gamePadState = gamePad->GetState(0);
+
+	if (Player::gamePadState.IsConnected())
+	{
+		HandleGamePad();
+	}
 }
 
 void PlayerController::HandleEvent(Event* e)
@@ -83,8 +102,11 @@ void PlayerController::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				input = inputDownEvent->GetInput();
-				HandleInput();
+				if (!Player::gamePadState.IsConnected())
+				{
+					input = inputDownEvent->GetInput();
+					HandleInput();
+				}
 			}
 		}
 	}
@@ -99,36 +121,11 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-			cout << "Collision enter" << endl;
+			//cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
 
 			Attack();
-
-			//	const float attackForce = 1;
-
-			//	XMFLOAT3 back = transform->GetForward();
-			//	back = { -back.x, -back.y, -back.z };
-
-			//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
-
-			//	//do animation
-				//AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
-
-				//animator->SetTrigger("Stumble");
-
-				//cout << "Attack" << endl;
-
-				////make them drop ball
-				//BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
-
-				//if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
-				//{
-				//	//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-				//	ball->DropBall(otherPlayer);
-				//}
-
-				//isAttacking = false;
 
 			return;
 		}
@@ -140,21 +137,21 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (justJumped)
-			{
-				justJumped = false;
+			//if (justJumped)
+			//{
+			//	justJumped = false;
 
-				//do animation
-				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+			//	//do animation
+			//	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-				animator->SetTrigger("Land");
+			//	animator->SetTrigger("Land");
 
-				cout << "Land" << endl;
-			}
+			//	//cout << "Land" << endl;
+			//}
 
 			floor = boxCollider->GetGameObject();
 
-			cout << "box enter" << endl;
+			//cout << "box enter" << endl;
 
 			return;
 		}
@@ -175,7 +172,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		}
 
 		floor = hexCollider->GetGameObject();
-		cout << "hex enter" << endl;
+		//cout << "hex enter" << endl;
 
 		return;
 	}
@@ -191,7 +188,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (capsCollider->GetGameObject() == otherPlayer)
 			{
-				cout << "Collision exit" << endl;
+				//cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
 
@@ -208,7 +205,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (boxCollider->GetGameObject() == floor)
 			{
-				cout << "floor exit" << endl;
+				//cout << "floor exit" << endl;
 
 				floor = nullptr;
 				return;
@@ -221,7 +218,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (hexCollider->GetGameObject() == floor)
 			{
-				cout << "hex exit" << endl;
+				//cout << "hex exit" << endl;
 
 				floor = nullptr;
 			}
@@ -251,17 +248,6 @@ void PlayerController::Jump()
 
 void PlayerController::Attack()
 {
-	//if colliding with another player
-	//if (otherPlayer)
-	//{
-	//	const float attackForce = 1;
-
-	//	XMFLOAT3 back = transform->GetForward();
-	//	back = { -back.x, -back.y, -back.z };
-
-	//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
-
-
 	if (isCharging)
 	{
 		//do animation
@@ -280,20 +266,14 @@ void PlayerController::Attack()
 			ball->DropBall(otherPlayer);
 		}
 	}
-	//}
-
-	//isAttacking = true;
-
-	//transform->SetVelocity(transform->GetForwardf3() * -chargeSpeed);
 }
 
 void PlayerController::Sprint()
 {
 	isSprinting = true;
-	//chargeTimer = 0.0f;
+	chargeTimer = 0.0f;
 
 	Physics* physics = GetGameObject()->GetComponent<Physics>();
-	//physics->SetHasMaxSpeed(false);
 	originalMaxSpeed = physics->GetMaxSpeed();
 	physics->SetMaxSpeed(originalMaxSpeed * sprintMultiplier);
 
@@ -309,19 +289,10 @@ void PlayerController::HandleInput()
 		Jump();
 	}
 
-	if (input->GetKeyDown('F'))
-	{
-		//cout << "F" << endl;
-		Attack();
-	}
-
 	//this line will only happen once
 	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
 	{
 		Sprint();
-
-		//Play sound
-
 
 		cout << "Sprint" << endl;
 	}
@@ -341,24 +312,61 @@ void PlayerController::HandleInput()
 	}
 }
 
+void PlayerController::HandleGamePad()
+{
+	GamePad::ButtonStateTracker tracker;
+
+	tracker.Update(Player::gamePadState);
+
+	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
+	{
+		Jump();
+	}
+
+	//this line will only happen once
+	//if ( && !isSprinting && canSprint) //16 == Left Shift
+	//{
+	//	Sprint();
+
+	//	//Play sound
+
+
+	//	cout << "Sprint" << endl;
+	//}
+	//else if (input->GetKeyUp(16) && isSprinting)
+	//{
+	//	isSprinting = false;
+	//	isCharging = false;
+
+	//	Physics* physics = GetGameObject()->GetComponent<Physics>();
+	//	physics->SetMaxSpeed(originalMaxSpeed);
+	//	//physics->SetHasMaxSpeed(true);
+
+	//	cout << "Stop Sprint" << endl;
+
+	//	//revert back to walk footsteps
+	//	SetFootstepsSound(0);
+	//}
+}
+
 void PlayerController::HandleSprintAndCharge()
 {
-	float multiplier;
+	float speedMultiplier;
 	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
 
 	if (isSprinting && canSprint)
 	{
-		if (isCharging) // wat
+		if (isCharging) //if currently charging, just change speed multiplier
 		{
-			multiplier = chargeMultiplier;
+			speedMultiplier = chargeMultiplier;
 
 			//TODO: do some visual effect
 
 		}
-		else if (chargeTimer >= timeTilCharge && !isCharging) // wat
+		else if (chargeTimer >= timeTilCharge && !isCharging)  //if not charging but you should be charging, charge
 		{
-			multiplier = chargeMultiplier;
-			//isSprinting = false;
+			speedMultiplier = chargeMultiplier;
+			//isSprinting = false; //charging is sprinting but sprinting isn't necessarily charging
 			isCharging = true;
 
 			cout << "Charge time" << endl;
@@ -370,43 +378,28 @@ void PlayerController::HandleSprintAndCharge()
 
 			//TODO: do some visual effect
 		}
-		else
+		else //if not charging then sprint
 		{
-			multiplier = sprintMultiplier;
+			speedMultiplier = sprintMultiplier;
 		}
 
-	//	float percentage = meterBar->GetPercentage() - sprintCost * dt;
-
-		//if small enough, then make it 0
-		//if (percentage <= 0.001f)
 		if (!meterBar->isDraining() && meterBar->getActive()) // recharging
 		{
-			//sprintAgainTimer = 0.0f;
-	//		percentage = 0.0f;
 			canSprint = false;
 			isCharging = false;
+			SetFootstepsSound(0);
 		}
-		else if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
+
+		//set velocity to respective velocity every frame
+		transform->AddVelocity(transform->GetForwardf3() * -speedMultiplier * 10.0f);
+	}
+	else if (!canSprint) //if you can't sprint, look for reasons to sprint
+	{
+		if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
 		{
 			canSprint = true;
 		}
-
-
-		//set velocity to respective velocity every frame
-		transform->AddVelocity(transform->GetForwardf3() * -multiplier * 10.0f);
 	}
-
-	//this was going to be the code for if we had the sprint bar regenerate
-
-	//else if (!canSprint)
-	//{
-	//	if (sprintAgainTimer >= timeTilSprint)
-	//	{
-	//		canSprint = true;
-
-	//		//
-	//	}
-	//}
 }
 
 void PlayerController::PlayFootstepsSound()
@@ -415,7 +408,7 @@ void PlayerController::PlayFootstepsSound()
 
 	if (GetGameObject()->FindIndexOfGameObject(GetGameObject()) == 2)
 	{
-		cout << footstepsSound << endl;
+		//cout << footstepsSound << endl;
 	}
 
 	switch (footstepsSound)

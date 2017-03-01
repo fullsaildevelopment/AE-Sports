@@ -244,6 +244,21 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	return 1;
 }
 
+void Client::sendMessage(char * message, uint16_t stride)
+{
+	BitStream bsOut;
+
+	bsOut.Write((RakNet::MessageID)ID_INCOMING_MESSAGE);
+	bsOut.Write(stride);
+
+	for (uint16_t i = 0; i < stride; ++i)
+	{
+		bsOut.Write(message[i]);
+	}
+
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+}
+
 void Client::sendMessage(char * message, GameMessages ID)
 {
 	BitStream bsOut;
