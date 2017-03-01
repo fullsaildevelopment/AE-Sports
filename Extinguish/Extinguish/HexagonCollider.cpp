@@ -97,7 +97,8 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 			//TopTopTop
 			if (CheckCapsuleAABB((int)floor(row * 0.821f) * col, row * col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row*0.821f), row, cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.821f); i < row; ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -136,12 +137,13 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 			//TopTopBottom
 			else if (CheckCapsuleAABB((int)floor(row * 0.741f) * col, (int)ceil(row * 0.839f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row * 0.741f), (int)ceil(row * 0.839f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.741f); i < (int)ceil(row * 0.83f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -179,7 +181,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 		//TopBottom
@@ -188,7 +190,8 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 			//TopBottomTop
 			if (CheckCapsuleAABB((int)floor(row * 0.621f) * col, (int)ceil(row * 0.759f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row * 0.621f), (int)ceil(row * 0.759f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.621f); i < (int)ceil(row * 0.759f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -226,12 +229,13 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 			//TopBottomBottom
 			else if (CheckCapsuleAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.639f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row * 0.49f), (int)ceil(row * 0.639f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.639f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -269,7 +273,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -282,7 +286,8 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 			//BottomTopTop
 			if (CheckCapsuleAABB((int)floor(row * 0.371f) * col, (int)ceil(row * 0.51f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row * 0.371f), (int)ceil(row * 0.51f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.371f); i < (int)ceil(row * 0.51f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -320,12 +325,13 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 			//BottomTopBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.389f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row * 0.241f), (int)ceil(row * 0.389f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.389f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -363,7 +369,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 		//BottomBottom
@@ -372,7 +378,8 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 			//BottomBottomTop
 			if (CheckCapsuleAABB((int)floor(row * 0.121f) * col, (int)ceil(row * 0.259f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, (int)floor(row * 0.121f), (int)ceil(row * 0.259f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = (int)floor(row * 0.121f); i < (int)ceil(row * 0.259f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -410,12 +417,13 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 			//BottomBottomBottom
 			if (CheckCapsuleAABB(0, (int)ceil(row * 0.121f) * col + col - 1, c))
 			{
-				AABB test;
+				collided = CheckCapsule(tg, 0, (int)ceil(row * 0.121f), cap, c, vel, f);
+				/*AABB test;
 				for (int i = 0; i < (int)ceil(row * 0.121f); ++i)
 				{
 					test.min = poses[i * col] - float3(1, 10, 1);
@@ -454,7 +462,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -470,9 +478,46 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, GameObject* Other
 	return collided;
 }
 
-bool HexagonCollider::CheckCapsule(int _min, int _max, Capsule cap)
+bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCollider* cap, Capsule c, float3 vel, int f)
 {
-	return false;
+	AABB test;
+	bool collided = false;
+	for (int i = _min; i < _max; ++i)
+	{
+		test.min = poses[i * col] - float3(1, 10, 1);
+		test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+		if (AABBToCapsule(test, c))
+		{
+			for (int j = 0; j < col; ++j)
+			{
+				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, vel);
+				if (!n.isEquil(zeroF))
+				{
+					bool apg = false;
+					if (!n.isEquil(float3(0, 1, 0)))
+						apg = true;
+					Physics* op = objects[f]->GetComponent<Physics>();
+					if (op)
+					{
+						op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false, { 0,0,0 }, apg);
+						if (!CollidingWith[f])
+						{
+							tg->OnCollisionEnter(cap);
+							objects[f]->OnCollisionEnter(this);
+							CollidingWith[f] = true;
+						}
+						collided = true;
+					}
+					else
+					{
+						objects[f]->GetTransform()->SetVelocity(vel);
+						objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
+					}
+				}
+			}
+		}
+	}
+	return collided;
 }
 
 void HexagonCollider::FixedUpdate(float dt)
