@@ -146,5 +146,7 @@ public:
 	int getScoreB() { return newClient.getScoreB(); }
 	float getTime() { return newClient.getTime(); }
 
+	UINT8 getObjID() { return newClient.getObjID(); }
+
 	UINT8 getNumClients() { return newClient.getNumClients(); }
 };

@@ -80,23 +80,26 @@ void MeterBar::HandleEvent(Event* e)
 			{
 				dTime = rTime * (drainTime / rechargeTime);
 			}
+			else if (drain == false)
+			{
+				drain = true;
+				dTime = rTime * (drainTime / rechargeTime);
+			}
 			isActive = true;
 
-			printf("drain\n");
 		}
 		else
 		{
 			if (drain && isActive == true)
 			{
+				drain = false;
 				rTime = dTime * (rechargeTime / drainTime);
 
 				if (rTime > rechargeTime)
 					rTime = rechargeTime;
 			}
 
-			isActive = false;
-
-			printf("recharge\n");
+		//	isActive = false;
 		}
 	}
 }

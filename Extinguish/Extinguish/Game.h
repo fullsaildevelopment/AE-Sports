@@ -48,6 +48,7 @@ private:
 	std::vector<GameState*> gameStates;
 
 	static int clientID;
+	static int objID;
 
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
