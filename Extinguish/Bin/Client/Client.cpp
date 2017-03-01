@@ -187,13 +187,12 @@ int Client::run()
 		{
 			return 6;
 		}
-		case ID_CHANGE_TEAM_A:
+		case ID_CLIENT_OBJ:
 		{
-			break;
-		}
-		case ID_CHANGE_TEAM_B:
-		{
-			break;
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			bIn.Read(objID);
+			return 7;
 		}
 		}
 	}

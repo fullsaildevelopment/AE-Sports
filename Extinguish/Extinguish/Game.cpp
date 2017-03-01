@@ -40,6 +40,7 @@ ClientWrapper Game::client;
 ServerWrapper Game::server;
 unsigned int Game::currentScene;
 int Game::returnResult = 1;
+int Game::objID = 1;
 
 Game::~Game()
 {
@@ -223,36 +224,34 @@ int Game::Update(float dt)
 		clientID = 1;
 	}
 
-	if (currentScene == 2) {
-		vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-		vector<XMFLOAT3> objectsPos, forwards;
-		objectsPos.resize(objects->size());
-		forwards.resize(objects->size());
+	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+	vector<XMFLOAT3> objectsPos, forwards;
+	objectsPos.resize(objects->size());
+	forwards.resize(objects->size());
 
-		for (int i = 0; i < objects->size(); ++i)
+	for (int i = 0; i < objects->size(); ++i)
+	{
+		//if (i != GetPlayerObjectID())
 		{
-			//if (i != GetPlayerObjectID())
-			{
-				//XMFLOAT3 objectPos;
+			//XMFLOAT3 objectPos;
 
-				objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-				objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-				objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-				//objectsPos.push_back(objectPos);
+			//objectsPos.push_back(objectPos);
 
-				//XMFLOAT3 forward;
-				forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-				//forwards.push_back(forward);
-			}
+			//XMFLOAT3 forward;
+			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+			//forwards.push_back(forward);
 		}
+	}
 	int index = (clientID - 1) * 3 + 2;
 
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
-	}
-
+	
 	return returnResult;
 }
 
@@ -981,7 +980,7 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->MakeRects();
 	sprintMeter->setDrainTime(5.0f);
 	sprintMeter->setRechargeTime(10.0f);
-	sprintMeter->setCanRecharge(false);
+	sprintMeter->setCanRecharge(true);
 
 	CreatePauseMenu(basic);
 
@@ -1622,6 +1621,8 @@ int Game::UpdateLobby()
 		UpdateLobbyUI(client.getNumClients());
 	else if (clientState == 6)
 		LoadScene("FirstLevel");
+	else if (clientState == 7)
+		objID = client.getObjID();
 
 
 	return clientState;
