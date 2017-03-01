@@ -389,17 +389,13 @@ void PlayerController::HandleSprintAndCharge()
 			isCharging = false;
 			SetFootstepsSound(0);
 		}
-		else
-		{
-			canSprint = true; // maybe?
-		}
 
 		//set velocity to respective velocity every frame
 		transform->AddVelocity(transform->GetForwardf3() * -speedMultiplier * 10.0f);
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
-		if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
+		if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty()) // fully charged
 		{
 			canSprint = true;
 		}
