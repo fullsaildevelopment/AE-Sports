@@ -130,6 +130,15 @@ public:
 		newClient.setRotation(rot);
 	}
 
+	void changeTeamA()
+	{
+		newClient.changeTeam(0);
+	}
+
+	void changeTeamB()
+	{
+		newClient.changeTeam(1);
+	}
 
 	int getFloorState(unsigned int i) { return newClient.getFloorState(i); }
 

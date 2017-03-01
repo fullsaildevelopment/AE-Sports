@@ -223,33 +223,35 @@ int Game::Update(float dt)
 		clientID = 1;
 	}
 
-	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-	vector<XMFLOAT3> objectsPos, forwards;
-	objectsPos.resize(objects->size());
-	forwards.resize(objects->size());
+	if (currentScene == 2) {
+		vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+		vector<XMFLOAT3> objectsPos, forwards;
+		objectsPos.resize(objects->size());
+		forwards.resize(objects->size());
 
-	for (int i = 0; i < objects->size(); ++i)
-	{
-		//if (i != GetPlayerObjectID())
+		for (int i = 0; i < objects->size(); ++i)
 		{
-			//XMFLOAT3 objectPos;
+			//if (i != GetPlayerObjectID())
+			{
+				//XMFLOAT3 objectPos;
 
-			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+				objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+				objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+				objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-			//objectsPos.push_back(objectPos);
+				//objectsPos.push_back(objectPos);
 
-			//XMFLOAT3 forward;
-			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-			//forwards.push_back(forward);
+				//XMFLOAT3 forward;
+				forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+				//forwards.push_back(forward);
+			}
 		}
-	}
 	int index = (clientID - 1) * 3 + 2;
 
 	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
+	}
 
 	return returnResult;
 }
@@ -979,6 +981,7 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->MakeRects();
 	sprintMeter->setDrainTime(5.0f);
 	sprintMeter->setRechargeTime(10.0f);
+	sprintMeter->setCanRecharge(false);
 
 	CreatePauseMenu(basic);
 
@@ -1238,8 +1241,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamA->AddComponent(caButton);
 	UIRenderer * eaRender = new UIRenderer();
 	eaRender->Init(true, 25.0f, devResources, caButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
-	eaRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+	eaRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
 	changeTeamA->AddComponent(eaRender);
 	eaRender->MakeRTSize();
 	caButton->MakeRect();
@@ -1258,8 +1261,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamB->AddComponent(cbButton);
 	UIRenderer * ebRender = new UIRenderer();
 	ebRender->Init(true, 25.0f, devResources, cbButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR.png");
-	ebRender->DecodeBitmap(L"../Assets/UI/smallHexR2.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+	ebRender->DecodeBitmap(L"../Assets/UI/smallHexB2.png");
 	changeTeamB->AddComponent(ebRender);
 	ebRender->MakeRTSize();
 	cbButton->MakeRect();
@@ -1371,6 +1374,27 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->SetActive(false);
 }
 
+void Game::AssignPlayers()
+{
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			// get teams of all players
+			/* rework networking to reassign id based on team */
+			// set mage ID
+			// all others become ai
+		}
+	}
+	else
+	{
+		// find team player selected
+		// set mage 1 to player if red team
+		// set mage 5 to player if blue team
+		// set ai to everything else
+	}
+	
+}
 
 void Game::EnableButton(std::string name, bool toggle)
 {
