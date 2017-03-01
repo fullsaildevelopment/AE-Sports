@@ -64,7 +64,6 @@ void MeterBar::Update(float dt)
 				rect2 = ShrinkRect(rTime, rechargeTime);
 		}
 	}
-
 }
 
 void MeterBar::HandleEvent(Event* e)
