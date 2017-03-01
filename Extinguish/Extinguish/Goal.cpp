@@ -3,6 +3,7 @@
 #include "EventDispatcher.h"
 #include "ScoreEvent.h"
 #include "BallController.h"
+#include "FloorController.h"
 
 Goal::Goal(GameObject* g) : Component(g)
 {
@@ -30,4 +31,5 @@ void Goal::Score(int team)
 	bt->SetPosition({ -7,15,-20.5f });
 	bt->SetVelocity({ 0,0,0 });
 	bt->GetGameObject()->GetComponent<BallController>()->SetHolder(nullptr);
+	FloorController::Score(team);
 }

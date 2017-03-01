@@ -24,7 +24,7 @@ private:
 	float rechargeTime, rTime; // rTime is the countdown time, rechargeTime doesn't change
 	float drainTime, dTime; // dTime is the countdown time, drainTime doesn't change
 	bool drain = true;
-	bool canRecharge;
+	bool canRecharge, empty;
 
 	/* other */
 	unsigned int sceneIndex;
@@ -49,6 +49,7 @@ public:
 	float getDrainTimeElapsed() { return drainTime - dTime; } // current time elapsed drain
 	float getRechargeTimeElapsed() { return rechargeTime - rTime; } // current time elapsed recharge
 	bool isDraining() { return drain; } // if false == recharge || false && !isActive == fully charged
+	bool isEmpty() { return empty; }
 
 	/* setters */
 	void setHeight(float _height) { height = _height; }
