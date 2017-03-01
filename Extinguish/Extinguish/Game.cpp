@@ -28,6 +28,7 @@
 #include "LoadSceneEvent.h"
 #include "SoundEvent.h"
 #include "CoughtEvent.h"
+#include "GamePadEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -308,7 +309,7 @@ void Game::HandleEvent(Event* e)
 		{
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
-			cout << "HUD stuff" << endl;
+			//cout << "HUD stuff" << endl;
 		}
 		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
@@ -400,6 +401,26 @@ void Game::HandleEvent(Event* e)
 	if (coughtEvent)
 	{
 		gameStates[coughtEvent->id]->hasBall = coughtEvent->holding;
+		return;
+	}
+
+	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+	if (gamePadEvent)
+	{
+		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
+		//(currentScene < 2)
+		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		{
+			//inputDownEvent->SetID(clientID);
+			inputDownEvent->SetIsServer(true);
+			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+		}
+		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
+		{
+			client.sendInput(inputDownEvent);
+		}
+
 		return;
 	}
 }
@@ -957,7 +978,7 @@ void Game::CreateUI(Scene * basic)
 	sprintBar->AddComponent(sprintRender);
 	sprintRender->MakeRTSize();
 	sprintMeter->MakeRects();
-	sprintMeter->setDrainTime(25.0f);
+	sprintMeter->setDrainTime(5.0f);
 	sprintMeter->setRechargeTime(10.0f);
 	sprintMeter->setCanRecharge(true);
 

@@ -83,6 +83,7 @@ private:
 		ID_INCOMING_STATE,
 		ID_NEW_CLIENT,
 		ID_START_GAME,
+		ID_INCOMING_MESSAGE,
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ
@@ -143,6 +144,7 @@ private:
 	std::vector<Server::GAME_STATE> * gameState;
 	SOCKET serverSocket;
 	bool npDec = false;
+	char* message;
 public:
 	Server();
 	~Server();
@@ -202,5 +204,6 @@ private:
 	void sendDisconnect(bool broadcast);
 	void recievePacket();
 	void recieveInput();
+	void ReceiveMessage();
 };
 

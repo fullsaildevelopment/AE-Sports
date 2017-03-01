@@ -87,6 +87,7 @@ private:
 		ID_INCOMING_STATE,
 		ID_NEW_CLIENT,
 		ID_START_GAME,
+		ID_INCOMING_MESSAGE,
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ
@@ -132,6 +133,7 @@ public:
 	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer);
 	void sendStop();
 	void sendMessage(char * newMessage);
+	void sendMessage(char * message, uint16_t stride);
 	void sendPacket();
 	void changeTeam(UINT16 team);
 
