@@ -80,6 +80,72 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_RunningPantShort" ID="{AB7D6FDE-1CF4-48C5-84B3-78883F81014A}">
+					<ChildrenList>
+						<Action Name="Play" ID="{58284EB4-EA65-4F72-84C1-241E709DB6DF}" ShortID="130954859" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{99D40564-2B39-412B-AFF7-E0408BA52316}" Global="false">
+									<ObjectRef Name="RunningPantShort" ID="{B30536C9-50D4-4DF4-A800-22CF78A9DC2B}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_RunningPantShort" ID="{B9320BD1-E8A4-4DBE-9B6C-5942880A110E}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{0A79B849-5FC6-4C1F-97E3-FE003BE18DA3}" ShortID="6826062" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{DAF15E7B-F065-4814-80A5-F14730EB027F}" Global="false">
+									<ObjectRef Name="RunningPantShort" ID="{B30536C9-50D4-4DF4-A800-22CF78A9DC2B}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Footsteps__Charge_" ID="{4FF87D44-5FC1-4AEE-9C84-EE76A60FC4F8}">
+					<ChildrenList>
+						<Action Name="Play" ID="{4062F4F1-B607-4D17-B861-42EE4312D604}" ShortID="928847530" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{5C3DBD41-33DA-4082-B964-57FD03FD1F41}" Global="false">
+									<ObjectRef Name="Footsteps (Charge)" ID="{413D7390-28C7-42BE-8FC2-4B6EDEBF0118}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_Footsteps__Charge_" ID="{1C3FA430-5470-45F5-B213-315DE5F1B04D}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{33B2ABB1-F4F0-4D7A-8362-AB923E59F2FA}" ShortID="816688674" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{ADD854F7-365C-4925-944D-F84D533FCC23}" Global="false">
+									<ObjectRef Name="Footsteps (Charge)" ID="{413D7390-28C7-42BE-8FC2-4B6EDEBF0118}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Footsteps__Sprint_" ID="{3238E085-B286-4DB9-987D-548088DA6238}">
+					<ChildrenList>
+						<Action Name="Play" ID="{D7860326-5A21-47E3-BC64-104FFD131C01}" ShortID="620138948" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{308DA9D0-D6DF-4AB9-8DEC-3A607F943049}" Global="false">
+									<ObjectRef Name="Footsteps (Sprint)" ID="{9DBC1349-D8D3-4E01-A343-B88E58B4BB1A}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_Footsteps__Sprint_" ID="{3D96B7CC-D935-4329-9C1A-68E37754F0EE}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{86A70FF8-7A23-4F1E-B4AE-D6B09A0E59D6}" ShortID="124426700" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{2B9269D4-B0A4-4C3A-9F3A-F7C574C0ED3B}" Global="false">
+									<ObjectRef Name="Footsteps (Sprint)" ID="{9DBC1349-D8D3-4E01-A343-B88E58B4BB1A}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

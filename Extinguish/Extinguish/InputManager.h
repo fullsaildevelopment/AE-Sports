@@ -2,6 +2,7 @@
 #include "Includes.h"
 //#include <Windows.h>
 #include <windowsx.h>
+#include "GamePad.h"
 
 class InputManager
 {
@@ -28,11 +29,14 @@ private:
 	//KeyState mouseButtons[3];
 
 	bool alreadySent;
+	bool isController;
+	DirectX::GamePad::State gamePadState;
 
 	//private helper functions
 	void SendEvent();
 
 public:
+	InputManager();
 	~InputManager();
 
 	//basic

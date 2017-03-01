@@ -40,6 +40,11 @@ public:
 		newServer.sendPackets();
 		int result = newServer.update();
 
+		if (result == 4)
+		{
+
+		}
+
 		if (result == 3)
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();

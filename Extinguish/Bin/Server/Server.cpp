@@ -147,6 +147,10 @@ int  Server::update()
 			// and do something with it
 			break;
 		}
+		case ID_INCOMING_MESSAGE:
+			ReceiveMessage();
+			result = 4;
+			break;
 		}
 	}
 
@@ -384,6 +388,23 @@ void Server::sendPackets()
 			bOut.Write(clientStates[0][i].hasSound);
 		}
 		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+	}
+}
+
+void Server::ReceiveMessage()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	uint16_t stride;
+	bIn.Read(stride);
+
+	delete message;
+	message = new char[stride];
+
+	for (int i = 0; i < stride; ++i)
+	{
+		bIn.Read(message[i]);
 	}
 }
 
