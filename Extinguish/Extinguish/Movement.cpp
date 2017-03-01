@@ -163,7 +163,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * moveSpeed, forward.y * moveSpeed,  forward.z * moveSpeed });
+		transform->AddVelocity({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt});
 		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
@@ -173,7 +173,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * -moveSpeed, forward.y * -moveSpeed,  forward.z * -moveSpeed });
+		transform->AddVelocity({ forward.x * -moveSpeed* dt, forward.y * -moveSpeed* dt,  forward.z * -moveSpeed * dt });
 		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		isMoving = true;
 	}
@@ -182,7 +182,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * -moveSpeed, right.y * -moveSpeed,  right.z * -moveSpeed });
+		transform->AddVelocity({ right.x * -moveSpeed* dt, right.y * -moveSpeed* dt,  right.z * -moveSpeed * dt });
 		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		isMoving = true;
 	}
@@ -191,7 +191,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * moveSpeed, right.y * moveSpeed,  right.z * moveSpeed });
+		transform->AddVelocity({ right.x * moveSpeed* dt, right.y * moveSpeed* dt,  right.z * moveSpeed * dt });
 		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;

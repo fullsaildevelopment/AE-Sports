@@ -111,12 +111,6 @@ void CapsuleCollider::FixedUpdate(float dt)
 					objects[i]->OnCollisionExit(this);
 					tg->OnCollisionExit(box);
 				}
-				else if (otherBox == box)
-				{
-					otherBox->OnCollisionExit(this);
-					tg->OnCollisionExit(otherBox);
-					otherBox = nullptr;
-				}
 			}
 			continue;
 		}
