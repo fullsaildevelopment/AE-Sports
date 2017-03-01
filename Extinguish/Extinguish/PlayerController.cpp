@@ -121,7 +121,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-			cout << "Collision enter" << endl;
+			//cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
 
@@ -137,21 +137,21 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (justJumped)
-			{
-				justJumped = false;
+			//if (justJumped)
+			//{
+			//	justJumped = false;
 
-				//do animation
-				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+			//	//do animation
+			//	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-				animator->SetTrigger("Land");
+			//	animator->SetTrigger("Land");
 
-				cout << "Land" << endl;
-			}
+			//	//cout << "Land" << endl;
+			//}
 
 			floor = boxCollider->GetGameObject();
 
-			cout << "box enter" << endl;
+			//cout << "box enter" << endl;
 
 			return;
 		}
@@ -172,7 +172,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		}
 
 		floor = hexCollider->GetGameObject();
-		cout << "hex enter" << endl;
+		//cout << "hex enter" << endl;
 
 		return;
 	}
@@ -188,7 +188,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (capsCollider->GetGameObject() == otherPlayer)
 			{
-				cout << "Collision exit" << endl;
+				//cout << "Collision exit" << endl;
 
 				otherPlayer = nullptr;
 
@@ -205,7 +205,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (boxCollider->GetGameObject() == floor)
 			{
-				cout << "floor exit" << endl;
+				//cout << "floor exit" << endl;
 
 				floor = nullptr;
 				return;
@@ -218,7 +218,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (hexCollider->GetGameObject() == floor)
 			{
-				cout << "hex exit" << endl;
+				//cout << "hex exit" << endl;
 
 				floor = nullptr;
 			}
@@ -387,14 +387,18 @@ void PlayerController::HandleSprintAndCharge()
 		{
 			canSprint = false;
 			isCharging = false;
-		}
-		else if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
-		{
-			canSprint = true;
+			SetFootstepsSound(0);
 		}
 
 		//set velocity to respective velocity every frame
 		transform->AddVelocity(transform->GetForwardf3() * -speedMultiplier * 10.0f);
+	}
+	else if (!canSprint) //if you can't sprint, look for reasons to sprint
+	{
+		if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
+		{
+			canSprint = true;
+		}
 	}
 }
 
@@ -404,7 +408,7 @@ void PlayerController::PlayFootstepsSound()
 
 	if (GetGameObject()->FindIndexOfGameObject(GetGameObject()) == 2)
 	{
-		cout << footstepsSound << endl;
+		//cout << footstepsSound << endl;
 	}
 
 	switch (footstepsSound)
