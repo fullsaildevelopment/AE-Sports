@@ -173,7 +173,7 @@ void Transform::FixedUpdate(float dt)
 //setters
 void Transform::BDirty()
 {
-	//only mark as dirty if it's not already dirty. This makes sure you don't mark children as dirty unecessarily
+	//only mark as dirty if it's not already dirty. This makes sure you don't mark children as dirty unnecessarily
 	if (!bDirty)
 	{
 		bDirty = true;
@@ -378,10 +378,7 @@ Transform* Transform::GetChild(int index)
 
 float3 Transform::GetForwardf3()
 {
-	float3 result(local._31, local._32, local._33);
-	result.normalize();
-
-	return result;
+	return float3(local._31, local._32, local._33).normalize();
 }
 
 DirectX::XMFLOAT3 Transform::GetForward()
@@ -408,9 +405,7 @@ DirectX::XMFLOAT3 Transform::GetUp()
 
 float3 Transform::GetRightf3()
 {
-	float3 vec = float3(local._11, local._12, local._13);
-	vec.normalize();
-	return vec;
+	return float3(local._11, local._12, local._13).normalize();
 }
 
 DirectX::XMFLOAT3 Transform::GetRight()
