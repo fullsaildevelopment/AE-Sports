@@ -23,7 +23,7 @@ void Physics::FixedUpdate(float dt)
 			nV += transform->GetVelocity() * (-airdrag * dt);
 		}
 		//apply friction if touching
-		if(colliding)
+		if(colliding && !stillapplygravity)
 		{
 			nV += transform->GetVelocity() * -1 * friction * dt;
 		}

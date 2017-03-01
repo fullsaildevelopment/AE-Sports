@@ -19,12 +19,12 @@ private:
 	float height, width;
 	float widthMult, heightMult;
 	bool isActive;
-	//float percentage;
 
 	/* for cooldowns */
 	float rechargeTime, rTime; // rTime is the countdown time, rechargeTime doesn't change
 	float drainTime, dTime; // dTime is the countdown time, drainTime doesn't change
 	bool drain = true;
+	bool canRecharge;
 
 	/* other */
 	unsigned int sceneIndex;
@@ -46,6 +46,8 @@ public:
 	bool getActive() { return isActive; } // if the bar is active | will render if true
 	float getDrainTime() { return dTime; } // current drain time (dTime == 0.0f -> fully drained | no energy)
 	float getRechargeTime() { return rTime; } // current time of recharge (rTime == rechargeTime -> fully charged)
+	float getDrainTimeElapsed() { return drainTime - dTime; } // current time elapsed drain
+	float getRechargeTimeElapsed() { return rechargeTime - rTime; } // current time elapsed recharge
 	bool isDraining() { return drain; } // if false == recharge || false && !isActive == fully charged
 
 	/* setters */
@@ -57,6 +59,7 @@ public:
 	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
 	void setRechargeTime(float time) { rechargeTime = time; rTime = time; }
 	void setDrainTime(float time) { drainTime = time; dTime = time; }
+	void setCanRecharge(bool recharge) { canRecharge = recharge; }
 
 	/* helpers */
 	D2D1_RECT_F MakeRect() {

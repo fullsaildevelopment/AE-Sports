@@ -82,7 +82,9 @@ private:
 		ID_INCOMING_INPUT,
 		ID_INCOMING_STATE,
 		ID_NEW_CLIENT,
-		ID_START_GAME
+		ID_START_GAME,
+		ID_CHANGE_TEAM_A,
+		ID_CHANGE_TEAM_B
 	};
 
 
@@ -124,7 +126,8 @@ private:
 	Packet * packet;
 	char * names[MAX_PLAYERS];
 	UINT8  nameSizes[MAX_PLAYERS];
-	UINT8  openIDs[MAX_PLAYERS];
+	UINT8  ateamIDs[MAX_PLAYERS];
+	UINT8  bteamIDs[MAX_PLAYERS];
 	bool newInput[MAX_PLAYERS];
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
@@ -178,6 +181,7 @@ private:
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();
+	void sendNew(UINT8 id);
 	void unregisterClient();
 	void sendDisconnect(bool broadcast);
 	void recievePacket();

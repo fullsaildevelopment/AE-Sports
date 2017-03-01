@@ -34,7 +34,7 @@ void MeterBar::Update(float dt)
 				rTime = 0.0f;
 			}
 		}
-		else
+		else if (canRecharge)
 		{
 			rTime += dt;
 
@@ -46,8 +46,10 @@ void MeterBar::Update(float dt)
 			else
 				rect2 = ShrinkRect(rTime, rechargeTime);
 		}
+		else
+			isActive = false;
 	}
-	else
+	else if (canRecharge)
 	{
 		if (rTime < rechargeTime)
 		{
