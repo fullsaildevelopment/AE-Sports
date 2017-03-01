@@ -393,7 +393,7 @@ void PlayerController::HandleSprintAndCharge()
 
 
 		//set velocity to respective velocity every frame
-		transform->SetVelocity(transform->GetForwardf3() * -multiplier * 100.0f);
+		transform->AddVelocity(transform->GetForwardf3() * -multiplier * 10.0f);
 	}
 
 	//this was going to be the code for if we had the sprint bar regenerate

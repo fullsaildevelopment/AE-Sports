@@ -603,6 +603,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+
 		if (i <= 4)
 			mageRenderer1->SetTeamColor({ 1,0,0,0 });
 		else
@@ -610,7 +611,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(1.5f, 0.75f);
+		mageMover->Init(300, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
@@ -777,15 +778,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	GameObject* meterbox6 = new GameObject();
-	basic->AddGameObject(meterbox6);
-	meterbox6->Init("MeterBox6");
-	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer6 = new Renderer();
-	meterbox6->AddComponent(meterboxRenderer6);
-	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
-	meterbox6->AddBoxCollider(meterboxcol6);
+	
 
 	GameObject* testPlayer = new GameObject();
 	basic->AddGameObject(testPlayer);
@@ -848,6 +841,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
 	BoxCollider* Wallboxcol4 = new BoxCollider(Wall4, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
 	Wall4->AddBoxCollider(Wallboxcol4);
+
+	GameObject* meterbox6 = new GameObject();
+	basic->AddGameObject(meterbox6);
+	meterbox6->Init("MeterBox6");
+	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* meterboxRenderer6 = new Renderer();
+	meterbox6->AddComponent(meterboxRenderer6);
+	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
+	meterbox6->AddBoxCollider(meterboxcol6);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
