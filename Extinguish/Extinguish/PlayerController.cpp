@@ -25,6 +25,9 @@ namespace Player
 	DirectX::GamePad::State gamePadState;
 };
 
+//charge is the ability to attack a player (and it makes you go faster)
+//after *blank* seconds of sprinting, you automatically charge
+
 PlayerController::PlayerController()
 {
 
@@ -123,31 +126,6 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 			otherPlayer = capsCollider->GetGameObject();
 
 			Attack();
-
-			//	const float attackForce = 1;
-
-			//	XMFLOAT3 back = transform->GetForward();
-			//	back = { -back.x, -back.y, -back.z };
-
-			//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
-
-			//	//do animation
-				//AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
-
-				//animator->SetTrigger("Stumble");
-
-				//cout << "Attack" << endl;
-
-				////make them drop ball
-				//BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
-
-				//if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
-				//{
-				//	//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-				//	ball->DropBall(otherPlayer);
-				//}
-
-				//isAttacking = false;
 
 			return;
 		}
@@ -270,17 +248,6 @@ void PlayerController::Jump()
 
 void PlayerController::Attack()
 {
-	//if colliding with another player
-	//if (otherPlayer)
-	//{
-	//	const float attackForce = 1;
-
-	//	XMFLOAT3 back = transform->GetForward();
-	//	back = { -back.x, -back.y, -back.z };
-
-	//	//otherPlayer->AddVelocity({ back.x * attackForce, back.y * attackForce, back.z * attackForce });
-
-
 	if (isCharging)
 	{
 		//do animation
@@ -299,20 +266,14 @@ void PlayerController::Attack()
 			ball->DropBall(otherPlayer);
 		}
 	}
-	//}
-
-	//isAttacking = true;
-
-	//transform->SetVelocity(transform->GetForwardf3() * -chargeSpeed);
 }
 
 void PlayerController::Sprint()
 {
 	isSprinting = true;
-	//chargeTimer = 0.0f;
+	chargeTimer = 0.0f;
 
 	Physics* physics = GetGameObject()->GetComponent<Physics>();
-	//physics->SetHasMaxSpeed(false);
 	originalMaxSpeed = physics->GetMaxSpeed();
 	physics->SetMaxSpeed(originalMaxSpeed * sprintMultiplier);
 
@@ -328,19 +289,10 @@ void PlayerController::HandleInput()
 		Jump();
 	}
 
-	//if (input->GetKeyDown('F'))
-	//{
-	//	//cout << "F" << endl;
-	//	Attack();
-	//}
-
 	//this line will only happen once
 	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
 	{
 		Sprint();
-
-		//Play sound
-
 
 		cout << "Sprint" << endl;
 	}
@@ -371,12 +323,6 @@ void PlayerController::HandleGamePad()
 		Jump();
 	}
 
-	//if (input->GetKeyDown('F'))
-	//{
-	//	//cout << "F" << endl;
-	//	Attack();
-	//}
-
 	//this line will only happen once
 	//if ( && !isSprinting && canSprint) //16 == Left Shift
 	//{
@@ -405,22 +351,22 @@ void PlayerController::HandleGamePad()
 
 void PlayerController::HandleSprintAndCharge()
 {
-	float multiplier;
+	float speedMultiplier;
 	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
 
 	if (isSprinting && canSprint)
 	{
-		if (isCharging) // wat
+		if (isCharging) //if currently charging, just change speed multiplier
 		{
-			multiplier = chargeMultiplier;
+			speedMultiplier = chargeMultiplier;
 
 			//TODO: do some visual effect
 
 		}
-		else if (chargeTimer >= timeTilCharge && !isCharging) // wat
+		else if (chargeTimer >= timeTilCharge && !isCharging)  //if not charging but you should be charging, charge
 		{
-			multiplier = chargeMultiplier;
-			//isSprinting = false;
+			speedMultiplier = chargeMultiplier;
+			//isSprinting = false; //charging is sprinting but sprinting isn't necessarily charging
 			isCharging = true;
 
 			cout << "Charge time" << endl;
@@ -432,19 +378,13 @@ void PlayerController::HandleSprintAndCharge()
 
 			//TODO: do some visual effect
 		}
-		else
+		else //if not charging then sprint
 		{
-			multiplier = sprintMultiplier;
+			speedMultiplier = sprintMultiplier;
 		}
 
-	//	float percentage = meterBar->GetPercentage() - sprintCost * dt;
-
-		//if small enough, then make it 0
-		//if (percentage <= 0.001f)
 		if (!meterBar->isDraining() && meterBar->getActive()) // recharging
 		{
-			//sprintAgainTimer = 0.0f;
-	//		percentage = 0.0f;
 			canSprint = false;
 			isCharging = false;
 		}
@@ -453,22 +393,9 @@ void PlayerController::HandleSprintAndCharge()
 			canSprint = true;
 		}
 
-
 		//set velocity to respective velocity every frame
-		transform->AddVelocity(transform->GetForwardf3() * -multiplier * 10.0f);
+		transform->AddVelocity(transform->GetForwardf3() * -speedMultiplier * 10.0f);
 	}
-
-	//this was going to be the code for if we had the sprint bar regenerate
-
-	//else if (!canSprint)
-	//{
-	//	if (sprintAgainTimer >= timeTilSprint)
-	//	{
-	//		canSprint = true;
-
-	//		//
-	//	}
-	//}
 }
 
 void PlayerController::PlayFootstepsSound()

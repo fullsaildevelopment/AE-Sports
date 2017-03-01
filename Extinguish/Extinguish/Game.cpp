@@ -977,7 +977,7 @@ void Game::CreateUI(Scene * basic)
 	sprintBar->AddComponent(sprintRender);
 	sprintRender->MakeRTSize();
 	sprintMeter->MakeRects();
-	sprintMeter->setDrainTime(25.0f);
+	sprintMeter->setDrainTime(5.0f);
 	sprintMeter->setRechargeTime(10.0f);
 
 	CreatePauseMenu(basic);
