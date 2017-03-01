@@ -383,11 +383,15 @@ void PlayerController::HandleSprintAndCharge()
 			speedMultiplier = sprintMultiplier;
 		}
 
-		if (!meterBar->isDraining() && meterBar->getActive()) // recharging
+		if (meterBar->isEmpty()) // empty, no more sprint
 		{
 			canSprint = false;
 			isCharging = false;
 			SetFootstepsSound(0);
+		}
+		else
+		{
+			canSprint = true; // maybe?
 		}
 
 		//set velocity to respective velocity every frame
