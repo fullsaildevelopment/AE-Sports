@@ -19,6 +19,7 @@ public:
 	//static HashString* GetSingleton() { if (!singleton) { singleton = new HashString(); } return singleton; }
 	int GetKey(std::string key);
 	void Insert(std::string key) { hashTable[key] = index++; }
+	void Clear() { hashTable.clear(); index = 0; }
 	//void Insert(std::string key, unsigned int theirIndex) { hashTable[key] = theirIndex; }
 	//void CleanUp() { delete singleton; singleton = nullptr; }
 };
