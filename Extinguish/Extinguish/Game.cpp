@@ -548,7 +548,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	int row = 80; // * 2 = z
 	int col = 80; // * 2 = x
 
-				  //deleted inside a different class
+	//deleted inside a different class
 	unsigned int* colors = new unsigned int[row * col];
 
 	GameObject* gameBall = new GameObject();
