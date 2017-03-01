@@ -36,6 +36,12 @@ public:
 	{
 		newClient.sendMessage(message);
 	}
+
+	void sendMessage(char * message, uint16_t stride)
+	{
+		newClient.sendMessage(message, stride);
+	}
+
 	void sendPacket()
 	{
 		newClient.sendPacket();
@@ -124,12 +130,23 @@ public:
 		newClient.setRotation(rot);
 	}
 
+	void changeTeamA()
+	{
+		newClient.changeTeam(0);
+	}
+
+	void changeTeamB()
+	{
+		newClient.changeTeam(1);
+	}
 
 	int getFloorState(unsigned int i) { return newClient.getFloorState(i); }
 
 	int getScoreA() { return newClient.getScoreA(); }
 	int getScoreB() { return newClient.getScoreB(); }
 	float getTime() { return newClient.getTime(); }
+
+	UINT8 getObjID() { return newClient.getObjID(); }
 
 	UINT8 getNumClients() { return newClient.getNumClients(); }
 };

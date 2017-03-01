@@ -34,7 +34,7 @@ void MeterBar::Update(float dt)
 				rTime = 0.0f;
 			}
 		}
-		else
+		else if (canRecharge)
 		{
 			rTime += dt;
 
@@ -46,8 +46,10 @@ void MeterBar::Update(float dt)
 			else
 				rect2 = ShrinkRect(rTime, rechargeTime);
 		}
+		else
+			isActive = false;
 	}
-	else
+	else if (canRecharge)
 	{
 		if (rTime < rechargeTime)
 		{
@@ -62,7 +64,6 @@ void MeterBar::Update(float dt)
 				rect2 = ShrinkRect(rTime, rechargeTime);
 		}
 	}
-
 }
 
 void MeterBar::HandleEvent(Event* e)
@@ -73,27 +74,32 @@ void MeterBar::HandleEvent(Event* e)
 	{
 		// check for specific key press (taken from powerup or something)
 		InputManager * input = inputDownEvent->GetInput();
-		if (input->GetKey(16))
+		if (input->GetKey(16) && input->GetKey('W'))
 		{
 			if (isActive == false)
 			{
 				dTime = rTime * (drainTime / rechargeTime);
 			}
+			else if (drain == false)
+			{
+				drain = true;
+				dTime = rTime * (drainTime / rechargeTime);
+			}
 			isActive = true;
+
 		}
 		else
 		{
 			if (drain && isActive == true)
 			{
+				drain = false;
 				rTime = dTime * (rechargeTime / drainTime);
 
 				if (rTime > rechargeTime)
 					rTime = rechargeTime;
 			}
 
-			isActive = false;
-
-			
+		//	isActive = false;
 		}
 	}
 }

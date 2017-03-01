@@ -40,6 +40,11 @@ public:
 		newServer.sendPackets();
 		int result = newServer.update();
 
+		if (result == 4)
+		{
+
+		}
+
 		if (result == 3)
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();
@@ -163,4 +168,6 @@ public:
 
 	void sendGameState() { newServer.sendState(); }
 	void StartGame() { newServer.StartGame(); }
+
+	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight) { newServer.setObjIDs(one, two, three, four, five, six, seven, eight); }
 };

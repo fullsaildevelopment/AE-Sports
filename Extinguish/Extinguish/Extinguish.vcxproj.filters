@@ -330,6 +330,9 @@
     <ClInclude Include="MeterBar.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="GamePad.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -384,5 +387,8 @@
     <Filter Include="Components\AnimatorController">
       <UniqueIdentifier>{03ddfbbd-f0a4-44c2-b737-a5d0ce246a9b}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

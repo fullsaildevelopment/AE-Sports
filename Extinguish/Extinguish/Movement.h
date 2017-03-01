@@ -19,6 +19,7 @@ private:
 
 	//private helper functions
 	void HandleInput(InputDownEvent* e);
+	void HandleGamePad();
 
 public:
 	//basic

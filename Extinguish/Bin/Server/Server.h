@@ -82,7 +82,11 @@ private:
 		ID_INCOMING_INPUT,
 		ID_INCOMING_STATE,
 		ID_NEW_CLIENT,
-		ID_START_GAME
+		ID_START_GAME,
+		ID_INCOMING_MESSAGE,
+		ID_CHANGE_TEAM_A,
+		ID_CHANGE_TEAM_B,
+		ID_CLIENT_OBJ
 	};
 
 
@@ -97,6 +101,14 @@ private:
 	};
 #pragma pack(pop)
 
+
+#pragma pack(push, 1)
+	struct OBJID
+	{
+		UINT8 id;
+		bool inUse;
+	};
+#pragma pack(pop)
 
 #pragma pack(push, 1)
 	struct InputEventStruct
@@ -124,12 +136,15 @@ private:
 	Packet * packet;
 	char * names[MAX_PLAYERS];
 	UINT8  nameSizes[MAX_PLAYERS];
-	UINT8  openIDs[MAX_PLAYERS];
+	UINT8  clientIDs[MAX_PLAYERS];
+	//UINT8  bteamIDs[MAX_PLAYERS];
+	OBJID objIDs[8];
 	bool newInput[MAX_PLAYERS];
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
 	SOCKET serverSocket;
 	bool npDec = false;
+	char* message;
 public:
 	Server();
 	~Server();
@@ -138,34 +153,40 @@ public:
 	int update();
 	void stop();
 	bool Shutdown();
-	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
-	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
-	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound);
-	void sendPackets();
-	void setObjectCount(int count);
+
+	/* getters */
+	unsigned int getPlayerCount() { return numPlayers; }
 	int getNewState() { return lastState; }
 	InputEventStruct * getInputEvent(unsigned int index) { return &clientInput[index]; }
 	CLIENT_GAME_STATE * getState(unsigned int i) { return &clientStates[0][i]; }
 	bool isInput(unsigned int index) { return newInput[index]; }
-	void resetInput() {
-		newInput[0] = false;
-		newInput[1] = false;
-		newInput[2] = false;
-		newInput[3] = false;
-	}
+	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
+	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
 
-	unsigned int getPlayerCount() { return numPlayers; }
-
+	/* setters */
 	void setStateSize(unsigned int size) { clientStates[0].clear(); clientStates[0].resize(size);}
+	void setScores(int scoreA, int scoreB) { gameState[0][0].scoreA = scoreA; gameState[0][0].scoreB = scoreB; }
+	void setTime(float time) { gameState[0][0].time = time; }
+	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound);
+	void setObjectCount(int count);
+	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight);
+
+
+	/* game stuff*/
+	void sendPackets();
 	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
 		clientStates[0][index].position = position;
 	clientStates[0][index].rotation = rotation;
 	}
 
 	void sendState();
-	void setScores(int scoreA, int scoreB) { gameState[0][0].scoreA = scoreA; gameState[0][0].scoreB = scoreB; }
-	void setTime(float time) { gameState[0][0].time = time; }
 	void StartGame();
+	void resetInput() {
+		newInput[0] = false;
+		newInput[1] = false;
+		newInput[2] = false;
+		newInput[3] = false;
+	}
 private:
 	int lastState = 0;
 	int packRec = 0;
@@ -178,9 +199,11 @@ private:
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();
+	void sendObjID(UINT8 id);
 	void unregisterClient();
 	void sendDisconnect(bool broadcast);
 	void recievePacket();
 	void recieveInput();
+	void ReceiveMessage();
 };
 
