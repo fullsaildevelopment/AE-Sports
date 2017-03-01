@@ -104,6 +104,15 @@ void ReturnToMenu()
 	delete event;
 }
 
+void ChangeTeamA()
+{
+	Game::client.changeTeamA();
+}
+
+void ChangeTeamB()
+{
+	Game::client.changeTeamB();
+}
 
 //Button::~Button()
 //{
@@ -269,6 +278,16 @@ void Button::setButtonType()
 	case BUTTON_TYPE::RETURN:
 	{
 		eventFunction = ReturnToMenu;
+		break;
+	}
+	case BUTTON_TYPE::CHANGE_TEAM_A:
+	{
+		eventFunction = ChangeTeamA;
+		break;
+	}
+	case BUTTON_TYPE::CHANGE_TEAM_B:
+	{
+		eventFunction = ChangeTeamB;
 		break;
 	}
 	}
