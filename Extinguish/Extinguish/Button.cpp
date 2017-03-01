@@ -221,7 +221,23 @@ void Button::HandleEvent(Event* e)
 						clickCooldown = 1.0f;
 					}
 					if (eventFunction)
+					{
 						eventFunction();
+						if (buttonType == CHANGE_TEAM_A)
+						{
+							GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
+							Button * theirbutton = otherteam->GetComponent<Button>();
+							theirbutton->setStayHovered(false);
+							stayOnClick = true;
+						}
+						else if (buttonType == CHANGE_TEAM_B)
+							{
+								GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
+								Button * theirbutton = otherteam->GetComponent<Button>();
+								theirbutton->setStayHovered(false);
+								stayOnClick = true;
+							}
+					}
 					else if (buttonType == RESUME_GAME)
 					{
 						isActive = false;
@@ -232,6 +248,8 @@ void Button::HandleEvent(Event* e)
 							exitButton->SetActive(false);
 						}
 					}
+
+					
 
 				}
 				else
