@@ -1444,8 +1444,8 @@ void Game::UpdateServerStates()
 
 		if (animator)
 		{
-			animIndex = animator->GetNextStateIndex();
 
+			animIndex = animator->GetNextStateIndex();
 			if (animIndex >= 0)
 			{
 				transitionIndex = animator->GetState(animIndex)->GetTransitionIndex();

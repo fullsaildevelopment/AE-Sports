@@ -349,6 +349,7 @@ void PlayerController::HandleGamePad()
 	//}
 }
 
+//sprinting isn't necessarily charging but charging is sprinting
 void PlayerController::HandleSprintAndCharge()
 {
 	float speedMultiplier;
@@ -366,7 +367,6 @@ void PlayerController::HandleSprintAndCharge()
 		else if (chargeTimer >= timeTilCharge && !isCharging)  //if not charging but you should be charging, charge
 		{
 			speedMultiplier = chargeMultiplier;
-			//isSprinting = false; //charging is sprinting but sprinting isn't necessarily charging
 			isCharging = true;
 
 			cout << "Charge time" << endl;
