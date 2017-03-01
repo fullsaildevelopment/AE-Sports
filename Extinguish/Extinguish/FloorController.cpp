@@ -246,7 +246,7 @@ void FloorController::ScoreColor()
 
 void FloorController::Update(float dt)
 {
-	ControlMovement(dt);
+	//ControlMovement(dt);
 	//ControlColors(dt);
 	if (score)
 	{
