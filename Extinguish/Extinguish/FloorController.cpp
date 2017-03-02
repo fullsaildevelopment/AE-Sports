@@ -1,6 +1,9 @@
 #include "FloorController.h"
 #include "GameObject.h"
+#include <random>
 
+bool FloorController::score = false;
+int FloorController::scorer = 2;
 
 FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors)
 {
@@ -154,6 +157,7 @@ void FloorController::ControlMovement(float dt)
 
 void FloorController::ControlColors(float dt)
 {
+	score = false;
 	int tr = (int)(row * 0.5f);
 	for (int i = 0; i < tr; ++i)
 	{
@@ -171,10 +175,90 @@ void FloorController::ControlColors(float dt)
 	}
 }
 
+void FloorController::RandomColorsInRandomPlaces()
+{
+	std::random_device rd;     // only used once to initialise (seed) engine
+	std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
+	std::uniform_int_distribution<int> uni(0, row * col); // guaranteed unbiased
+
+	auto randInt = uni(rng);
+	auto rint = uni(rng) % 255;
+	auto gint = uni(rng) % 255;
+	auto bint = uni(rng) % 255;
+	colors[randInt] = (rint << 24) | (gint << 16) | (bint << 8);
+}
+
+bool FloorController::StripColor()
+{
+	for (int i = 0; i < 3; ++i)
+	{
+		unsigned int color = colors[StripCurr + i];
+		unsigned int rc = ((color & 0xFF000000) >> 24);
+		unsigned int gc = ((color & 0x00FF0000) >> 16);
+		unsigned int bc = ((color & 0x0000FF00) >> 8);
+		float3 rcf = float3(rc,gc,bc) * 0.003906f;
+		rcf = rcf.normalize();
+		rc = min(max(rc + (rcf.x * StripMult), 0), 255);
+		gc = min(max(gc + (rcf.y * StripMult), 0), 255);
+		bc = min(max(bc + (rcf.z * StripMult), 0), 255);
+		colors[StripCurr + i] = (rc << 24) | (gc << 16) | (bc << 8);
+		if (StripCurr + i >= row * col)
+		{
+			StripCurr = 0;
+			StripMult *= -1;
+		}
+	}
+	StripCurr += 3;
+	return false;
+}
+
+void FloorController::Score(int t)
+{
+	scorer = t;
+	score = true;
+}
+
+void FloorController::ScoreColor()
+{
+	int tr = (int)(row * 0.5f);
+	if (scorer == 1)
+	{
+		for (int i = 0; i < tr; ++i)
+		{
+			for (int j = 0; j < col; ++j)
+			{
+				colors[i * col + j] = 0x00FF0000;
+			}
+		}
+	}
+	else
+	{
+		for (int i = tr; i < row; ++i)
+		{
+			for (int j = 0; j < col; ++j)
+			{
+				colors[i * col + j] = 0x00FF0000;
+			}
+		}
+	}
+	scorer = 2;
+}
+
 void FloorController::Update(float dt)
 {
-	ControlMovement(dt);
+	//ControlMovement(dt);
 	//ControlColors(dt);
+	if (score)
+	{
+		if (scorer != 2)
+			ScoreColor();
+		sinceScore += dt;
+		if (sinceScore >= 2.5)
+		{
+			ControlColors(dt);
+			sinceScore = 0;
+		}
+	}
 }
 
 void FloorController::SetState(int state, float dt)

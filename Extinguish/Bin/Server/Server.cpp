@@ -51,8 +51,8 @@ int Server::init(uint16_t port)
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
 		names[i] = new char[8];
-		ateamIDs[i] = i + 1;
-		bteamIDs[i] = i + 5;
+		clientIDs[i] = i + 1;
+	//	bteamIDs[i] = i + 5;
 	}
 
 	peer->SetOccasionalPing(true);
@@ -154,21 +154,21 @@ int  Server::update()
 			UINT8 tempID;
 			bIn.Read(tempID);
 
-			UINT8 newID;
+			UINT8 objID;
 
 			if (tempID > 4)
 			{
 				for (unsigned int i = 0; i < 4; ++i)
 				{
-					if (ateamIDs[i] == (i + 1))
+					if (!objIDs[i].inUse)
 					{
-						newID = ateamIDs[i];
-						ateamIDs[i] = 0;
-						bteamIDs[tempID - 5] = tempID;
+						objID = objIDs[i].id;
+						objIDs[i].inUse = true;
 						break;
 					}
 				}
-			sendNew(newID);
+				
+				sendObjID(objID);
 			}
 
 
@@ -181,25 +181,28 @@ int  Server::update()
 			UINT8 tempID;
 			bIn.Read(tempID);
 
-			UINT8 newID;
+			UINT8 objID;
 
 			if (tempID < 5)
 			{
-				for (unsigned int i = 0; i < 4; ++i)
+				for (unsigned int i = 5; i < 9; ++i)
 				{
-					if (bteamIDs[i] == (i + 5))
+					if (!objIDs[i].inUse)
 					{
-						newID = bteamIDs[i];
-						bteamIDs[i] = 0;
-						ateamIDs[tempID - 1] = tempID;
+						objID = objIDs[i].id;
+						objIDs[i].inUse = true;
 						break;
 					}
 				}
-			sendNew(newID);
+			sendObjID(objID);
 			}
 
 			break;
 		}
+		case ID_INCOMING_MESSAGE:
+			ReceiveMessage();
+			result = 4;
+			break;
 		}
 	}
 
@@ -315,10 +318,10 @@ void Server::sendNew()
 	UINT8 newID;
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
-		if (ateamIDs[i] != 0)
+		if (clientIDs[i] != 0)
 		{
-			newID = ateamIDs[i];
-			ateamIDs[i] = 0;
+			newID = clientIDs[i];
+			clientIDs[i] = 0;
 			break;
 		}
 	}
@@ -329,10 +332,10 @@ void Server::sendNew()
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 
-void Server::sendNew(UINT8 id)
+void Server::sendObjID(UINT8 id)
 {
 	BitStream bsOut;
-	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
+	bsOut.Write((RakNet::MessageID)ID_CLIENT_OBJ);
 
 	bsOut.Write(id);
 	bsOut.Write(serverObjs);
@@ -350,7 +353,7 @@ void Server::unregisterClient()
 	bsIn.Read(leavingID);
 	int size = nameSizes[leavingID - 1];
 
-	ateamIDs[leavingID - 1] = leavingID;
+	clientIDs[leavingID - 1] = leavingID;
 	char message[30];
 	memcpy(&message[0], names[leavingID - 1], size);
 	memcpy(&message[size], " has left the lobby.\n", strlen(" has left the lobby.\n"));
@@ -451,6 +454,23 @@ void Server::sendPackets()
 	}
 }
 
+void Server::ReceiveMessage()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	uint16_t stride;
+	bIn.Read(stride);
+
+	delete message;
+	message = new char[stride];
+
+	for (int i = 0; i < stride; ++i)
+	{
+		bIn.Read(message[i]);
+	}
+}
+
 void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound)
 {
 	//if (serverObjs > 0) {
@@ -486,4 +506,17 @@ void Server::sendState()
 void Server::StartGame()
 {
 	sendMessage(UINT8(0), ID_START_GAME, true);
+}
+
+
+void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight)
+{
+	objIDs[0].id = one;
+	objIDs[1].id = two;
+	objIDs[2].id = three;
+	objIDs[3].id = four;
+	objIDs[4].id = five;
+	objIDs[5].id = six;
+	objIDs[6].id = seven;
+	objIDs[7].id = eight;
 }

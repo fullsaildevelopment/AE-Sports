@@ -187,13 +187,12 @@ int Client::run()
 		{
 			return 6;
 		}
-		case ID_CHANGE_TEAM_A:
+		case ID_CLIENT_OBJ:
 		{
-			break;
-		}
-		case ID_CHANGE_TEAM_B:
-		{
-			break;
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			bIn.Read(objID);
+			return 7;
 		}
 		}
 	}
@@ -243,6 +242,21 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 	return 1;
+}
+
+void Client::sendMessage(char * message, uint16_t stride)
+{
+	BitStream bsOut;
+
+	bsOut.Write((RakNet::MessageID)ID_INCOMING_MESSAGE);
+	bsOut.Write(stride);
+
+	for (uint16_t i = 0; i < stride; ++i)
+	{
+		bsOut.Write(message[i]);
+	}
+
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
 
 void Client::sendMessage(char * message, GameMessages ID)
