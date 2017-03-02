@@ -21,7 +21,12 @@ public:
 
 	//sends event to all devices registere
 	void Dispatch(Event* event);
+
+	//send event to specific handler
 	void DispatchTo(Event* event, std::string handlerName);
+
+	//send event to all devices except this specific handler
+	void DispatchExcept(Event* event, std::string handlerName);
 
 	//getters
 	static EventDispatcher* GetSingleton();

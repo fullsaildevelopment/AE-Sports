@@ -4,6 +4,7 @@
 class InputManager;
 class Transform;
 class InputDownEvent;
+class GamePadEvent;
 
 class Movement : public Component
 {
@@ -19,7 +20,7 @@ private:
 
 	//private helper functions
 	void HandleInput(InputDownEvent* e);
-	void HandleGamePad();
+	void HandleGamePad(GamePadEvent* gamePadEvent);
 
 public:
 	//basic

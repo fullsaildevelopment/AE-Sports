@@ -61,23 +61,6 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 	//initialize resource manager
 	resourceManager->Init(devResources);
 
-	/*if (isMultiplayer)
-	{
-		if (server.init("127.0.0.1", 60000) == 1)
-		{
-			isMultiplayer = true;
-			isServer = true;
-
-			client.init("127.0.0.1", 60001);
-		}
-		else
-		{
-			isServer = false;
-			client.init("127.0.0.1", 60001);
-		}
-
-	}*/
-
 	currentScene = 0;
 	//create scenes
 	CreateScenes(inputManager);
@@ -179,7 +162,14 @@ int Game::Update(float dt)
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
 				int serverState = server.run();
+
+				//to receive the message server sent
+				if (serverState == 4)
+				{
+					ReceiveServerMessage();
+				}
 			}
+
 
 			//run client
 			int clientState = client.run();
@@ -408,17 +398,13 @@ void Game::HandleEvent(Event* e)
 
 	if (gamePadEvent)
 	{
-		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
-		//(currentScene < 2)
-		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if (ResourceManager::GetSingleton()->IsServer())
 		{
-			//inputDownEvent->SetID(clientID);
-			inputDownEvent->SetIsServer(true);
-			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			EventDispatcher::GetSingleton()->DispatchExcept(gamePadEvent, "Game"); //this way it doesn't create an infinite loop... and it does this without any booleans and such
 		}
-		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
+		else //client needs to send gamepad state info to sesrver
 		{
-			client.sendInput(inputDownEvent);
+			client.sendMessage((char*)gamePadEvent->GetState(), sizeof(GamePad::State) + 1);
 		}
 
 		return;
@@ -495,7 +481,7 @@ void Game::CreateScenes(InputManager* input)
 		camera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 		Camera* cameraController = new Camera();
 		camera->AddComponent(cameraController);
-		cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+		cameraController->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, false);
 
 		menu->Init(devResources, input);
 
@@ -516,7 +502,7 @@ void Game::CreateScenes(InputManager* input)
 		lcamera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 		Camera* cameraControllerL = new Camera();
 		lcamera->AddComponent(cameraControllerL);
-		cameraControllerL->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+		cameraControllerL->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, false);
 
 		lobby->Init(devResources, input);
 
@@ -727,7 +713,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		//camera1->InitTransform(identity, { 0, 0, -15.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
-		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f);
+		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
 
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
@@ -1147,6 +1133,26 @@ void Game::CreateMenu(Scene * scene)
 	bg2Render->MakeRTSize();
 	bg2Button->MakeRect();
 
+
+}
+
+void Game::ReceiveServerMessage()
+{
+	char* message = server.getMessage();
+	uint16_t stride = server.GetStride();
+
+	//filter based on stride
+	switch (stride)
+	{
+		case sizeof(GamePad::State):
+		{
+			GamePadEvent* gamePadEvent = new GamePadEvent();
+			gamePadEvent->Init((GamePad::State*)message + 1, message[0]);
+			HandleEvent(gamePadEvent);
+			delete gamePadEvent;
+		}
+		break;
+	}
 
 }
 

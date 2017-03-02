@@ -1,16 +1,19 @@
 #pragma once
 #include "Event.h"
+#include "GamePad.h"
 
 class GamePadEvent : public Event
 {
 private:
-	void* gamePadState;
+	DirectX::GamePad::State* gamePadState;
+	int clientID;
 
 public:
 	void Init();
 
-	void Init(void* state);
+	void Init(DirectX::GamePad::State* state, int id);
 
 	//getters//
-	void* GetState();
+	DirectX::GamePad::State* GetState();
+	int GetClientID();
 };
