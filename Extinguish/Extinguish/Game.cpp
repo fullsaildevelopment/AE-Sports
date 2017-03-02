@@ -617,10 +617,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		{
 			tempCol = -col + 14;
 			mage1->SetTag("Team2");
-
-			//AI *mageAI = new AI(mage1);
-			////mage1->AddComponent(mageAI);
-			//ai.push_back(mageAI);
 		}
 
 		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
