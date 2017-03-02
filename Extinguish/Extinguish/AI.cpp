@@ -3,7 +3,7 @@
 
 #define RunSpeed 5
 #define AttackSpeed 15
-#define StumbleSpeed 5
+#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -43,12 +43,23 @@ void AI::OnCollisionEnter(Collider *obj)
 		{
 			startTimer = true;
 
+			// handle the target stumbling and dropping ball
+			if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
+				ballClass->DropBall(realTarget);
 
-			//float3 j = ((me->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
-			float3 forward = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1));
-			float3 pos = (me->GetTransform()->GetPosition() * float3(1, 0, 1)).normalize();
+			float3 vel = (realTarget->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).normalize() * StumbleSpeed;
+			float3 a = (realTarget->GetTransform()->GetWorldPosition() * (0, 1, 0)).normalize() * StumbleSpeed;
 
-			me->GetTransform()->AddVelocity(forward * -10);
+			realTarget->GetTransform()->AddVelocity(float3(0, StumbleSpeed, 0));
+			realTarget->GetTransform()->AddVelocity(realTarget->GetTransform()->GetForwardf3() * (StumbleSpeed, 0, StumbleSpeed));
+
+			/*if (realTarget->GetComponent<AI>())
+				realTarget->GetComponent<AI>()->Stumble(me);
+
+			else if (realTarget->GetComponent<PlayerController>())
+			{
+				// ask tom
+			}*/
 		}
 	}
 }
@@ -526,6 +537,11 @@ void AI::TurnTo(GameObject *target)
 		float degRad = dot_product(u, v);
 		me->GetTransform()->RotateY(degRad);
 	}
+}
+
+void AI::Stumble(GameObject *attacker)
+{
+
 }
 
 void AI::Score()
