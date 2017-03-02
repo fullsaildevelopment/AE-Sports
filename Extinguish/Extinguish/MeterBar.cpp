@@ -74,27 +74,35 @@ void MeterBar::HandleEvent(Event* e)
 	{
 		// check for specific key press (taken from powerup or something)
 		InputManager * input = inputDownEvent->GetInput();
-		if (input->GetKey(16))
+		if (input->GetKey(16) && input->GetKey('W'))
 		{
 			if (isActive == false)
 			{
 				dTime = rTime * (drainTime / rechargeTime);
+				isActive = true;
 			}
-			isActive = true;
+			else if (drain == false)
+			{
+				drain = true;
+				dTime = rTime * (drainTime / rechargeTime);
+				if (dTime <= 0.0f)
+					empty = true;
+				else
+					empty = false;
+			}
 		}
 		else
 		{
 			if (drain && isActive == true)
 			{
+				drain = false;
 				rTime = dTime * (rechargeTime / drainTime);
 
 				if (rTime > rechargeTime)
 					rTime = rechargeTime;
 			}
 
-			isActive = false;
-
-			
+		//	isActive = false;
 		}
 	}
 }

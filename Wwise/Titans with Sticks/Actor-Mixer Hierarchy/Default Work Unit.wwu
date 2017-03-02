@@ -32,6 +32,7 @@
 						</Sound>
 						<Sound Name="Footsteps (Walk___)" ID="{3C58A25C-4566-4D56-BA0D-86EA1E032E28}" ShortID="269169697" Type="SoundFX">
 							<PropertyList>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
 								<Property Name="PositioningType" Type="int16" Value="1"/>
 							</PropertyList>
 							<ReferenceList>
@@ -103,6 +104,84 @@
 							</ChildrenList>
 							<ActiveSourceList>
 								<ActiveSource Name="Throw" ID="{17E4FEFC-1A99-4A42-9975-2982DDFB2B6E}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="RunningPantShort" ID="{B30536C9-50D4-4DF4-A800-22CF78A9DC2B}" ShortID="879123324" Type="SoundFX">
+							<PropertyList>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="RunningPantShort" ID="{5E3C44AB-A343-4413-B53A-2D1EDF0FC5FC}" ShortID="523059377">
+									<Language>SFX</Language>
+									<AudioFile>RunningPantShort.wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="RunningPantShort" ID="{5E3C44AB-A343-4413-B53A-2D1EDF0FC5FC}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="Footsteps (Charge)" ID="{413D7390-28C7-42BE-8FC2-4B6EDEBF0118}" ShortID="28021506" Type="SoundFX">
+							<PropertyList>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Footsteps (Charge)" ID="{93D5C825-64D4-4FC6-88BB-349308E82BE2}" ShortID="743215297">
+									<Language>SFX</Language>
+									<AudioFile>Footsteps (Charge).wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="Footsteps (Charge)" ID="{93D5C825-64D4-4FC6-88BB-349308E82BE2}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="Footsteps (Sprint)" ID="{9DBC1349-D8D3-4E01-A343-B88E58B4BB1A}" ShortID="800761665" Type="SoundFX">
+							<PropertyList>
+								<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Footsteps (Sprint)" ID="{7D1846D6-FFD0-409C-9B4E-53F8AAF4CBE8}" ShortID="42589970">
+									<Language>SFX</Language>
+									<AudioFile>Footsteps (Sprint).wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="Footsteps (Sprint)" ID="{7D1846D6-FFD0-409C-9B4E-53F8AAF4CBE8}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
 					</ChildrenList>

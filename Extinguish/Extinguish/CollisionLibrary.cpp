@@ -1078,8 +1078,24 @@ float3 SpherePlanePoint(const NewPlane& p, const Sphere& s)
 	return s.m_Center + np;
 }
 float3 zeroF = float3(0, 0, 0);
+float3 tpln = float3(0, 0, 0);
+float3 rpln = float3(0, 0, 0);
 float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 {
+	if (tpln.isEquil(zeroF))
+	{
+		float3 top = float3(0, 0, hex.s);
+		float3 righttop = float3(hex.h * 0.5f, 0, hex.s * 0.5f);
+		float3 right = float3(hex.h * 0.5f, 0, 0);
+		cross_product(tpln, (righttop - top).normalize(), float3(0, 1, 0));
+	}
+	if (rpln.isEquil(zeroF))
+	{
+		float3 top = float3(0, 0, hex.s);
+		float3 righttop = float3(hex.h * 0.5f, 0, hex.s * 0.5f);
+		float3 right = float3(hex.h * 0.5f, 0, 0);
+		cross_product(rpln, (right - righttop).normalize(), float3(0, 1, 0));
+	}
 	float hd = hex.d * 0.5f;
 	AABB bounding;
 	bounding.min = float3(hex.seg.m_Start.x - hd, hex.seg.m_Start.y - hd, hex.seg.m_Start.z - hd);
@@ -1123,7 +1139,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		// Returns 3 if the sphere straddles the plane.
 
 		NewPlane tpl;
-		cross_product(tpl.n, (righttop - top).normalize(), float3(0, 1, 0));
+		tpl.n = tpln;
 		tpl.p = top;
 		Sphere Scopy;
 		Scopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
@@ -1136,7 +1152,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		else if (cify == 2)
 		{
 			NewPlane rpl;
-			cross_product(rpl.n, (right - righttop).normalize(), float3(0, 1, 0));
+			rpl.n = rpln;
 			rpl.p = right;
 			Sphere rScopy;
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
@@ -1204,7 +1220,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		else if (cify == 3)
 		{
 			NewPlane rpl;
-			cross_product(rpl.n, (right - righttop).normalize(), float3(0, 1, 0));
+			rpl.n = rpln;
 			rpl.p = right;
 			Sphere rScopy;
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
@@ -1273,12 +1289,28 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 	if (topcify == 3)
 	{
-		s.m_Center = SpherePlanePoint(toptest, s);
-		s.m_Center.y += 0.0001f;
+		NewPlane rpl;
+		rpl.n = rpln;
+		rpl.p = right;
+		Sphere rScopy;
+		rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
+		rScopy.m_Radius = s.m_Radius;
+		NewPlane tpl;
+		tpl.n = tpln;
+		tpl.p = top;
+		Sphere Scopy;
+		Scopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
+		Scopy.m_Radius = s.m_Radius;
+		int rcify = ClassifySphereToPlane(rpl, rScopy);
+		int cify = ClassifySphereToPlane(tpl, Scopy);
+		if (cify != 1 && rcify != 1)
+		{
+			s.m_Center = SpherePlanePoint(toptest, s);
 
-		float3 n = float3(0, 1, 0);
+			float3 n = float3(0, 1, 0);
 
-		return n;
+			return n;
+		}
 	}
 
 	return zeroF;

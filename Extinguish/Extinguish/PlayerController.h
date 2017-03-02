@@ -5,7 +5,6 @@
 class GameObject;
 class Camera;
 class Transform;
-class InputManager;
 
 class PlayerController : public Component
 {
@@ -19,7 +18,7 @@ private:
 	Transform* transform;
 	Camera* camera;
 	Transform* cameraTransform;
-
+	
 	//reg members
 	float dt;
 	bool justJumped;
@@ -45,6 +44,7 @@ private:
 
 	//private helper functions
 	void HandleInput();
+	void HandleGamePad();
 	void HandleSprintAndCharge();
 	void PlayFootstepsSound();
 	void StopFootstepsSound();

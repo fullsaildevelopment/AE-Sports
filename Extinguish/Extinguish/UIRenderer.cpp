@@ -175,7 +175,7 @@ void UIRenderer::Render()
 
 			if (pBitmap)
 			{
-				if (!theButton->isHovered() || !pBitmapHovered)
+				if ((!theButton->isHovered() && !theButton->stayHovered()) || !pBitmapHovered)
 					d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
 				else
 					d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
