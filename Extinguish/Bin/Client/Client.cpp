@@ -192,6 +192,7 @@ int Client::run()
 			BitStream bIn(packet->data, packet->length, false);
 			bIn.IgnoreBytes(sizeof(MessageID));
 			bIn.Read(objID);
+			bIn.Read(clientID);
 			return 7;
 		}
 		}

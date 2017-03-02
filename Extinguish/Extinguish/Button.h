@@ -51,6 +51,7 @@ private:
 	bool isTimer = false;
 	bool showFps = false;
 	bool hovered = false;
+	bool stayOnClick = false;
 	unsigned int sceneIndex;
 	std::vector<int> helperIndex;
 
@@ -80,6 +81,7 @@ public:
 		theTime += to_string((time / 60.0f));
 		return theTime;
 	}
+	bool stayHovered() { return stayOnClick; }
 
 
 	wstring getWTime() {
@@ -130,6 +132,7 @@ public:
 	void SetActive(bool active) { isActive = active; }
 	void setTimer(bool active) { isTimer = active; }
 	void setHelper(int index) { helperIndex.push_back(index); }
+	void setStayHovered(bool b) { stayOnClick = b; }
 
 	void resetTime() { time = 300.0f; }
 

@@ -60,20 +60,6 @@ void FloorController::StripPattern(float dt)
 	if (ratios >= 1.0f) currPattern = 1;
 }
 
-void FloorController::RandomPattern(float dt)
-{
-	ratios += dt * transSpeed;
-	for (int i = 0; i < row; ++i)
-	{
-		for (int j = 0; j < col; ++j)
-		{
-			if (i % 12 < 4)
-				MovePillar(i * col + j, ratios);
-		}
-	}
-	if (ratios >= 1.0f) currPattern = 4;
-}
-
 void FloorController::MovePillar(int pillar, float ratio)
 {
 	floor[pillar].y = ratio * maxHeight - 10;
@@ -96,6 +82,11 @@ void FloorController::LevelFloor(float dt)
 		}
 	}
 	if (ratios >= 1.0f) currPattern = 0;
+}
+
+void FloorController::Strips(float dt)
+{
+
 }
 
 void FloorController::ControlMovement(float dt)
@@ -144,7 +135,7 @@ void FloorController::ControlMovement(float dt)
 	else if (timeing >= 40 && timeing < 50 && currPattern != 4)
 	{
 		transState = 4;
-		RandomPattern(dt);
+		//RandomPattern(dt);
 		if (currPattern == 4)
 		{
 			ratios = 0;
@@ -175,19 +166,6 @@ void FloorController::ControlColors(float dt)
 	}
 }
 
-void FloorController::RandomColorsInRandomPlaces()
-{
-	std::random_device rd;     // only used once to initialise (seed) engine
-	std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
-	std::uniform_int_distribution<int> uni(0, row * col); // guaranteed unbiased
-
-	auto randInt = uni(rng);
-	auto rint = uni(rng) % 255;
-	auto gint = uni(rng) % 255;
-	auto bint = uni(rng) % 255;
-	colors[randInt] = (rint << 24) | (gint << 16) | (bint << 8);
-}
-
 bool FloorController::StripColor()
 {
 	for (int i = 0; i < 3; ++i)
@@ -196,11 +174,11 @@ bool FloorController::StripColor()
 		unsigned int rc = ((color & 0xFF000000) >> 24);
 		unsigned int gc = ((color & 0x00FF0000) >> 16);
 		unsigned int bc = ((color & 0x0000FF00) >> 8);
-		float3 rcf = float3(rc,gc,bc) * 0.003906f;
+		float3 rcf = float3((float)rc, (float)gc, (float)bc) * 0.003906f;
 		rcf = rcf.normalize();
-		rc = min(max(rc + (rcf.x * StripMult), 0), 255);
-		gc = min(max(gc + (rcf.y * StripMult), 0), 255);
-		bc = min(max(bc + (rcf.z * StripMult), 0), 255);
+		rc = (unsigned int)min(max(rc + (rcf.x * StripMult), 0), 255);
+		gc = (unsigned int)min(max(gc + (rcf.y * StripMult), 0), 255);
+		bc = (unsigned int)min(max(bc + (rcf.z * StripMult), 0), 255);
 		colors[StripCurr + i] = (rc << 24) | (gc << 16) | (bc << 8);
 		if (StripCurr + i >= row * col)
 		{
@@ -301,7 +279,7 @@ void FloorController::SetState(int state, float dt)
 	}
 	else if (state == 30)
 	{
-		RandomPattern(1000);
+		//RandomPattern(1000);
 	}
 }
 
