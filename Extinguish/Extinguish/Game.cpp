@@ -616,7 +616,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			mage1->SetTag("Team2");
 
 			AI *mageAI = new AI(mage1);
-			//mage1->AddComponent(mageAI);
+			mage1->AddComponent(mageAI);
 			ai.push_back(mageAI);
 		}
 
