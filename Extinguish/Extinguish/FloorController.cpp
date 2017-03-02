@@ -60,20 +60,6 @@ void FloorController::StripPattern(float dt)
 	if (ratios >= 1.0f) currPattern = 1;
 }
 
-void FloorController::RandomPattern(float dt)
-{
-	ratios += dt * transSpeed;
-	for (int i = 0; i < row; ++i)
-	{
-		for (int j = 0; j < col; ++j)
-		{
-			if (i % 12 < 4)
-				MovePillar(i * col + j, ratios);
-		}
-	}
-	if (ratios >= 1.0f) currPattern = 4;
-}
-
 void FloorController::MovePillar(int pillar, float ratio)
 {
 	floor[pillar].y = ratio * maxHeight - 10;
@@ -96,6 +82,11 @@ void FloorController::LevelFloor(float dt)
 		}
 	}
 	if (ratios >= 1.0f) currPattern = 0;
+}
+
+void FloorController::Strips(float dt)
+{
+
 }
 
 void FloorController::ControlMovement(float dt)
@@ -144,14 +135,14 @@ void FloorController::ControlMovement(float dt)
 	else if (timeing >= 40 && timeing < 50 && currPattern != 4)
 	{
 		transState = 4;
-		RandomPattern(dt);
+		//RandomPattern(dt);
 		if (currPattern == 4)
 		{
 			ratios = 0;
 			transState = 40;
 		}
 	}
-	if (timeing > 40)
+	if (timeing > 9)
 		timeing = 0;
 }
 
@@ -173,19 +164,6 @@ void FloorController::ControlColors(float dt)
 			colors[i * col + j] = team2color;
 		}
 	}
-}
-
-void FloorController::RandomColorsInRandomPlaces()
-{
-	std::random_device rd;     // only used once to initialise (seed) engine
-	std::mt19937 rng(rd());    // random-number engine used (Mersenne-Twister in this case)
-	std::uniform_int_distribution<int> uni(0, row * col); // guaranteed unbiased
-
-	auto randInt = uni(rng);
-	auto rint = uni(rng) % 255;
-	auto gint = uni(rng) % 255;
-	auto bint = uni(rng) % 255;
-	colors[randInt] = (rint << 24) | (gint << 16) | (bint << 8);
 }
 
 bool FloorController::StripColor()
@@ -246,7 +224,7 @@ void FloorController::ScoreColor()
 
 void FloorController::Update(float dt)
 {
-	//ControlMovement(dt);
+	ControlMovement(dt);
 	//ControlColors(dt);
 	if (score)
 	{
@@ -301,7 +279,7 @@ void FloorController::SetState(int state, float dt)
 	}
 	else if (state == 30)
 	{
-		RandomPattern(1000);
+		//RandomPattern(1000);
 	}
 }
 
