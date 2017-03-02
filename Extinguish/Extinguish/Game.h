@@ -28,10 +28,18 @@ class SoundEngine;
 class Game : public EventHandler
 {
 public:
+	enum PLAYER_TEAM
+	{
+		TEAM_A = 0,
+		TEAM_B = 4
+	};
+
 	static ClientWrapper client;
 	static ServerWrapper server;
 	static unsigned int currentScene;
 	static int returnResult;
+	static PLAYER_TEAM team;
+	static UINT8 objIDs[10];
 
 	int Team1Score;
 	int Team2Score;
