@@ -134,9 +134,9 @@ private:
 	UINT8 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
-	char * names[MAX_PLAYERS];
-	UINT8  nameSizes[MAX_PLAYERS];
-	UINT8  clientIDs[MAX_PLAYERS];
+//	char * names[MAX_PLAYERS];
+//	UINT8  nameSizes[MAX_PLAYERS];
+	UINT8  clientIDs[8];
 	//UINT8  bteamIDs[MAX_PLAYERS];
 	OBJID objIDs[8];
 	bool newInput[MAX_PLAYERS];
@@ -162,6 +162,8 @@ public:
 	bool isInput(unsigned int index) { return newInput[index]; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
+	bool isPlayer(unsigned int i) { return objIDs[i].inUse; }
+	UINT8 getObjID(unsigned int i) { return objIDs[i].id; }
 
 	/* setters */
 	void setStateSize(unsigned int size) { clientStates[0].clear(); clientStates[0].resize(size);}
@@ -199,7 +201,7 @@ private:
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();
-	void sendObjID(UINT8 id);
+	void sendObjID(UINT8 id, UINT8 newID);
 	void unregisterClient();
 	void sendDisconnect(bool broadcast);
 	void recievePacket();

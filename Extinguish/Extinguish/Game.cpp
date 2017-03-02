@@ -41,6 +41,8 @@ ServerWrapper Game::server;
 unsigned int Game::currentScene;
 int Game::returnResult = 1;
 int Game::objID = 1;
+Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
+UINT8 Game::objIDs[10];
 
 Game::~Game()
 {
@@ -594,7 +596,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	goal->SetTag("Goal1");
 	goal2->SetTag("Goal2");
 
-	vector<AI*> ai;
+	//vector<AI*> ai;
 
 	for (int i = 1; i <= 8; ++i)
 	{
@@ -603,6 +605,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		GameObject* crosse = new GameObject();
 		basic->AddGameObject(crosse);
+		objIDs[i - 1] = (UINT8)basic->GetNumObjects();
 		GameObject* mage1 = new GameObject();
 		basic->AddGameObject(mage1);
 		mage1->Init(playerName);
@@ -614,10 +617,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		{
 			tempCol = -col + 14;
 			mage1->SetTag("Team2");
-
-			AI *mageAI = new AI(mage1);
-			mage1->AddComponent(mageAI);
-			ai.push_back(mageAI);
 		}
 
 		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
@@ -771,11 +770,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//			mageRenderer1->SetTeamColor({ 0,0,1,0 });
 	//	}
 	//}
-	for (int i = 0; i < ai.size(); ++i)
-	{
-		ai[i]->Init(goal, goal2);
-	}
+	//for (int i = 0; i < ai.size(); ++i)
+	//{
+	//	ai[i]->Init(goal, goal2);
+	//}
 
+	objIDs[8] = (UINT8)basic->GetNumObjects();
 	basic->AddGameObject(goal);
 	goal->Init("Goal");
 	goal->InitTransform(identity, { -7, 15, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
@@ -787,6 +787,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
 
+	objIDs[9] = (UINT8)basic->GetNumObjects();
 	basic->AddGameObject(goal2);
 	goal2->Init("Goal2");
 	goal2->InitTransform(identity, { -7, 15, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
@@ -1377,24 +1378,64 @@ void Game::CreatePauseMenu(Scene * scene)
 
 void Game::AssignPlayers()
 {
+	vector<AI*> ai;
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			// get teams of all players
-			/* rework networking to reassign id based on team */
-			// set mage ID
 			// all others become ai
+
+			for (unsigned int i = 0; i < 8; ++i) 
+			{
+				if (!server.isPlayer(i)) 
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
+				}
+			}
+			GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
+			GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
+
+			for (int i = 0; i < ai.size(); ++i)
+			{
+				ai[i]->Init(goal, goal2);
+			}
 		}
 	}
 	else
 	{
 		// find team player selected
-		// set mage 1 to player if red team
-		// set mage 5 to player if blue team
-		// set ai to everything else
+		for (unsigned int i = 0; i < 8; ++i) 
+		{
+			// set mage 1 to player if red team
+			if (team == TEAM_A && i != 0)
+			{
+				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+				AI *mageAI = new AI(mage1);
+				mage1->AddComponent(mageAI);
+				ai.push_back(mageAI);
+			}
+			// set mage 5 to player if blue team
+			else if (team == TEAM_B && i!= 4)
+			{
+				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+				AI *mageAI = new AI(mage1);
+				mage1->AddComponent(mageAI);
+				ai.push_back(mageAI);
+			}
+		}
+		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
+		GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
+
+		for (int i = 0; i < ai.size(); ++i)
+		{
+			ai[i]->Init(goal, goal2);
+		}
 	}
-	
+
 }
 
 void Game::EnableButton(std::string name, bool toggle)
@@ -1586,8 +1627,18 @@ void Game::LoadScene(std::string name)
 		else
 			EnableButton("Start", false);
 	}
+	else if (currentScene == 2)
+	{
+		AssignPlayers();
+	}
 
 	//resize gamestates
+	for (unsigned int i = 0; i < gameStates.size(); ++i)
+	{
+		delete gameStates[i];
+	}
+
+	gameStates.clear();
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	for (int i = 0; i < gameStates.size(); ++i)
 	{
@@ -1624,7 +1675,10 @@ int Game::UpdateLobby()
 	else if (clientState == 6)
 		LoadScene("FirstLevel");
 	else if (clientState == 7)
+	{
 		objID = client.getObjID();
+		clientID = client.getID();
+	}
 
 
 	return clientState;
