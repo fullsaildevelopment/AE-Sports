@@ -1247,6 +1247,7 @@ void Game::CreateLobby(Scene * scene)
 	caButton->MakeRect();
 	caButton->MakeHandler();
 	eaRender->InitMetrics();
+	caButton->setHelper(scene->GetNumUIObjects());
 
 	// change team to B
 	GameObject * changeTeamB = new GameObject();
@@ -1267,6 +1268,7 @@ void Game::CreateLobby(Scene * scene)
 	cbButton->MakeRect();
 	cbButton->MakeHandler();
 	ebRender->InitMetrics();
+	cbButton->setHelper(scene->GetNumUIObjects() - 2);
 
 	// change team logo
 	GameObject * changeTeam = new GameObject();

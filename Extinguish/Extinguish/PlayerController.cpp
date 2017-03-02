@@ -383,7 +383,7 @@ void PlayerController::HandleSprintAndCharge()
 			speedMultiplier = sprintMultiplier;
 		}
 
-		if (!meterBar->isDraining() && meterBar->getActive()) // recharging
+		if (meterBar->isEmpty()) // empty, no more sprint
 		{
 			canSprint = false;
 			isCharging = false;
@@ -395,7 +395,7 @@ void PlayerController::HandleSprintAndCharge()
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
-		if (!meterBar->isDraining() && !meterBar->getActive()) // fully charged
+		if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty()) // fully charged
 		{
 			canSprint = true;
 		}
