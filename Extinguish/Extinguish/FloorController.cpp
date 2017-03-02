@@ -174,11 +174,11 @@ bool FloorController::StripColor()
 		unsigned int rc = ((color & 0xFF000000) >> 24);
 		unsigned int gc = ((color & 0x00FF0000) >> 16);
 		unsigned int bc = ((color & 0x0000FF00) >> 8);
-		float3 rcf = float3(rc,gc,bc) * 0.003906f;
+		float3 rcf = float3((float)rc, (float)gc, (float)bc) * 0.003906f;
 		rcf = rcf.normalize();
-		rc = min(max(rc + (rcf.x * StripMult), 0), 255);
-		gc = min(max(gc + (rcf.y * StripMult), 0), 255);
-		bc = min(max(bc + (rcf.z * StripMult), 0), 255);
+		rc = (unsigned int)min(max(rc + (rcf.x * StripMult), 0), 255);
+		gc = (unsigned int)min(max(gc + (rcf.y * StripMult), 0), 255);
+		bc = (unsigned int)min(max(bc + (rcf.z * StripMult), 0), 255);
 		colors[StripCurr + i] = (rc << 24) | (gc << 16) | (bc << 8);
 		if (StripCurr + i >= row * col)
 		{

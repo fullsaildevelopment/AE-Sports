@@ -33,6 +33,16 @@ void StartServer()
 		Game::client.init("127.0.0.1", 60001);
 		Game::client.setIsServer();
 
+		Game::server.setObjIDs(Game::objIDs[0],
+			Game::objIDs[1],
+			Game::objIDs[2],
+			Game::objIDs[3],
+			Game::objIDs[4],
+			Game::objIDs[5],
+			Game::objIDs[6],
+			Game::objIDs[7]
+		);
+
 		LoadSceneEvent* event = new LoadSceneEvent();
 		event->Init("Lobby");
 		EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
