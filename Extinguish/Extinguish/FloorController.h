@@ -21,11 +21,10 @@ class FloorController : public Component
 	float timeing;
 	void WavePattern(float dt);
 	void BigHexPattern(float dt);
+	void Strips(float dt);
 	void StripPattern(float dt);
-	void RandomPattern(float dt);
 	void ControlMovement(float dt);
 	void ControlColors(float dt);
-	void RandomColorsInRandomPlaces();
 	void ScoreColor();
 	float sinceScore = 0;
 	bool StripColor();

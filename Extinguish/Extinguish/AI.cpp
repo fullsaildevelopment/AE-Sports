@@ -3,7 +3,7 @@
 
 #define RunSpeed 5
 #define AttackSpeed 15
-#define StumbleSpeed 5
+#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -25,30 +25,27 @@ void AI::OnCollisionEnter(Collider *obj)
 
 	if (col)
 	{
-		// if i bump into a player and they are intentionally attacking me
-		/*if (obj->GetGameObject()->GetComponent<AI>())
-		{
-			if (obj->GetGameObject()->GetComponent<AI>()->GetIsAttacking())
-			{
-				// IF I HAVE THE BALL  drop the ball and 'stumble' in the way they pushed me
-				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
-					ballClass->DropBall(me);
-
-				float3 vel = obj->GetGameObject()->GetTransform()->GetForwardf3() * StumbleSpeed;
-				me->GetTransform()->AddVelocity(vel);
-			}
-		}
-
-		else */ if (obj->GetGameObject() == realTarget)
+		if (obj->GetGameObject() == realTarget)
 		{
 			startTimer = true;
 
+			// handle the target stumbling and dropping ball
+			if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
+				ballClass->DropBall(realTarget);
 
-			//float3 j = ((me->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
-			float3 forward = (me->GetTransform()->GetForwardf3() * float3(1, 0, 1));
-			float3 pos = (me->GetTransform()->GetPosition() * float3(1, 0, 1)).normalize();
+			realTarget->GetTransform()->AddVelocity(float3(0, StumbleSpeed, 0));
+			realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
+			
+			//me->GetTransform()->AddVelocity(float3(0, 2, 0));
+			//me->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3() * (2, 0, 2));
 
-			me->GetTransform()->AddVelocity(forward * -10);
+			/*if (realTarget->GetComponent<AI>())
+				realTarget->GetComponent<AI>()->Stumble(me);
+
+			else if (realTarget->GetComponent<PlayerController>())
+			{
+				// ask tom
+			}*/
 		}
 	}
 }
@@ -260,7 +257,7 @@ void AI::Update(float dt)
 #pragma region Goalie2
 	if (currState == playboy)
 	{
-		float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
+		/*float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
 		// if the ball gets close
 		if (ballDist.magnitude() < 28)
@@ -282,7 +279,9 @@ void AI::Update(float dt)
 				TurnTo(myGoal);
 				Idle();
 			}
-		}
+		}*/
+
+
 	}
 
 #pragma endregion

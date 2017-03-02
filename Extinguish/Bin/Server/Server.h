@@ -24,7 +24,7 @@ using namespace RakNet;
 using namespace std;
 using namespace DirectX;
 
-#define MAX_PLAYERS 4
+#define MAX_PLAYERS 8
 
 class SERVERDLL_API Server
 {
@@ -89,8 +89,6 @@ private:
 		ID_CLIENT_OBJ
 	};
 
-
-
 #pragma pack(push, 1)
 	struct KeyStates
 	{
@@ -127,18 +125,18 @@ private:
 #pragma pack(pop)
 
 	//static CLIENT_GAME_STATE * clientStates;
-	InputEventStruct clientInput[4];
+	InputEventStruct clientInput[8];
 	//static GAME_STATE * gameState;
 	//GAME_STATE gameState;
 	//static CLIENT_GAME_STATE * aiStates;
 	UINT8 numPlayers = 0;
 	RakPeerInterface * peer;
 	Packet * packet;
-	char * names[MAX_PLAYERS];
-	UINT8  nameSizes[MAX_PLAYERS];
+//	char * names[MAX_PLAYERS];
+//	UINT8  nameSizes[MAX_PLAYERS];
 	UINT8  clientIDs[MAX_PLAYERS];
 	//UINT8  bteamIDs[MAX_PLAYERS];
-	OBJID objIDs[8];
+	OBJID objIDs[MAX_PLAYERS];
 	bool newInput[MAX_PLAYERS];
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
@@ -168,9 +166,17 @@ public:
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
 	char* getMessage() { return message; }
 	uint16_t GetStride() { return stride; }
+	bool isPlayer(unsigned int i) { return objIDs[i].inUse; }
+	UINT8 getObjID(unsigned int i) { return objIDs[i].id; }
 
 	/* setters */
-	void setStateSize(unsigned int size) { clientStates[0].clear(); clientStates[0].resize(size);}
+	void setStateSize(unsigned int size) { 
+		if (!peer)
+			float temp = 0.0f;
+
+		clientStates[0].clear(); 
+		clientStates[0].resize(size);
+	}
 	void setScores(int scoreA, int scoreB) { gameState[0][0].scoreA = scoreA; gameState[0][0].scoreB = scoreB; }
 	void setTime(float time) { gameState[0][0].time = time; }
 	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound);
@@ -205,7 +211,7 @@ private:
 	void rerouteMessage();
 	UINT16 registerClient();
 	void sendNew();
-	void sendObjID(UINT8 id);
+	void sendObjID(UINT8 id, UINT8 newID);
 	void unregisterClient();
 	void sendDisconnect(bool broadcast);
 	void recievePacket();

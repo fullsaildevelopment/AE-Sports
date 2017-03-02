@@ -17,6 +17,7 @@ private:
 	unsigned int objCount = 0;
 	bool isMultiplayer = false;
 	bool isServer = false;
+	UINT8 objIDs[8];
 
 public:
 	~ServerWrapper() { 
@@ -174,5 +175,19 @@ public:
 	void sendGameState() { newServer.sendState(); }
 	void StartGame() { newServer.StartGame(); }
 
-	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight) { newServer.setObjIDs(one, two, three, four, five, six, seven, eight); }
+	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight) 
+	{ 
+		objIDs[0] = one;
+		objIDs[1] = two;
+		objIDs[2] = three;
+		objIDs[3] = four;
+		objIDs[4] = five;
+		objIDs[5] = six;
+		objIDs[6] = seven;
+		objIDs[7] = eight;
+		newServer.setObjIDs(one, two, three, four, five, six, seven, eight);
+	}
+
+	bool isPlayer(unsigned int i) { return newServer.isPlayer(i); }
+	UINT8 getObjID(unsigned int i) { return newServer.getObjID(i); }
 };
