@@ -142,7 +142,7 @@ void FloorController::ControlMovement(float dt)
 			transState = 40;
 		}
 	}
-	if (timeing > 9)
+	if (timeing > 40)
 		timeing = 0;
 }
 
