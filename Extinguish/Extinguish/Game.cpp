@@ -801,8 +801,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
-
 	GameObject* testPlayer = new GameObject();
 	basic->AddGameObject(testPlayer);
 	testPlayer->Init("TestPlayer");
@@ -1633,12 +1631,12 @@ void Game::LoadScene(std::string name)
 	}
 
 	//resize gamestates
-	for (unsigned int i = 0; i < gameStates.size(); ++i)
+	/*for (unsigned int i = 0; i < gameStates.size(); ++i)
 	{
 		delete gameStates[i];
 	}
 
-	gameStates.clear();
+	gameStates.clear();*/
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	for (int i = 0; i < gameStates.size(); ++i)
 	{

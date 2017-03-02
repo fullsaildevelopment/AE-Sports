@@ -137,17 +137,17 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	{
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			//if (justJumped)
-			//{
-			//	justJumped = false;
+			if (justJumped)
+			{
+				justJumped = false;
 
-			//	//do animation
-			//	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+				//do animation
+				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-			//	animator->SetTrigger("Land");
+				animator->SetTrigger("Land");
 
-			//	//cout << "Land" << endl;
-			//}
+				//cout << "Land" << endl;
+			}
 
 			floor = boxCollider->GetGameObject();
 
@@ -164,7 +164,6 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		if (justJumped)
 		{
 			justJumped = false;
-
 			//do animation
 			AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
@@ -188,8 +187,6 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (capsCollider->GetGameObject() == otherPlayer)
 			{
-				//cout << "Collision exit" << endl;
-
 				otherPlayer = nullptr;
 
 				return;
@@ -208,6 +205,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 				//cout << "floor exit" << endl;
 
 				floor = nullptr;
+				justJumped = false;
 				return;
 			}
 		}
@@ -218,9 +216,8 @@ void PlayerController::OnCollisionExit(Collider* collider)
 		{
 			if (hexCollider->GetGameObject() == floor)
 			{
-				//cout << "hex exit" << endl;
-
 				floor = nullptr;
+				justJumped = false;
 			}
 		}
 	}
@@ -228,7 +225,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 
 void PlayerController::Jump()
 {
-	if (floor)
+	if (floor && !justJumped)
 	{
 		justJumped = true;
 		transform->AddVelocity({ 0, 5.0f, 0 });

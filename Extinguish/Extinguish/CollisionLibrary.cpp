@@ -1161,18 +1161,24 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			if (rcify == 1) return zeroF;
 			else if (rcify == 2)
 			{
+				float3 topcheck = float3(rScopy.m_Center.x, hex.seg.m_End.y, rScopy.m_Center.z);
+				NewPlane toppl;
+				toppl.n = float3(0, 1, 0);
+				toppl.p = topcheck;
+				float3 p0 = SpherePlanePoint(toppl, rScopy);
 				float3 p1 = SpherePlanePoint(rpl, rScopy);
 				float3 p2 = SpherePlanePoint(tpl, rScopy);
+				float pd0 = (p0 - rScopy.m_Center).magnitude();
 				float pd1 = (p1 - rScopy.m_Center).magnitude();
 				float pd2 = (p2 - rScopy.m_Center).magnitude();
-				if (pd1 < pd2)
+				if (pd1 < pd2 && pd1 < pd0)
 				{
 					float3 dff = p1 - rScopy.m_Center;
 
 					if (rels.x < 0) dff.x *= -1;
 					if (rels.z < 0) dff.z *= -1;
 
-					s.m_Center += dff;
+					s.m_Center += dff - 0.00001f;
 
 					if (s.m_Center.x < SE.x)
 						rpl.n.x *= -1;
@@ -1181,14 +1187,14 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 					return rpl.n;
 				}
-				else
+				else if(pd2 < pd0)
 				{
 					float3 dff = p2 - rScopy.m_Center;
 
 					if (rels.x < 0) dff.x *= -1;
 					if (rels.z < 0) dff.z *= -1;
 
-					s.m_Center += dff;
+					s.m_Center += dff - 0.00001f;
 
 					if (s.m_Center.x < SE.x)
 						tpl.n.x *= -1;
@@ -1196,6 +1202,22 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 						tpl.n.z *= -1;
 
 					return tpl.n;
+				}
+				else
+				{
+					float3 dff = p0 - rScopy.m_Center;
+
+					if (rels.x < 0) dff.x *= -1;
+					if (rels.z < 0) dff.z *= -1;
+
+					s.m_Center += dff - 0.00001f;
+
+					if (s.m_Center.x < SE.x)
+						toppl.n.x *= -1;
+					if (s.m_Center.z < SE.z)
+						toppl.n.z *= -1;
+
+					return toppl.n;
 				}
 			}
 			else if (rcify == 3)
@@ -1207,7 +1229,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				if (rels.x < 0) dff.x *= -1;
 				if (rels.z < 0) dff.z *= -1;
 
-				s.m_Center += dff;
+				s.m_Center += dff - 0.00001f;
 
 				if (s.m_Center.x < SE.x)
 					rpl.n.x *= -1;
@@ -1236,7 +1258,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				if (rels.x < 0) dff.x *= -1;
 				if (rels.z < 0) dff.z *= -1;
 
-				s.m_Center += dff;
+				s.m_Center += dff - 0.00001f;
 
 				if (s.m_Center.x < SE.x)
 					tpl.n.x *= -1;
@@ -1258,7 +1280,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 					if (rels.x < 0) dff.x *= -1;
 					if (rels.z < 0) dff.z *= -1;
 
-					s.m_Center += dff;
+					s.m_Center += dff - 0.00001f;
 
 					if (s.m_Center.x < SE.x)
 						rpl.n.x *= -1;
@@ -1274,7 +1296,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 					if (rels.x < 0) dff.x *= -1;
 					if (rels.z < 0) dff.z *= -1;
 
-					s.m_Center += dff;
+					s.m_Center += dff - 0.00001f;
 
 					if (s.m_Center.x < SE.x)
 						tpl.n.x *= -1;
@@ -1340,7 +1362,7 @@ float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 	if (!n.isEquil(zeroF))
 	{
 		float3 diff = s.m_Center - c.m_Segment.m_Start;
-		c.m_Segment.m_Start += diff;
+		c.m_Segment.m_Start += diff - 0.00001f;
 		return n;
 	}
 	return zeroF;
