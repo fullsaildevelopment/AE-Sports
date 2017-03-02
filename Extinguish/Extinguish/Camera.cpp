@@ -2,11 +2,14 @@
 #include <iostream>
 #include "EventDispatcher.h"
 #include "GameObject.h"
+#include "GamePadEvent.h"
+#include "GamePad.h"
+#include "Game.h"
 
 using namespace DirectX;
 using namespace std;
 
-Camera::Camera() : maxRotX(1.5f), maxRotY(2.0f)
+Camera::Camera() : maxRotX(1.5f), maxRotY(2.0f), padSensitivityX(2.5f), padSensitivityY(2.5f)
 {
 	//camTransform = new Transform();
 }
@@ -17,14 +20,17 @@ Camera::~Camera()
 }
 
 //basic//
-void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel)
+void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel, bool isEventHandler)
 {
 	//cache
 	transform = GetGameObject()->GetTransform();
 	input = InputManager::GetSingleton();
 
 	//register handler
-	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+	if (isEventHandler)
+	{
+		EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+	}
 
 	//set camera initial position
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
@@ -73,6 +79,28 @@ void Camera::HandleEvent(Event* e)
 				}
 			}
 		}
+
+		return;
+	}
+
+	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+	if (gamePadEvent)
+	{
+		string name;
+		name = "Camera";
+		name += to_string(gamePadEvent->GetClientID());
+
+		if (GetGameObject()->GetName() == name)
+		{
+			string playerName = "Mage";
+			playerName += to_string(gamePadEvent->GetClientID());
+			playerTransform = GetGameObject()->FindGameObject(playerName)->GetTransform();
+
+			MoveCamera(gamePadEvent);
+		}
+
+		return;
 	}
 }
 
@@ -189,6 +217,49 @@ void Camera::MoveCamera(InputDownEvent* e)
 	prevMouseX = input->GetMouseX();
 	prevMouseY = input->GetMouseY();
 #endif
+}
+
+void Camera::MoveCamera(GamePadEvent* e)
+{
+	GamePad::State* padState = e->GetState();
+
+	if (padState->thumbSticks.rightX || padState->thumbSticks.rightY)
+	{
+		//if (!input->GetMouseButton(0) && prevMouseX && prevMouseY)
+		//if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
+		{
+			XMFLOAT4X4 camera = transform->GetWorld();
+
+			float dx = padState->thumbSticks.rightX;
+			float dy = -padState->thumbSticks.rightY;
+
+			//store old cam position
+			float degX = dy * rotateSpeed * dt * 2.5f;
+			float degY = dx * rotateSpeed * dt * 2.5f;
+
+
+			if (curRotX + degX > maxRotX)
+			{
+				curRotX = maxRotX;
+				degX = maxRotX - curRotX;
+			}
+			else if (curRotX + degX < -maxRotX)
+			{
+				curRotX = -maxRotX;
+				degX = -maxRotX - curRotX;
+			}
+			else
+			{
+				curRotX += degX;
+			}
+
+			curRotY += degY;
+
+			transform->RotateX(degX);
+			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
+			playerTransform->RotateY(degY);
+		}
+	}
 }
 
 void Camera::ClampTo()

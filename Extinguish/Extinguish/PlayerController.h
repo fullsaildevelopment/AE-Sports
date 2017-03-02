@@ -5,6 +5,7 @@
 class GameObject;
 class Camera;
 class Transform;
+class GamePadEvent;
 
 class PlayerController : public Component
 {
@@ -44,7 +45,7 @@ private:
 
 	//private helper functions
 	void HandleInput();
-	void HandleGamePad();
+	void HandleGamePad(GamePadEvent* gamePadEvent);
 	void HandleSprintAndCharge();
 	void PlayFootstepsSound();
 	void StopFootstepsSound();

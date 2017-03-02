@@ -11,7 +11,6 @@ private:
 	int clientID;
 	bool isServer;
 
-
 public:
 	//InputDownEvent(InputManager* inputManager, bool isServer);
 	InputDownEvent();
