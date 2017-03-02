@@ -3,7 +3,7 @@
 
 #define RunSpeed 5
 #define AttackSpeed 15
-#define StumbleSpeed 10
+#define StumbleSpeed 5
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -257,10 +257,10 @@ void AI::Update(float dt)
 #pragma region Goalie2
 	if (currState == playboy)
 	{
-		/*float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
+		float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
 		// if the ball gets close
-		if (ballDist.magnitude() < 28)
+		/*if (ballDist.magnitude() < 28)
 		{
 			// if no one is holding it or the enemies have it
 			if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
@@ -280,8 +280,6 @@ void AI::Update(float dt)
 				Idle();
 			}
 		}*/
-
-
 	}
 
 #pragma endregion
