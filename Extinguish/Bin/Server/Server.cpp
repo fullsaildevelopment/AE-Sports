@@ -21,8 +21,8 @@ Server::Server()
 
 Server::~Server()
 {
-	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
-		delete names[i];
+	/*for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+		delete names[i];*/
 
 	delete clientStates;
 	delete gameState;
@@ -48,12 +48,14 @@ int Server::init(uint16_t port)
 	peer->SetMaximumIncomingConnections(MAX_PLAYERS);
 
 	printf("Server made at: %s\n", peer->GetMyBoundAddress().ToString());
-	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+	for (unsigned int i = 0; i < 8; ++i)
 	{
-		names[i] = new char[8];
+		//names[i] = new char[8];
 		clientIDs[i] = i + 1;
 	//	bteamIDs[i] = i + 5;
 	}
+
+	objIDs[0].inUse = true;
 
 	peer->SetOccasionalPing(true);
 
@@ -110,9 +112,9 @@ int  Server::update()
 		case ID_CLIENT_REGISTER:
 		{
 			UINT16 id = registerClient();
-			char newMessage[50] = "Please welcome the new player, ";
-			memcpy(&newMessage[strlen(newMessage)], names[id], nameSizes[id]);
-			memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
+			char newMessage[50] = "Please welcome the new player.\n";
+		//	memcpy(&newMessage[strlen(newMessage)], names[id], nameSizes[id]);
+		//	memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
 
 			printf(newMessage);
 			//sendMessage(newMessage, ID_SERVER_MESSAGE, true);
@@ -143,8 +145,8 @@ int  Server::update()
 		case ID_INCOMING_INPUT:
 		{
 			recieveInput();
-			result = 3;
-			break;
+			return 3;
+			//break;
 		}
 
 		case ID_CHANGE_TEAM_A:
@@ -154,9 +156,9 @@ int  Server::update()
 			UINT8 tempID;
 			bIn.Read(tempID);
 
-			UINT8 objID;
+			UINT8 objID, newID;
 
-			if (tempID > 4)
+			if (tempID >= 4)
 			{
 				for (unsigned int i = 0; i < 4; ++i)
 				{
@@ -164,11 +166,15 @@ int  Server::update()
 					{
 						objID = objIDs[i].id;
 						objIDs[i].inUse = true;
+						objIDs[tempID - 1].inUse = false;
+						clientIDs[tempID - 1] = tempID;
+						newID = i + 1;
+						clientIDs[i] = 0;
 						break;
 					}
 				}
 				
-				sendObjID(objID);
+				sendObjID(objID, newID);
 			}
 
 
@@ -181,20 +187,25 @@ int  Server::update()
 			UINT8 tempID;
 			bIn.Read(tempID);
 
-			UINT8 objID;
+			UINT8 objID, newID;
 
 			if (tempID < 5)
 			{
-				for (unsigned int i = 5; i < 9; ++i)
+				for (unsigned int i = 4; i < 8; ++i)
 				{
 					if (!objIDs[i].inUse)
 					{
 						objID = objIDs[i].id;
 						objIDs[i].inUse = true;
+						objIDs[tempID - 1].inUse = false;
+						clientIDs[tempID - 1] = tempID;
+						newID = i + 1;
+						clientIDs[i] = 0;
 						break;
 					}
 				}
-			sendObjID(objID);
+			sendObjID(objID, newID);
+			
 			}
 
 			break;
@@ -304,9 +315,9 @@ UINT16 Server::registerClient()
 	UINT8 length, clientid;
 	bsIn.Read(clientid);
 	bsIn.Read(length);
-	bsIn.Read(names[clientid - 1], length);
+	//bsIn.Read(names[clientid - 1], length);
 
-	nameSizes[clientid - 1] = length;
+	//nameSizes[clientid - 1] = length;
 	return clientid - 1;
 }
 
@@ -332,12 +343,13 @@ void Server::sendNew()
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }
 
-void Server::sendObjID(UINT8 id)
+void Server::sendObjID(UINT8 id, UINT8 newID)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_CLIENT_OBJ);
 
 	bsOut.Write(id);
+	bsOut.Write(newID);
 	bsOut.Write(serverObjs);
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
@@ -351,12 +363,12 @@ void Server::unregisterClient()
 
 	UINT8 leavingID;
 	bsIn.Read(leavingID);
-	int size = nameSizes[leavingID - 1];
+	//int size = nameSizes[leavingID - 1];
 
 	clientIDs[leavingID - 1] = leavingID;
-	char message[30];
-	memcpy(&message[0], names[leavingID - 1], size);
-	memcpy(&message[size], " has left the lobby.\n", strlen(" has left the lobby.\n"));
+	char message[30] = "A player has left the lobby.\n";
+	//memcpy(&message[0], names[leavingID - 1], size);
+	//memcpy(&message[size], "A player has left the lobby.\n", strlen("A player has left the lobby.\n"));
 	sendMessage(message, ID_SERVER_MESSAGE, true);
 
 	--numPlayers;
@@ -426,7 +438,7 @@ void Server::recieveInput()
 void Server::sendPackets()
 {
 	// send packet x8 to all clients
-	//if (packRec >= numPlayers)
+	if (serverObjs > 0)
 	{
 		packRec = 0;
 		BitStream bOut;
