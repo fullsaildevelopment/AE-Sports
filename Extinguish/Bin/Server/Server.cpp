@@ -64,6 +64,8 @@ int Server::init(uint16_t port)
 
 int  Server::update()
 {
+	if (!peer)
+		float temp = 0.0f;
 	int result = 1;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
@@ -215,6 +217,9 @@ int  Server::update()
 			result = 4;
 			break;
 		}
+
+		if (!peer)
+			float temp = 0.0f;
 	}
 
 	/*if (result == 2)
@@ -333,6 +338,7 @@ void Server::sendNew()
 		{
 			newID = clientIDs[i];
 			clientIDs[i] = 0;
+			objIDs[i].inUse = true;
 			break;
 		}
 	}
@@ -440,6 +446,10 @@ void Server::sendPackets()
 	// send packet x8 to all clients
 	if (serverObjs > 0)
 	{
+
+		if (!peer)
+			float temp = 0.0f;
+
 		packRec = 0;
 		BitStream bOut;
 		bOut.Write((MessageID)ID_INCOMING_PACKET);
