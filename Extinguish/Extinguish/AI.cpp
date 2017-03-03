@@ -171,7 +171,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		{
 			bool bgoalie = false;
 			bool bplayboy = false;
-			bool bguy1 = false;
+			bool bguy = false;
 			bool btank = false;
 
 			for (int i = 0; i < AIbuddies.size(); ++i)
@@ -183,7 +183,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 					bplayboy = true;
 
 				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
-					bguy1 = true;
+					bguy = true;
 
 				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
 					btank = true;
@@ -191,7 +191,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 			if (!bgoalie) currState = goalie;
 			else if (!bplayboy) currState = playboy;
-			else if (!bguy1) currState = guy;
+			else if (!bguy) currState = guy;
 			else if (!btank) currState = tank;
 
 			break;
@@ -230,13 +230,24 @@ void AI::Update(float dt)
 		{
 			GameObject *myGuy = nullptr;
 
-			for (int i = 0; i < AIbuddies.size(); ++i)
+			for (int i = 0; i < listOfMates.size(); ++i)
 			{
-				if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
-					myGuy = AIbuddies[i];
+				float mdist = 789; // distance to me
+				float3 tmp2 = listOfMates[i]->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+
+				if (fakeTeam == 3 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+					myGuy = listOfMates[i];
+
+				// if they're closer to me
+				else if (tmp2.magnitude() < mdist)
+				{
+					// switch to them
+					mdist = tmp2.magnitude();
+					myGuy = listOfMates[i];
+				}
 			}
 
-			if (myGuy && !RunTo(myGuy))
+			if (myGuy && RunTo(myGuy, 10.0f))
 				crosse->Throw();
 		}
 
@@ -253,7 +264,7 @@ void AI::Update(float dt)
 #pragma endregion
 
 #pragma region Goalie2
-	if (currState == playboy)
+	else if (currState == playboy)
 	{
 		float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
@@ -289,10 +300,7 @@ void AI::Update(float dt)
 		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 		{
 			if (ballClass->GetHolder() == me)
-			{
-				Paranoia();
 				Score();
-			}
 
 			else if (ballClass->GetHolder()->GetTag() == me->GetTag())
 				DefendTeammate();
@@ -317,10 +325,7 @@ void AI::Update(float dt)
 			{
 				// if it's me
 				if (ballClass->GetHolder() == me)
-				{
 					Score();
-					Paranoia();
-				}
 
 				// if it's my friend
 				else
@@ -471,7 +476,7 @@ void AI::Paranoia()
 			}
 
 			// pass the ball
-			//TurnTo(target); //////////////////////////////////////////////////////////////////////////////////////////////
+			TurnTo(target);
 			crosse->Throw();
 		}
 	}
@@ -525,6 +530,7 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
+	Paranoia();
 	bool trash = RunTo(enemyGoal);
 
 	if (RunTo(enemyGoal, 10.0f))
