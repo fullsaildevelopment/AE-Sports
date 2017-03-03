@@ -493,8 +493,8 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCo
 	bool collided = false;
 	for (int i = _min; i < _max; ++i)
 	{
-		test.min = poses[i * col] - float3(1, 10, 1);
-		test.max = poses[i * col + col - 1] + float3(1, 20, 1);
+		test.min = poses[i * col] - float3(2, 10, 2);
+		test.max = poses[i * col + col - 1] + float3(2, 20, 2);
 		if (AABBToCapsule(test, c))
 		{
 			for (int j = 0; j < col; ++j)
