@@ -227,6 +227,7 @@ void Camera::MoveCamera(GamePadEvent* e)
 	{
 		//if (!input->GetMouseButton(0) && prevMouseX && prevMouseY)
 		//if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
+		if (!padState->IsLeftTriggerPressed())
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
 

@@ -262,29 +262,33 @@ void Crosse::HandleGamePad(GamePadEvent* e)
 			float xPos = CLIENT_WIDTH / 2 * ratio;
 			float yPos = CLIENT_HEIGHT / 2 * yRatio;
 
-			cout << ratio << " " << yRatio << endl;
+			//cout << ratio << " " << yRatio << endl;
 
-			if (xPos > xWiggleRoom && yPos > 0) //top-right quadrant
+			if (xPos > 0 && yPos > 0) //top-right quadrant
 			{
 				//yRatio = -yRatio;
 			}
-			else if (xPos > xWiggleRoom && yPos < 0) //bottom-right quadrant
-			{
-				//yRatio = -yRatio;
-				doubleY = true;
-			}
-			else if (xPos < -xWiggleRoom && yPos < 0) //bottom-left quadrant
+			else if (xPos > 0 && yPos < 0) //bottom-right quadrant
 			{
 				//yRatio = -yRatio;
 				doubleY = true;
-			}
-			else if (xPos < -xWiggleRoom && yPos > 0) //top-left quadrant
-			{
+				//ratio = -ratio;
 				yRatio = -yRatio;
+			}
+			else if (xPos < 0 && yPos < 0) //bottom-left quadrant
+			{
+				//yRatio = -yRatio;
+				doubleY = true;
+				//yRatio = -yRatio;
+				//ratio = -ratio;
+			}
+			else if (xPos < 0 && yPos > 0) //top-left quadrant
+			{
+	
 			}
 
 			//this way if the pos is inside the wiggle area, the radians will be zero and no rotation will happen
-			if (xPos > xWiggleRoom || xPos < -xWiggleRoom)
+			if (xPos > 0 || xPos < 0)
 			{
 				radians = -90.0f / 180.0f * XM_PI;
 				yRadians = -45.0f / 180.0f * XM_PI;
@@ -295,10 +299,10 @@ void Crosse::HandleGamePad(GamePadEvent* e)
 				yPos *= 2.2f; //added because crosse would only go halfway down y in bottom quadrants
 			}
 
-			//cout << xPos << " " << yPos << " " << (ratio * -90.0f) << " " << (-yRatio * -45.0f) << " " << (ratio * -90.0f) + (-yRatio * -45.0f) << endl;
+			cout << xPos << " " << yPos << " " << (ratio * -90.0f) << " " << (yRatio * -45.0f) << " " << (ratio * -90.0f) + (yRatio * -45.0f) << endl;
 
 			transform->SetPosition({ xPos * 0.001f * 1.8f, yPos * 0.001f + minY, transform->GetPosition().z }); // * 1.8 because * 2 is too much. And it was only travelling half
-			transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (-yRatio * yRadians) });
+			transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (yRatio * yRadians) });
 			//transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * degrees) + (yRatio * 45.0f) });
 		}
 	}

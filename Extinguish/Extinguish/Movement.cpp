@@ -202,39 +202,44 @@ void Movement::HandleGamePad(GamePadEvent* gamePadEvent)
 
 	//tracker.Update(gamePadState);
 
-	if (state->IsLeftThumbStickUp())
+	float leftY = state->thumbSticks.leftY;
+
+	if (leftY > 0.0f)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * moveSpeed, forward.y * moveSpeed,  forward.z * moveSpeed });
+		transform->AddVelocity({ forward.x * moveSpeed * leftY, forward.y * moveSpeed * leftY,  forward.z * moveSpeed * leftY });
 		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (state->IsLeftThumbStickDown())
+	if (leftY < 0.0f)
 	{
 		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * -moveSpeed, forward.y * -moveSpeed,  forward.z * -moveSpeed });
+		transform->AddVelocity({ forward.x * moveSpeed * leftY, forward.y * moveSpeed * leftY,  forward.z * moveSpeed * leftY });
 		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (state->IsLeftThumbStickLeft())
+	float leftX = state->thumbSticks.leftX;
+
+
+	if (leftX < 0.0f)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * -moveSpeed, right.y * -moveSpeed,  right.z * -moveSpeed });
+		transform->AddVelocity({ right.x * moveSpeed * leftX, right.y * moveSpeed * leftX,  right.z * moveSpeed * leftX });
 		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (state->IsLeftThumbStickRight())
+	if (leftX > 0.0f)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * moveSpeed, right.y * moveSpeed,  right.z * moveSpeed });
+		transform->AddVelocity({ right.x * moveSpeed * leftX, right.y * moveSpeed * leftX,  right.z * moveSpeed * leftX });
 		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;

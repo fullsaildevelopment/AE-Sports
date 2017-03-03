@@ -233,7 +233,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 5.0f, 0 });
+		transform->AddVelocity({ 0, 10.0f, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation
@@ -316,10 +316,10 @@ void PlayerController::HandleInput()
 
 void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 {
-
+	GamePad::State* padState = gamePadEvent->GetState();
 	GamePad::ButtonStateTracker tracker;
 
-	tracker.Update(*gamePadEvent->GetState());
+	tracker.Update(*padState);
 
 	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
 	{
@@ -327,29 +327,26 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 	}
 
 	//this line will only happen once
-	//if ( && !isSprinting && canSprint) //16 == Left Shift
-	//{
-	//	Sprint();
+	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint) //16 == Left Shift
+	{
+		Sprint();
 
-	//	//Play sound
+		cout << "Sprint" << endl;
+	}
+	else if (!padState->thumbSticks.leftY && isSprinting)
+	{
+		isSprinting = false;
+		isCharging = false;
 
+		Physics* physics = GetGameObject()->GetComponent<Physics>();
+		physics->SetMaxSpeed(originalMaxSpeed);
+		//physics->SetHasMaxSpeed(true);
 
-	//	cout << "Sprint" << endl;
-	//}
-	//else if (input->GetKeyUp(16) && isSprinting)
-	//{
-	//	isSprinting = false;
-	//	isCharging = false;
+		cout << "Stop Sprint" << endl;
 
-	//	Physics* physics = GetGameObject()->GetComponent<Physics>();
-	//	physics->SetMaxSpeed(originalMaxSpeed);
-	//	//physics->SetHasMaxSpeed(true);
-
-	//	cout << "Stop Sprint" << endl;
-
-	//	//revert back to walk footsteps
-	//	SetFootstepsSound(0);
-	//}
+		//revert back to walk footsteps
+		SetFootstepsSound(0);
+	}
 }
 
 //sprinting isn't necessarily charging but charging is sprinting
