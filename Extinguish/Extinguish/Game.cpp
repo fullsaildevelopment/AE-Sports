@@ -1625,10 +1625,17 @@ void Game::LoadScene(std::string name)
 
 	if (currentScene == 1)
 	{
-		if (ResourceManager::GetSingleton()->IsServer())
-			EnableButton("Start", true);
+		if (ResourceManager::GetSingleton()->IsMultiplayer())
+		{
+			if (ResourceManager::GetSingleton()->IsServer())
+				EnableButton("Start", true);
+			else
+				EnableButton("Start", false);
+		}
 		else
-			EnableButton("Start", false);
+		{
+			EnableButton("Players", false);
+		}
 	}
 	else if (currentScene == 2)
 	{
