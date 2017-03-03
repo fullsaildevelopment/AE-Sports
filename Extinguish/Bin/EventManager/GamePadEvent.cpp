@@ -1,17 +1,25 @@
 #include "GamePadEvent.h"
 
+using namespace DirectX;
+
 void GamePadEvent::Init()
 {
 	//nothing
 }
 
-void GamePadEvent::Init(void* state)
+void GamePadEvent::Init(GamePad::State* state, int id)
 {
 	gamePadState = state;
+	clientID = id;
 }
 
 //getters//
-void* GamePadEvent::GetState()
+GamePad::State* GamePadEvent::GetState()
 {
 	return gamePadState;
+}
+
+int GamePadEvent::GetClientID()
+{
+	return clientID;
 }

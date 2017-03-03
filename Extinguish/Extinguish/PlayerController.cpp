@@ -17,13 +17,9 @@
 #include "Movement.h"
 #include "GamePad.h"
 #include "Game.h"
+#include "GamePadEvent.h"
 
 using namespace std;
-
-namespace Player
-{
-	DirectX::GamePad::State gamePadState;
-};
 
 //charge is the ability to attack a player (and it makes you go faster)
 //after *blank* seconds of sprinting, you automatically charge
@@ -74,15 +70,6 @@ void PlayerController::Update(float dt)
 	{
 		StopFootstepsSound();
 	}
-
-	//handle input from controller
-	std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
-	Player::gamePadState = gamePad->GetState(0);
-
-	if (Player::gamePadState.IsConnected())
-	{
-		HandleGamePad();
-	}
 }
 
 void PlayerController::HandleEvent(Event* e)
@@ -102,13 +89,31 @@ void PlayerController::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				if (!Player::gamePadState.IsConnected())
+				//if (!Player::gamePadState.IsConnected())
 				{
 					input = inputDownEvent->GetInput();
 					HandleInput();
 				}
 			}
 		}
+
+		return;
+	}
+
+	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+	if (gamePadEvent)
+	{
+		string name;
+		name = "Mage";
+		name += to_string(gamePadEvent->GetClientID());
+
+		if (GetGameObject()->GetName() == name)
+		{
+			HandleGamePad(gamePadEvent);
+		}
+
+		return;
 	}
 }
 
@@ -228,7 +233,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 5.0f, 0 });
+		transform->AddVelocity({ 0, 7.5f, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation
@@ -309,11 +314,12 @@ void PlayerController::HandleInput()
 	}
 }
 
-void PlayerController::HandleGamePad()
+void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 {
+	GamePad::State* padState = gamePadEvent->GetState();
 	GamePad::ButtonStateTracker tracker;
 
-	tracker.Update(Player::gamePadState);
+	tracker.Update(*padState);
 
 	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
 	{
@@ -321,31 +327,29 @@ void PlayerController::HandleGamePad()
 	}
 
 	//this line will only happen once
-	//if ( && !isSprinting && canSprint) //16 == Left Shift
-	//{
-	//	Sprint();
+	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint) //16 == Left Shift
+	{
+		Sprint();
 
-	//	//Play sound
+		cout << "Sprint" << endl;
+	}
+	else if (!padState->thumbSticks.leftY && isSprinting)
+	{
+		isSprinting = false;
+		isCharging = false;
 
+		Physics* physics = GetGameObject()->GetComponent<Physics>();
+		physics->SetMaxSpeed(originalMaxSpeed);
+		//physics->SetHasMaxSpeed(true);
 
-	//	cout << "Sprint" << endl;
-	//}
-	//else if (input->GetKeyUp(16) && isSprinting)
-	//{
-	//	isSprinting = false;
-	//	isCharging = false;
+		cout << "Stop Sprint" << endl;
 
-	//	Physics* physics = GetGameObject()->GetComponent<Physics>();
-	//	physics->SetMaxSpeed(originalMaxSpeed);
-	//	//physics->SetHasMaxSpeed(true);
-
-	//	cout << "Stop Sprint" << endl;
-
-	//	//revert back to walk footsteps
-	//	SetFootstepsSound(0);
-	//}
+		//revert back to walk footsteps
+		SetFootstepsSound(0);
+	}
 }
 
+//sprinting isn't necessarily charging but charging is sprinting
 void PlayerController::HandleSprintAndCharge()
 {
 	float speedMultiplier;
@@ -363,7 +367,6 @@ void PlayerController::HandleSprintAndCharge()
 		else if (chargeTimer >= timeTilCharge && !isCharging)  //if not charging but you should be charging, charge
 		{
 			speedMultiplier = chargeMultiplier;
-			//isSprinting = false; //charging is sprinting but sprinting isn't necessarily charging
 			isCharging = true;
 
 			cout << "Charge time" << endl;
@@ -392,7 +395,7 @@ void PlayerController::HandleSprintAndCharge()
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
-		if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty()) // fully charged
+		if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty())
 		{
 			canSprint = true;
 		}

@@ -41,6 +41,20 @@ void EventDispatcher::DispatchTo(Event* event, std::string handlerName)
 	}
 }
 
+//this will dispatch it to every single handler except the one specified
+void EventDispatcher::DispatchExcept(Event* event, std::string handlerName)
+{
+	int indexToAvoid = handlersTable.GetKey(handlerName);
+
+	for (int i = 0; i < handlers.size(); ++i)
+	{
+		if (i != indexToAvoid)
+		{
+			handlers[i]->HandleEvent(event);
+		}
+	}
+}
+
 //getters
 EventDispatcher* EventDispatcher::GetSingleton()
 {

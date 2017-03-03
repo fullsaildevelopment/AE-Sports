@@ -59,6 +59,8 @@ int Server::init(uint16_t port)
 
 	peer->SetOccasionalPing(true);
 
+	message = nullptr;
+
 	return 1;
 }
 
@@ -259,6 +261,8 @@ bool Server::Shutdown()
 		shutdown = true;
 		return true;
 	}
+
+	delete message;
 
 	return false;
 }
@@ -481,10 +485,11 @@ void Server::ReceiveMessage()
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
-	uint16_t stride;
 	bIn.Read(stride);
 
 	delete message;
+	message = nullptr;
+
 	message = new char[stride];
 
 	for (int i = 0; i < stride; ++i)

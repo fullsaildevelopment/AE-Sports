@@ -342,9 +342,6 @@
     <ClInclude Include="MeterBar.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="GamePad.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="ReadData.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -409,7 +406,6 @@
       <UniqueIdentifier>{0c2426c2-8489-4a44-b3f8-e4223ba9bcad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
     <None Include="Bloom.hlsli">
       <Filter>Shaders\BloomPS</Filter>

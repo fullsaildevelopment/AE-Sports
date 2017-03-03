@@ -28,10 +28,10 @@ private:
 
 	/* other */
 	unsigned int sceneIndex;
-
+	bool gamePadSprinting;
 
 public:
-	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) { }
+	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) { gamePadSprinting = false; }
 	~MeterBar();
 
 	/* overrides */

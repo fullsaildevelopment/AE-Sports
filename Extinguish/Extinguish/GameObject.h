@@ -80,6 +80,7 @@ public:
 	Transform* GetTransform();
 	std::string GetName();
 	std::string GetTag() { return tag; };
+	Scene* GetScene();
 
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }

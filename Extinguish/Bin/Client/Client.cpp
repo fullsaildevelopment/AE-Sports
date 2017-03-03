@@ -244,7 +244,7 @@ int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardU
 	return 1;
 }
 
-void Client::sendMessage(char * message, uint16_t stride)
+void Client::sendMessage(char* message, uint16_t stride)
 {
 	BitStream bsOut;
 

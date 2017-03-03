@@ -88,7 +88,7 @@ void InputManager::Update()
 		if (gamePadState.IsConnected())
 		{
 			GamePadEvent* gamePadEvent = new GamePadEvent();
-			gamePadEvent->Init(&gamePadState);
+			gamePadEvent->Init(&gamePadState, Game::GetClientID());
 			EventDispatcher::GetSingleton()->DispatchTo(gamePadEvent, "Game");
 			delete gamePadEvent;
 		}
@@ -268,27 +268,6 @@ bool* InputManager::GetMouseUp()
 
 void InputManager::SetKeyboardKey(unsigned int index, bool toggle)
 {
-	////button is already pressed and they are still pressing
-	//if (keyboard[index] && toggle)
-	//{
-	//	keyboard[index] = KeyState::HELD;	
-	//	//cout << "Held" << endl;
-	//	SendEvent();
-	//}
-	////button isn't already pressed and they pressed it
-	//else if (!keyboard[index] && toggle)
-	//{
-	//	keyboard[index] = KeyState::DOWN;
-	//	cout << "Down" << endl;
-	//	SendEvent();
-	//}
-	//else if (!toggle)
-	//{
-	//	keyboard[index] = KeyState::UP;
-	//	SendEvent();
-	//	keyboard[index] = KeyState::NOTPRESSED;
-	//}
-
 	if (toggle)
 	{
 		if (!keyboardDown[index] && !keyboard[index])
@@ -300,14 +279,6 @@ void InputManager::SetKeyboardKey(unsigned int index, bool toggle)
 
 			//cout << "Down and GetKey" << endl;
 		}
-		//else if (keyboardDown[index])
-		//{
-		//	keyboardDown[index] = false;
-		//	
-		//	cout << "No longer down" << endl;
-		//}
-
-		//SendEvent();
 
 		//cout << "sent event" << endl;
 	}
@@ -331,37 +302,6 @@ void InputManager::SetKeyboardKey(unsigned int index, bool toggle)
 //-1 is left. 0 is middle. 1 is right.
 void InputManager::SetMouseButtons(int index, bool toggle)
 {
-	//if (index == -1)
-	//{
-	//	leftButtonPressed = toggle;
-	//}
-	//else if (index)
-	//{
-	//	rightButtonPressed = toggle;
-	//}
-	//else
-	//{
-	//	middleButtonPressed = toggle;
-	//}
-
-/*	if (mouseButtons[index] && toggle)
-	{
-		mouseButtons[index] = KeyState::HELD;
-		SendEvent();
-	}
-	else *///if (!mouseButtons[index] && toggle)
-	/*{
-		mouseButtons[index] = KeyState::DOWN;
-		SendEvent();
-		mouseButtons[index] = KeyState::HELD;
-	}
-	else if (mouseButtons[index] && !toggle)
-	{
-		mouseButtons[index] = KeyState::UP;
-		SendEvent();
-		mouseButtons[index] = KeyState::NOTPRESSED;
-	}*/
-
 	if (toggle)
 	{
 		if (!mouseDown[index] && !mouse[index])
@@ -371,12 +311,6 @@ void InputManager::SetMouseButtons(int index, bool toggle)
 			SendEvent();
 			mouseDown[index] = false;
 		}
-		//else if (mouseDown[index])
-		//{
-		//	mouseDown[index] = false;
-		//}
-
-		//SendEvent();
 	}
 	else
 	{
