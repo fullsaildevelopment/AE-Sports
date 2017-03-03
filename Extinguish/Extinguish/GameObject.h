@@ -14,6 +14,7 @@ class Scene;
 class Button;
 class Transform;
 class UIRenderer;
+class FloorController;
 
 class GameObject
 {
