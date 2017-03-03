@@ -10,6 +10,7 @@
 #include "InputManager.h"
 #include "Transform.h"
 #include "PlayerController.h"
+#include "PostProcess.h"
 
 #define NUMOFPOINTLIGHTS 1
 #define NUMOFSPOTLIGHTS 0
@@ -24,6 +25,8 @@ private:
 	//buffer data
 	//DirectX::XMFLOAT4X4 camera;
 	//DirectX::XMFLOAT4X4 projection;
+
+	PostProcess PostProcessing;
 
 	//camera movement data
 	//float camYaw;
@@ -88,7 +91,7 @@ public:
 	~Scene();
 
 	//basics
-	void Init(DeviceResources const * devResources, InputManager* inputRef);
+	void Init(DeviceResources * devResources, InputManager* inputRef);
 	void Update(float dt);
 	void FixedUpdate(float dt);
 	void Render();

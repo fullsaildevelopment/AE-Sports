@@ -71,7 +71,7 @@ private:
 	void AssignPlayers();
 
 	void UpdateServerStates();
-	void UpdateClientObjects();
+	void UpdateClientObjects(float dt);
 	void UpdateScoreUI();
 	void UpdateLobbyUI(int _amount);
 
