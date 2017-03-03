@@ -142,7 +142,7 @@ int Client::run()
 			result = 3;
 			//printf("Please enter a name (8 characters max): ");
 			//memcpy(clientName, "Player", strlen("Player"));
-			//registerName();
+			registerName();
 			break;
 		}
 		case ID_SERVER_MESSAGE:
@@ -161,7 +161,7 @@ int Client::run()
 		{
 			receivePackets();
 			if (result != 4 || result != 5)
-				result = 2;
+				return 2;
 			break;
 		}
 		case ID_SERVER_CLOSURE:
@@ -180,8 +180,7 @@ int Client::run()
 			BitStream bIn(packet->data, packet->length, false);
 			bIn.IgnoreBytes(sizeof(MessageID));
 			bIn.Read(curNumOfClients);
-			result = 5;
-			break;
+			return 5;
 		}
 		case ID_START_GAME:
 		{
