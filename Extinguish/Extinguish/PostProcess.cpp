@@ -108,7 +108,6 @@ namespace BLOOM
 
 using namespace BLOOM;
 
-
 void PostProcess::CreateDevice(DeviceResources* devR)
 {
 	devRes = devR;
