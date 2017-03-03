@@ -272,8 +272,8 @@ void AI::Update(float dt)
 		if (ballDist.magnitude() < 28)
 		{
 			// if no one is holding it
-			if (!ballClass->GetIsHeld())
-				GetBall();
+			/*if (!ballClass->GetIsHeld())
+				GetBall();*/
 		}
 
 		// if i have the ball score
@@ -283,7 +283,7 @@ void AI::Update(float dt)
 		// if the ball is too far from the goal
 		else if (ballDist.magnitude() > 28)
 		{
-			if (RunTo(enemyGoal, 20.0f))
+			if (RunTo(enemyGoal, 30.0f))
 			{
 				TurnTo(myGoal);
 				Idle();
