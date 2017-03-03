@@ -54,8 +54,9 @@ public:
 	IDXGISwapChain* GetSwapChain() const { return swapChain.Get(); }
 	ID3D11DepthStencilView* GetDepthStencilView() const { return depthStencilView.Get(); }
 	ID3D11DepthStencilView* GetShadowMapDSV() const { return shadowMapDSV.Get(); }
-	ID3D11RenderTargetView* GetRenderTargetView() const { return shadowMapRTV.Get(); }
-	ID3D11RenderTargetView* GetShadowMapRTV() const { return renderTargetView.Get(); }
+	ID3D11RenderTargetView* GetRenderTargetView() const { return renderTargetView.Get(); }
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetRenderTargetViewComPtr() { return renderTargetView; }
+	ID3D11RenderTargetView* GetShadowMapRTV() const { return shadowMapRTV.Get(); }
 	ID3D11RenderTargetView* const * GetShadowMapRTVAddress() const { return shadowMapRTV.GetAddressOf(); }
 	ID3D11RenderTargetView* const * GetRenderTargetViewAddress() const { return renderTargetView.GetAddressOf(); }
 	ID3D11ShaderResourceView* GetShadowMapSRV() const { return shadowMapSRV.Get(); }

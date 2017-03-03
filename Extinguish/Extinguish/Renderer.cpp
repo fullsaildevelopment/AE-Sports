@@ -123,7 +123,7 @@ void Renderer::Update(float dt)
 
 	if (teamcolorBuffer)
 	{
-		devContext->UpdateSubresource(teamcolorBuffer, NULL, NULL, &TeamColor, NULL, NULL);
+		devContext->UpdateSubresource(teamcolorBuffer.Get(), NULL, NULL, &TeamColor, NULL, NULL);
 
 		devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
 	}
@@ -148,13 +148,13 @@ void Renderer::Render()
 	//Draw!
 	if (numIns > 0)
 	{
-		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 		D3D11_MAPPED_SUBRESOURCE mapstuff;
 		D3D11_MAPPED_SUBRESOURCE mapstuff2;
 
-		devContext->Map(instancedBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff);
-		devContext->Map(instancedBuffer2, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff2);
+		devContext->Map(instancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff);
+		devContext->Map(instancedBuffer2.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapstuff2);
 
 		float3* mapyay = (float3*)mapstuff.pData;
 		unsigned int* mapyay2 = (unsigned int*)mapstuff2.pData;
@@ -165,12 +165,12 @@ void Renderer::Render()
 			mapyay2[i] = m_instancedcolor[i];
 		}
 
-		devContext->Unmap(instancedBuffer, 0);
-		devContext->Unmap(instancedBuffer2, 0);
+		devContext->Unmap(instancedBuffer.Get(), 0);
+		devContext->Unmap(instancedBuffer2.Get(), 0);
 
 		unsigned int strides[] = { vertexStride, sizeof(float3), sizeof(unsigned int) };
 		unsigned int offsets[] = { 0, 0, 0 };
-		ID3D11Buffer* buf_ptrs[] = { vertexBuffer, instancedBuffer, instancedBuffer2 };
+		ID3D11Buffer* buf_ptrs[] = { vertexBuffer, instancedBuffer.Get(), instancedBuffer2.Get() };
 
 		devContext->IASetVertexBuffers(0, 3, buf_ptrs, strides, offsets);
 		//and finally... draw models
@@ -178,7 +178,7 @@ void Renderer::Render()
 	}
 	else if (indexBuffer)
 	{
-		devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		devContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 		//and finally... draw model
 		devContext->DrawIndexed(numIndices, 0, 0);
@@ -226,13 +226,13 @@ void Renderer::SetTeamColor(float4 c)
 void Renderer::SetCatch(float c)
 {
 	TeamColor.w = c;
-	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer,&TeamColor);
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer.Get(),&TeamColor);
 }
 
 void Renderer::SetCatch(float4 c)
 {
 	TeamColor = c;
-	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer, &TeamColor);
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer.Get(), &TeamColor);
 }
 
 

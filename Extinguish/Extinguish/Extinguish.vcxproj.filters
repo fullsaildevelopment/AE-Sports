@@ -38,6 +38,15 @@
     <FxCompile Include="PS_Crosse.hlsl">
       <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="BloomCombine.hlsl">
+      <Filter>Shaders\BloomPS</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomExtract.hlsl">
+      <Filter>Shaders\BloomPS</Filter>
+    </FxCompile>
+    <FxCompile Include="GaussianBlur.hlsl">
+      <Filter>Shaders\BloomPS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -171,6 +180,9 @@
     </ClCompile>
     <ClCompile Include="MeterBar.cpp">
       <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcess.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -333,6 +345,12 @@
     <ClInclude Include="GamePad.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="ReadData.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcess.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
@@ -387,8 +405,14 @@
     <Filter Include="Components\AnimatorController">
       <UniqueIdentifier>{03ddfbbd-f0a4-44c2-b737-a5d0ce246a9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\BloomPS">
+      <UniqueIdentifier>{0c2426c2-8489-4a44-b3f8-e4223ba9bcad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Bloom.hlsli">
+      <Filter>Shaders\BloomPS</Filter>
+    </None>
   </ItemGroup>
 </Project>
