@@ -243,9 +243,7 @@ void AI::Update(float dt)
 		// if the ball is too far from the goal
 		else if (dist.magnitude() > 28)
 		{
-			float3 goalDist = myGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
-			if (RunTo(myGoal) && goalDist.magnitude() < 1)
+			if (RunTo(myGoal, 15.0f))
 			{
 				TurnTo(enemyGoal);
 				Idle();
@@ -260,26 +258,26 @@ void AI::Update(float dt)
 		float3 ballDist = ball->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
 		// if the ball gets close
-		/*if (ballDist.magnitude() < 28)
+		if (ballDist.magnitude() < 28)
 		{
-			// if no one is holding it or the enemies have it
-			if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
+			// if no one is holding it
+			if (!ballClass->GetIsHeld())
 				GetBall();
 		}
 
-		// if i have the ball pass it off to someone
+		// if i have the ball score
 		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 			Score();
 
 		// if the ball is too far from the goal
 		else if (ballDist.magnitude() > 28)
 		{
-			if (RunTo(enemyGoal, 10.0f))
+			if (RunTo(enemyGoal, 20.0f))
 			{
 				TurnTo(myGoal);
 				Idle();
 			}
-		}*/
+		}
 	}
 
 #pragma endregion
@@ -473,7 +471,7 @@ void AI::Paranoia()
 			}
 
 			// pass the ball
-			//TurnTo(target); /////////////////////////////////////////////////////////
+			//TurnTo(target); //////////////////////////////////////////////////////////////////////////////////////////////
 			crosse->Throw();
 		}
 	}
@@ -529,7 +527,7 @@ void AI::Score()
 {
 	bool trash = RunTo(enemyGoal);
 
-	if (float3(enemyGoal->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 10)
+	if (RunTo(enemyGoal, 10.0f))
 		crosse->Throw();
 }
 
