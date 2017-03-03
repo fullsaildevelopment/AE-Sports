@@ -195,7 +195,7 @@ int Game::Update(float dt)
 			// so that it can be included in update
 			if ((clientState == 2 || clientState == 4) && client.getID() > 0)
 			{
-				UpdateClientObjects();
+				UpdateClientObjects(dt);
 
 				if (clientState == 4)
 				{
@@ -617,6 +617,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		{
 			tempCol = -col + 14;
 			mage1->SetTag("Team2");
+
+			/*AI *mageAI = new AI(mage1);
+			mage1->AddComponent(mageAI);
+			ai.push_back(mageAI);*/
 		}
 
 		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
@@ -770,10 +774,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//			mageRenderer1->SetTeamColor({ 0,0,1,0 });
 	//	}
 	//}
-	//for (int i = 0; i < ai.size(); ++i)
-	//{
-	//	ai[i]->Init(goal, goal2);
-	//}
+	/*for (int i = 0; i < ai.size(); ++i)
+	{
+		ai[i]->Init(goal, goal2);
+	}*/
 
 	objIDs[8] = (UINT8)basic->GetNumObjects();
 	basic->AddGameObject(goal);
@@ -1394,6 +1398,7 @@ void Game::AssignPlayers()
 					ai.push_back(mageAI);
 				}
 			}
+
 			GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
 			GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
 
@@ -1459,6 +1464,11 @@ void Game::UpdateServerStates()
 		GameState* state = gameStates[i];
 		GameObject* gameObject = (*gameObjects)[i];
 
+		if (gameObject->GetName() == "HexFloor")
+		{
+			state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
+		}
+
 		float3 position = gameObject->GetTransform()->GetPosition();
 		float3 rotation = gameObject->GetTransform()->GetRotation();
 		state->position = { position.x, position.y, position.z };
@@ -1521,7 +1531,7 @@ void Game::UpdateServerStates()
 	}
 }
 
-void Game::UpdateClientObjects()
+void Game::UpdateClientObjects(float dt)
 {
 	// get current game states
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -1545,6 +1555,14 @@ void Game::UpdateClientObjects()
 			//if (i != id)
 			{
 				GameObject* gameObject = (*gameObjects)[i];
+
+				if (gameObject->GetName() == "HexFloor")
+				{
+					FloorController * fC = gameObject->GetComponent<FloorController>();
+					fC->SetState(client.getFloorState(i), dt);
+				}
+
+
 				XMFLOAT3 position, rotation;
 				position = client.getLocation(i);
 				rotation = client.getRotation(i);
