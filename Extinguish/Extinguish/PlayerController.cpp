@@ -233,7 +233,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 10.0f, 0 });
+		transform->AddVelocity({ 0, 7.5f, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation

@@ -86,13 +86,11 @@ void Movement::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				//TODO: further optimization is to make input manager send different event or not send one at all
-				if (!Move::gamePadState.IsConnected())
-				{
-					HandleInput(inputDownEvent);
-				}
+				HandleInput(inputDownEvent);
 			}
 		}
+
+		return;
 	}
 
 	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
