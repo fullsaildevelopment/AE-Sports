@@ -421,7 +421,7 @@ void Scene::Update(float dt)
 	//Renderer* renderer = gameObjects[gameObjects.size() - 1]->GetComponent<Renderer>();
 	//ID2D1HwndRenderTarget * pRT = renderer->GetPRT();
 
-
+	
 	ImGui_ImplDX11_NewFrame();
 
 	for (int i = 0; i < gameObjects.size(); ++i)
