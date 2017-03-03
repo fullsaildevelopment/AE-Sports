@@ -12,6 +12,8 @@
 
 class GameObject;
 
+
+
 class Renderer : public Component
 {
 private:
@@ -24,9 +26,6 @@ private:
 	///////////Instanced///////////
 	ID3D11Buffer* instancedBuffer;
 	ID3D11Buffer* instancedBuffer2;
-	///////////////////////////////
-	////////PostProssessing////////
-
 	///////////////////////////////
 	ID3D11Buffer* indexBuffer;
 	ID3D11Buffer* teamcolorBuffer;
