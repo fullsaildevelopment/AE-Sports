@@ -116,12 +116,18 @@ void ReturnToMenu()
 
 void ChangeTeamA()
 {
-	Game::client.changeTeamA();
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::client.changeTeamA();
+	else
+		Game::team = Game::TEAM_A;
 }
 
 void ChangeTeamB()
 {
-	Game::client.changeTeamB();
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::client.changeTeamB();
+	else
+		Game::team = Game::TEAM_B;
 }
 
 //Button::~Button()
