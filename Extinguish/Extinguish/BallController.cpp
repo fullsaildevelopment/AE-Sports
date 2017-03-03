@@ -117,7 +117,6 @@ void BallController::FixedUpdate(float dt)
 	}
 }
 
-
 void BallController::Throw()
 {
 	timer.Restart();
@@ -150,7 +149,6 @@ void BallController::ThrowTo(GameObject *target)
 
 void BallController::DropBall(GameObject *person)
 {
-
 	// add some velocity to me in the holders forward vec
 	float3 vel = holder->GetTransform()->GetForwardf3() * 1;
 	vel.y += 1.0f;
@@ -190,7 +188,8 @@ bool BallController::GetIsThrown()
 
 GameObject* BallController::GetHolder()
 {
-	return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	if (!isThrown && holder)
+		return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
 }
 
 GameObject* BallController::GetCrosseHolder()
