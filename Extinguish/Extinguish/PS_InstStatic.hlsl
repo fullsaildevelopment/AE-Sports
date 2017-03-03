@@ -23,8 +23,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 		finalColor.r = ((0xFF000000 & input.color) >> 24) * 0.003906f;
 		finalColor.g = ((0x00FF0000 & input.color) >> 16) * 0.003906f;
 		finalColor.b = ((0x0000FF00 & input.color) >> 8) * 0.003906f;
-		finalColor.a = (0x000000FF & input.color) * 0.003906;
 	}
-
+	finalColor.a = 1;
 	return finalColor;
 }

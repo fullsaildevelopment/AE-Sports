@@ -21,7 +21,7 @@ Scene::~Scene()
 
 //basic//
 
-void Scene::Init(DeviceResources const * devResources, InputManager* inputRef)
+void Scene::Init(DeviceResources * devResources, InputManager* inputRef)
 {
 	//set camera initial position
 	//XMVECTORF32 eye = { 0.0f, 0.7f, -1.5f, 0.0f };
@@ -32,7 +32,8 @@ void Scene::Init(DeviceResources const * devResources, InputManager* inputRef)
 
 	//create all the device resources
 	CreateDevResources(devResources);
-
+	PostProcessing.CreateDevice(devResources);
+	PostProcessing.CreateResources();
 	//create all lights
 	CreateLights();
 
@@ -50,7 +51,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	deviceResources = devResources;
 	device = devResources->GetDevice();
 	devContext = devResources->GetDeviceContext();
-
+	
 	//compile shaders
 	//Microsoft::WRL::ComPtr<ID3D10Blob> basicVSBuffer;
 	//Microsoft::WRL::ComPtr<ID3D10Blob> depthPrePassVSBuffer;
@@ -395,6 +396,9 @@ void Scene::CreateModels()
 //void Scene::Update(InputManager input, float dt)
 void Scene::Update(float dt)
 {
+	///////////////Clear BackBuffer//////////////
+	PostProcessing.Clear();
+	/////////////////////////////////////////////
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
@@ -451,7 +455,7 @@ void Scene::Update(float dt)
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
 			}
-
+			
 			//don't render yourself
 			if (i != (id - 1) * 3 + 2)
 			{
@@ -475,7 +479,9 @@ void Scene::Update(float dt)
 			}
 		}
 	}
-
+	////////////////////////////DO POST PROCESSING////////////////////////
+	PostProcessing.DoPostProcess();
+	//////////////////////////////////////////////////////////////////////
 	// commented out until we have the scoring
 	// if score needs to be updated
 	//GameObject * scoreUpdate = uiObjects[0]->FindGameObject("gameScore");
