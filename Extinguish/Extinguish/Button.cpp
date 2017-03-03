@@ -23,6 +23,14 @@ void StartGame()
 	delete soundEvent;
 }
 
+void StartLobby()
+{
+	LoadSceneEvent* event = new LoadSceneEvent();
+	event->Init("Lobby");
+	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+	delete event;
+}
+
 void StartServer()
 {
 	if (Game::server.init("127.0.0.1", 60000) == 1)
@@ -43,10 +51,7 @@ void StartServer()
 			Game::objIDs[7]
 		);
 
-		LoadSceneEvent* event = new LoadSceneEvent();
-		event->Init("Lobby");
-		EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
-		delete event;
+		StartLobby();
 	}
 }
 
@@ -56,10 +61,7 @@ void JoinServer()
 	ResourceManager::GetSingleton()->SetServer(false);
 	Game::client.init("127.0.0.1", 60001);
 
-	LoadSceneEvent* event = new LoadSceneEvent();
-	event->Init("Lobby");
-	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
-	delete event;
+	StartLobby();
 }
 
 void ShutdownGame()
@@ -116,12 +118,18 @@ void ReturnToMenu()
 
 void ChangeTeamA()
 {
-	Game::client.changeTeamA();
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::client.changeTeamA();
+	else
+		Game::team = Game::TEAM_A;
 }
 
 void ChangeTeamB()
 {
-	Game::client.changeTeamB();
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+		Game::client.changeTeamB();
+	else
+		Game::team = Game::TEAM_B;
 }
 
 //Button::~Button()
@@ -316,6 +324,11 @@ void Button::setButtonType()
 	case BUTTON_TYPE::CHANGE_TEAM_B:
 	{
 		eventFunction = ChangeTeamB;
+		break;
+	}
+	case BUTTON_TYPE::LOBBY:
+	{
+		eventFunction = StartLobby;
 		break;
 	}
 	}
