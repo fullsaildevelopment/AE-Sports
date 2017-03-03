@@ -21,8 +21,13 @@ private:
 
 	DeviceResources* devResources;
 	ID3D11Buffer* vertexBuffer;
+	///////////Instanced///////////
 	ID3D11Buffer* instancedBuffer;
 	ID3D11Buffer* instancedBuffer2;
+	///////////////////////////////
+	////////PostProssessing////////
+
+	///////////////////////////////
 	ID3D11Buffer* indexBuffer;
 	ID3D11Buffer* teamcolorBuffer;
 	ID3D11InputLayout* inputLayout;
