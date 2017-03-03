@@ -24,7 +24,8 @@ private:
 		RETURN,
 		RESUME_GAME,
 		CHANGE_TEAM_A,
-		CHANGE_TEAM_B
+		CHANGE_TEAM_B, 
+		LOBBY
 	};
 
 

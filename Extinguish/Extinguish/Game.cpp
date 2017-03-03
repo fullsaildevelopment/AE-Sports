@@ -250,7 +250,7 @@ int Game::Update(float dt)
 	}
 	int index = (clientID - 1) * 3 + 2;
 
-	soundEngine->UpdateListener(objectsPos[(clientID - 1) * 3 + 2], forwards[(clientID - 1) * 3 + 2]);
+	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
 	soundEngine->UpdatePositions(objectsPos, forwards);
 	soundEngine->ProcessAudio();
 	
@@ -1038,7 +1038,7 @@ void Game::CreateMenu(Scene * scene)
 	GameObject * soloPlayer = new GameObject();
 	scene->AddUIObject(soloPlayer);
 	soloPlayer->Init("soloPlayer");
-	Button * sButton = new Button(true, true, L"", (unsigned int)strlen(""), 300.0f, 60.0f, devResources, 3);
+	Button * sButton = new Button(true, true, L"", (unsigned int)strlen(""), 300.0f, 60.0f, devResources, 10);
 	sButton->SetGameObject(soloPlayer);
 	sButton->showFPS(false);
 	sButton->setPositionMultipliers(0.65f, 0.45f);
@@ -1405,6 +1405,11 @@ void Game::AssignPlayers()
 	}
 	else
 	{
+		if (team == TEAM_A)
+			clientID = 1;
+		else
+			clientID = 5;
+
 		// find team player selected
 		for (unsigned int i = 0; i < 8; ++i) 
 		{
@@ -1656,28 +1661,33 @@ void Game::UpdateLobbyUI(int _amount)
 // since the networking is different on the lobby, this keeps it from sending packages when it doesn't need to
 int Game::UpdateLobby()
 {
-	//set client id
-	Game::clientID = client.getID();
 
-	//run server
-	if (ResourceManager::GetSingleton()->IsServer())
-	{
-		int serverState = server.run();
+	if (ResourceManager::GetSingleton()->IsMultiplayer()) {
+		//set client id
+		Game::clientID = client.getID();
+
+		//run server
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			int serverState = server.run();
+		}
+
+		//run client
+		int clientState = client.run();
+
+		if (clientState == 5)
+			UpdateLobbyUI(client.getNumClients());
+		else if (clientState == 6)
+			LoadScene("FirstLevel");
+		else if (clientState == 7)
+		{
+			objID = client.getObjID();
+			clientID = client.getID();
+		}
+
+
+		return clientState;
 	}
 
-	//run client
-	int clientState = client.run();
-
-	if (clientState == 5)
-		UpdateLobbyUI(client.getNumClients());
-	else if (clientState == 6)
-		LoadScene("FirstLevel");
-	else if (clientState == 7)
-	{
-		objID = client.getObjID();
-		clientID = client.getID();
-	}
-
-
-	return clientState;
+	return 1;
 }
