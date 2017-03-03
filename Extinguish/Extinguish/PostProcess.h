@@ -1,9 +1,9 @@
 #pragma once
+#include "DeviceResources.h"
 #include "CommonStates.h"
 #include "SpriteBatch.h"
 #include <DirectXMath.h>
 #include "ReadData.h"
-#include "DeviceResources.h"
 
 class PostProcess
 {

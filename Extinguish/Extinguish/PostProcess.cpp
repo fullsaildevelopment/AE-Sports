@@ -139,6 +139,9 @@ void PostProcess::CreateDevice(DeviceResources* devR)
 		device->CreateBuffer(&cbDesc, nullptr, m_blurParamsWidth.ReleaseAndGetAddressOf());
 		device->CreateBuffer(&cbDesc, nullptr, m_blurParamsHeight.ReleaseAndGetAddressOf());
 	}
+
+	m_states.reset(new CommonStates(device));
+	m_spriteBatch.reset(new SpriteBatch(deviceContext));
 }
 
 void PostProcess::CreateResources()
@@ -180,6 +183,12 @@ void PostProcess::CreateResources()
 	m_bloomRect.top = 0;
 	m_bloomRect.right = 1000 / 2;
 	m_bloomRect.bottom = 800 / 2;
+
+	m_fullscreenRect.left = 0;
+	m_fullscreenRect.top = 0;
+	m_fullscreenRect.right = 1000;
+	m_fullscreenRect.bottom = 800;
+
 }
 
 void PostProcess::DoPostProcess()
@@ -203,15 +212,14 @@ void PostProcess::DoPostProcess()
 		});
 		m_spriteBatch->Draw(m_sceneSRV.Get(), m_bloomRect);
 		m_spriteBatch->End();
-
+		
 		// RT1 -> RT2 (blur horizontal)
 		deviceContext->OMSetRenderTargets(1, m_rt2RT.GetAddressOf(), nullptr);
 		m_spriteBatch->Begin(SpriteSortMode_Immediate,
 			nullptr, nullptr, nullptr, nullptr,
 			[=]() {
 			deviceContext->PSSetShader(m_gaussianBlurPS.Get(), nullptr, 0);
-			deviceContext->PSSetConstantBuffers(0, 1,
-				m_blurParamsWidth.GetAddressOf());
+			deviceContext->PSSetConstantBuffers(0, 1, m_blurParamsWidth.GetAddressOf());
 		});
 		m_spriteBatch->Draw(m_rt1SRV.Get(), m_bloomRect);
 		m_spriteBatch->End();
@@ -224,12 +232,11 @@ void PostProcess::DoPostProcess()
 			nullptr, nullptr, nullptr, nullptr,
 			[=]() {
 			deviceContext->PSSetShader(m_gaussianBlurPS.Get(), nullptr, 0);
-			deviceContext->PSSetConstantBuffers(0, 1,
-				m_blurParamsHeight.GetAddressOf());
+			deviceContext->PSSetConstantBuffers(0, 1, m_blurParamsHeight.GetAddressOf());
 		});
 		m_spriteBatch->Draw(m_rt2SRV.Get(), m_bloomRect);
 		m_spriteBatch->End();
-
+		
 		// RT1 + scene
 		deviceContext->OMSetRenderTargets(1, devRes->GetRenderTargetViewComPtr().GetAddressOf(), nullptr);
 		m_spriteBatch->Begin(SpriteSortMode_Immediate,
