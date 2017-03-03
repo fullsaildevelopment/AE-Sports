@@ -396,6 +396,9 @@ void Scene::CreateModels()
 //void Scene::Update(InputManager input, float dt)
 void Scene::Update(float dt)
 {
+	///////////////Clear BackBuffer//////////////
+	PostProcessing.Clear();
+	/////////////////////////////////////////////
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
@@ -451,9 +454,7 @@ void Scene::Update(float dt)
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
 			}
-			///////////////Clear BackBuffer//////////////
-			PostProcessing.Clear();
-			/////////////////////////////////////////////
+			
 			//don't render yourself
 			if (i != (id - 1) * 3 + 2)
 			{

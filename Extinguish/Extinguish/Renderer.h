@@ -24,11 +24,11 @@ private:
 	DeviceResources* devResources;
 	ID3D11Buffer* vertexBuffer;
 	///////////Instanced///////////
-	Microsoft::WRL::ComPtr<ID3D11Buffer> instancedBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> instancedBuffer2;
+	ID3D11Buffer* instancedBuffer;
+	ID3D11Buffer* instancedBuffer2;
 	///////////////////////////////
-	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> teamcolorBuffer;
+	ID3D11Buffer* indexBuffer;
+	ID3D11Buffer* teamcolorBuffer;
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vertexShader;
 	ID3D11PixelShader* pixelShader;
