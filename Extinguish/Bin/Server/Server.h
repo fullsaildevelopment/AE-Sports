@@ -142,7 +142,10 @@ private:
 	std::vector<Server::GAME_STATE> * gameState;
 	SOCKET serverSocket;
 	bool npDec = false;
+
+	//for any message where stride will be cheap way of message header
 	char* message;
+	uint16_t stride;
 
 public:
 	Server();
@@ -161,6 +164,8 @@ public:
 	bool isInput(unsigned int index) { return newInput[index]; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
+	char* getMessage() { return message; }
+	uint16_t GetStride() { return stride; }
 	bool isPlayer(unsigned int i) { return objIDs[i].inUse; }
 	UINT8 getObjID(unsigned int i) { return objIDs[i].id; }
 

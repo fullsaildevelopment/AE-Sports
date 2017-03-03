@@ -7,6 +7,7 @@
 
 class GameObject;
 class BallController;
+class GamePadEvent;
 
 class Crosse : public Component
 {
@@ -32,7 +33,7 @@ private:
 
 	//private helper functions
 	void HandleInput(InputDownEvent* e);
-
+	void HandleGamePad(GamePadEvent* e);
 public:
 	Crosse();
 	~Crosse();

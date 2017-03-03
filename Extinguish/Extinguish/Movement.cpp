@@ -10,6 +10,7 @@
 #include "SoundEngine.h"
 #include "SoundEvent.h"
 #include "GamePad.h"
+#include "GamePadEvent.h"
 
 namespace Move
 {
@@ -39,36 +40,6 @@ void Movement::Update(float dt)
 {
 	this->dt = dt;
 
-	//play footsteps sound
-	//if (isMoving && !footstepsPlayed/*(timeSincePlayed == 0 || timeSincePlayed > 18.0f)*/)
-	//{
-	//	SoundEvent* soundEvent = new SoundEvent();
-	//	soundEvent->Init(eventID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-	//	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-	//	delete soundEvent;
-	//	//cout << "play walk" << endl;
-	//	//timeSincePlayed = 0;
-	//	footstepsPlayed = true;
-	//}
-	//else if (!isMoving)
-	//{5
-	//	SoundEvent* soundEvent = new SoundEvent();
-	//	soundEvent->Init(eventID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-	//	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-	//	delete soundEvent;
-
-	//	//cout << "stop walk" << endl;
-	//}
-
-	//if (isMoving)
-	//{
-	//	timeSincePlayed += dt;
-	//}
-	//else
-	//{
-	//	timeSincePlayed = 0;
-	//}
-
 	//animation feedback
 	if (isMoving)
 	{
@@ -97,17 +68,6 @@ void Movement::Update(float dt)
 				//cout << "Idle" << endl;
 			}
 		}
-
-		//footstepsPlayed = false;
-	}
-
-	//handle gamePad input
-	std::unique_ptr<GamePad> gamePad = std::make_unique<GamePad>();
-	Move::gamePadState = gamePad->GetState(0);
-
-	if (Move::gamePadState.IsConnected())
-	{
-		HandleGamePad();
 	}
 }
 
@@ -126,13 +86,27 @@ void Movement::HandleEvent(Event* e)
 
 			if (GetGameObject()->GetName() == name)
 			{
-				//TODO: further optimization is to make input manager send different event or not send one at all
-				if (!Move::gamePadState.IsConnected())
-				{
-					HandleInput(inputDownEvent);
-				}
+				HandleInput(inputDownEvent);
 			}
 		}
+
+		return;
+	}
+
+	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+	if (gamePadEvent)
+	{
+		string name;
+		name = "Mage";
+		name += to_string(gamePadEvent->GetClientID());
+
+		if (GetGameObject()->GetName() == name)
+		{
+			HandleGamePad(gamePadEvent);
+		}
+
+		return;
 	}
 }
 
@@ -216,47 +190,54 @@ void Movement::HandleInput(InputDownEvent* e)
 	//}
 }
 
-void Movement::HandleGamePad()
+void Movement::HandleGamePad(GamePadEvent* gamePadEvent)
 {
 	isMoving = false;
+
+	GamePad::State* state = gamePadEvent->GetState();
 
 	//GamePad::ButtonStateTracker tracker;
 
 	//tracker.Update(gamePadState);
 
-	if (Move::gamePadState.IsLeftThumbStickUp())
+	float leftY = state->thumbSticks.leftY;
+
+	if (leftY > 0.0f)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * moveSpeed, forward.y * moveSpeed,  forward.z * moveSpeed });
+		transform->AddVelocity({ forward.x * moveSpeed * leftY, forward.y * moveSpeed * leftY,  forward.z * moveSpeed * leftY });
 		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (Move::gamePadState.IsLeftThumbStickDown())
+	if (leftY < 0.0f)
 	{
 		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * -moveSpeed, forward.y * -moveSpeed,  forward.z * -moveSpeed });
+		transform->AddVelocity({ forward.x * moveSpeed * leftY, forward.y * moveSpeed * leftY,  forward.z * moveSpeed * leftY });
 		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (Move::gamePadState.IsLeftThumbStickLeft())
+	float leftX = state->thumbSticks.leftX;
+
+
+	if (leftX < 0.0f)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * -moveSpeed, right.y * -moveSpeed,  right.z * -moveSpeed });
+		transform->AddVelocity({ right.x * moveSpeed * leftX, right.y * moveSpeed * leftX,  right.z * moveSpeed * leftX });
 		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		isMoving = true;
 	}
 
-	if (Move::gamePadState.IsLeftThumbStickRight())
+	if (leftX > 0.0f)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * moveSpeed, right.y * moveSpeed,  right.z * moveSpeed });
+		transform->AddVelocity({ right.x * moveSpeed * leftX, right.y * moveSpeed * leftX,  right.z * moveSpeed * leftX });
 		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;

@@ -42,6 +42,7 @@ private:
 	DirectionalLight dirLight;
 	vector<PointLight> pointLights;
 	vector<SpotLight> spotLights;
+	
 
 	//ResourceManager* resourceManager;
 	//vector<AnimatedRenderNode*> renderNodes;

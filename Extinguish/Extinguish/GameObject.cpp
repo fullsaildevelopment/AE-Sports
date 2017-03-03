@@ -183,6 +183,12 @@ std::string GameObject::GetName()
 	return name;
 }
 
+Scene* GameObject::GetScene()
+{
+	return scene;
+}
+
+//collision functions//
 void GameObject::OnCollisionEnter(Collider* e)
 {
 	for (int i = 0; i < components.size(); ++i)

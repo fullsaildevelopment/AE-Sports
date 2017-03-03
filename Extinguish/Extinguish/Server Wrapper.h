@@ -41,11 +41,6 @@ public:
 		newServer.sendPackets();
 		int result = newServer.update();
 
-		if (result == 4)
-		{
-
-		}
-
 		if (result == 3)
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();
@@ -139,6 +134,16 @@ public:
 	XMFLOAT3 getRotation(unsigned int index)
 	{
 		return newServer.getRotation(index);
+	}
+
+	char* getMessage()
+	{
+		return newServer.getMessage();
+	}
+
+	uint16_t GetStride()
+	{
+		return newServer.GetStride();
 	}
 
 	void setObjCount(int count)

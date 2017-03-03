@@ -6,6 +6,7 @@
 #include "InputDownEvent.h"
 
 class GameObject;
+class GamePadEvent;
 
 class Camera : public Component
 {
@@ -22,19 +23,21 @@ private:
 	int prevMouseX, prevMouseY;
 	float dt;
 	float sensitivityX, sensitivityY;
+	const float padSensitivityX, padSensitivityY;
 
 	float curRotX, curRotY;
 	const float maxRotX, maxRotY;
 
 	//private helper functions
 	void MoveCamera(InputDownEvent* e);
+	void MoveCamera(GamePadEvent* e);
 	void ClampTo();
 public:
 	Camera();
 	~Camera();
 
 	//basic
-	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel);
+	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel, bool isEventHandler);
 	void Update(float dt) override;
 	void HandleEvent(Event* e);
 	//void UpdateCamsRotation(float x, float y);

@@ -430,7 +430,7 @@ void Scene::Update(float dt)
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		//only update game objects if this is the server
-		if (id == 1)
+		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			gameObjects[i]->Update(dt);
 		}
@@ -439,7 +439,8 @@ void Scene::Update(float dt)
 
 		if (renderer)
 		{
-			if (id != 1)
+			//client needs to update renderer but not any other component
+			if (!ResourceManager::GetSingleton()->IsServer())
 			{
 				renderer->Update(dt);
 			}
@@ -508,10 +509,11 @@ void Scene::FixedUpdate(float dt)
 	{
 		id = 1;
 	}
+
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		//only update game objects if this is the server
-		if (id == 1)
+		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			gameObjects[i]->FixedUpdate(dt);
 		}
@@ -519,7 +521,7 @@ void Scene::FixedUpdate(float dt)
 		AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
 		//don't animate yourself or animate server which has already been animated
-		if (animator && i != (id - 1) * 3 + 2 && id != 1)
+		if (animator && i != (id - 1) * 3 + 2 && !ResourceManager::GetSingleton()->IsServer())
 		{
 			animator->FixedUpdate(dt);
 		}
@@ -655,14 +657,6 @@ void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpee
 
 void Scene::Render()
 {
-	//render all models
-	//for (size_t i = 0; i < models.size(); ++i)
-	//{
-	//	//if (i == 0) //to not render the idle test box
-	//	{
-	//		models[i].Render();
-	//	}
-	//}
 
 }
 
