@@ -53,11 +53,17 @@ void Physics::FixedUpdate(float dt)
 	}
 }
 
-void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, float3 bounceNormal, bool _stillApplyGravity)
+void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, float3 collisionNormal, bool _stillApplyGravity, bool stopMovement)
 {
 	if (_bounce)
 	{
-		nV = nV - bounceNormal * bounce * 2 * dot_product(nV, bounceNormal * bounce);
+		nV = nV - collisionNormal * bounce * 2 * dot_product(nV, collisionNormal * bounce);
+	}
+	if (stopMovement)
+	{
+		float3 invN = collisionNormal.negate();
+		invN = invN * (nV * collisionNormal).magnitude();
+		nV = nV - invN;
 	}
 	tt->SetVelocity(nV);
 	tt->SetPosition(nP);
