@@ -1,9 +1,9 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 5
-#define AttackSpeed 15
-#define StumbleSpeed 5
+#define RunSpeed 0
+#define AttackSpeed 0
+#define StumbleSpeed 0
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 

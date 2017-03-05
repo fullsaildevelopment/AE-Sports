@@ -45,6 +45,24 @@ int ClassifyPointToPlane(const Plane& plane, const vec3f& point)
 {
 	return (dot_product(point, plane.normal) >= plane.offset) ? 1 : 2;
 }
+// Returns 0 if on plane 1 if in front of -1 if behind
+int ClassifyPointToPlane(const NewPlane& plane, const vec3f& point)
+{
+	float r = dot_product(point - plane.p, plane.n);
+	if (r == 0)
+	{
+		return 0;
+	}
+	else if (r > 0) return 1;
+	else return -1;
+}
+
+float3 LS2PI(const float3& p0, const float3& p1, const NewPlane& plane)
+{
+	float3 L = p1 - p0;
+	float d = -(dot_product(plane.n, p0) - dot_product(plane.n, plane.p)) / (dot_product(plane.n, L));
+	return p0 + L * d;
+}
 
 // ClassifySphereToPlane
 //
@@ -1077,55 +1095,267 @@ float3 SpherePlanePoint(const NewPlane& p, const Sphere& s)
 	float3 np = p.n * (s.m_Radius - d);
 	return s.m_Center + np;
 }
+
 float3 zeroF = float3(0, 0, 0);
-float3 tpln = float3(0, 0, 0);
-float3 rpln = float3(0, 0, 0);
+float3 tpln = float3(0.5f, 0, 0.866025f);
+float3 rpln = float3(1.0f, 0, 0);
+
 float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 {
-	if (tpln.isEquil(zeroF))
-	{
-		float3 top = float3(0, 0, hex.s);
-		float3 righttop = float3(hex.h * 0.5f, 0, hex.s * 0.5f);
-		float3 right = float3(hex.h * 0.5f, 0, 0);
-		cross_product(tpln, (righttop - top).normalize(), float3(0, 1, 0));
-	}
-	if (rpln.isEquil(zeroF))
-	{
-		float3 top = float3(0, 0, hex.s);
-		float3 righttop = float3(hex.h * 0.5f, 0, hex.s * 0.5f);
-		float3 right = float3(hex.h * 0.5f, 0, 0);
-		cross_product(rpln, (right - righttop).normalize(), float3(0, 1, 0));
-	}
-	float hd = hex.d * 0.5f;
 	AABB bounding;
-	bounding.min = float3(hex.seg.m_Start.x - hd, hex.seg.m_Start.y - hd, hex.seg.m_Start.z - hd);
-	bounding.max = float3(hex.seg.m_End.x + hd, hex.seg.m_End.y + hd, hex.seg.m_End.z + hd);
+	bounding.min = float3(hex.seg.m_Start.x - 3, hex.seg.m_Start.y - 3, hex.seg.m_Start.z - 3);
+	bounding.max = float3(hex.seg.m_End.x + 3, hex.seg.m_End.y + 3, hex.seg.m_End.z + 3);
 	
 	if (!SphereToAABB(s, bounding))
 		return zeroF;
 
-	vec3f SE = hex.seg.m_End - hex.seg.m_Start;
-	float ratio = dot_product(SE, s.m_Center - hex.seg.m_Start) / dot_product(SE, SE);
-	ratio = max(0, min(ratio, 1));
-	SE = hex.seg.m_Start + SE * ratio;
+	//vec3f SE = hex.seg.m_End - hex.seg.m_Start;
+	//float ratio = dot_product(SE, s.m_Center - hex.seg.m_Start) / dot_product(SE, SE);
+	//ratio = max(0, min(ratio, 1));
+	//SE = hex.seg.m_Start + SE * ratio;
 
-	float3 top = float3(0, 0, hex.s);
-	float3 righttop = float3(hex.h * 0.5f, 0,hex.s * 0.5f);
-	float3 right = float3(hex.h * 0.5f, 0, 0);
+	float3 rels = float3(s.m_Center.x - hex.seg.m_Start.x, s.m_Center.y - hex.seg.m_Start.y, s.m_Center.z - hex.seg.m_Start.z);
 
-	float3 rels = float3(s.m_Center.x - SE.x, 0, s.m_Center.z - SE.z);
+	float3 relVel;
+	relVel.x = (rels.x < 0) ? -vel.x : vel.x;
+	relVel.z = (rels.z < 0) ? -vel.z : vel.z;
+	relVel.y = vel.y;
 
-	////////////////////////////////////////////////////////////////////Test Top & Bottom/////////////////////////////////////////////////////////////
+	float3 startPoint = float3(abs(rels.x), rels.y, abs(rels.z)) - relVel;
+
+	float3 endPoint = float3(abs(rels.x), rels.y, abs(rels.z)) + relVel;
 
 	NewPlane toptest;
 	toptest.n = float3(0, 1, 0);
-	toptest.p = hex.seg.m_End;
+	toptest.p = hex.seg.m_End + toptest.n * s.m_Radius;
+
+	NewPlane tpl;
+	tpl.n = tpln;
+	tpl.p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + tpln * s.m_Radius;
+
+	NewPlane rpl;
+	rpl.n = rpln;
+	rpl.p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + rpln * s.m_Radius;
+	//////////////////////Check if crosses the Top plane/////////////////////////////////////////////
+	int TstartTest = ClassifyPointToPlane(toptest, startPoint);
+	int TendTest = ClassifyPointToPlane(toptest, endPoint);
+	
+	//If above top plane then no collision with anything return zero
+	if (TstartTest == 1 && TendTest == 1)
+	{
+		return zeroF;
+	}
+	//If on top plane then just return top plane no need to move sphere
+	if (TstartTest == 0 && TendTest == 0)
+	{
+		return toptest.n;
+	}
+	//check if within other planes
+	if (TstartTest >= 0 && TendTest == -1)
+	{
+		float3 InPoint = LS2PI(startPoint, endPoint, toptest);
+		int toprightresult = ClassifyPointToPlane(tpl, InPoint);
+		int rightresult = ClassifyPointToPlane(rpl, InPoint);
+		//If on both planes then collide with corner
+		if (toprightresult == 0 && rightresult == 0)
+		{
+			float3 dff = InPoint - startPoint;
+
+			if (rels.x < 0)
+			{
+				dff.x *= -1;
+				rpl.n.x *= -1;
+				tpl.n.x *= -1;
+			}
+			if (rels.z < 0)
+			{
+				dff.z *= -1;
+				rpl.n.z *= -1;
+				tpl.n.x *= -1;
+			}
+
+			s.m_Center += dff;
+
+			return (toptest.n + tpl.n + rpl.n).normalize();
+		}
+		//If in both then collides with top
+		else if (toprightresult == -1 && rightresult == -1)
+		{
+			float3 dff = InPoint - startPoint;
+
+			if (rels.x < 0) dff.x *= -1;
+			if (rels.z < 0) dff.z *= -1;
+
+			s.m_Center += dff;
+
+			return toptest.n;
+		}
+		//If on the edge of one of the planes
+		else if (toprightresult == 0)
+		{
+			float3 dff = InPoint - startPoint;
+
+			if (rels.x < 0)
+			{
+				dff.x *= -1;
+				tpl.n.x *= -1;
+			}
+			if (rels.z < 0)
+			{
+				dff.z *= -1;
+				tpl.n.x *= -1;
+			}
+
+			s.m_Center += dff;
+
+			return (toptest.n + tpl.n).normalize();
+		}
+		else if (rightresult == 0)
+		{
+			float3 dff = InPoint - startPoint;
+
+			if (rels.x < 0)
+			{
+				dff.x *= -1;
+				rpl.n.x *= -1;
+			}
+			if (rels.z < 0)
+			{
+				dff.z *= -1;
+				rpl.n.z *= -1;
+			}
+
+			s.m_Center += dff;
+
+			return (toptest.n + rpl.n).normalize();
+		}
+	}
+	//If below top or did not collide with top
+	{
+		//////////////////////Check if line passes through one of the side planes//////////////////////////////
+		int TRstartTest = ClassifyPointToPlane(tpl, startPoint);
+		int TRendTest = ClassifyPointToPlane(tpl, endPoint);
+		//If above anyside plane then no collision with anyplane return zero
+		if (TRstartTest == 1 && TRendTest == 1)
+		{
+			return zeroF;
+		}
+		if (TRstartTest == 0 && TRendTest == 0)
+		{
+			if (s.m_Center.x < hex.seg.m_Start.x)
+			{
+				tpl.n.x *= -1;
+			}
+			if (s.m_Center.z < hex.seg.m_Start.z)
+			{
+				tpl.n.x *= -1;
+			}
+
+			return tpl.n;
+		}
+		if (TRstartTest >= 0 && TRendTest == -1)
+		{
+			float3 InPoint = LS2PI(startPoint, endPoint, tpl);
+			int TTest = ClassifyPointToPlane(toptest, InPoint);
+			if (TTest == 1)
+			{
+				return zeroF;
+			}
+			int rightresult = ClassifyPointToPlane(rpl, InPoint);
+			if (rightresult == 0)
+			{
+				float3 dff = InPoint - startPoint;
+
+				if (rels.x < 0)
+				{
+					dff.x *= -1;
+					rpl.n.x *= -1;
+					tpl.n.x *= -1;
+				}
+				if (rels.z < 0)
+				{
+					dff.z *= -1;
+					rpl.n.z *= -1;
+					tpl.n.x *= -1;
+				}
+
+				s.m_Center += dff;
+
+				return (tpl.n + rpl.n).normalize();
+			}
+			else if (rightresult == -1)
+			{
+				float3 dff = InPoint - startPoint;
+
+				if (rels.x < 0)
+				{
+					dff.x *= -1;
+					tpl.n.x *= -1;
+				}
+				if (rels.z < 0)
+				{
+					dff.z *= -1;
+					tpl.n.x *= -1;
+				}
+
+				s.m_Center += dff;
+
+				return tpl.n;
+			}
+		}
+		//If below topright or did not collide with topright
+		{
+			int RstartTest = ClassifyPointToPlane(rpl, startPoint);
+			int RendTest = ClassifyPointToPlane(rpl, endPoint);
+			if (RstartTest == 1 && RendTest == 1)
+			{
+				return zeroF;
+			}
+			if (RstartTest == 0 && RendTest == 0)
+			{
+				if (s.m_Center.x < hex.seg.m_Start.x)
+				{
+					rpl.n.x *= -1;
+				}
+				if (s.m_Center.z < hex.seg.m_Start.z)
+				{
+					rpl.n.x *= -1;
+				}
+
+				return rpl.n;
+			}
+			if (RstartTest >= 0 && RendTest == -1)
+			{
+				float3 InPoint = LS2PI(startPoint, endPoint, rpl);
+				int TTest = ClassifyPointToPlane(toptest, InPoint);
+				if (TTest == 1)
+				{
+					return zeroF;
+				}
+				float3 dff = InPoint - startPoint;
+
+				if (rels.x < 0)
+				{
+					dff.x *= -1;
+					rpl.n.x *= -1;
+				}
+				if (rels.z < 0)
+				{
+					dff.z *= -1;
+					rpl.n.z *= -1;
+				}
+
+				s.m_Center += dff;
+
+				return rpl.n;
+			}
+		}
+	}
+	////////////////////////////////////////////////////////////////////Test Top & Bottom/////////////////////////////////////////////////////////////        OLD
+	/*
 	int topcify = ClassifySphereToPlane(toptest, s);
 	if (topcify == 1) return zeroF;
 
-	NewPlane bottomtest;
-	bottomtest.n = float3(0, -1, 0);
-	bottomtest.p = hex.seg.m_Start;
 	int bottomcify = ClassifySphereToPlane(bottomtest, s);
 
 	if (bottomcify == 1) return zeroF;
@@ -1137,10 +1367,6 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		// Returns 1 if the sphere is in front of the plane.
 		// Returns 2 if the sphere is behind the plane.
 		// Returns 3 if the sphere straddles the plane.
-
-		NewPlane tpl;
-		tpl.n = tpln;
-		tpl.p = top;
 		Sphere Scopy;
 		Scopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 		Scopy.m_Radius = s.m_Radius;
@@ -1151,9 +1377,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		}
 		else if (cify == 2)
 		{
-			NewPlane rpl;
-			rpl.n = rpln;
-			rpl.p = right;
+			
 			Sphere rScopy;
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 			rScopy.m_Radius = s.m_Radius;
@@ -1241,9 +1465,6 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		}
 		else if (cify == 3)
 		{
-			NewPlane rpl;
-			rpl.n = rpln;
-			rpl.p = right;
 			Sphere rScopy;
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 			rScopy.m_Radius = s.m_Radius;
@@ -1311,15 +1532,9 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 	if (topcify == 3)
 	{
-		NewPlane rpl;
-		rpl.n = rpln;
-		rpl.p = right;
 		Sphere rScopy;
 		rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 		rScopy.m_Radius = s.m_Radius;
-		NewPlane tpl;
-		tpl.n = tpln;
-		tpl.p = top;
 		Sphere Scopy;
 		Scopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 		Scopy.m_Radius = s.m_Radius;
@@ -1334,38 +1549,18 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			return n;
 		}
 	}
-
+	*/
 	return zeroF;
 }
 
 float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
 {
-	float hd = hex.d * 0.5f;
-	AABB bounding;
-	AABB cb;
-	bounding.min = float3(hex.seg.m_Start.x - hd, hex.seg.m_Start.y - hd, hex.seg.m_Start.z - hd);
-	bounding.max = float3(hex.seg.m_End.x + hd, hex.seg.m_End.y + hd, hex.seg.m_End.z + hd);
-	cb.min.x = c.m_Segment.m_Start.x - c.m_Radius;
-	cb.min.y = c.m_Segment.m_Start.y - c.m_Radius;
-	cb.min.z = c.m_Segment.m_Start.z - c.m_Radius;
-	cb.max.x = c.m_Segment.m_End.x + c.m_Radius;
-	cb.max.y = c.m_Segment.m_End.y + c.m_Radius;
-	cb.max.z = c.m_Segment.m_End.z + c.m_Radius;
-
-	if (!AABBtoAABB(bounding, cb)) 
-		return zeroF;
-
 	Sphere s;
 	s.m_Center = c.m_Segment.m_Start;
 	s.m_Radius = c.m_Radius;
 	float3 n = HexagonToSphere(hex, s, vel);
-	if (!n.isEquil(zeroF))
-	{
-		float3 diff = s.m_Center - c.m_Segment.m_Start;
-		c.m_Segment.m_Start += diff - 0.00001f;
-		return n;
-	}
-	return zeroF;
+	c.m_Segment.m_Start = s.m_Center;
+	return n;
 }
 
 float3 XMtoF(DirectX::XMFLOAT3 m)
