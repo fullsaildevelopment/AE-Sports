@@ -288,22 +288,17 @@ void Game::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
-		//(currentScene < 2)
-		if ((ResourceManager::GetSingleton()->IsServer() && /*inputDownEvent->GetID() != 1 &&*/ !inputDownEvent->IsServer()))// || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if (ResourceManager::GetSingleton()->IsServer()) //only send input to handlers if server
 		{
-			//inputDownEvent->SetID(clientID);
-			inputDownEvent->SetIsServer(true);
-			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			EventDispatcher::GetSingleton()->DispatchExcept(inputDownEvent, "Game"); //this way it doesn't create an infinite loop... and it does this without any booleans and such
 		}
-		//TODO: need to make this work for in-game menu if we ever add
-		else if (scenesNamesTable.GetKey("Lobby") == currentScene && !inputDownEvent->IsServer()) //if it's a HUD scene, let it handle the input itself
+		else if (scenesNamesTable.GetKey("Lobby") == currentScene) //if it's a HUD scene, let it handle the input itself
 		{
 			inputDownEvent->SetIsServer(true);
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
 			//cout << "HUD stuff" << endl;
 		}
-		else if (!inputDownEvent->IsServer()) //if not server, give server your input to handle it
+		else //client needs to send input info to sesrver
 		{
 			client.sendInput(inputDownEvent);
 		}
@@ -1424,10 +1419,10 @@ void Game::AssignPlayers()
 	}
 	else
 	{
-		if (team == TEAM_A)
-			clientID = 1;
-		else
-			clientID = 5;
+		//if (team == TEAM_A)
+		//	clientID = 1;
+		//else
+		//	clientID = 5;
 
 		// find team player selected
 		for (unsigned int i = 0; i < 8; ++i) 
