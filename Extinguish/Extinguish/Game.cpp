@@ -43,6 +43,7 @@ int Game::returnResult = 1;
 int Game::objID = 1;
 Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
+float Game::time = 300.0f;
 
 Game::~Game()
 {
@@ -145,17 +146,30 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 
 int Game::Update(float dt)
 {
+	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
+	{
+		time -= dt;
+
+		if (time < 0)
+		{
+			time = 0.0f;
+		}
+	}
+
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (currentScene >= 2) {
-			if (server.getObjCount() == 0)
-				server.setObjCount(scenes[currentScene]->GetNumObjects());
+			if (ResourceManager::GetSingleton()->IsServer())
+			{
+				server.setTime(time);
 
+				if (server.getObjCount() == 0)
+					server.setObjCount(scenes[currentScene]->GetNumObjects());
+
+				server.sendGameState();
+			}
 			//set client id
 			Game::clientID = client.getID();
-
-			if (clientID == 2)
-				float temp = 0;
 
 			// if server, set game states
 			if (ResourceManager::GetSingleton()->IsServer())
@@ -192,6 +206,7 @@ int Game::Update(float dt)
 
 				if (clientState == 4)
 				{
+					time = client.getTime();
 					Team1Score = client.getScoreA();
 					Team2Score = client.getScoreB();
 					UpdateScoreUI();
@@ -343,7 +358,7 @@ void Game::HandleEvent(Event* e)
 		if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
 		{
 			server.setScores(Team1Score, Team2Score);
-			server.sendGameState();
+		//	server.sendGameState();
 		}
 		UpdateScoreUI();
 		//Reset Game

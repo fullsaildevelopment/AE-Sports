@@ -149,4 +149,6 @@ public:
 	UINT8 getObjID() { return newClient.getObjID(); }
 
 	UINT8 getNumClients() { return newClient.getNumClients(); }
+
+//	float getTime() { return newClient.getTime(); }
 };

@@ -58,10 +58,9 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
-		int scoreA;
-		int scoreB;
+		int scoreA = 0;
+		int scoreB = 0;
 		float time;
-
 
 		GAME_STATE() {}
 	};
