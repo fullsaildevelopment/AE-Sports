@@ -161,7 +161,7 @@ int Client::run()
 		{
 			receivePackets();
 			if (result != 4 || result != 5)
-				return 2;
+				result = 2;
 			break;
 		}
 		case ID_SERVER_CLOSURE:
@@ -180,11 +180,18 @@ int Client::run()
 			BitStream bIn(packet->data, packet->length, false);
 			bIn.IgnoreBytes(sizeof(MessageID));
 			bIn.Read(curNumOfClients);
-			return 5;
+			result = 5;
 		}
 		case ID_START_GAME:
 		{
-			return 6;
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			UINT8 temp;
+			bIn.Read(temp);
+			if (temp == 11)
+				return 6;
+
+			break;
 		}
 		case ID_CLIENT_OBJ:
 		{
@@ -400,7 +407,7 @@ void Client::receivePackets()
 	}
 }
 
-Client::CLIENT_GAME_STATE Client::getState(unsigned int index)
+Client::CLIENT_GAME_STATE Client::getMyState()
 {
 	// return the state of the obj at index
 	return myState[0][0];

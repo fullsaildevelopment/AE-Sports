@@ -532,7 +532,7 @@ void Server::sendState()
 
 void Server::StartGame()
 {
-	sendMessage(UINT8(0), ID_START_GAME, true);
+	sendMessage(UINT8(11), ID_START_GAME, true);
 }
 
 
