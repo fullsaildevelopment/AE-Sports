@@ -551,8 +551,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 {
 
 	//used for hexagon floor
-	int row = 80; // * 2 = z
-	int col = 80; // * 2 = x
+	int row = 38; // * 2 = z
+	int col = 55; // * 2 = x
 
 	//deleted inside a different class
 	unsigned int* colors = new unsigned int[row * col];
@@ -620,14 +620,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(300, 0.75f);
+		mageMover->Init(4.4f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0.6f, 0 }, { 0, 5, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 10.0f, 0.07f, 20, -14.8f);
+		Physics* physics = new Physics(0.01f, 0.1f, 0.07f, 4.4f, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
