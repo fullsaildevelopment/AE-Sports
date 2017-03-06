@@ -881,13 +881,21 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* Hex = new GameObject();
 	basic->AddGameObject(Hex);
 	Hex->Init("Team2");
-	Hex->InitTransform(identity, { (float)-col - 3, 0, -4 }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	Hex->InitTransform(identity, { -15, 0, -20.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
 	Hex->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
 	Movement* ballMover3 = new Movement();
 	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10);
 	Hex->AddComponent(HexPillar);
+
+	GameObject* axis = new GameObject();
+	basic->AddGameObject(axis);
+	axis->Init("axis");
+	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, 10, 10 }, nullptr, nullptr, nullptr);
+	Renderer* axisRenderer = new Renderer();
+	axis->AddComponent(axisRenderer);
+	axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

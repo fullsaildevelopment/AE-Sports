@@ -39,7 +39,6 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 void Movement::Update(float dt)
 {
 	this->dt = dt;
-
 	//animation feedback
 	if (isMoving)
 	{
