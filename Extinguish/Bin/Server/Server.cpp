@@ -150,7 +150,7 @@ int  Server::update()
 		{
 			recieveInput();
 			result = 3;
-			//break;
+			break;
 		}
 
 		case ID_CHANGE_TEAM_A:
