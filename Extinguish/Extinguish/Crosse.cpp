@@ -73,7 +73,7 @@ void Crosse::SetColor(bool b)
 			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
 		else
 			GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
-		if (Game::GetClientID() == 1)
+		if (ResourceManager::GetSingleton()->IsServer())//Game::GetClientID() == 1)
 		{
 			CoughtEvent* ce = new CoughtEvent;
 			ce->holding = b;

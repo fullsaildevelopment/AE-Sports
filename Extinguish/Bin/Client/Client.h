@@ -155,7 +155,7 @@ public:
 	INT8 GetTransitionIndex(unsigned int index) { return clientStates[0][index].transitionIndex; }
 	UINT32 GetSoundID(unsigned int index) { return clientStates[0][index].soundID; }
 	UINT8 getID() { return clientID; }
-	CLIENT_GAME_STATE getState(unsigned int index);
+	CLIENT_GAME_STATE getMyState();
 	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }

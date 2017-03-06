@@ -290,7 +290,7 @@ void Game::HandleEvent(Event* e)
 	{
 		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
 		//(currentScene < 2)
-		if ((ResourceManager::GetSingleton()->IsServer() && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if ((ResourceManager::GetSingleton()->IsServer() && /*inputDownEvent->GetID() != 1 &&*/ !inputDownEvent->IsServer()))// || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
@@ -303,7 +303,7 @@ void Game::HandleEvent(Event* e)
 			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
 			//cout << "HUD stuff" << endl;
 		}
-		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
+		else if (!inputDownEvent->IsServer()) //if not server, give server your input to handle it
 		{
 			client.sendInput(inputDownEvent);
 		}
@@ -1554,7 +1554,7 @@ void Game::UpdateClientObjects(float dt)
 
 	int id = client.getID();
 
-	if (id != 1)
+	if (!ResourceManager::GetSingleton()->IsServer())
 	{
 		//remove children of every object
 		for (unsigned int i = 0; i < numobjs; ++i)
@@ -1710,22 +1710,22 @@ int Game::UpdateLobby()
 		{
 			int serverState = server.run();
 		}
+		else {
+			//run client
+			int clientState = client.run();
 
-		//run client
-		int clientState = client.run();
-
-		if (clientState == 5)
-			UpdateLobbyUI(client.getNumClients());
-		else if (clientState == 6)
-			LoadScene("FirstLevel");
-		else if (clientState == 7)
-		{
-			objID = client.getObjID();
-			clientID = client.getID();
-		}
-
+			if (clientState == 5)
+				UpdateLobbyUI(client.getNumClients());
+			else if (clientState == 6)
+				LoadScene("FirstLevel");
+			else if (clientState == 7)
+			{
+				objID = client.getObjID();
+				clientID = client.getID();
+			}
 
 		return clientState;
+		}
 	}
 
 	return 1;
