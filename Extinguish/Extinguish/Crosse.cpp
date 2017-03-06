@@ -129,7 +129,7 @@ void Crosse::HandleEvent(Event* e)
 	{
 		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
 
-		if (inputDownEvent->IsServer())
+		//if (inputDownEvent->IsServer())
 		{
 			string name;
 			name = "Crosse";
