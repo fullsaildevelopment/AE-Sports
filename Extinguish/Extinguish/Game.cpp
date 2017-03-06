@@ -604,7 +604,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			ai.push_back(mageAI);*/
 		}
 
-		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
