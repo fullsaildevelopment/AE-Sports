@@ -23,6 +23,7 @@ class FloorController : public Component
 	void BigHexPattern(float dt);
 	void Strips(float dt);
 	void StripPattern(float dt);
+	void InitialPattern(float dt);
 	void ControlMovement(float dt);
 	void ControlColors(float dt);
 	void ScoreColor();
