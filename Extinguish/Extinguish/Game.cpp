@@ -295,7 +295,7 @@ void Game::HandleEvent(Event* e)
 		else if (scenesNamesTable.GetKey("Lobby") == currentScene) //if it's a HUD scene, let it handle the input itself
 		{
 			inputDownEvent->SetIsServer(true);
-			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			EventDispatcher::GetSingleton()->DispatchExcept(inputDownEvent, "Game");
 			//cout << "HUD stuff" << endl;
 		}
 		else //client needs to send input info to sesrver
