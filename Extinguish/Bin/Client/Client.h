@@ -169,6 +169,7 @@ public:
 	UINT8 getObjID() { return objID; }
 
 private:
+	bool gameStart = false;
 	void sendMessage(char * message, GameMessages ID);
 	void sendMessage(char * message, GameMessages ID, SystemAddress sAddress);
 	void sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress);
