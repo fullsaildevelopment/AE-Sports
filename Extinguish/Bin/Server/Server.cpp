@@ -149,7 +149,7 @@ int  Server::update()
 		case ID_INCOMING_INPUT:
 		{
 			recieveInput();
-			return 3;
+			result = 3;
 			//break;
 		}
 
