@@ -1710,7 +1710,7 @@ int Game::UpdateLobby()
 		{
 			int serverState = server.run();
 		}
-		else {
+	//	else {
 			//run client
 			int clientState = client.run();
 
@@ -1725,7 +1725,7 @@ int Game::UpdateLobby()
 			}
 
 		return clientState;
-		}
+		//}
 	}
 
 	return 1;
