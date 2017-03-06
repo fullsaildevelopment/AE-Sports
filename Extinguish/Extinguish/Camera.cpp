@@ -63,7 +63,7 @@ void Camera::HandleEvent(Event* e)
 	if (inputDownEvent)
 	{
 		if (GetGameObject()->GetTransform()->GetParent()) {
-			if (inputDownEvent->IsServer())
+			//if (inputDownEvent->IsServer())
 			{
 				string name;
 				name = "Camera";

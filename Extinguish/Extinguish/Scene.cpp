@@ -468,6 +468,8 @@ void Scene::Update(float dt)
 
 				devContext->UpdateSubresource(BallConstantBuffer.Get(), NULL, NULL, &cps, NULL, NULL);
 				devContext->PSSetConstantBuffers(2, 1, BallConstantBuffer.GetAddressOf());
+
+				cout << transform->GetRotationDeg().x << " " << transform->GetRotationDeg().y << " " << transform->GetRotationDeg().z << endl;
 			}
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
