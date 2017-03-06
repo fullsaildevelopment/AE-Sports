@@ -290,7 +290,7 @@ void Game::HandleEvent(Event* e)
 	{
 		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
 		//(currentScene < 2)
-		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if ((ResourceManager::GetSingleton()->IsServer() && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
 		{
 			//inputDownEvent->SetID(clientID);
 			inputDownEvent->SetIsServer(true);
