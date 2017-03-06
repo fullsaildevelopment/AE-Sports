@@ -154,6 +154,9 @@ int Game::Update(float dt)
 			//set client id
 			Game::clientID = client.getID();
 
+			if (clientID == 2)
+				float temp = 0;
+
 			// if server, set game states
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
