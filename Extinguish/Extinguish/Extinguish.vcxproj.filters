@@ -302,12 +302,6 @@
     <ClInclude Include="..\Bin\imgui\imgui_internal.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Client Wrapper.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Server Wrapper.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="MathStuff.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -343,6 +337,12 @@
     </ClInclude>
     <ClInclude Include="BallController.h">
       <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Client Wrapper.h">
+      <Filter>Network Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Server Wrapper.h">
+      <Filter>Network Wrappers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -388,6 +388,9 @@
     </Filter>
     <Filter Include="Components\Scripts">
       <UniqueIdentifier>{851092dd-5769-47ea-966c-057726f5dc67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network Wrappers">
+      <UniqueIdentifier>{39c56189-847b-4a1c-8607-69df504f7be7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
