@@ -189,17 +189,19 @@ int Client::run()
 			UINT8 temp;
 			bIn.Read(temp);
 			if (temp == 11)
+			{
+				gameStart = true;
 				return 6;
+			}
 
 			break;
 		}
 		case ID_CLIENT_OBJ:
 		{
-			BitStream bIn(packet->data, packet->length, false);
-			bIn.IgnoreBytes(sizeof(MessageID));
-			bIn.Read(objID);
-			bIn.Read(clientID);
-			return 7;
+			GetID();
+			if (!gameStart)
+				return 7;
+			break;
 		}
 		}
 	}
@@ -223,7 +225,7 @@ void Client::stop()
 	//RakPeerInterface::DestroyInstance(peer);
 }
 
-int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer)
+int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, bool isServer)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_INPUT);
@@ -310,13 +312,12 @@ void Client::readMessage()
 
 void Client::GetID()
 {
-	//UINT8 objs;
-	RakString rs;
-	BitStream bsIn(packet->data, packet->length, false);
-	bsIn.IgnoreBytes(sizeof(MessageID));
-	bsIn.Read(clientID);
-	bsIn.Read(objects);
-
+	if (!gameStart) {
+		BitStream bsIn(packet->data, packet->length, false);
+		bsIn.IgnoreBytes(sizeof(MessageID));
+		bsIn.Read(clientID);
+		bsIn.Read(objects);
+	}
 //	clientStates = new CLIENT_GAME_STATE[objects]();
 }
 
