@@ -129,7 +129,6 @@ void Camera::HandleEvent(Event* e)
 //}
 
 //private helper functions
-
 void Camera::MoveCamera(InputDownEvent* e)
 {
 	input = e->GetInput();
@@ -155,11 +154,13 @@ void Camera::MoveCamera(InputDownEvent* e)
 				curRotX = maxRotX;
 				degX = maxRotX - curRotX;
 			}
+
 			else if (curRotX + degX < -maxRotX)
 			{
 				curRotX = -maxRotX;
 				degX = -maxRotX - curRotX;
 			}
+
 			else
 			{
 				curRotX += degX;
@@ -196,11 +197,13 @@ void Camera::MoveCamera(InputDownEvent* e)
 				curRotX = maxRotX;
 				degX = maxRotX - curRotX;
 			}
+
 			else if (curRotX + degX < -maxRotX)
 			{
 				curRotX = -maxRotX;
 				degX = -maxRotX - curRotX;
 			}
+
 			else
 			{
 				curRotX += degX;
@@ -283,7 +286,6 @@ void Camera::SetClampPos(DirectX::XMFLOAT3 pos)
 {
 	clampPos = pos;
 }
-
 
 //getters//
 XMFLOAT4X4 Camera::GetView()
