@@ -195,7 +195,7 @@ void Button::Update(float dt)
 {
 	if (isTimer)
 	{
-		time = Game::time;
+		time = Game::Time;
 		setText(getWTime());
 	}
 

@@ -40,7 +40,7 @@ public:
 	static int returnResult;
 	static PLAYER_TEAM team;
 	static UINT8 objIDs[10];
-	static float time;
+	static float Time;
 
 	int Team1Score;
 	int Team2Score;

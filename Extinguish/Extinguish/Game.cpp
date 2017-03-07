@@ -46,7 +46,7 @@ int Game::returnResult = 1;
 int Game::objID = 1;
 Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
-float Game::time = 300.0f;
+float Game::Time = 300.0f;
 
 Game::~Game()
 {
@@ -149,11 +149,11 @@ int Game::Update(float dt)
 {
 	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
 	{
-		time -= dt;
+		Time -= dt;
 
-		if (time < 0)
+		if (Time < 0)
 		{
-			time = 0.0f;
+			Time = 0.0f;
 		}
 	}
 
@@ -162,7 +162,7 @@ int Game::Update(float dt)
 		if (currentScene >= 2) {
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
-				server.setTime(time);
+				server.setTime(Time);
 
 				if (server.getObjCount() == 0)
 					server.setObjCount(scenes[currentScene]->GetNumObjects());
@@ -207,7 +207,7 @@ int Game::Update(float dt)
 
 				if (clientState == 4)
 				{
-					time = client.getTime();
+					Time = client.getTime();
 					Team1Score = client.getScoreA();
 					Team2Score = client.getScoreB();
 					UpdateScoreUI();
