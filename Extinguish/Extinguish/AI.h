@@ -24,11 +24,13 @@ private:
 	int fakeTeam = 0; // number of AI on my team
 
 	State currState; // the AI's current state or position that they'll take
+	Transform *camera; // gives me access to the camera transform
 
 	GameObject *myGoal; // my goal object
 	GameObject *enemyGoal; // the enemy's goal object
 	GameObject *ball; // the ball object
 	GameObject *realTarget; // holder for attacking
+	GameObject *eTank; // enemy's tank
 	GameObject *me; // access to the gameObject stuff through me
 
 	BallController *ballClass; // gives me access to the balls script
@@ -60,10 +62,10 @@ public:
 	void Score(); // throw the ball into the goal
 
 	// Accessors
-	State GetCurrState();
-	bool GetIsAttacking();
+	State GetCurrState(); // returns what position of the team the AI is
+	bool GetIsAttacking(); // returns if im attacking
+	GameObject *GetTarget(); // returns the target the AI is attacking
 
 	// Mutators
-
 
 };

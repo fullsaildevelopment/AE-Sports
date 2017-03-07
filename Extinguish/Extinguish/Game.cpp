@@ -1422,6 +1422,7 @@ void Game::AssignPlayers()
 			}
 		}
 	}
+
 	else
 	{
 		if (team == TEAM_A)
