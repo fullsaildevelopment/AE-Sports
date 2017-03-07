@@ -104,32 +104,7 @@ void Camera::HandleEvent(Event* e)
 	}
 }
 
-//void Camera::UpdateCamsRotation(float x, float y)
-//{
-//	XMFLOAT4X4 world = transform->GetWorld();
-//
-//	world._41 = 0;
-//	world._42 = 0;
-//	world._43 = 0;
-//
-//	XMMATRIX rotX = XMMatrixRotationX(x * rotateSpeed);
-//	XMMATRIX rotY = XMMatrixRotationY(y * rotateSpeed);
-//
-//	XMMATRIX tempView = XMLoadFloat4x4(&world);
-//	tempView = XMMatrixMultiply(rotX, tempView);
-//	tempView = XMMatrixMultiply(tempView, rotY);
-//	XMStoreFloat4x4(&world, tempView);
-//
-//	//change position to where it was earlier
-//	world._41 = transform->GetPosition().x;
-//	world._42 = transform->GetPosition().y;
-//	world._43 = transform->GetPosition().z;
-//
-//	transform->SetLocal(world);
-//}
-
 //private helper functions
-
 void Camera::MoveCamera(InputDownEvent* e)
 {
 	input = e->GetInput();
@@ -155,11 +130,13 @@ void Camera::MoveCamera(InputDownEvent* e)
 				curRotX = maxRotX;
 				degX = maxRotX - curRotX;
 			}
+
 			else if (curRotX + degX < -maxRotX)
 			{
 				curRotX = -maxRotX;
 				degX = -maxRotX - curRotX;
 			}
+
 			else
 			{
 				curRotX += degX;
@@ -167,9 +144,8 @@ void Camera::MoveCamera(InputDownEvent* e)
 
 			curRotY += degY;
 
-			transform->RotateX(degX);
-			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
-			playerTransform->RotateY(degY);
+			transform->RotateX(degX); //only camera can rotate on the x
+			playerTransform->RotateY(degY); //this rotates camera as well given its a child to player
 		}
 	}
 
@@ -196,11 +172,13 @@ void Camera::MoveCamera(InputDownEvent* e)
 				curRotX = maxRotX;
 				degX = maxRotX - curRotX;
 			}
+
 			else if (curRotX + degX < -maxRotX)
 			{
 				curRotX = -maxRotX;
 				degX = -maxRotX - curRotX;
 			}
+
 			else
 			{
 				curRotX += degX;
@@ -257,33 +235,10 @@ void Camera::MoveCamera(GamePadEvent* e)
 			curRotY += degY;
 
 			transform->RotateX(degX);
-			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
 			playerTransform->RotateY(degY);
 		}
 	}
 }
-
-void Camera::ClampTo()
-{
-	//clamp._41 += -10.0f;
-	//clamp._42 += -10.0f;
-	//clamp._43 += 5.0f;
-
-	transform->SetPosition({ clampPos.x, clampPos.y + 3.5f, clampPos.z + 0.5f });
-}
-
-//setters//
-//void Camera::SetClampMatrix(DirectX::XMFLOAT4X4 matrix)
-//{
-//	XMStoreFloat4x4(&clamp, XMMatrixInverse(nullptr, XMLoadFloat4x4(&matrix)));
-//	//clamp = matrix;
-//}
-
-void Camera::SetClampPos(DirectX::XMFLOAT3 pos)
-{
-	clampPos = pos;
-}
-
 
 //getters//
 XMFLOAT4X4 Camera::GetView()
