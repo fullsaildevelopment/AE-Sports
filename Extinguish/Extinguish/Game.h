@@ -61,6 +61,7 @@ private:
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
 	void ReceiveServerMessage();
+	void ResetPlayers();
 
 	/* to separate all the ui */
 	void CreateUI(Scene * basic);
