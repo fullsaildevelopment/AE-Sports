@@ -16,7 +16,7 @@ Server::Server()
 {
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
-	gameState[0].resize(1);
+	gameState[0].resize(MAX_PLAYERS);
 }
 
 Server::~Server()
@@ -526,6 +526,14 @@ void Server::sendState()
 	bOut.Write(gameState[0][0].scoreA);
 	bOut.Write(gameState[0][0].scoreB);
 	bOut.Write(gameState[0][0].time);
+
+	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+	{
+		bOut.Write(gameState[0][i].sprintA);
+		bOut.Write(gameState[0][i].sprintD);
+		bOut.Write(gameState[0][i].down);
+	}
+
 
 	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }

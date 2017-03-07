@@ -5,6 +5,7 @@
 #include "Client.h"
 #include "..\ShaderStructures\ShaderStructures.h"
 #include "InputManager.h"
+#include "InputDownEvent.h"
 
 class ClientWrapper
 {
@@ -150,5 +151,7 @@ public:
 
 	UINT8 getNumClients() { return newClient.getNumClients(); }
 
-//	float getTime() { return newClient.getTime(); }
+	bool getMeterActive() { return newClient.getMeterActive(); }
+	bool getMeterDrain() { return newClient.getMeterDrain(); }
+	bool getMeterDown() { return newClient.getMeterDown(); }
 };

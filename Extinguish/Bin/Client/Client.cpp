@@ -423,6 +423,21 @@ void Client::receiveGameState()
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
+	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+	{
+		if (i == clientID - 1)
+		{
+			bIn.Read(gameState[0][0].sprintA);
+			bIn.Read(gameState[0][0].sprintD);
+			bIn.Read(gameState[0][0].down);
+			break;
+		}
+		
+		bool temp, temp2;
+		bIn.Read(temp);
+		bIn.Read(temp2);
+		bIn.Read(temp2);
+	}
 }
 
 
