@@ -16,7 +16,6 @@ private:
 	Transform* transform;
 	Transform* playerTransform;
 	DirectX::XMFLOAT4X4 view;
-	DirectX::XMFLOAT3 clampPos;
 
 	float moveSpeed;
 	float rotateSpeed;
@@ -31,7 +30,6 @@ private:
 	//private helper functions
 	void MoveCamera(InputDownEvent* e);
 	void MoveCamera(GamePadEvent* e);
-	void ClampTo();
 public:
 	Camera();
 	~Camera();
@@ -40,11 +38,6 @@ public:
 	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel, bool isEventHandler);
 	void Update(float dt) override;
 	void HandleEvent(Event* e);
-	//void UpdateCamsRotation(float x, float y);
-
-	//setters
-	//void SetClampMatrix(DirectX::XMFLOAT4X4 matrix);
-	void SetClampPos(DirectX::XMFLOAT3 pos);
 
 	//getters
 	XMFLOAT4X4 GetView();

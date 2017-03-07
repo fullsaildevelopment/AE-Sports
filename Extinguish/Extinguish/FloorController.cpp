@@ -60,6 +60,11 @@ void FloorController::StripPattern(float dt)
 	if (ratios >= 1.0f) currPattern = 1;
 }
 
+void FloorController::InitialPattern(float dt)
+{
+
+}
+
 void FloorController::MovePillar(int pillar, float ratio)
 {
 	floor[pillar].y = ratio * maxHeight - 10;

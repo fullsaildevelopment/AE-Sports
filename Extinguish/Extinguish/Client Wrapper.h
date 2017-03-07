@@ -65,7 +65,7 @@ public:
 			input->GetMouseUp(), 
 			input->GetMouseX(), 
 			input->GetMouseY(), 
-			inputEvent->GetID(), 
+			//inputEvent->GetID(), 
 			inputEvent->IsServer());
 		//delete temp;
 	}
