@@ -181,6 +181,7 @@ int Client::run()
 			bIn.IgnoreBytes(sizeof(MessageID));
 			bIn.Read(curNumOfClients);
 			result = 5;
+			break;
 		}
 		case ID_START_GAME:
 		{
