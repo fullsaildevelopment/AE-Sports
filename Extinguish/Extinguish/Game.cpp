@@ -33,6 +33,9 @@
 using namespace DirectX;
 using namespace std;
 
+//this is for debugging purposes of being able to toggle AI
+#define AI_ON 1
+
 //initialize static member
 int Game::clientID = 1;
 
@@ -1395,70 +1398,71 @@ void Game::CreatePauseMenu(Scene * scene)
 
 void Game::AssignPlayers()
 {
-	//vector<AI*> ai;
-	//if (ResourceManager::GetSingleton()->IsMultiplayer())
-	//{
-	//	if (ResourceManager::GetSingleton()->IsServer())
-	//	{
-	//		// get teams of all players
-	//		// all others become ai
+#if AI_ON
+	vector<AI*> ai;
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			// get teams of all players
+			// all others become ai
 
-	//		for (unsigned int i = 0; i < 8; ++i) 
-	//		{
-	//			if (!server.isPlayer(i)) 
-	//			{
-	//				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-	//				AI *mageAI = new AI(mage1);
-	//				mage1->AddComponent(mageAI);
-	//				ai.push_back(mageAI);
-	//			}
-	//		}
+			for (unsigned int i = 0; i < 8; ++i) 
+			{
+				if (!server.isPlayer(i)) 
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
+				}
+			}
 
-	//		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
-	//		GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
+			GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
+			GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
 
-	//		for (int i = 0; i < ai.size(); ++i)
-	//		{
-	//			ai[i]->Init(goal, goal2);
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	//if (team == TEAM_A)
-	//	//	clientID = 1;
-	//	//else
-	//	//	clientID = 5;
+			for (int i = 0; i < ai.size(); ++i)
+			{
+				ai[i]->Init(goal, goal2);
+			}
+		}
+	}
+	else
+	{
+		//if (team == TEAM_A)
+		//	clientID = 1;
+		//else
+		//	clientID = 5;
 
-	//	// find team player selected
-	//	for (unsigned int i = 0; i < 8; ++i) 
-	//	{
-	//		// set mage 1 to player if red team
-	//		if (team == TEAM_A && i != 0)
-	//		{
-	//			GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-	//			AI *mageAI = new AI(mage1);
-	//			mage1->AddComponent(mageAI);
-	//			ai.push_back(mageAI);
-	//		}
-	//		// set mage 5 to player if blue team
-	//		else if (team == TEAM_B && i!= 4)
-	//		{
-	//			GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-	//			AI *mageAI = new AI(mage1);
-	//			mage1->AddComponent(mageAI);
-	//			ai.push_back(mageAI);
-	//		}
-	//	}
-	//	GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
-	//	GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
+		// find team player selected
+		for (unsigned int i = 0; i < 8; ++i) 
+		{
+			// set mage 1 to player if red team
+			if (team == TEAM_A && i != 0)
+			{
+				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+				AI *mageAI = new AI(mage1);
+				mage1->AddComponent(mageAI);
+				ai.push_back(mageAI);
+			}
+			// set mage 5 to player if blue team
+			else if (team == TEAM_B && i!= 4)
+			{
+				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+				AI *mageAI = new AI(mage1);
+				mage1->AddComponent(mageAI);
+				ai.push_back(mageAI);
+			}
+		}
+		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
+		GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
 
-	//	for (int i = 0; i < ai.size(); ++i)
-	//	{
-	//		ai[i]->Init(goal, goal2);
-	//	}
-	//}
-
+		for (int i = 0; i < ai.size(); ++i)
+		{
+			ai[i]->Init(goal, goal2);
+		}
+	}
+#endif
 }
 
 void Game::EnableButton(std::string name, bool toggle)
