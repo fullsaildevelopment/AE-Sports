@@ -34,7 +34,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 1
+#define AI_ON 0
 
 //initialize static member
 int Game::clientID = 1;
@@ -342,7 +342,12 @@ void Game::HandleEvent(Event* e)
 			server.sendGameState();
 		}
 		UpdateScoreUI();
+
 		//Reset Game
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			ResetPlayers();
+		}
 
 		return;
 	}
@@ -611,7 +616,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
-		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.6f, 0 }, { 0, 0.6f + 1.8f, 0 }, mage1, false);
+		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
 		Physics* physics = new Physics(0.01f, 2.0f, 0.07f, 4.4f, -14.8f);
@@ -1114,9 +1119,11 @@ void Game::ResetPlayers()
 	//const float rotations[] = { XM_PI / 2, -XM_PI / 4, 0, XM_PI / 4, //red rotations
 	//							-XM_PI / 2, 225.0f / 180.0f * XM_PI, XM_PI, XM_PI, 135.0f / 180.0f * XM_PI }; //blue rotations
 
-	const float rotations[] = { 90.0f, -45.0f, 0, 45.0f,
-							   -90.0f, 135.0f, 180.0f, 225.0f };
+	//const float rotations[] = { 90.0f, -45.0f, 0, 45.0f,
+	//						   -90.0f, 135.0f, 180.0f, 225.0f };
 
+	const float rotations[] = { 270.0f, 145.0f, 180.0f, 225.0f,
+							   90.0f, 315.0f, 360.0f, 405.0f };
 	bool posUsed[8] = { 0 };
 
 	for (int i = 1; i <= 8; ++i)
@@ -1147,7 +1154,15 @@ void Game::ResetPlayers()
 		}
 
 		player->GetTransform()->SetPosition(positions[randIndex]);
-		player->GetTransform()->RotateY(rotations[randIndex] / 180.0f * XM_PI);
+		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
+
+		//reset camera
+		string cameraName = "Camera";
+		cameraName += to_string(i);
+		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
+
+		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+		//player->GetTransform()->RotateY(rotations[randIndex] / 180.0f * XM_PI);
 	}
 }
 
