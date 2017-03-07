@@ -81,7 +81,7 @@ void PlayerController::HandleEvent(Event* e)
 	{
 		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
 
-		if (inputDownEvent->IsServer())
+		//if (inputDownEvent->IsServer())
 		{
 			string name;
 			name = "Mage";
@@ -233,7 +233,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 7.5f, 0 });
+		transform->AddVelocity({ 0, 4.0f, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation

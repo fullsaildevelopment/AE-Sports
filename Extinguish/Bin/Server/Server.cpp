@@ -149,8 +149,8 @@ int  Server::update()
 		case ID_INCOMING_INPUT:
 		{
 			recieveInput();
-			return 3;
-			//break;
+			result = 3;
+			break;
 		}
 
 		case ID_CHANGE_TEAM_A:
@@ -358,8 +358,8 @@ void Server::sendObjID(UINT8 id, UINT8 newID)
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_CLIENT_OBJ);
 
-	bsOut.Write(id);
 	bsOut.Write(newID);
+	bsOut.Write(id);
 	bsOut.Write(serverObjs);
 
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
@@ -532,7 +532,7 @@ void Server::sendState()
 
 void Server::StartGame()
 {
-	sendMessage(UINT8(0), ID_START_GAME, true);
+	sendMessage(UINT8(11), ID_START_GAME, true);
 }
 
 

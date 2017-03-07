@@ -56,31 +56,16 @@
     <ClCompile Include="AnimatorController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="BallController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Crosse.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="FloorController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Goal.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Movement.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Physics.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
@@ -182,6 +167,21 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Components\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="FloorController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Crosse.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parameter.h" />
@@ -191,34 +191,19 @@
     <ClInclude Include="AnimatorController.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="BallController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Crosse.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="FloorController.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Goal.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Movement.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Physics.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerController.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
@@ -317,12 +302,6 @@
     <ClInclude Include="..\Bin\imgui\imgui_internal.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Client Wrapper.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Server Wrapper.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="MathStuff.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -343,6 +322,27 @@
     </ClInclude>
     <ClInclude Include="Collider.h">
       <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="FloorController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Crosse.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="BallController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Client Wrapper.h">
+      <Filter>Network Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Server Wrapper.h">
+      <Filter>Network Wrappers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -385,6 +385,12 @@
     </Filter>
     <Filter Include="Components\Colliders">
       <UniqueIdentifier>{4eed2f02-86bc-41bd-8c9d-ac132cb087f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Scripts">
+      <UniqueIdentifier>{851092dd-5769-47ea-966c-057726f5dc67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network Wrappers">
+      <UniqueIdentifier>{39c56189-847b-4a1c-8607-69df504f7be7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

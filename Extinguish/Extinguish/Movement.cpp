@@ -77,7 +77,7 @@ void Movement::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		if (inputDownEvent->IsServer())
+		//if (inputDownEvent->IsServer())
 		{
 			string name;
 			name = "Mage";

@@ -222,7 +222,7 @@ void Button::HandleEvent(Event* e)
 	{
 		InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-		if (inputDownEvent)
+		if (inputDownEvent && isActive)
 		{
 			InputManager * input = inputDownEvent->GetInput();
 
@@ -236,7 +236,7 @@ void Button::HandleEvent(Event* e)
 				{
 					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
 					{
-						clickCooldown = 1.0f;
+						clickCooldown = 2.0f;
 					}
 					if (eventFunction)
 					{

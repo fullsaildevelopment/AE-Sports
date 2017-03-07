@@ -105,6 +105,13 @@ private:
 
 	UINT8 curNumOfClients;
 	UINT8 objID;
+
+
+	UINT8 objects;
+	int numPackets = 0;
+	bool disconnect = false;
+	UINT8 clientID;
+	char clientName[8];
 public:
 
 #pragma pack(push, 1)
@@ -130,7 +137,7 @@ public:
 	void stop();
 
 	// send functions
-	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer);
+	int sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, bool isServer);
 	void sendStop();
 	void sendMessage(char * newMessage);
 	void sendMessage(char * message, uint16_t stride);
@@ -155,18 +162,14 @@ public:
 	INT8 GetTransitionIndex(unsigned int index) { return clientStates[0][index].transitionIndex; }
 	UINT32 GetSoundID(unsigned int index) { return clientStates[0][index].soundID; }
 	UINT8 getID() { return clientID; }
-	CLIENT_GAME_STATE getState(unsigned int index);
+	CLIENT_GAME_STATE getMyState();
 	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
 
 private:
-	UINT8 objects;
-	int numPackets = 0;
-	bool disconnect = false;
-	UINT8 clientID;
-	char clientName[8];
+	bool gameStart = false;
 	void sendMessage(char * message, GameMessages ID);
 	void sendMessage(char * message, GameMessages ID, SystemAddress sAddress);
 	void sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress);

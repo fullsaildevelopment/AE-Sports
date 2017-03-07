@@ -46,7 +46,7 @@ public:
 			InputDownEvent* inputEvent = new InputDownEvent();
 			InputManager* input = new InputManager();
 
-			for (unsigned int i = 0; i < 4; ++i)
+			for (unsigned int i = 0; i < 8; ++i)
 			{
 				if (newServer.isInput(i))
 				{
