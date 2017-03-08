@@ -195,12 +195,8 @@ void Button::Update(float dt)
 {
 	if (isTimer)
 	{
-		time -= dt;
+		time = Game::Time;
 		setText(getWTime());
-		if (time < 0)
-		{
-			time = 0.0f;
-		}
 	}
 
 	if (clickCooldown >= 0.0f)
