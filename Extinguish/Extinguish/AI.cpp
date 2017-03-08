@@ -1,9 +1,9 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 5
-#define AttackSpeed 10
-#define StumbleSpeed 5
+#define RunSpeed 8
+#define AttackSpeed 20
+#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -33,9 +33,10 @@ void AI::OnCollisionEnter(Collider *obj)
 			if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
 				ballClass->DropBall(realTarget);
 
-			realTarget->GetTransform()->AddVelocity(float3(0, StumbleSpeed, 0));
+			realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
 			realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
-			
+			realTarget = nullptr;
+
 			//me->GetTransform()->AddVelocity(float3(0, 2, 0));
 			//me->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3() * (2, 0, 2));
 		}
@@ -270,8 +271,26 @@ void AI::Update(float dt)
 #pragma region Goalie2
 	else if (currState == playboy)
 	{
-		// if AI, it'll attack the tank if his team has the ball, else it'll run around next to the enemy's goal
+		// if AI, it'll attack the tank
+		// if his team has the ball, else it'll run around next to the enemy's goal
+		if (!ballClass->GetIsHeld())
+		{
 
+		}
+
+		else if (!ballClass->GetIsThrown() && ballClass->GetIsHeld())
+		{
+			// if they're on my team
+			if (ballClass->GetHolder()->GetTag() == me->GetTag())
+			{
+
+			}
+
+			else
+			{
+
+			}
+		}
 	}
 
 #pragma endregion
@@ -517,7 +536,7 @@ void AI::Score()
 
 	if (RunTo(enemyGoal, 30.0f))
 	{
-		camera->RotateX(100);
+		camera->RotateX(345);
 		crosse->Throw();
 	}
 }
