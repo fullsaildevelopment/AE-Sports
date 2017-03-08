@@ -34,6 +34,8 @@ class FloorController : public Component
 	unsigned int team1color = 0xAD000000;
 	unsigned int team2color = 0x0000AD00;
 	float colortiming = 0;
+
+	int direction;
 public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
 	~FloorController();

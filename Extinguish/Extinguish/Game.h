@@ -48,8 +48,6 @@ private:
 	HashString scenesNamesTable;
 
 	DeviceResources* devResources;
-
-	//InputManager* input;
 	ResourceManager* resourceManager;
 	SoundEngine* soundEngine;
 
@@ -58,10 +56,13 @@ private:
 	static int clientID;
 	static int objID;
 
+	float* gameTime;
+
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
 	void ReceiveServerMessage();
 	void ResetPlayers();
+	void ResetBall();
 
 	/* to separate all the ui */
 	void CreateUI(Scene * basic);
