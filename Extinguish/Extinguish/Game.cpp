@@ -34,7 +34,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 1
+#define AI_ON 0
 
 //initialize static member
 int Game::clientID = 1;
@@ -621,7 +621,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			mage1->SetTag("Team2");
 		}
 
-		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, 0, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
+		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, XM_PI, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
@@ -872,7 +872,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* axis = new GameObject();
 	axis->Init("axis");
 	basic->AddGameObject(axis);
-	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, 10, 10 }, nullptr, nullptr, nullptr);
+	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, -10, 10 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
 	Renderer* axisRenderer = new Renderer();
 	axis->AddComponent(axisRenderer);
 	axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
@@ -1178,14 +1178,14 @@ void Game::ResetPlayers()
 		}
 
 		player->GetTransform()->SetPosition(positions[randIndex]);
-		//player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
+		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 
 		//reset camera
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-		//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 	}
 }
 
