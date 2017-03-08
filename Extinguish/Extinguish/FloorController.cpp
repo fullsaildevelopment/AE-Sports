@@ -63,6 +63,7 @@ void FloorController::StripPattern(float dt)
 
 void FloorController::InitialPattern(float dt)
 {
+	//decide which way to make the side pillars move up
 	if (ratios > 1.0f)
 	{
 		ratios = 1.0f;
@@ -76,12 +77,17 @@ void FloorController::InitialPattern(float dt)
 
 	ratios += dt * transSpeed * direction;
 
+	//red goal
 	MovePillar(15, ratios);
 	MovePillar(16, 1);
 	MovePillar(24, 1);
 	MovePillar(25, ratios);
 
-	//MovePillar (55 * 
+	//blue goal
+	MovePillar((38 * 54) + 15, ratios);
+	MovePillar((38 * 54) + 16, 1);
+	MovePillar((38 * 54) + 24, 1);
+	MovePillar((38 * 54) + 25, ratios);
 }
 
 void FloorController::MovePillar(int pillar, float ratio)
