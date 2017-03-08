@@ -40,6 +40,7 @@ public:
 	static int returnResult;
 	static PLAYER_TEAM team;
 	static UINT8 objIDs[10];
+	static float Time;
 
 	int Team1Score;
 	int Team2Score;
@@ -70,6 +71,7 @@ private:
 	void CreateLobby(Scene * scene);
 	void CreatePauseMenu(Scene * scene);
 	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
+	void CreateScoreBoard(Scene * scene);
 	void AssignPlayers();
 
 	void UpdateServerStates();
