@@ -80,6 +80,8 @@ void FloorController::InitialPattern(float dt)
 	MovePillar(16, 1);
 	MovePillar(24, 1);
 	MovePillar(25, ratios);
+
+	//MovePillar (55 * 
 }
 
 void FloorController::MovePillar(int pillar, float ratio)
