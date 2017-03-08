@@ -31,6 +31,7 @@
 using namespace RakNet;
 using namespace std;
 using namespace DirectX;
+#define MAX_PLAYERS 8
 
 class CLIENTDLL_API Client
 {
@@ -62,10 +63,13 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
-		int scoreA;
-		int scoreB;
+		int scoreA = 0;
+		int scoreB = 0;
 		float time;
-
+		bool sprintA = false;
+		bool sprintD = false;
+		bool empty = false;
+		bool down = false;
 
 		GAME_STATE() {}
 	};
@@ -90,7 +94,8 @@ private:
 		ID_INCOMING_MESSAGE,
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
-		ID_CLIENT_OBJ
+		ID_CLIENT_OBJ,
+		ID_SPRINT_EMPTY
 	};
 
 	static RakPeerInterface * peer;
@@ -143,6 +148,7 @@ public:
 	void sendMessage(char * message, uint16_t stride);
 	void sendPacket();
 	void changeTeam(UINT16 team);
+	void sendEmpty(bool empty);
 
 	// setters
 	void setLocation(XMFLOAT3 loc) { myState[0][0].position = loc; }
@@ -153,6 +159,10 @@ public:
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
+	bool getMeterActive() { return gameState[0][0].sprintA; }
+	bool getMeterDrain() { return gameState[0][0].sprintD; }
+	bool getMeterEmpty() { return gameState[0][0].empty; }
+	bool getMeterDown() { return gameState[0][0].down; }
 	UINT8 getNumClients() { return curNumOfClients; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }

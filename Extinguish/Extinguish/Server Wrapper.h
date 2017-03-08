@@ -190,4 +190,14 @@ public:
 
 	bool isPlayer(unsigned int i) { return newServer.isPlayer(i); }
 	UINT8 getObjID(unsigned int i) { return newServer.getObjID(i); }
+
+	void setMeterActive(bool toggle, unsigned int i) { newServer.setMeterActive(toggle, i); }
+	void setMeterDrain(bool toggle, unsigned int i) { newServer.setMeterDrain(toggle, i); }
+	void setMeterEmpty(bool toggle, unsigned int i) { //newServer.setMeterEmpty(toggle, i);
+	}
+	void setMeterDown(bool toggle, unsigned int i) { return newServer.setMeterDown(toggle, i); }
+
+	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i);}
+	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
+	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
 };

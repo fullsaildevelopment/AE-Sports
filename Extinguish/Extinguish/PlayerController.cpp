@@ -91,6 +91,7 @@ void PlayerController::HandleEvent(Event* e)
 			{
 				//if (!Player::gamePadState.IsConnected())
 				{
+					playerID = inputDownEvent->GetID();
 					input = inputDownEvent->GetInput();
 					HandleInput();
 				}
@@ -383,11 +384,23 @@ void PlayerController::HandleSprintAndCharge()
 			speedMultiplier = sprintMultiplier;
 		}
 
-		if (meterBar->isEmpty()) // empty, no more sprint
+		if (!ResourceManager::GetSingleton()->IsMultiplayer() || playerID == Game::GetClientID())
 		{
-			canSprint = false;
-			isCharging = false;
-			SetFootstepsSound(0);
+			if (meterBar->isEmpty()) // empty, no more sprint
+			{
+				canSprint = false;
+				isCharging = false;
+				SetFootstepsSound(0);
+			}
+		}
+		else
+		{
+			if (Game::server.getEmpty(playerID - 1)) 
+			{
+				canSprint = false;
+				isCharging = false;
+				SetFootstepsSound(0);
+			}
 		}
 
 		//set velocity to respective velocity every frame
@@ -395,9 +408,19 @@ void PlayerController::HandleSprintAndCharge()
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
-		if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty())
+		if (!ResourceManager::GetSingleton()->IsMultiplayer() || playerID == Game::GetClientID())
 		{
-			canSprint = true;
+			if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty())
+			{
+				canSprint = true;
+			}
+		}
+		else
+		{
+			if (!Game::server.getEmpty(playerID - 1) || (!Game::server.getMeterDrain(playerID - 1) && !Game::server.getMeterActive(playerID - 1)))
+			{
+				canSprint = true;
+			}
 		}
 	}
 }

@@ -195,12 +195,8 @@ void Button::Update(float dt)
 {
 	if (isTimer)
 	{
-		time -= dt;
+		time = Game::Time;
 		setText(getWTime());
-		if (time < 0)
-		{
-			time = 0.0f;
-		}
 	}
 
 	if (clickCooldown >= 0.0f)
@@ -231,7 +227,6 @@ void Button::HandleEvent(Event* e)
 
 			if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
 			{
-
 				if (input->GetMouseDown()[0] && clickCooldown <= 0.0f)
 				{
 					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
@@ -249,12 +244,12 @@ void Button::HandleEvent(Event* e)
 							stayOnClick = true;
 						}
 						else if (buttonType == CHANGE_TEAM_B)
-							{
-								GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
-								Button * theirbutton = otherteam->GetComponent<Button>();
-								theirbutton->setStayHovered(false);
-								stayOnClick = true;
-							}
+						{
+							GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
+							Button * theirbutton = otherteam->GetComponent<Button>();
+							theirbutton->setStayHovered(false);
+							stayOnClick = true;
+						}
 					}
 					else if (buttonType == RESUME_GAME)
 					{

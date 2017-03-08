@@ -34,7 +34,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -46,6 +46,7 @@ int Game::returnResult = 1;
 int Game::objID = 1;
 Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
+float Game::Time = 300.0f;
 
 Game::~Game()
 {
@@ -158,17 +159,30 @@ int Game::Update(float dt)
 
 	}
 
+	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
+	{
+		Time -= dt;
+
+		if (Time < 0)
+		{
+			Time = 0.0f;
+		}
+	}
+
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (currentScene >= 2) {
-			if (server.getObjCount() == 0)
-				server.setObjCount(scenes[currentScene]->GetNumObjects());
+			if (ResourceManager::GetSingleton()->IsServer())
+			{
+				server.setTime(Time);
 
+				if (server.getObjCount() == 0)
+					server.setObjCount(scenes[currentScene]->GetNumObjects());
+
+				server.sendGameState();
+			}
 			//set client id
 			Game::clientID = client.getID();
-
-			if (clientID == 2)
-				float temp = 0;
 
 			// if server, set game states
 			if (ResourceManager::GetSingleton()->IsServer())
@@ -205,6 +219,7 @@ int Game::Update(float dt)
 
 				if (clientState == 4)
 				{
+					Time = client.getTime();
 					Team1Score = client.getScoreA();
 					Team2Score = client.getScoreB();
 					UpdateScoreUI();
@@ -345,7 +360,7 @@ void Game::HandleEvent(Event* e)
 		if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
 		{
 			server.setScores(Team1Score, Team2Score);
-			server.sendGameState();
+		//	server.sendGameState();
 		}
 		UpdateScoreUI();
 
@@ -564,7 +579,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* gameBall = new GameObject();
 	gameBall->Init("GameBall");
 	basic->AddGameObject(gameBall);
-	gameBall->InitTransform(identity, { -20, 15.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
+	gameBall->InitTransform(identity, { -20, 5.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
@@ -1359,6 +1374,33 @@ void Game::CreateLobby(Scene * scene)
 	bg2Button->MakeRect();
 }
 
+void Game::CreateScoreBoard(Scene * scene)
+{
+	// images only
+	GameObject * scoreBack = new GameObject();
+	scene->AddUIObject(scoreBack);
+	scoreBack->Init("pauseResume");
+	{
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 7);
+		button->setSceneIndex((unsigned int)scenes.size() - 1);
+		button->SetGameObject(scoreBack);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.80f, 0.30f);
+		scoreBack->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/resumeButton.png");
+		scoreBack->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(false);
+		button->setHelper(scene->GetNumUIObjects());
+	}
+
+}
+
 void Game::CreatePauseMenu(Scene * scene)
 {
 	// server only?
@@ -1366,7 +1408,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	scene->AddUIObject(resumeGame);
 	resumeGame->Init("pauseResume");
 	Button * rButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 7);
-	rButton->setSceneIndex((unsigned int)scenes.size());
+	rButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	rButton->SetGameObject(resumeGame);
 	rButton->showFPS(false);
 	rButton->setPositionMultipliers(0.80f, 0.30f);
@@ -1388,7 +1430,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	scene->AddUIObject(exitGame);
 	exitGame->Init("pauseExit");
 	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 5);
-	eButton->setSceneIndex((unsigned int)scenes.size());
+	eButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
 	eButton->setPositionMultipliers(0.80f, 0.40f);
@@ -1410,7 +1452,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	scene->AddUIObject(exitMenu);
 	exitMenu->Init("pauseMenu");
 	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 6);
-	mButton->setSceneIndex((unsigned int)scenes.size());
+	mButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	mButton->SetGameObject(exitMenu);
 	mButton->showFPS(false);
 	mButton->setPositionMultipliers(0.80f, 0.50f);
@@ -1454,10 +1496,11 @@ void Game::AssignPlayers()
 
 			for (int i = 0; i < ai.size(); ++i)
 			{
-				ai[i]->Init(goal, goal2);
+				ai[i]->Init(goal2, goal);
 			}
 		}
 	}
+
 	else
 	{
 		//if (team == TEAM_A)
@@ -1490,7 +1533,7 @@ void Game::AssignPlayers()
 
 		for (int i = 0; i < ai.size(); ++i)
 		{
-			ai[i]->Init(goal, goal2);
+			ai[i]->Init(goal2, goal);
 		}
 	}
 #endif
@@ -1609,7 +1652,8 @@ void Game::UpdateClientObjects(float dt)
 				if (gameObject->GetName() == "HexFloor")
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
-					fC->SetState(client.getFloorState(i), dt);
+					if (fC->GetState() != client.getFloorState(i))
+						fC->SetState(client.getFloorState(i), dt);
 				}
 
 
@@ -1736,7 +1780,6 @@ void Game::UpdateLobbyUI(int _amount)
 // since the networking is different on the lobby, this keeps it from sending packages when it doesn't need to
 int Game::UpdateLobby()
 {
-
 	if (ResourceManager::GetSingleton()->IsMultiplayer()) {
 		//set client id
 		Game::clientID = client.getID();

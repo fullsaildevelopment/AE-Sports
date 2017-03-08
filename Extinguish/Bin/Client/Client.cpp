@@ -423,6 +423,21 @@ void Client::receiveGameState()
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
+	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+	{
+		if (i == clientID - 1)
+		{
+			bIn.Read(gameState[0][0].sprintA);
+			bIn.Read(gameState[0][0].sprintD);
+			bIn.Read(gameState[0][0].down);
+			break;
+		}
+		
+		bool temp, temp2;
+		bIn.Read(temp);
+		bIn.Read(temp2);
+		bIn.Read(temp2);
+	}
 }
 
 
@@ -436,4 +451,13 @@ void Client::changeTeam(UINT16 team)
 	{
 		sendMessage(clientID, ID_CHANGE_TEAM_B, peer->GetSystemAddressFromIndex(0));
 	}
+}
+
+void Client::sendEmpty(bool empty)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_SPRINT_EMPTY);
+	bsOut.Write(clientID);
+	bsOut.Write(empty);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
