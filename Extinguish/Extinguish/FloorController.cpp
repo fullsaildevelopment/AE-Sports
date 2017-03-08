@@ -16,6 +16,7 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	colors = _colors;
 	timer.Restart();
 	ControlColors(0);
+	direction = 1;
 }
 
 void FloorController::WavePattern(float dt)
@@ -62,7 +63,23 @@ void FloorController::StripPattern(float dt)
 
 void FloorController::InitialPattern(float dt)
 {
+	if (ratios > 1.0f)
+	{
+		ratios = 1.0f;
+		direction = -1;
+	}
+	else if (ratios < 0.0f)
+	{
+		ratios = 0.0f;
+		direction = 1;
+	}
 
+	ratios += dt * transSpeed * direction;
+
+	MovePillar(15, ratios);
+	MovePillar(16, 1);
+	MovePillar(24, 1);
+	MovePillar(25, ratios);
 }
 
 void FloorController::MovePillar(int pillar, float ratio)
@@ -97,58 +114,61 @@ void FloorController::Strips(float dt)
 void FloorController::ControlMovement(float dt)
 {
 	timeing += dt;
-	if (timeing < 10 && currPattern != 1)
-	{
-		transState = 1;
-		StripPattern(dt);
-		if (currPattern == 1)
-		{
-			ratios = 0;
-			transState = 10;
-		}
-	}
-	else if (timeing >= 10 && timeing < 20 && currPattern != 0)
-	{
-		transState = 0;
-		LevelFloor(dt);
-		if (currPattern == 0)
-		{
-			ratios = 0;
-			transState = -1;
-		}
-	}
-	else if (timeing >= 20 && timeing < 30 && currPattern != 2)
-	{
-		transState = 2;
-		WavePattern(dt);
-		if (currPattern == 2)
-		{
-			ratios = 0;
-			transState = 20;
-		}
-	}
-	else if (timeing >= 30 && timeing < 40 && currPattern != 0)
-	{
-		transState = 0;
-		LevelFloor(dt);
-		if (currPattern == 0)
-		{
-			ratios = 0;
-			transState = -1;
-		}
-	}
-	else if (timeing >= 40 && timeing < 50 && currPattern != 4)
-	{
-		transState = 4;
-		//RandomPattern(dt);
-		if (currPattern == 4)
-		{
-			ratios = 0;
-			transState = 40;
-		}
-	}
-	if (timeing > 40)
-		timeing = 0;
+
+	InitialPattern(dt);
+
+	//if (timeing < 10 && currPattern != 1)
+	//{
+	//	transState = 1;
+	//	StripPattern(dt);
+	//	if (currPattern == 1)
+	//	{
+	//		ratios = 0;
+	//		transState = 10;
+	//	}
+	//}
+	//else if (timeing >= 10 && timeing < 20 && currPattern != 0)
+	//{
+	//	transState = 0;
+	//	LevelFloor(dt);
+	//	if (currPattern == 0)
+	//	{
+	//		ratios = 0;
+	//		transState = -1;
+	//	}
+	//}
+	//else if (timeing >= 20 && timeing < 30 && currPattern != 2)
+	//{
+	//	transState = 2;
+	//	WavePattern(dt);
+	//	if (currPattern == 2)
+	//	{
+	//		ratios = 0;
+	//		transState = 20;
+	//	}
+	//}
+	//else if (timeing >= 30 && timeing < 40 && currPattern != 0)
+	//{
+	//	transState = 0;
+	//	LevelFloor(dt);
+	//	if (currPattern == 0)
+	//	{
+	//		ratios = 0;
+	//		transState = -1;
+	//	}
+	//}
+	//else if (timeing >= 40 && timeing < 50 && currPattern != 4)
+	//{
+	//	transState = 4;
+	//	//RandomPattern(dt);
+	//	if (currPattern == 4)
+	//	{
+	//		ratios = 0;
+	//		transState = 40;
+	//	}
+	//}
+	//if (timeing > 40)
+	//	timeing = 0;
 }
 
 void FloorController::ControlColors(float dt)
@@ -229,7 +249,7 @@ void FloorController::ScoreColor()
 
 void FloorController::Update(float dt)
 {
-	//ControlMovement(dt);
+	ControlMovement(dt);
 	//ControlColors(dt);
 	if (score)
 	{
@@ -285,6 +305,10 @@ void FloorController::SetState(int state, float dt)
 	else if (state == 30)
 	{
 		//RandomPattern(1000);
+	}
+	else if (420)
+	{
+		InitialPattern(dt);
 	}
 }
 

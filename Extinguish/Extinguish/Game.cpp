@@ -146,6 +146,18 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 
 int Game::Update(float dt)
 {
+	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
+	{
+		//for now, I will just load main menu
+		LoadScene("Menu");
+
+		//TODO: This stuff below needs to be done to replace the line of code above
+		//bring onto screen text overlay that says which team won
+
+		//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
+
+	}
+
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (currentScene >= 2) {
@@ -211,6 +223,8 @@ int Game::Update(float dt)
 		}
 	}
 
+	//cout << *gameTime << endl;
+
 	//update current scene
 	scenes[currentScene]->Update(dt);
 
@@ -227,21 +241,13 @@ int Game::Update(float dt)
 
 	for (int i = 0; i < objects->size(); ++i)
 	{
-		//if (i != GetPlayerObjectID())
-		{
-			//XMFLOAT3 objectPos;
+		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
-
-			//objectsPos.push_back(objectPos);
-
-			//XMFLOAT3 forward;
-			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-			//forwards.push_back(forward);
-		}
+		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
 	}
+
 	int index = (clientID - 1) * 3 + 2;
 
 	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
@@ -347,6 +353,7 @@ void Game::HandleEvent(Event* e)
 		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			ResetPlayers();
+			ResetBall();
 		}
 
 		return;
@@ -834,6 +841,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
+	fcon->SetState(420, 1 / 6.0f);
 
 	GameObject* Hex = new GameObject();
 	Hex->Init("Team2");
@@ -861,6 +869,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	if (ResourceManager::GetSingleton()->IsServer())
 	{
 		ResetPlayers();
+		ResetBall();
 	}
 
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
@@ -881,6 +890,9 @@ void Game::CreateUI(Scene * basic)
 	theSButton->showFPS(false);
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	scoreA->AddComponent(theSButton);
+
+	gameTime = theSButton->GetTime();
+
 	UIRenderer * scoreRender = new UIRenderer();
 	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
@@ -944,6 +956,9 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->setCanRecharge(true);
 
 	CreatePauseMenu(basic);
+
+	//create game over menu
+
 
 	#ifdef DEBUG
 		GameObject * debugUI = new GameObject();
@@ -1116,12 +1131,6 @@ void Game::ResetPlayers()
 	const float3 positions[] = { {-22.0f, 0.0f, 1.8f}, {2.0f, 0.0f, -20.0f}, {-20.0f, 0.0f, -30.0f}, {-45.0f, 0.0f, -20.0f}, //red positions
 								{-18.0f, 0.0f, 1.8f}, {-45.0f, 0.0f, 20.0f}, {-20.0f, 0.0f, 30.0f}, {2.0f, 0.0f, 20.0f} }; //blue positions
 
-	//const float rotations[] = { XM_PI / 2, -XM_PI / 4, 0, XM_PI / 4, //red rotations
-	//							-XM_PI / 2, 225.0f / 180.0f * XM_PI, XM_PI, XM_PI, 135.0f / 180.0f * XM_PI }; //blue rotations
-
-	//const float rotations[] = { 90.0f, -45.0f, 0, 45.0f,
-	//						   -90.0f, 135.0f, 180.0f, 225.0f };
-
 	const float rotations[] = { 270.0f, 145.0f, 180.0f, 225.0f,
 							   90.0f, 315.0f, 360.0f, 405.0f };
 	bool posUsed[8] = { 0 };
@@ -1162,8 +1171,15 @@ void Game::ResetPlayers()
 		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
 		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
-		//player->GetTransform()->RotateY(rotations[randIndex] / 180.0f * XM_PI);
 	}
+}
+
+void Game::ResetBall()
+{
+	GameObject* ball = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject("GameBall");
+	ball->GetTransform()->SetPosition({ -20.0f, 15.0f, 1.8f });
+	ball->GetTransform()->SetVelocity({ 0,0,0 });
+	ball->GetComponent<BallController>()->SetHolder(nullptr);
 }
 
 void Game::ReceiveServerMessage()

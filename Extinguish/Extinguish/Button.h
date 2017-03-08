@@ -102,6 +102,7 @@ public:
 
 		return theTime;
 	}
+	float* GetTime() { return &time; }
 
 	unsigned int getLength() { return textLength; }
 	IDWriteTypography * getTypography() { return pTypography.Get(); }
@@ -135,7 +136,7 @@ public:
 	void setHelper(int index) { helperIndex.push_back(index); }
 	void setStayHovered(bool b) { stayOnClick = b; }
 
-	void resetTime() { time = 300.0f; }
+	void resetTime() { time = 10.0f; }
 
 	/* HELPERS*/
 
