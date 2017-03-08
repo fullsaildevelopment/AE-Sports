@@ -21,6 +21,7 @@ private:
 	Transform* cameraTransform;
 	
 	//reg members
+	unsigned int playerID = 0;
 	float dt;
 	bool justJumped;
 	bool isSprinting;

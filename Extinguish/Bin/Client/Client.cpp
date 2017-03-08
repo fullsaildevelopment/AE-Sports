@@ -452,3 +452,12 @@ void Client::changeTeam(UINT16 team)
 		sendMessage(clientID, ID_CHANGE_TEAM_B, peer->GetSystemAddressFromIndex(0));
 	}
 }
+
+void Client::sendEmpty(bool empty)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_SPRINT_EMPTY);
+	bsOut.Write(clientID);
+	bsOut.Write(empty);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+}

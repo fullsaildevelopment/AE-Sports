@@ -94,7 +94,8 @@ private:
 		ID_INCOMING_MESSAGE,
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
-		ID_CLIENT_OBJ
+		ID_CLIENT_OBJ,
+		ID_SPRINT_EMPTY
 	};
 
 	static RakPeerInterface * peer;
@@ -147,6 +148,7 @@ public:
 	void sendMessage(char * message, uint16_t stride);
 	void sendPacket();
 	void changeTeam(UINT16 team);
+	void sendEmpty(bool empty);
 
 	// setters
 	void setLocation(XMFLOAT3 loc) { myState[0][0].position = loc; }

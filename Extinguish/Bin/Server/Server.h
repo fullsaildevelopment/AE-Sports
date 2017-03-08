@@ -63,7 +63,8 @@ public:
 		float time = 300.0f;
 		bool sprintA = false;
 		bool sprintD = true;
-		bool down = true;
+		bool down = false;
+		bool empty = false;
 
 		GAME_STATE() {}
 	};
@@ -88,7 +89,8 @@ private:
 		ID_INCOMING_MESSAGE,
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
-		ID_CLIENT_OBJ
+		ID_CLIENT_OBJ,
+		ID_SPRINT_EMPTY
 	};
 
 #pragma pack(push, 1)
@@ -172,6 +174,7 @@ public:
 	UINT8 getObjID(unsigned int i) { return objIDs[i].id; }
 	bool getMeterDrain(unsigned int i) { return gameState[0][i].sprintD; }
 	bool getMeterActive(unsigned int i) { return gameState[0][i].sprintA; }
+	bool getEmpty(unsigned int i) { return gameState[0][i].empty; }
 
 	/* setters */
 	void setStateSize(unsigned int size) { 

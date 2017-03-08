@@ -154,4 +154,5 @@ public:
 	bool getMeterActive() { return newClient.getMeterActive(); }
 	bool getMeterDrain() { return newClient.getMeterDrain(); }
 	bool getMeterDown() { return newClient.getMeterDown(); }
+	void sendEmpty(bool toggle) { newClient.sendEmpty(toggle); }
 };
