@@ -34,7 +34,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -572,7 +572,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* gameBall = new GameObject();
 	gameBall->Init("GameBall");
 	basic->AddGameObject(gameBall);
-	gameBall->InitTransform(identity, { -20, 15.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
+	gameBall->InitTransform(identity, { -20, 5.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
@@ -1480,7 +1480,7 @@ void Game::AssignPlayers()
 
 			for (int i = 0; i < ai.size(); ++i)
 			{
-				ai[i]->Init(goal, goal2);
+				ai[i]->Init(goal2, goal);
 			}
 		}
 	}
@@ -1517,7 +1517,7 @@ void Game::AssignPlayers()
 
 		for (int i = 0; i < ai.size(); ++i)
 		{
-			ai[i]->Init(goal, goal2);
+			ai[i]->Init(goal2, goal);
 		}
 	}
 #endif
