@@ -31,12 +31,14 @@ void MeterBar::Update(float dt)
 				dTime = rTime * (drainTime / rechargeTime);
 				if (dTime <= 0.0f)
 				{
+					Game::client.sendEmpty(true);
 					empty = true;
 				}
-				else
+				/*else
 				{
+					Game::client.sendEmpty(false);
 					empty = false;
-				}
+				}*/
 			}
 			
 			if ((drain && isActive) && !Game::client.getMeterDown())
@@ -44,7 +46,11 @@ void MeterBar::Update(float dt)
 				rTime = dTime * (rechargeTime / drainTime);
 
 				if (rTime > rechargeTime)
-					rTime = rechargeTime;
+				{
+					rTime = rechargeTime; 
+					Game::client.sendEmpty(false);
+					empty = false;
+				}
 			}
 
 			if (isActive != Game::client.getMeterActive())
@@ -53,9 +59,6 @@ void MeterBar::Update(float dt)
 				drain = Game::client.getMeterDrain();
 			if (empty)
 				drain = false;
-
-			//dTime = Game::client.getDrainTime();
-			//rTime = Game::client.getRechargeTime();
 		}
 	}
 
@@ -117,11 +120,11 @@ void MeterBar::HandleEvent(Event* e)
 		InputManager * input = inputDownEvent->GetInput();
 		if (input->GetKey(16) && input->GetKey('W'))
 		{
-			Drain(inputDownEvent);
+			Drain(inputDownEvent->GetID());
 		}
 		else
 		{
-			Recharge(inputDownEvent);
+			Recharge(inputDownEvent->GetID());
 
 			//	isActive = false;
 		}
@@ -150,7 +153,9 @@ void MeterBar::HandleEvent(Event* e)
 
 		if (gamePadSprinting)
 		{
-			if (isActive == false)
+			Drain(gamePadEvent->GetClientID());
+
+			/*if (isActive == false)
 			{
 				dTime = rTime * (drainTime / rechargeTime);
 				isActive = true;
@@ -163,26 +168,27 @@ void MeterBar::HandleEvent(Event* e)
 					empty = true;
 				else
 					empty = false;
-			}
+			}*/
 		}
 		else
 		{
-			if (drain && isActive == true)
+			Recharge(gamePadEvent->GetClientID());
+			/*if (drain && isActive == true)
 			{
 				drain = false;
 				rTime = dTime * (rechargeTime / drainTime);
 
 				if (rTime > rechargeTime)
 					rTime = rechargeTime;
-			}
+			}*/
 		}
 	}
 }
 
 
-void MeterBar::Drain(InputDownEvent* inputDownEvent)
+void MeterBar::Drain(unsigned int id)
 {
-	if (!ResourceManager::GetSingleton()->IsMultiplayer() || (ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() == Game::GetClientID())) {
+	if (!ResourceManager::GetSingleton()->IsMultiplayer() || (ResourceManager::GetSingleton()->IsServer() && id == Game::GetClientID())) {
 		if (isActive == false)
 		{
 			dTime = rTime * (drainTime / rechargeTime);
@@ -198,33 +204,24 @@ void MeterBar::Drain(InputDownEvent* inputDownEvent)
 				empty = false;
 		}
 	}
-	else if ((inputDownEvent->GetID() != Game::GetClientID()) && ResourceManager::GetSingleton()->IsServer())
+	else if ((id != Game::GetClientID()) && ResourceManager::GetSingleton()->IsServer())
 	{
-		if (Game::server.getMeterActive(inputDownEvent->GetID() - 1) == false)
+		if (Game::server.getMeterActive(id - 1) == false)
 		{
-		    //	float tdTime = rTime * (drainTime / rechargeTime);
-			Game::server.setMeterActive(true, inputDownEvent->GetID() - 1);
-			//Game::server.setDrainTime(tdTime, inputDownEvent->GetID());
-			Game::server.setMeterDown(true, inputDownEvent->GetID() - 1);
+			Game::server.setMeterActive(true, id - 1);
+			Game::server.setMeterDown(true, id - 1);
 		}
-		else if (Game::server.getMeterDrain(inputDownEvent->GetID() - 1) == false)
+		else if (Game::server.getMeterDrain(id - 1) == false)
 		{
-			//Game::server.setMeterActive(true, inputDownEvent->GetID() - 1);
-			Game::server.setMeterDrain(true, inputDownEvent->GetID() - 1);
-			Game::server.setMeterDown(true, inputDownEvent->GetID() - 1);
-		/*	float tdTime = rTime * (drainTime / rechargeTime);
-			Game::server.setDrainTime(tdTime, inputDownEvent->GetID());
-			if (tdTime <= 0.0f)
-				Game::server.setMeterEmpty(true, inputDownEvent->GetID());
-			else
-				Game::server.setMeterDrain(false, inputDownEvent->GetID());*/
+			Game::server.setMeterDrain(true, id - 1);
+			Game::server.setMeterDown(true, id - 1);
 		}
 	}
 }
 
-void MeterBar::Recharge(InputDownEvent* inputDownEvent)
+void MeterBar::Recharge(unsigned int id)
 {
-	if (!ResourceManager::GetSingleton()->IsMultiplayer() || (ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() == Game::GetClientID())) {
+	if (!ResourceManager::GetSingleton()->IsMultiplayer() || (ResourceManager::GetSingleton()->IsServer() && id == Game::GetClientID())) {
 		if (drain && isActive)
 		{
 			drain = false;
@@ -234,12 +231,12 @@ void MeterBar::Recharge(InputDownEvent* inputDownEvent)
 				rTime = rechargeTime;
 		}
 	}
-	else if ((inputDownEvent->GetID() != Game::GetClientID()) && ResourceManager::GetSingleton()->IsServer())
+	else if ((id != Game::GetClientID()) && ResourceManager::GetSingleton()->IsServer())
 	{
-		if (Game::server.getMeterActive(inputDownEvent->GetID() - 1) && Game::server.getMeterDrain(inputDownEvent->GetID() - 1))
+		if (Game::server.getMeterActive(id - 1) && Game::server.getMeterDrain(id - 1))
 		{
-			Game::server.setMeterDrain(false, inputDownEvent->GetID() - 1);
+			Game::server.setMeterDrain(false, id - 1);
 		}
-			Game::server.setMeterDown(false, inputDownEvent->GetID() - 1);
+			Game::server.setMeterDown(false, id - 1);
 	}
 }

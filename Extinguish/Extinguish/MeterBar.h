@@ -30,8 +30,8 @@ private:
 	unsigned int sceneIndex;
 	bool gamePadSprinting;
 
-	void Drain(InputDownEvent* inputDownEvent);
-	void Recharge(InputDownEvent* inputDownEvent);
+	void Drain(unsigned int id);
+	void Recharge(unsigned int id);
 
 public:
 	MeterBar(bool active, float _width, float _height, float multiplyX, float multiplyY) : isActive(active), width(_width), height(_height), widthMult(multiplyX), heightMult(multiplyY) { gamePadSprinting = false; }

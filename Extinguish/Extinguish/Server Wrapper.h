@@ -199,4 +199,5 @@ public:
 
 	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i);}
 	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
+	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
 };

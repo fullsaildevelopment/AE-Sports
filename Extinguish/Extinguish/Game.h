@@ -70,6 +70,7 @@ private:
 	void CreateLobby(Scene * scene);
 	void CreatePauseMenu(Scene * scene);
 	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
+	void CreateScoreBoard(Scene * scene);
 	void AssignPlayers();
 
 	void UpdateServerStates();

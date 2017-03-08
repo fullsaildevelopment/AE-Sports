@@ -117,8 +117,8 @@ int  Server::update()
 		{
 			UINT16 id = registerClient();
 			char newMessage[50] = "Please welcome the new player.\n";
-		//	memcpy(&newMessage[strlen(newMessage)], names[id], nameSizes[id]);
-		//	memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
+			//	memcpy(&newMessage[strlen(newMessage)], names[id], nameSizes[id]);
+			//	memcpy(&newMessage[strlen(newMessage)], ".\n", 3);
 
 			printf(newMessage);
 			//sendMessage(newMessage, ID_SERVER_MESSAGE, true);
@@ -177,7 +177,7 @@ int  Server::update()
 						break;
 					}
 				}
-				
+
 				sendObjID(objID, newID);
 			}
 
@@ -208,16 +208,28 @@ int  Server::update()
 						break;
 					}
 				}
-			sendObjID(objID, newID);
-			
+				sendObjID(objID, newID);
+
 			}
 
 			break;
 		}
 		case ID_INCOMING_MESSAGE:
-			ReceiveMessage();
-			result = 4;
+		{	ReceiveMessage();
+		result = 4;
+		break; }
+
+		case ID_SPRINT_EMPTY:
+		{
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+
+			UINT8 id;
+			bIn.Read(id);
+			bIn.Read(gameState[0][id - 1].empty);
+
 			break;
+		}
 		}
 
 		if (!peer)
