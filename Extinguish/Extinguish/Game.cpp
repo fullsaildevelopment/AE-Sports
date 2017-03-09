@@ -621,7 +621,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			mage1->SetTag("Team2");
 		}
 
-		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, XM_PI, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
+		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, 0, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
@@ -1178,14 +1178,14 @@ void Game::ResetPlayers()
 		}
 
 		player->GetTransform()->SetPosition(positions[randIndex]);
-		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
+		//player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 
 		//reset camera
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+		//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 	}
 }
 
@@ -1389,7 +1389,7 @@ void Game::CreateScoreBoard(Scene * scene)
 		scoreBack->AddComponent(button);
 		UIRenderer * render = new UIRenderer();
 		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/resumeButton.png");
+	//	render->DecodeBitmap(L"../Assets/UI/scoreback.png");
 		scoreBack->AddComponent(render);
 		render->MakeRTSize();
 		button->MakeRect();
