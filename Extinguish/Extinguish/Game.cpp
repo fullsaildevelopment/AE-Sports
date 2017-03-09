@@ -238,7 +238,7 @@ int Game::Update(float dt)
 		}
 	}
 
-	//cout << *gameTime << endl;
+	//cout << team << endl;
 
 	//update current scene
 	scenes[currentScene]->Update(dt);
@@ -782,11 +782,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	//create goals
 
-	//top goal
+	//top goal //used to be Goal
 	objIDs[8] = (UINT8)basic->GetNumObjects();
-	goal->Init("Goal");
+	goal->Init("RedGoal");
 	basic->AddGameObject(goal);
-	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z + 0.75f}, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z + 0.75f}, { 0,0,0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
@@ -795,9 +795,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
 
-	//bottom goal
+	//bottom goal // used to be named Goal2
 	objIDs[9] = (UINT8)basic->GetNumObjects();
-	goal2->Init("Goal2");
+	goal2->Init("BlueGoal");
 	basic->AddGameObject(goal2);
 	goal2->InitTransform(identity, { -20.0f, 15, topWall->GetTransform()->GetPosition().z - 0.75f }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
@@ -876,6 +876,15 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* axisRenderer = new Renderer();
 	axis->AddComponent(axisRenderer);
 	axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
+
+	GameObject* powerUp = new GameObject();
+	powerUp->Init("PowerUp");
+	basic->AddGameObject(powerUp);
+	powerUp->InitTransform(identity, {5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1}, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	Renderer* powerUpRenderer = new Renderer();
+	powerUp->AddComponent(powerUpRenderer);
+	powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	scenes.push_back(basic);
@@ -971,7 +980,7 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->setCanRecharge(true);
 
 	CreatePauseMenu(basic);
-
+	CreateScoreBoard(basic);
 	//create game over menu
 
 
@@ -1503,10 +1512,10 @@ void Game::AssignPlayers()
 
 	else
 	{
-		//if (team == TEAM_A)
-		//	clientID = 1;
-		//else
-		//	clientID = 5;
+		if (team == TEAM_A)
+			clientID = 1;
+		else
+			clientID = 5;
 
 		// find team player selected
 		for (unsigned int i = 0; i < 8; ++i) 

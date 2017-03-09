@@ -16,6 +16,7 @@ private:
 	Transform* ballTransform;
 	InputManager* input;
 	BallController* ballC;
+	GameObject* player;
 
 	int prevMouseX, prevMouseY;
 	const float maxRotZ = 70.0f;
@@ -45,6 +46,7 @@ public:
 
 	//misc
 	void Throw();
+	void Catch();
 	void HandleEvent(Event* e) override;
 	void SetColor(bool b);
 	//setters//

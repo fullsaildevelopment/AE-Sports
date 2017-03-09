@@ -15,6 +15,8 @@ private:
 		HELD,
 	};
 
+	//the singleton feature of this class might not give intended results
+	//use inputdownevent instead!
 	static InputManager* input;
 
 	//KeyState keyboard[256];

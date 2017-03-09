@@ -142,12 +142,12 @@ void Camera::MoveCamera(InputDownEvent* e)
 				curRotX += radX;
 			}
 
-			curRotY += radY;
+			//curRotY += radY;
 
 			transform->RotateX(radX); //only camera can rotate on the x
 			playerTransform->RotateY(radY); //this rotates camera as well given its a child to player
 
-			cout << curRotX << endl;
+			//cout << curRotX << endl;
 		}
 	}
 
