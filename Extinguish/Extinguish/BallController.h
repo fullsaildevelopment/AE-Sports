@@ -31,7 +31,6 @@ public:
 	void OnCollisionEnter(Collider* obj) override;
 
 	// actions
-	void ThrowTo(GameObject *target);
 	void DropBall(GameObject *holder);
 	void Throw();
 
