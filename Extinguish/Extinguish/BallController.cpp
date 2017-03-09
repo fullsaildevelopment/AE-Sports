@@ -155,32 +155,6 @@ void BallController::Throw()
 	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 }
 
-void BallController::ThrowTo(GameObject *target)
-{
-	//store prevThrower even if thrower is null
-	prevThrower = thrower;
-
-	//store thrower before it's thrown
-	thrower = holder;
-
-	//set times
-	timeSincePreviouslyThrown = timeSinceThrown;
-	timeSinceThrown = 0;
-
-	isHeld = false;
-	holder->GetTransform()->RemoveChild(me->GetTransform());
-	holder->GetComponent<Crosse>()->SetColor(false);
-	holder = nullptr;
-	transform->SetParent(nullptr);
-
-	float3 vel = me->GetTransform()->GetForwardf3() * ThrowSpeed;
-	transform->AddVelocity(vel);
-
-	//turn on physics
-	physics->SetIsKinematic(false);
-	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
-}
-
 void BallController::DropBall(GameObject *person)
 {
 	// add some velocity to me in the holders forward vec
