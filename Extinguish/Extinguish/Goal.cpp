@@ -4,17 +4,18 @@
 #include "ScoreEvent.h"
 #include "BallController.h"
 #include "FloorController.h"
+#include "PlayerController.h"
 
 Goal::Goal(GameObject* g) : Component(g)
 {
-
+	ballController = GetGameObject()->FindGameObject("GameBall")->GetComponent<BallController>();
 }
 
 void Goal::OnTriggerEnter(Collider* c)
 {
 	if (c->GetGameObject()->GetName() == "GameBall")
 	{
-		if (GetGameObject()->GetName() == "Goal")
+		if (GetGameObject()->GetName() == "RedGoal")
 			Score(1);
 		else
 			Score(0);
@@ -23,6 +24,21 @@ void Goal::OnTriggerEnter(Collider* c)
 
 void Goal::Score(int team)
 {
+	//give the player who threw the ball a goal
+	PlayerController* throwerPC = ballController->GetThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>();
+	throwerPC->AddGoal(); //GetThrower returns crosse object. GetParent returns camera transform. GetParent again returns the mage transform
+
+	//check if the player was assisted
+	if (ballController->GetPreviousThrower() != ballController->GetThrower() && ballController->GetPreviousThrower()) //can't assist yourself and mustn't be nullptr
+	{
+		//make sure the time isn't greater than the threshold
+		if (ballController->GetTimeSincePreviouslyThrown() <= MAX_SECONDS_FOR_ASSIST)
+		{
+			PlayerController* prevThrowerPC = ballController->GetPreviousThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>();
+			prevThrowerPC->AddAssist();
+		}
+	}
+
 	ScoreEvent* se = new ScoreEvent();
 	se->SetTeam(team);
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
