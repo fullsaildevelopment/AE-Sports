@@ -116,36 +116,38 @@ void Camera::MoveCamera(InputDownEvent* e)
 		if (input->GetMouseButton(2) && prevMouseX && prevMouseY)
 		{
 			XMFLOAT4X4 camera = transform->GetWorld();
+			curRotX = transform->GetRotation().x;
 
 			float dx = (float)input->GetMouseX() - (float)prevMouseX;
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
 			//store old cam position
-			float degX = dy * rotateSpeed * dt;
-			float degY = dx * rotateSpeed * dt;
+			float radX = dy * rotateSpeed * dt;
+			float radY = dx * rotateSpeed * dt;
 
 
-			if (curRotX + degX > maxRotX)
+			//limit camera's rotation on x-axis
+			if (curRotX + radX > maxRotX)
 			{
 				curRotX = maxRotX;
-				degX = maxRotX - curRotX;
+				radX = maxRotX - curRotX;
 			}
-
-			else if (curRotX + degX < -maxRotX)
+			else if (curRotX + radX < -maxRotX)
 			{
 				curRotX = -maxRotX;
-				degX = -maxRotX - curRotX;
+				radX = -maxRotX - curRotX;
 			}
-
 			else
 			{
-				curRotX += degX;
+				curRotX += radX;
 			}
 
-			curRotY += degY;
+			//curRotY += radY;
 
-			transform->RotateX(degX); //only camera can rotate on the x
-			playerTransform->RotateY(degY); //this rotates camera as well given its a child to player
+			transform->RotateX(radX); //only camera can rotate on the x
+			playerTransform->RotateY(radY); //this rotates camera as well given its a child to player
+
+			//cout << curRotX << endl;
 		}
 	}
 

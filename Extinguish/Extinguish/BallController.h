@@ -21,6 +21,12 @@ private:
 	void SetIsHeld(bool ans);
 	std::vector<Transform*> nets;
 
+	//members for scoring
+	GameObject* prevThrower = nullptr;
+	GameObject* thrower = nullptr;
+	float timeSincePreviouslyThrown = 0;
+	float timeSinceThrown = 0;
+
 public:
 	BallController(GameObject* obj);
 	void Init();
@@ -31,7 +37,6 @@ public:
 	void OnCollisionEnter(Collider* obj) override;
 
 	// actions
-	void ThrowTo(GameObject *target);
 	void DropBall(GameObject *holder);
 	void Throw();
 
@@ -40,6 +45,10 @@ public:
 	bool GetIsThrown();
 	GameObject *GetHolder();
 	GameObject *GetCrosseHolder();
+	GameObject* GetThrower();
+	GameObject* GetPreviousThrower();
+	float GetTimeSinceThrown();
+	float GetTimeSincePreviouslyThrown();
 
 	// mutators
 	void SetHolder(GameObject *person);
