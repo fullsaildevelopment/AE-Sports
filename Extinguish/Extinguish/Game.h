@@ -22,7 +22,7 @@ class SphereCollider;
 class Camera;
 class Crosse;
 class Transform;
-class PlayerConroller;
+class PlayerController;
 class SoundEngine;
 
 class Game : public EventHandler
