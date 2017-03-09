@@ -34,7 +34,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -331,9 +331,11 @@ void Game::HandleEvent(Event* e)
 				GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
 				GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
 				GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
+				//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
 				Button * resumeButton = pauseResume->GetComponent<Button>();
 				Button * exitButton = pauseExit->GetComponent<Button>();
 				Button * menuButton = pauseMenu->GetComponent<Button>();
+				//Button * scoreButton = pauseScore->GetComponent<Button>();
 				resumeButton->SetActive(true);
 				exitButton->SetActive(true);
 				menuButton->SetActive(true);
@@ -1388,7 +1390,7 @@ void Game::CreateScoreBoard(Scene * scene)
 	// images only
 	GameObject * scoreBack = new GameObject();
 	scene->AddUIObject(scoreBack);
-	scoreBack->Init("pauseResume");
+	scoreBack->Init("pauseScore");
 	{
 		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 7);
 		button->setSceneIndex((unsigned int)scenes.size() - 1);
@@ -1398,13 +1400,13 @@ void Game::CreateScoreBoard(Scene * scene)
 		scoreBack->AddComponent(button);
 		UIRenderer * render = new UIRenderer();
 		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-	//	render->DecodeBitmap(L"../Assets/UI/scoreback.png");
+		render->DecodeBitmap(L"../Assets/UI/scoreback.png");
 		scoreBack->AddComponent(render);
 		render->MakeRTSize();
 		button->MakeRect();
 		//button->MakeHandler();
 		render->InitMetrics();
-		button->SetActive(false);
+		button->SetActive(true);
 		button->setHelper(scene->GetNumUIObjects());
 	}
 
@@ -1491,12 +1493,24 @@ void Game::AssignPlayers()
 
 			for (unsigned int i = 0; i < 8; ++i) 
 			{
+				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+
 				if (!server.isPlayer(i)) 
 				{
-					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 					AI *mageAI = new AI(mage1);
 					mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+				}
+				else
+				{
+					unsigned int teamID = PLAYER_TEAM::TEAM_A;
+
+					if (i > 4)
+					{
+						teamID = PLAYER_TEAM::TEAM_B;
+					}
+
+					mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
 				}
 			}
 
