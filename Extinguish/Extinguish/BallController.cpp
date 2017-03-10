@@ -73,8 +73,9 @@ void BallController::Update(float dt)
 
 	if (InputManager::GetSingleton()->GetKey(17))
 	{
-		SetHolder(GetGameObject()->FindGameObject("Crosse1"));
-		holder->GetComponent<Crosse>()->SetColor(true);
+		//SetHolder(GetGameObject()->FindGameObject("Crosse1"));
+		GetGameObject()->FindGameObject("Crosse1")->GetComponent<Crosse>()->SetColor(true);
+		GetGameObject()->FindGameObject("Crosse1")->GetComponent<Crosse>()->Catch();
 	}
 
 	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
@@ -89,6 +90,19 @@ void BallController::Update(float dt)
 			holder = nullptr;
 		}
 	}
+
+	if (thrower)
+	{
+		timeSinceThrown += dt;
+	}
+
+	if (prevThrower)
+	{
+		timeSincePreviouslyThrown += dt;
+	}
+
+	//cout << thrower << " " << prevThrower << endl;
+	//cout << timeSinceThrown << " " << timeSincePreviouslyThrown << endl;
 	//cout << isHeld;
 }
 
@@ -119,6 +133,16 @@ void BallController::FixedUpdate(float dt)
 
 void BallController::Throw()
 {
+	//store prevThrower even if null
+	prevThrower = thrower;
+
+	//store thrower before it's thrown
+	thrower = holder;
+
+	//set times
+	timeSincePreviouslyThrown = timeSinceThrown;
+	timeSinceThrown = 0;
+
 	timer.Restart();
 	isThrown = true;
 	holder->GetTransform()->RemoveChild(me->GetTransform());
@@ -152,6 +176,8 @@ void BallController::DropBall(GameObject *person)
 	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
 	transform->SetParent(nullptr);
+	thrower = nullptr;
+	timeSinceThrown = 0;
 
 	//turn on physics
 	physics->SetIsKinematic(false);
@@ -181,6 +207,26 @@ GameObject* BallController::GetCrosseHolder()
 	return holder;
 }
 
+GameObject* BallController::GetThrower()
+{
+	return thrower;
+}
+
+GameObject* BallController::GetPreviousThrower()
+{
+	return prevThrower;
+}
+
+float BallController::GetTimeSinceThrown()
+{
+	return timeSinceThrown;
+}
+
+float BallController::GetTimeSincePreviouslyThrown()
+{
+	return timeSincePreviouslyThrown;
+}
+
 void BallController::SetIsHeld(bool ans)
 {
 	isHeld = ans;
@@ -192,6 +238,8 @@ void BallController::SetHolder(GameObject *person)
 	{
 		isHeld = true;
 		holder = person;
+		//prevThrower = thrower;
+		//thrower = holder;
 
 		//turn off physics
 		physics->SetIsKinematic(true);
@@ -202,9 +250,13 @@ void BallController::SetHolder(GameObject *person)
 		transform->SetVelocity(float3(0, 0, 0));
 		transform->SetPosition(float3(0, 0, 0));
 	}
-
-	else
+	else //this isn't the same as throwing or dropping. Just no one has it anymore
 	{
+		prevThrower = nullptr;
+		thrower = nullptr;
+		timeSinceThrown = 0;
+		timeSincePreviouslyThrown = 0;
+
 		isHeld = false;
 		holder = nullptr;
 		if (transform->GetParent())
