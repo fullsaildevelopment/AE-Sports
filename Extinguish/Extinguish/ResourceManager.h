@@ -16,6 +16,8 @@
 //class BindPose;
 //class AnimationSet;
 
+struct ED2Mesh;
+
 class ResourceManager
 {
 private:
@@ -61,12 +63,13 @@ private:
 	Animation LoadInAnimation(std::string path);
 	void LoadAndCreateShaders();
 	void LoadInMesh(std::string path);
-	void LoadInBasicMesh(std::string path);
+	void LoadInBasicMesh(std::string path, ED2Mesh* collmesh);
 	void LoadInAnimationSetsAndMeshes();
 	void DoFBXExporting();
 	void CreateInputLayouts();
 	void LoadInTextures();
 public:
+	std::vector<ED2Mesh*> collisionMeshes;
 	ResourceManager();
 	~ResourceManager();
 
