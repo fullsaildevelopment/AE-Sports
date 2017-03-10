@@ -7,6 +7,7 @@
 #include "ForFBX.h"
 #include "ResourceManager.h"
 #include "Skeleton.h"
+#include "EDMesh.h"
 
 ResourceManager* ResourceManager::singleton = 0;
 
@@ -129,10 +130,21 @@ void ResourceManager::LoadInAnimationSetsAndMeshes()
 					filePath += "/";
 					filePath += fileData.cFileName;
 
-					LoadInBasicMesh(filePath);
-
-					vertexBuffersTable.Insert(folderData.cFileName);
-					indexBuffersTable.Insert(folderData.cFileName);
+					string file = fileData.cFileName;
+					size_t found = 0;
+					found = file.find("COLLMESH");
+					if (found != file.npos)
+					{
+						ED2Mesh* mesh = new ED2Mesh;
+						LoadInBasicMesh(filePath, mesh);
+						collisionMeshes.push_back(mesh);
+					}
+					else
+					{
+						LoadInBasicMesh(filePath, nullptr);
+						vertexBuffersTable.Insert(folderData.cFileName);
+						indexBuffersTable.Insert(folderData.cFileName);
+					}
 				}
 
 				//load in every animation
@@ -257,7 +269,7 @@ void ResourceManager::LoadInMesh(std::string path)
 	numIndices.push_back(tempNumIndices);
 }
 
-void ResourceManager::LoadInBasicMesh(std::string path)
+void ResourceManager::LoadInBasicMesh(std::string path, ED2Mesh* collmesh)
 {
 	std::ifstream bin;
 	std::vector<VS_BasicInput> verts;
@@ -286,6 +298,11 @@ void ResourceManager::LoadInBasicMesh(std::string path)
 		bin.read((char*)tempIndices.data(), sizeof(unsigned int) * tempNumIndices);
 
 		bin.close();
+	}
+	if (collmesh)
+	{
+		ED2Mesh::DoEDMesh(verts, tempIndices, collmesh);
+		return;
 	}
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
@@ -768,7 +785,7 @@ void ResourceManager::DoFBXExporting()
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Ball\\Ball.fbx", "Ball");
 
-	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Hexagon\\Hexagon.fbx", "Hexagon");
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Hexagon_COLLMESH\\Hexagon_COLLMESH.fbx", "Hexagon_COLLMESH");
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Axis\\Axis.fbx", "Axis");
 
