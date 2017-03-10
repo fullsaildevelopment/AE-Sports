@@ -198,6 +198,7 @@
     <ClInclude Include="BallController.h" />
     <ClInclude Include="Client Wrapper.h" />
     <ClInclude Include="Crosse.h" />
+    <ClInclude Include="EDMesh.h" />
     <ClInclude Include="FloorController.h" />
     <ClInclude Include="Goal.h" />
     <ClInclude Include="HexagonCollider.h" />
