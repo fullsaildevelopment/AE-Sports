@@ -33,6 +33,9 @@
 using namespace DirectX;
 using namespace std;
 
+//this is for debugging purposes of being able to toggle AI
+#define AI_ON 1
+
 //initialize static member
 int Game::clientID = 1;
 
@@ -43,6 +46,7 @@ int Game::returnResult = 1;
 int Game::objID = 1;
 Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
+float Game::Time = 300.0f;
 
 Game::~Game()
 {
@@ -56,6 +60,9 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 	resourceManager = ResourceManager::GetSingleton();
 
 	devResources = _devResources;
+
+	//set seed
+	srand((unsigned int)time(nullptr));
 
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
@@ -79,11 +86,6 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 		GameState* state = new GameState();
 		gameStates[i] = state;
 	}
-
-	/*if (isServer)
-	{
-		server.setObjCount(scenes[currentScene]->GetNumObjects());
-	}*/
 
 	//init sound engine
 	std::vector<unsigned int> ids;
@@ -145,12 +147,40 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 
 int Game::Update(float dt)
 {
+	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
+	{
+		//for now, I will just load main menu
+		LoadScene("Menu");
+
+		//TODO: This stuff below needs to be done to replace the line of code above
+		//bring onto screen text overlay that says which team won
+
+		//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
+
+	}
+
+	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
+	{
+		Time -= dt;
+
+		if (Time < 0)
+		{
+			Time = 0.0f;
+		}
+	}
+
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (currentScene >= 2) {
-			if (server.getObjCount() == 0)
-				server.setObjCount(scenes[currentScene]->GetNumObjects());
+			if (ResourceManager::GetSingleton()->IsServer())
+			{
+				server.setTime(Time);
 
+				if (server.getObjCount() == 0)
+					server.setObjCount(scenes[currentScene]->GetNumObjects());
+
+				server.sendGameState();
+			}
 			//set client id
 			Game::clientID = client.getID();
 
@@ -189,6 +219,7 @@ int Game::Update(float dt)
 
 				if (clientState == 4)
 				{
+					Time = client.getTime();
 					Team1Score = client.getScoreA();
 					Team2Score = client.getScoreB();
 					UpdateScoreUI();
@@ -207,6 +238,8 @@ int Game::Update(float dt)
 		}
 	}
 
+	//cout << team << endl;
+
 	//update current scene
 	scenes[currentScene]->Update(dt);
 
@@ -223,21 +256,13 @@ int Game::Update(float dt)
 
 	for (int i = 0; i < objects->size(); ++i)
 	{
-		//if (i != GetPlayerObjectID())
-		{
-			//XMFLOAT3 objectPos;
+		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
-
-			//objectsPos.push_back(objectPos);
-
-			//XMFLOAT3 forward;
-			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-			//forwards.push_back(forward);
-		}
+		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
 	}
+
 	int index = (clientID - 1) * 3 + 2;
 
 	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
@@ -274,12 +299,7 @@ void Game::Shutdown()
 	resourceManager->Shutdown();
 }
 
-//misc
-
-//void Game::LoadScene(unsigned int index)
-//{
-//
-//}
+//misc//
 
 void Game::HandleEvent(Event* e)
 {
@@ -288,22 +308,17 @@ void Game::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		//if the game is the server, but the messenger is a client, dispatch a message from server to all components to handle input... or if messenger is server, but not marked as one
-		//(currentScene < 2)
-		if ((ResourceManager::GetSingleton()->IsServer() && inputDownEvent->GetID() != 1 && !inputDownEvent->IsServer()) || ((!inputDownEvent->IsServer() && inputDownEvent->GetID() == 1)))
+		if (ResourceManager::GetSingleton()->IsServer()) //only send input to handlers if server
 		{
-			//inputDownEvent->SetID(clientID);
-			inputDownEvent->SetIsServer(true);
-			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			EventDispatcher::GetSingleton()->DispatchExcept(inputDownEvent, "Game"); //this way it doesn't create an infinite loop... and it does this without any booleans and such
 		}
-		//TODO: need to make this work for in-game menu if we ever add
-		else if (scenesNamesTable.GetKey("Lobby") == currentScene && !inputDownEvent->IsServer()) //if it's a HUD scene, let it handle the input itself
+		else if (scenesNamesTable.GetKey("Lobby") == currentScene) //if it's a HUD scene, let it handle the input itself
 		{
 			inputDownEvent->SetIsServer(true);
-			EventDispatcher::GetSingleton()->Dispatch(inputDownEvent);
+			EventDispatcher::GetSingleton()->DispatchExcept(inputDownEvent, "Game");
 			//cout << "HUD stuff" << endl;
 		}
-		else if (inputDownEvent->GetID() > 1 && !inputDownEvent->IsServer()) //if not server, give server your input to handle it
+		else //client needs to send input info to sesrver
 		{
 			client.sendInput(inputDownEvent);
 		}
@@ -345,10 +360,16 @@ void Game::HandleEvent(Event* e)
 		if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
 		{
 			server.setScores(Team1Score, Team2Score);
-			server.sendGameState();
+		//	server.sendGameState();
 		}
 		UpdateScoreUI();
+
 		//Reset Game
+		if (ResourceManager::GetSingleton()->IsServer())
+		{
+			ResetPlayers();
+			ResetBall();
+		}
 
 		return;
 	}
@@ -488,8 +509,10 @@ void Game::CreateScenes(InputManager* input)
 		menu->Init(devResources, input);
 
 		menu->set2DRenderTarget(devResources->GetRenderTarget());
-
-		CreateMenu(menu);
+		//CreateScoreBoard(menu); // uncomment when testing scoreboard
+		// move CreateScoreBoard into Pause Menu or whatever whenever you have everything positioned as you want.
+		// We will need an easier way to turn on the pause menu, however. There are too many UI objects to make up the scoreboard as is, and it might eat up too much time getting all those game objects. might.
+		CreateMenu(menu); // comment when testing scoreboard
 
 		scenes.push_back(menu);
 		scenesNamesTable.Insert("Menu");
@@ -523,10 +546,6 @@ void Game::CreateScenes(InputManager* input)
 	basic->set2DRenderTarget(devResources->GetRenderTarget());
 
 	CreateGame(basic, identity, projection);
-
-
-	scenes.push_back(basic);
-	scenesNamesTable.Insert("FirstLevel");
 }
 
 void Game::CreateGameWrapper()
@@ -542,7 +561,7 @@ void Game::CreateGameWrapper()
 				trans->Reset();
 		}
 	}
-
+	// also need to remove ai?
 	Team1Score = Team2Score = 0;
 	UpdateScoreUI();
 	Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
@@ -553,16 +572,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 {
 
 	//used for hexagon floor
-	int row = 80; // * 2 = z
-	int col = 80; // * 2 = x
+	int row = 55; // * 2 = z
+	int col = 38; // * 2 = x
 
 	//deleted inside a different class
 	unsigned int* colors = new unsigned int[row * col];
 
 	GameObject* gameBall = new GameObject();
-	basic->AddGameObject(gameBall);
 	gameBall->Init("GameBall");
-	gameBall->InitTransform(identity, { -7, 15, -20.5f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
+	basic->AddGameObject(gameBall);
+	gameBall->InitTransform(identity, { -20, 5.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
@@ -582,8 +601,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	goal->SetTag("Goal1");
 	goal2->SetTag("Goal2");
 
-	//vector<AI*> ai;
-
 	for (int i = 1; i <= 8; ++i)
 	{
 		string playerName = "Mage";
@@ -592,24 +609,21 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		GameObject* crosse = new GameObject();
 		basic->AddGameObject(crosse);
 		objIDs[i - 1] = (UINT8)basic->GetNumObjects();
+
 		GameObject* mage1 = new GameObject();
-		basic->AddGameObject(mage1);
 		mage1->Init(playerName);
+		basic->AddGameObject(mage1);
 		mage1->SetTag("Team1");
 
 		int tempCol = col - 25;
 
-		if (i > 4)
+		if (i <= 4)
 		{
 			tempCol = -col + 14;
 			mage1->SetTag("Team2");
-
-			/*AI *mageAI = new AI(mage1);
-			mage1->AddComponent(mageAI);
-			ai.push_back(mageAI);*/
 		}
 
-		mage1->InitTransform(identity, { (float)tempCol, 0.0f, -12.0f + i * 4.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, XM_PI, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
@@ -622,14 +636,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(250, 0.75f);
+		mageMover->Init(4.4f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
-		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.6f, { 0, 0.6f, 0 }, { 0, 5, 0 }, mage1, false);
+		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 10.0f, 0.07f, 20, -14.8f);
+		Physics* physics = new Physics(0.01f, 2.0f, 0.07f, 4.4f, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -648,9 +662,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		State* mageJump = new State();
 		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 2.0f, "Jump");
 		mageAnim1->AddState(mageJump);
-		//State* mageLand = new State();
-		//mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 2.0f, "Land");
-		//mageAnim1->AddState(mageLand);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
@@ -690,12 +701,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Transition* jumpToIdle = new Transition();
 		mageJump->AddTransition(jumpToIdle);
 		jumpToIdle->Init(mageJump, mageIdle, 0, 0.1f);
-		//Transition* jumpToLand = new Transition();
-		//mageJump->AddTransition(jumpToLand);
-		//jumpToLand->Init(mageJump, mageLand, 0, 0.0f);
-		//Transition* landToIdle = new Transition();
-		//mageLand->AddTransition(landToIdle);
-		//landToIdle->Init(mageLand, mageIdle, 0, 0.001f);
 		Transition* runToJump = new Transition();
 		mageRun->AddTransition(runToJump);
 		runToJump->Init(mageRun, mageJump, -1, 0.001f);
@@ -708,12 +713,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		//mageRenderer1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->
 
 		GameObject* camera1 = new GameObject();
-		basic->AddGameObject(camera1);
 		camera1->Init(cameraName);
+		basic->AddGameObject(camera1);
 		camera1->InitTransform(identity, { 0, 5.0f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-		//camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-		//camera1->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-		//camera1->InitTransform(identity, { 0, 0, -15.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
@@ -723,8 +725,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		crosse->Init(crosseName);
 		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
-		//crosse->InitTransform(identity, { 0, 5.4f, -1.7f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
+		SphereCollider* crosseNetCollider = new SphereCollider(0.25f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
@@ -740,35 +741,54 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	ballController->LateInit();
 
-	//for max poly count
-	//for (int i = 0; i < 15; ++i)
-	//{
-	//	for (int j = 0; j < 15; ++j)
-	//	{
-	//		GameObject* mage1 = new GameObject();
-	//		basic->AddGameObject(mage1);
-	//		mage1->Init("MageCrap");
+	//create walls
+	GameObject* rightWall = new GameObject();
+	rightWall->Init("RightWall");
+	basic->AddGameObject(rightWall);
+	rightWall->InitTransform(identity, { (float)col / 2 - 7.5f, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer = new Renderer();
+	rightWall->AddComponent(WallRenderer);
+	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol = new BoxCollider(rightWall, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
+	rightWall->AddBoxCollider(Wallboxcol);
 
-	//		mage1->InitTransform(identity, { (float)0 + i * 2.0f, 10, -40.0f + j * 2.0f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	GameObject* leftWall = new GameObject();
+	leftWall->Init("LeftWall");
+	basic->AddGameObject(leftWall);
+	leftWall->InitTransform(identity, { (float)-col - col * 0.5f, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer2 = new Renderer();
+	leftWall->AddComponent(WallRenderer2);
+	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol2 = new BoxCollider(leftWall, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
+	leftWall->AddBoxCollider(Wallboxcol2);
 
-	//		Renderer* mageRenderer1 = new Renderer();
-	//		mage1->AddComponent(mageRenderer1);
-	//		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
-	//		if (i <= 4)
-	//			mageRenderer1->SetTeamColor({ 1,0,0,0 });
-	//		else
-	//			mageRenderer1->SetTeamColor({ 0,0,1,0 });
-	//	}
-	//}
-	/*for (int i = 0; i < ai.size(); ++i)
-	{
-		ai[i]->Init(goal, goal2);
-	}*/
+	GameObject* topWall = new GameObject();
+	topWall->Init("TopWall");
+	basic->AddGameObject(topWall);
+	topWall->InitTransform(identity, { 0, 0, 45.0f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer3 = new Renderer();
+	topWall->AddComponent(WallRenderer3);
+	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol3 = new BoxCollider(topWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	topWall->AddBoxCollider(Wallboxcol3);
 
+	GameObject* bottomWall = new GameObject();
+	bottomWall->Init("BottomWall");
+	basic->AddGameObject(bottomWall);
+	bottomWall->InitTransform(identity, { 0, 0, (float)-row + 15.0f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	Renderer* WallRenderer4 = new Renderer();
+	bottomWall->AddComponent(WallRenderer4);
+	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	BoxCollider* Wallboxcol4 = new BoxCollider(bottomWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	bottomWall->AddBoxCollider(Wallboxcol4);
+
+	//create goals
+
+	//top goal //used to be Goal
 	objIDs[8] = (UINT8)basic->GetNumObjects();
+	goal->Init("RedGoal");
 	basic->AddGameObject(goal);
-	goal->Init("Goal");
-	goal->InitTransform(identity, { -7, 15, (float)-row + 1.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z + 0.75f}, { 0,0,0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
@@ -777,10 +797,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
 
+	//bottom goal // used to be named Goal2
 	objIDs[9] = (UINT8)basic->GetNumObjects();
+	goal2->Init("BlueGoal");
 	basic->AddGameObject(goal2);
-	goal2->Init("Goal2");
-	goal2->InitTransform(identity, { -7, 15, (float)row - 43 }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -20.0f, 15, topWall->GetTransform()->GetPosition().z - 0.75f }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
@@ -792,8 +813,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GameObject* testPlayer = new GameObject();
-	basic->AddGameObject(testPlayer);
 	testPlayer->Init("TestPlayer");
+	basic->AddGameObject(testPlayer);
 	testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* testPlayerRenderer = new Renderer();
 	testPlayer->AddComponent(testPlayerRenderer);
@@ -813,49 +834,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//	}
 	//}
 
-	GameObject* Wall = new GameObject();
-	basic->AddGameObject(Wall);
-	Wall->Init("Wall");
-	Wall->InitTransform(identity, { 57, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
-	Renderer* WallRenderer = new Renderer();
-	Wall->AddComponent(WallRenderer);
-	WallRenderer->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol = new BoxCollider(Wall, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
-	Wall->AddBoxCollider(Wallboxcol);
-
-	GameObject* Wall2 = new GameObject();
-	basic->AddGameObject(Wall2);
-	Wall2->Init("Wall2");
-	Wall2->InitTransform(identity, { -70, 0, 0 }, { 0, 0, 0 }, { 1, 100, 600 }, nullptr, nullptr, nullptr);
-	Renderer* WallRenderer2 = new Renderer();
-	Wall2->AddComponent(WallRenderer2);
-	WallRenderer2->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol2 = new BoxCollider(Wall2, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
-	Wall2->AddBoxCollider(Wallboxcol2);
-
-	GameObject* Wall3 = new GameObject();
-	basic->AddGameObject(Wall3);
-	Wall3->Init("Wall3");
-	Wall3->InitTransform(identity, { 0, 0, 38.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
-	Renderer* WallRenderer3 = new Renderer();
-	Wall3->AddComponent(WallRenderer3);
-	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol3 = new BoxCollider(Wall3, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
-	Wall3->AddBoxCollider(Wallboxcol3);
-
-	GameObject* Wall4 = new GameObject();
-	basic->AddGameObject(Wall4);
-	Wall4->Init("Wall4");
-	Wall4->InitTransform(identity, { 0, 0, -80.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
-	Renderer* WallRenderer4 = new Renderer();
-	Wall4->AddComponent(WallRenderer4);
-	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Wallboxcol4 = new BoxCollider(Wall4, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
-	Wall4->AddBoxCollider(Wallboxcol4);
-
 	GameObject* meterbox6 = new GameObject();
-	basic->AddGameObject(meterbox6);
 	meterbox6->Init("MeterBox6");
+	basic->AddGameObject(meterbox6);
 	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
@@ -867,8 +848,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
 
 	GameObject* HexFloor = new GameObject();
-	basic->AddGameObject(HexFloor);
 	HexFloor->Init("HexFloor");
+	basic->AddGameObject(HexFloor);
 	HexFloor->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
@@ -877,10 +858,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
+	fcon->SetState(420, 1 / 6.0f);
 
 	GameObject* Hex = new GameObject();
-	basic->AddGameObject(Hex);
 	Hex->Init("Team2");
+	basic->AddGameObject(Hex);
 	Hex->InitTransform(identity, { -15, 0, -20.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
 	Renderer* ballrenderer3 = new Renderer();
 	Hex->AddComponent(ballrenderer3);
@@ -890,14 +872,31 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Hex->AddComponent(HexPillar);
 
 	GameObject* axis = new GameObject();
-	basic->AddGameObject(axis);
 	axis->Init("axis");
-	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, 10, 10 }, nullptr, nullptr, nullptr);
+	basic->AddGameObject(axis);
+	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, -10, 10 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
 	Renderer* axisRenderer = new Renderer();
 	axis->AddComponent(axisRenderer);
 	axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
+
+	GameObject* powerUp = new GameObject();
+	powerUp->Init("PowerUp");
+	basic->AddGameObject(powerUp);
+	powerUp->InitTransform(identity, {5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1}, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	Renderer* powerUpRenderer = new Renderer();
+	powerUp->AddComponent(powerUpRenderer);
+	powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	scenes.push_back(basic);
+	scenesNamesTable.Insert("FirstLevel");
+
+	if (ResourceManager::GetSingleton()->IsServer())
+	{
+		ResetPlayers();
+		ResetBall();
+	}
 
 	// so that we keep the chunk of 3d object creation and 2d object creation separate
 	if (!DEBUG_GRAPHICS) {
@@ -917,6 +916,9 @@ void Game::CreateUI(Scene * basic)
 	theSButton->showFPS(false);
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	scoreA->AddComponent(theSButton);
+
+	gameTime = theSButton->GetTime();
+
 	UIRenderer * scoreRender = new UIRenderer();
 	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
 	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
@@ -980,6 +982,9 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->setCanRecharge(true);
 
 	CreatePauseMenu(basic);
+	//CreateScoreBoard(basic);
+	//create game over menu
+
 
 	#ifdef DEBUG
 		GameObject * debugUI = new GameObject();
@@ -1145,6 +1150,62 @@ void Game::CreateMenu(Scene * scene)
 	bg2Button->MakeRect();
 
 
+}
+
+void Game::ResetPlayers()
+{
+	const float3 positions[] = { {-22.0f, 0.0f, 1.8f}, {2.0f, 0.0f, -20.0f}, {-20.0f, 0.0f, -30.0f}, {-45.0f, 0.0f, -20.0f}, //red positions
+								{-18.0f, 0.0f, 1.8f}, {-45.0f, 0.0f, 20.0f}, {-20.0f, 0.0f, 30.0f}, {2.0f, 0.0f, 20.0f} }; //blue positions
+
+	const float rotations[] = { 270.0f, 145.0f, 180.0f, 225.0f,
+							   90.0f, 315.0f, 360.0f, 405.0f };
+	bool posUsed[8] = { 0 };
+
+	for (int i = 1; i <= 8; ++i)
+	{
+		string playerName = "Mage";
+		playerName += to_string(i);
+
+		GameObject* player = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(playerName);
+
+		//reset positions
+		int teamOffset = 0;
+
+		if (i > 4)
+		{
+			teamOffset = 4;
+		}
+
+		int randIndex;
+		while (true)
+		{
+			randIndex = rand() % 4 + teamOffset;
+
+			if (!posUsed[randIndex])
+			{
+				posUsed[randIndex] = true;
+				break;
+			}
+		}
+
+		player->GetTransform()->SetPosition(positions[randIndex]);
+		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
+
+		//reset camera
+		string cameraName = "Camera";
+		cameraName += to_string(i);
+		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
+
+		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+	}
+}
+
+void Game::ResetBall()
+{
+	GameObject* ball = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject("GameBall");
+	ball->GetTransform()->SetPosition({ -20.0f, 15.0f, 1.8f });
+	ball->GetTransform()->SetVelocity({ 0,0,0 });
+	ball->GetComponent<BallController>()->SetHolder(nullptr);
 }
 
 void Game::ReceiveServerMessage()
@@ -1324,6 +1385,686 @@ void Game::CreateLobby(Scene * scene)
 	bg2Button->MakeRect();
 }
 
+void Game::CreateScoreBoard(Scene * scene)
+{
+	// test stuff, looks "beautiful"
+	GameObject * scoreBack = new GameObject();
+	scene->AddUIObject(scoreBack);
+	scoreBack->Init("scoreboard0");
+	{
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 700.0f, 450.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreBack);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.50f, 0.45f); // second field as 0.5f if height changes to 500
+		scoreBack->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/scoreback.png");
+		scoreBack->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+	}
+
+	// you had a weird icon beside the team name soo???
+	GameObject * scoreRed = new GameObject();
+	scene->AddUIObject(scoreRed);
+	scoreRed->Init("scoreboardRed");
+	{
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 100.0f, 100.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreRed);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.25f, 0.28f);
+		scoreRed->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+		scoreRed->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+	}
+
+
+
+	// first team
+	GameObject * scoreBar0_Name = new GameObject();
+	scene->AddUIObject(scoreBar0_Name);
+	scoreBar0_Name->Init("scoreboard1_name");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"RED", (unsigned int)strlen("RED"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar0_Name);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.40f, 0.24f);
+		scoreBar0_Name->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar0_Name->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first score
+	GameObject * scoreBar0_Score = new GameObject();
+	scene->AddUIObject(scoreBar0_Score);
+	scoreBar0_Score->Init("scoreboard0_score");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"SCORE", (unsigned int)strlen("SCORE"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar0_Score);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.50f, 0.24f);
+		scoreBar0_Score->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar0_Score->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first assists
+	GameObject * scoreBar0_Assist = new GameObject();
+	scene->AddUIObject(scoreBar0_Assist);
+	scoreBar0_Assist->Init("scoreboard0_Assists");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"ASSISTS", (unsigned int)strlen("ASSISTS"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar0_Assist);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.63f, 0.24f);
+		scoreBar0_Assist->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar0_Assist->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// title saves
+	GameObject * scoreBar0_Saves = new GameObject();
+	scene->AddUIObject(scoreBar0_Saves);
+	scoreBar0_Saves->Init("scoreboard0_save");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"SAVES", (unsigned int)strlen("SAVES"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar0_Saves);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.75f, 0.24f);
+		scoreBar0_Saves->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar0_Saves->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+	{
+	GameObject * scoreBar = new GameObject();
+	scene->AddUIObject(scoreBar);
+	scoreBar->Init("scoreboard1");
+	{
+		// graphic
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreBar);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.60f, 0.30f);
+		scoreBar->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/scorebarRed.png");
+		scoreBar->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+
+	}
+
+	// first name
+	GameObject * scoreBar_Name = new GameObject();
+	scene->AddUIObject(scoreBar_Name);
+	scoreBar_Name->Init("scoreboard1_name");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Name);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.40f, 0.30f);
+		scoreBar_Name->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Name->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first score
+	GameObject * scoreBar_Score = new GameObject();
+	scene->AddUIObject(scoreBar_Score);
+	scoreBar_Score->Init("scoreboard1_score");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Score);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.50f, 0.30f);
+		scoreBar_Score->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Score->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first assists
+	GameObject * scoreBar_Assist = new GameObject();
+	scene->AddUIObject(scoreBar_Assist);
+	scoreBar_Assist->Init("scoreboard1_Assists");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Assist);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.63f, 0.30f);
+		scoreBar_Assist->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Assist->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first saves
+	GameObject * scoreBar_Saves = new GameObject();
+	scene->AddUIObject(scoreBar_Saves);
+	scoreBar_Saves->Init("scoreboard1_save");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Saves);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.75f, 0.30f);
+		scoreBar_Saves->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Saves->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	GameObject * scoreBar2 = new GameObject();
+	scene->AddUIObject(scoreBar2);
+	scoreBar2->Init("scoreboard2");
+	{
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreBar2);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.60f, 0.38f);
+		scoreBar2->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/scorebarRed.png");
+		scoreBar2->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+	}
+
+
+
+	// second name
+	GameObject * scoreBar2_Name = new GameObject();
+	scene->AddUIObject(scoreBar2_Name);
+	scoreBar2_Name->Init("scoreboard2_name");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Name);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.40f, 0.38f);
+		scoreBar2_Name->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Name->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second score
+	GameObject * scoreBar2_Score = new GameObject();
+	scene->AddUIObject(scoreBar2_Score);
+	scoreBar2_Score->Init("scoreboard1_score");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Score);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.50f, 0.38f);
+		scoreBar2_Score->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Score->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second assists
+	GameObject * scoreBar2_Assist = new GameObject();
+	scene->AddUIObject(scoreBar2_Assist);
+	scoreBar2_Assist->Init("scoreboard2_Assists");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Assist);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.63f, 0.38f);
+		scoreBar2_Assist->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Assist->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second  saves
+	GameObject * scoreBar2_Saves = new GameObject();
+	scene->AddUIObject(scoreBar2_Saves);
+	scoreBar2_Saves->Init("scoreboard2_save");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Saves);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.75f, 0.38f);
+		scoreBar2_Saves->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Saves->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+}
+
+	// SECOND TEAM
+
+
+	// you had a weird icon beside the team name soo???
+	GameObject * scoreBlue = new GameObject();
+	scene->AddUIObject(scoreBlue);
+	scoreBlue->Init("scoreboardBlue");
+	{
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 100.0f, 100.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreBlue);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.25f, 0.54f);
+		scoreBlue->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+		scoreBlue->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+	}
+
+
+
+	// first team
+	GameObject * scoreBar3_Name = new GameObject();
+	scene->AddUIObject(scoreBar3_Name);
+	scoreBar3_Name->Init("scoreboard3_name");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"BLUE", (unsigned int)strlen("BLUE"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar3_Name);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.40f, 0.48f);
+		scoreBar3_Name->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar3_Name->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	{
+	GameObject * scoreBar = new GameObject();
+	scene->AddUIObject(scoreBar);
+	scoreBar->Init("scoreboard1");
+	{
+		// graphic
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreBar);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.60f, 0.54f);
+		scoreBar->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/scorebarBlue.png");
+		scoreBar->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+
+	}
+
+	// first name
+	GameObject * scoreBar_Name = new GameObject();
+	scene->AddUIObject(scoreBar_Name);
+	scoreBar_Name->Init("scoreboard3_name");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Name);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.40f, 0.54f);
+		scoreBar_Name->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Name->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first score
+	GameObject * scoreBar_Score = new GameObject();
+	scene->AddUIObject(scoreBar_Score);
+	scoreBar_Score->Init("scoreboard3_score");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Score);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.50f, 0.54f);
+		scoreBar_Score->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Score->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first assists
+	GameObject * scoreBar_Assist = new GameObject();
+	scene->AddUIObject(scoreBar_Assist);
+	scoreBar_Assist->Init("scoreboard3_Assists");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Assist);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.63f, 0.54f);
+		scoreBar_Assist->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Assist->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// first saves
+	GameObject * scoreBar_Saves = new GameObject();
+	scene->AddUIObject(scoreBar_Saves);
+	scoreBar_Saves->Init("scoreboard3_save");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Saves);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.75f, 0.54f);
+		scoreBar_Saves->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Saves->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	GameObject * scoreBar2 = new GameObject();
+	scene->AddUIObject(scoreBar2);
+	scoreBar2->Init("scoreboard4");
+	{
+		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+		button->setSceneIndex((unsigned int)scenes.size());
+		button->SetGameObject(scoreBar2);
+		button->showFPS(false);
+		button->setPositionMultipliers(0.60f, 0.62f);
+		scoreBar2->AddComponent(button);
+		UIRenderer * render = new UIRenderer();
+		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+		render->DecodeBitmap(L"../Assets/UI/scorebarBlue.png");
+		scoreBar2->AddComponent(render);
+		render->MakeRTSize();
+		button->MakeRect();
+		//button->MakeHandler();
+		render->InitMetrics();
+		button->SetActive(true);
+		button->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second name
+	GameObject * scoreBar2_Name = new GameObject();
+	scene->AddUIObject(scoreBar2_Name);
+	scoreBar2_Name->Init("scoreboard4_name");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Name);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.40f, 0.62f);
+		scoreBar2_Name->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Name->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second score
+	GameObject * scoreBar2_Score = new GameObject();
+	scene->AddUIObject(scoreBar2_Score);
+	scoreBar2_Score->Init("scoreboard4_score");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Score);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.50f, 0.62f);
+		scoreBar2_Score->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Score->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second assists
+	GameObject * scoreBar2_Assist = new GameObject();
+	scene->AddUIObject(scoreBar2_Assist);
+	scoreBar2_Assist->Init("scoreboard4_Assists");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Assist);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.63f, 0.62f);
+		scoreBar2_Assist->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Assist->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+	// second  saves
+	GameObject * scoreBar2_Saves = new GameObject();
+	scene->AddUIObject(scoreBar2_Saves);
+	scoreBar2_Saves->Init("scoreboard4_save");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar2_Saves);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.75f, 0.62f);
+		scoreBar2_Saves->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar2_Saves->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+};
+}
+
 void Game::CreatePauseMenu(Scene * scene)
 {
 	// server only?
@@ -1331,7 +2072,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	scene->AddUIObject(resumeGame);
 	resumeGame->Init("pauseResume");
 	Button * rButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 7);
-	rButton->setSceneIndex((unsigned int)scenes.size());
+	rButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	rButton->SetGameObject(resumeGame);
 	rButton->showFPS(false);
 	rButton->setPositionMultipliers(0.80f, 0.30f);
@@ -1353,7 +2094,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	scene->AddUIObject(exitGame);
 	exitGame->Init("pauseExit");
 	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 5);
-	eButton->setSceneIndex((unsigned int)scenes.size());
+	eButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
 	eButton->setPositionMultipliers(0.80f, 0.40f);
@@ -1375,7 +2116,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	scene->AddUIObject(exitMenu);
 	exitMenu->Init("pauseMenu");
 	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 6);
-	mButton->setSceneIndex((unsigned int)scenes.size());
+	mButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	mButton->SetGameObject(exitMenu);
 	mButton->showFPS(false);
 	mButton->setPositionMultipliers(0.80f, 0.50f);
@@ -1394,6 +2135,7 @@ void Game::CreatePauseMenu(Scene * scene)
 
 void Game::AssignPlayers()
 {
+#if AI_ON
 	vector<AI*> ai;
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
@@ -1418,10 +2160,11 @@ void Game::AssignPlayers()
 
 			for (int i = 0; i < ai.size(); ++i)
 			{
-				ai[i]->Init(goal, goal2);
+				ai[i]->Init(goal2, goal);
 			}
 		}
 	}
+
 	else
 	{
 		if (team == TEAM_A)
@@ -1454,10 +2197,10 @@ void Game::AssignPlayers()
 
 		for (int i = 0; i < ai.size(); ++i)
 		{
-			ai[i]->Init(goal, goal2);
+			ai[i]->Init(goal2, goal);
 		}
 	}
-
+#endif
 }
 
 void Game::EnableButton(std::string name, bool toggle)
@@ -1554,7 +2297,7 @@ void Game::UpdateClientObjects(float dt)
 
 	int id = client.getID();
 
-	if (id != 1)
+	if (!ResourceManager::GetSingleton()->IsServer())
 	{
 		//remove children of every object
 		for (unsigned int i = 0; i < numobjs; ++i)
@@ -1573,7 +2316,8 @@ void Game::UpdateClientObjects(float dt)
 				if (gameObject->GetName() == "HexFloor")
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
-					fC->SetState(client.getFloorState(i), dt);
+					if (fC->GetState() != client.getFloorState(i))
+						fC->SetState(client.getFloorState(i), dt);
 				}
 
 
@@ -1700,7 +2444,6 @@ void Game::UpdateLobbyUI(int _amount)
 // since the networking is different on the lobby, this keeps it from sending packages when it doesn't need to
 int Game::UpdateLobby()
 {
-
 	if (ResourceManager::GetSingleton()->IsMultiplayer()) {
 		//set client id
 		Game::clientID = client.getID();
@@ -1710,22 +2453,22 @@ int Game::UpdateLobby()
 		{
 			int serverState = server.run();
 		}
+	//	else {
+			//run client
+			int clientState = client.run();
 
-		//run client
-		int clientState = client.run();
-
-		if (clientState == 5)
-			UpdateLobbyUI(client.getNumClients());
-		else if (clientState == 6)
-			LoadScene("FirstLevel");
-		else if (clientState == 7)
-		{
-			objID = client.getObjID();
-			clientID = client.getID();
-		}
-
+			if (clientState == 5)
+				UpdateLobbyUI(client.getNumClients());
+			else if (clientState == 6)
+				LoadScene("FirstLevel");
+			else if (clientState == 7)
+			{
+				objID = client.getObjID();
+				clientID = client.getID();
+			}
 
 		return clientState;
+		//}
 	}
 
 	return 1;

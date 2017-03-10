@@ -72,6 +72,11 @@ void PlayerController::Update(float dt)
 	}
 }
 
+void PlayerController::Shutdown()
+{
+	//save out player stats to 
+}
+
 void PlayerController::HandleEvent(Event* e)
 {
 	//filter throw events to find right one
@@ -81,7 +86,7 @@ void PlayerController::HandleEvent(Event* e)
 	{
 		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
 
-		if (inputDownEvent->IsServer())
+		//if (inputDownEvent->IsServer())
 		{
 			string name;
 			name = "Mage";
@@ -91,6 +96,7 @@ void PlayerController::HandleEvent(Event* e)
 			{
 				//if (!Player::gamePadState.IsConnected())
 				{
+					playerID = inputDownEvent->GetID();
 					input = inputDownEvent->GetInput();
 					HandleInput();
 				}
@@ -116,6 +122,8 @@ void PlayerController::HandleEvent(Event* e)
 		return;
 	}
 }
+
+
 
 //misc//
 void PlayerController::OnCollisionEnter(Collider* collider)
@@ -228,12 +236,41 @@ void PlayerController::OnCollisionExit(Collider* collider)
 	}
 }
 
+void PlayerController::AddGoal()
+{
+	++goals;
+	++totalGoals;
+
+	score += goalPoints;
+	cout << "GOAL!" << endl;
+}
+
+void PlayerController::AddSave()
+{
+	++saves;
+	++totalSaves;
+
+	score += savePoints;
+
+	cout << "SAVE!" << endl;
+}
+
+void PlayerController::AddAssist()
+{
+	++assists;
+	++totalAssists;
+
+	score += assistPoints;
+	cout << "ASSIST!" << endl;
+}
+
+//actions//
 void PlayerController::Jump()
 {
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 7.5f, 0 });
+		transform->AddVelocity({ 0, 4.0f, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation
@@ -296,7 +333,7 @@ void PlayerController::HandleInput()
 	{
 		Sprint();
 
-		cout << "Sprint" << endl;
+		//cout << "Sprint" << endl;
 	}
 	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
 	{
@@ -307,7 +344,7 @@ void PlayerController::HandleInput()
 		physics->SetMaxSpeed(originalMaxSpeed);
 		//physics->SetHasMaxSpeed(true);
 
-		cout << "Stop Sprint" << endl;
+		//cout << "Stop Sprint" << endl;
 
 		//revert back to walk footsteps
 		SetFootstepsSound(0);
@@ -331,7 +368,7 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 	{
 		Sprint();
 
-		cout << "Sprint" << endl;
+		//cout << "Sprint" << endl;
 	}
 	else if (!padState->thumbSticks.leftY && isSprinting)
 	{
@@ -342,7 +379,7 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 		physics->SetMaxSpeed(originalMaxSpeed);
 		//physics->SetHasMaxSpeed(true);
 
-		cout << "Stop Sprint" << endl;
+		//cout << "Stop Sprint" << endl;
 
 		//revert back to walk footsteps
 		SetFootstepsSound(0);
@@ -383,11 +420,23 @@ void PlayerController::HandleSprintAndCharge()
 			speedMultiplier = sprintMultiplier;
 		}
 
-		if (meterBar->isEmpty()) // empty, no more sprint
+		if (!ResourceManager::GetSingleton()->IsMultiplayer() || playerID == Game::GetClientID())
 		{
-			canSprint = false;
-			isCharging = false;
-			SetFootstepsSound(0);
+			if (meterBar->isEmpty()) // empty, no more sprint
+			{
+				canSprint = false;
+				isCharging = false;
+				SetFootstepsSound(0);
+			}
+		}
+		else
+		{
+			if (Game::server.getEmpty(playerID - 1)) 
+			{
+				canSprint = false;
+				isCharging = false;
+				SetFootstepsSound(0);
+			}
 		}
 
 		//set velocity to respective velocity every frame
@@ -395,9 +444,19 @@ void PlayerController::HandleSprintAndCharge()
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
-		if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty())
+		if (!ResourceManager::GetSingleton()->IsMultiplayer() || playerID == Game::GetClientID())
 		{
-			canSprint = true;
+			if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty())
+			{
+				canSprint = true;
+			}
+		}
+		else
+		{
+			if (!Game::server.getEmpty(playerID - 1) || (!Game::server.getMeterDrain(playerID - 1) && !Game::server.getMeterActive(playerID - 1)))
+			{
+				canSprint = true;
+			}
 		}
 	}
 }
@@ -435,7 +494,7 @@ void PlayerController::PlayFootstepsSound()
 		soundEvent->Init(playID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
-		cout << "play walk" << endl;
+		//cout << "play walk" << endl;
 
 		footstepsPlayed = true;
 	}
@@ -468,7 +527,7 @@ void PlayerController::StopFootstepsSound()
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 	delete soundEvent;
 
-	cout << "stop walk" << endl;
+	//cout << "stop walk" << endl;
 	footstepsPlayed = false;
 }
 
@@ -479,4 +538,90 @@ void PlayerController::SetFootstepsSound(int sound)
 
 	//set it
 	footstepsSound = sound;
+}
+
+void PlayerController::ResetPlayerGameStats()
+{
+	score = 0;
+	goals = 0;
+	assists = 0;
+	saves = 0;
+}
+
+
+//getters//
+std::string PlayerController::GetName()
+{
+	return name;
+}
+
+unsigned int PlayerController::GetTotalGoals()
+{
+	return totalGoals;
+}
+
+unsigned int PlayerController::GetTotalSaves()
+{
+	return totalSaves;
+}
+
+
+unsigned int PlayerController::GetTotalAssists()
+{
+	return totalAssists;
+}
+
+
+unsigned int PlayerController::GetScore()
+{
+	return score;
+}
+
+
+unsigned int PlayerController::GetGoals()
+{
+	return goals;
+}
+
+
+unsigned int PlayerController::GetSaves()
+{
+	return saves;
+}
+
+
+unsigned int PlayerController::GetAssists()
+{
+	return assists;
+}
+
+unsigned int PlayerController::GetTeamID()
+{
+	return teamID;
+}
+
+//setters//
+void PlayerController::SetName(std::string name)
+{
+	this->name = name;
+}
+
+void PlayerController::SetTotalGoals(unsigned int ttlGoals)
+{
+	totalGoals = ttlGoals;
+}
+
+void PlayerController::SetTotalSaves(unsigned int ttlSaves)
+{
+	totalSaves = ttlSaves;
+}
+
+void PlayerController::SetTotalAssists(unsigned int ttlAssists)
+{
+	totalAssists = ttlAssists;
+}
+
+void PlayerController::SetTeamID(unsigned int id)
+{
+	teamID = id;
 }

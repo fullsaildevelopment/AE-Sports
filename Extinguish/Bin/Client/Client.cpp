@@ -161,7 +161,7 @@ int Client::run()
 		{
 			receivePackets();
 			if (result != 4 || result != 5)
-				return 2;
+				result = 2;
 			break;
 		}
 		case ID_SERVER_CLOSURE:
@@ -180,19 +180,29 @@ int Client::run()
 			BitStream bIn(packet->data, packet->length, false);
 			bIn.IgnoreBytes(sizeof(MessageID));
 			bIn.Read(curNumOfClients);
-			return 5;
+			result = 5;
+			break;
 		}
 		case ID_START_GAME:
 		{
-			return 6;
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			UINT8 temp;
+			bIn.Read(temp);
+			if (temp == 11)
+			{
+				gameStart = true;
+				return 6;
+			}
+
+			break;
 		}
 		case ID_CLIENT_OBJ:
 		{
-			BitStream bIn(packet->data, packet->length, false);
-			bIn.IgnoreBytes(sizeof(MessageID));
-			bIn.Read(objID);
-			bIn.Read(clientID);
-			return 7;
+			GetID();
+			if (!gameStart)
+				return 7;
+			break;
 		}
 		}
 	}
@@ -216,7 +226,7 @@ void Client::stop()
 	//RakPeerInterface::DestroyInstance(peer);
 }
 
-int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, int clientID, bool isServer)
+int Client::sendInput(bool keyboard[256], bool keyboardDown[256], bool keyboardUp[256], bool mouse[3], bool mouseDown[3], bool mouseUp[3], int mouseX, int mouseY, bool isServer)
 {
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_INCOMING_INPUT);
@@ -303,13 +313,12 @@ void Client::readMessage()
 
 void Client::GetID()
 {
-	//UINT8 objs;
-	RakString rs;
-	BitStream bsIn(packet->data, packet->length, false);
-	bsIn.IgnoreBytes(sizeof(MessageID));
-	bsIn.Read(clientID);
-	bsIn.Read(objects);
-
+	if (!gameStart) {
+		BitStream bsIn(packet->data, packet->length, false);
+		bsIn.IgnoreBytes(sizeof(MessageID));
+		bsIn.Read(clientID);
+		bsIn.Read(objects);
+	}
 //	clientStates = new CLIENT_GAME_STATE[objects]();
 }
 
@@ -400,7 +409,7 @@ void Client::receivePackets()
 	}
 }
 
-Client::CLIENT_GAME_STATE Client::getState(unsigned int index)
+Client::CLIENT_GAME_STATE Client::getMyState()
 {
 	// return the state of the obj at index
 	return myState[0][0];
@@ -414,6 +423,21 @@ void Client::receiveGameState()
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
+	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
+	{
+		if (i == clientID - 1)
+		{
+			bIn.Read(gameState[0][0].sprintA);
+			bIn.Read(gameState[0][0].sprintD);
+			bIn.Read(gameState[0][0].down);
+			break;
+		}
+		
+		bool temp, temp2;
+		bIn.Read(temp);
+		bIn.Read(temp2);
+		bIn.Read(temp2);
+	}
 }
 
 
@@ -427,4 +451,13 @@ void Client::changeTeam(UINT16 team)
 	{
 		sendMessage(clientID, ID_CHANGE_TEAM_B, peer->GetSystemAddressFromIndex(0));
 	}
+}
+
+void Client::sendEmpty(bool empty)
+{
+	BitStream bsOut;
+	bsOut.Write((RakNet::MessageID)ID_SPRINT_EMPTY);
+	bsOut.Write(clientID);
+	bsOut.Write(empty);
+	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }

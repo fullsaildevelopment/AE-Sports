@@ -22,7 +22,7 @@ class SphereCollider;
 class Camera;
 class Crosse;
 class Transform;
-class PlayerConroller;
+class PlayerController;
 class SoundEngine;
 
 class Game : public EventHandler
@@ -40,6 +40,7 @@ public:
 	static int returnResult;
 	static PLAYER_TEAM team;
 	static UINT8 objIDs[10];
+	static float Time;
 
 	int Team1Score;
 	int Team2Score;
@@ -48,8 +49,6 @@ private:
 	HashString scenesNamesTable;
 
 	DeviceResources* devResources;
-
-	//InputManager* input;
 	ResourceManager* resourceManager;
 	SoundEngine* soundEngine;
 
@@ -58,9 +57,13 @@ private:
 	static int clientID;
 	static int objID;
 
+	float* gameTime;
+
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
 	void ReceiveServerMessage();
+	void ResetPlayers();
+	void ResetBall();
 
 	/* to separate all the ui */
 	void CreateUI(Scene * basic);
@@ -68,6 +71,7 @@ private:
 	void CreateLobby(Scene * scene);
 	void CreatePauseMenu(Scene * scene);
 	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
+	void CreateScoreBoard(Scene * scene);
 	void AssignPlayers();
 
 	void UpdateServerStates();

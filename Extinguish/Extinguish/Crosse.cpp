@@ -34,6 +34,7 @@ void Crosse::Init()
 	minY = transform->GetPosition().y;
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 	ballC = ballTransform->GetGameObject()->GetComponent<BallController>();
+	player = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject();
 
 	//register crosse event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
@@ -52,15 +53,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 	{
 		if (!ballC->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
-			ballC->SetHolder(GetGameObject());
-			SetColor(true);
-			//play sound
-			SoundEvent* soundEvent = new SoundEvent();
-			soundEvent->Init(AK::EVENTS::PLAY_CATCH, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-			EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-			delete soundEvent;
-
-			//catchAgainTimer = 0.0f;
+			Catch();
 		}
 	}
 }
@@ -73,7 +66,7 @@ void Crosse::SetColor(bool b)
 			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
 		else
 			GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
-		if (Game::GetClientID() == 1)
+		if (ResourceManager::GetSingleton()->IsServer())//Game::GetClientID() == 1)
 		{
 			CoughtEvent* ce = new CoughtEvent;
 			ce->holding = b;
@@ -120,6 +113,45 @@ void Crosse::Throw()
 	}
 }
 
+void Crosse::Catch()
+{
+	//increase player's stats
+	//TODO: decide if it is a save or not. If not, then it's just a catch
+	PlayerController* playerController = GetGameObject()->GetComponent<PlayerController>();
+	float3 goalPos;
+
+	if (Game::team == Game::PLAYER_TEAM::TEAM_A) //red player
+	{
+		goalPos = GetGameObject()->FindGameObject("RedGoal")->GetTransform()->GetPosition();
+	}
+	else //blue player
+	{
+		goalPos = GetGameObject()->FindGameObject("BlueGoal")->GetTransform()->GetPosition();
+	}
+
+	//dimensions of goal: 13 x 8
+
+	//check the position to see if it was close to going to the goal
+	float3 ballPos = ballTransform->GetPosition();
+	if ((ballPos.x <= goalPos.x + 8.0f || ballPos.x >= goalPos.x - 8.0f) && (ballPos.y >= goalPos.y - 4.0f) && (ballPos.z >= goalPos.z - 8.0f))
+	{
+		//check the direction to make sure that it's not moving away from the goal
+		if (dot_product(ballTransform->GetVelocity().normalize(), float3(0, 0, -1)) <= 0)
+		{
+			player->GetComponent<PlayerController>()->AddSave();
+		}
+	}
+
+	ballC->SetHolder(GetGameObject());
+	SetColor(true);
+
+	//play sound
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::PLAY_CATCH, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
+}
+
 void Crosse::HandleEvent(Event* e)
 {
 	//filter throw events to find right one
@@ -129,7 +161,7 @@ void Crosse::HandleEvent(Event* e)
 	{
 		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
 
-		if (inputDownEvent->IsServer())
+		//if (inputDownEvent->IsServer())
 		{
 			string name;
 			name = "Crosse";
@@ -229,12 +261,6 @@ void Crosse::HandleInput(InputDownEvent* e)
 	{
 		Throw();
 	}
-
-	//if (input->GetKeyDown('T'))
-	//{
-	//	XMFLOAT3 up = transform->GetUp();
-	//	transform->Translate({ up.x * dt, up.y * dt,  up.z * dt });
-	//}
 }
 
 void Crosse::HandleGamePad(GamePadEvent* e)
@@ -315,10 +341,8 @@ void Crosse::HandleGamePad(GamePadEvent* e)
 
 void Crosse::SetHolder(GameObject* object)
 {
-	BallController* ballController = GetGameObject()->FindGameObject("GameBall")->GetComponent<BallController>();
-
-	if (ballController)
+	if (ballC)
 	{
-		ballController->SetHolder(object);
+		ballC->SetHolder(object);
 	}
 }

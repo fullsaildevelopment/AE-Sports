@@ -468,6 +468,9 @@ void Scene::Update(float dt)
 
 				devContext->UpdateSubresource(BallConstantBuffer.Get(), NULL, NULL, &cps, NULL, NULL);
 				devContext->PSSetConstantBuffers(2, 1, BallConstantBuffer.GetAddressOf());
+
+				//cout << transform->GetForward().x << " " << transform->GetForward().y << " " << transform->GetForward().z << " ";
+				//cout << camObject->GetTransform()->GetForward().x << " " << camObject->GetTransform()->GetForward().y << " " << camObject->GetTransform()->GetForward().z << endl;
 			}
 
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
@@ -674,6 +677,7 @@ void Scene::Shutdown()
 	uiObjects.clear();
 }
 
+//misc//s
 void Scene::CreateGameObject()
 {
 

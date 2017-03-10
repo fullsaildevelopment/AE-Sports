@@ -5,6 +5,7 @@
 #include "Client.h"
 #include "..\ShaderStructures\ShaderStructures.h"
 #include "InputManager.h"
+#include "InputDownEvent.h"
 
 class ClientWrapper
 {
@@ -65,7 +66,7 @@ public:
 			input->GetMouseUp(), 
 			input->GetMouseX(), 
 			input->GetMouseY(), 
-			inputEvent->GetID(), 
+			//inputEvent->GetID(), 
 			inputEvent->IsServer());
 		//delete temp;
 	}
@@ -149,4 +150,9 @@ public:
 	UINT8 getObjID() { return newClient.getObjID(); }
 
 	UINT8 getNumClients() { return newClient.getNumClients(); }
+
+	bool getMeterActive() { return newClient.getMeterActive(); }
+	bool getMeterDrain() { return newClient.getMeterDrain(); }
+	bool getMeterDown() { return newClient.getMeterDown(); }
+	void sendEmpty(bool toggle) { newClient.sendEmpty(toggle); }
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "Component.h"
 //#include "vec3.h"
 
@@ -21,6 +22,8 @@ private:
 	Transform* cameraTransform;
 	
 	//reg members
+	std::string name;
+	unsigned int playerID = 0;
 	float dt;
 	bool justJumped;
 	bool isSprinting;
@@ -29,19 +32,30 @@ private:
 	float originalMaxSpeed;
 	float chargeTimer;
 	bool footstepsPlayed;
-	//AkUniqueID stepsPlayID;
-	//AkUniqueID stepsStopID;
 	int footstepsSound;
-	//float sprintAgainTimer;
-	//float3 originalVelocity;
+	unsigned int teamID;
+
+	//stat members for the player's whole history
+	unsigned int totalGoals;
+	unsigned int totalAssists;
+	unsigned int totalSaves;
+	unsigned int totalCatches;
+
+	//stat members for current game
+	unsigned int score;
+	unsigned int goals;
+	unsigned int saves;
+	unsigned int assists;
 
 	//const members
-	//const float chargeSpeed = 150.0f;
-	const float sprintMultiplier = 1.75f;
+	const float sprintMultiplier = 2.5f;// 1.75f;
 	const float chargeMultiplier = 2.25f;
 	const float timeTilCharge = 2.5f;
-	//const float timeTilSprint = 3.0f;
 	const float sprintCost = 0.15f;
+
+	const unsigned int goalPoints = 100;
+	const unsigned int savePoints = 50;
+	const unsigned int assistPoints = 50;
 
 	//private helper functions
 	void HandleInput();
@@ -57,14 +71,37 @@ public:
 	//basic
 	void Init();
 	void Update(float dt) override;
+	void Shutdown() override;
 	void HandleEvent(Event* e) override;
 
 	//misc
 	void OnCollisionEnter(Collider* collider) override;
 	void OnCollisionExit(Collider* collider) override;
+	void ResetPlayerGameStats();
+	void AddGoal();
+	void AddSave();
+	void AddAssist();
 
 	//actions
 	void Jump();
 	void Attack();
 	void Sprint();
+
+	//getters//
+	std::string GetName();
+	unsigned int GetTotalGoals();
+	unsigned int GetTotalSaves();
+	unsigned int GetTotalAssists();
+	unsigned int GetScore();
+	unsigned int GetGoals();
+	unsigned int GetSaves();
+	unsigned int GetAssists();
+	unsigned int GetTeamID();
+
+	//setters//
+	void SetName(std::string name);
+	void SetTotalGoals(unsigned int ttlGoals);
+	void SetTotalSaves(unsigned int ttlSaves);
+	void SetTotalAssists(unsigned int ttlAssists);
+	void SetTeamID(unsigned int id);
 };
