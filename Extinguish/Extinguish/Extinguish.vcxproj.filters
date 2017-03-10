@@ -344,7 +344,9 @@
     <ClInclude Include="Server Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
-  </ItemGroup>
+    <ClInclude Include="EDMesh.h">
+      <Filter>Collision</Filter>
+    </ClInclude>  </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Box_Idle.fbm\TestCube.dds" />
     <Media Include="..\Assets\Textures\DDS\Mage.dds" />
