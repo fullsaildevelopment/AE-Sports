@@ -807,7 +807,7 @@ void HexagonCollider::FixedUpdate(float dt)
 					float3 nvel = objects[i]->GetTransform()->GetVelocity();
 					Capsule c = cap->GetWorldCapsule();
 					float t = 100;
-					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t, mesh);
+					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t);
 					if (!n.isEquil(zeroF))
 					{
 						bool apg = false;
