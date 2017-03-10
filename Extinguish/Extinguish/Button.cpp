@@ -191,7 +191,7 @@ Button::Button(bool active, bool clickable, char * newText, unsigned int length)
 	textLength = length;
 }
 
-void Button::Update(float dt)
+void Button::Update(float _dt)
 {
 	if (isTimer)
 	{
@@ -200,11 +200,11 @@ void Button::Update(float dt)
 	}
 
 	if (clickCooldown >= 0.0f)
-		clickCooldown -= dt;
+		clickCooldown -= _dt;
 
 	if (showFps)
 	{
-		int _fps = (int)(1 / dt);
+		int _fps = (int)(1 / _dt);
 
 		fps = to_string(_fps);
 		fps += " FPS";

@@ -11,7 +11,7 @@ void Physics::Init()
 	hasMaxSpeed = true;
 }
 
-void Physics::FixedUpdate(float dt)
+void Physics::FixedUpdate(float _dt)
 {
 	if (!isKinematic)
 	{
@@ -19,13 +19,13 @@ void Physics::FixedUpdate(float dt)
 		//apply gravity
 		if (!colliding || stillapplygravity)
 		{
-			nV += { 0, gravity * dt, 0 };
-			nV += transform->GetVelocity() * (-airdrag * dt);
+			nV += { 0, gravity * _dt, 0 };
+			nV += transform->GetVelocity() * (-airdrag * _dt);
 		}
 		//apply friction if touching
 		if(colliding && !stillapplygravity)
 		{
-			nV += transform->GetVelocity() * -1 * friction * dt;
+			nV += transform->GetVelocity() * -1 * friction * _dt;
 		}
 		if (nV.x <= 0.0001f && nV.x >= -0.0001f)
 		{
@@ -49,7 +49,7 @@ void Physics::FixedUpdate(float dt)
 		}
 		transform->SetVelocity(nV);
 		colliding = false;
-		transform->Translate({ nV.x * dt, nV.y * dt, nV.z * dt });
+		transform->Translate({ nV.x * _dt, nV.y * _dt, nV.z * _dt });
 	}
 }
 

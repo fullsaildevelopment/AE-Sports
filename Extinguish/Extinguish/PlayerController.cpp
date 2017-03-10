@@ -54,10 +54,10 @@ void PlayerController::Init()
 	canSprint = true;
 }
 
-void PlayerController::Update(float dt)
+void PlayerController::Update(float _dt)
 {
-	this->dt = dt;
-	chargeTimer += dt;
+	this->_dt = _dt;
+	chargeTimer += _dt;
 	//sprintAgainTimer += dt;
 
 	HandleSprintAndCharge();

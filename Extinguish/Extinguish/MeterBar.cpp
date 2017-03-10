@@ -16,7 +16,7 @@ void MeterBar::MakeHandler()
 }
 
 
-void MeterBar::Update(float dt)
+void MeterBar::Update(float _dt)
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
@@ -66,7 +66,7 @@ void MeterBar::Update(float dt)
 	{
 		if (drain)
 		{
-			dTime -= dt;
+			dTime -= _dt;
 
 			rect2 = ShrinkRect(dTime, drainTime);
 
@@ -79,7 +79,7 @@ void MeterBar::Update(float dt)
 		}
 		else if (canRecharge)
 		{
-			rTime += dt;
+			rTime += _dt;
 
 			if (rTime >= rechargeTime)
 			{
@@ -97,7 +97,7 @@ void MeterBar::Update(float dt)
 	{
 		if (rTime < rechargeTime)
 		{
-			rTime += dt;
+			rTime += _dt;
 
 			if (rTime >= rechargeTime)
 			{

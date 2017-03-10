@@ -51,6 +51,7 @@ public:
 		INT8 parentIndex;
 		INT8 animationIndex;
 		int otherIndex;
+		float _dt;
 		INT8 transitionIndex;
 		UINT32 soundID;
 		bool hasSound;
@@ -66,6 +67,7 @@ public:
 		int scoreA = 0;
 		int scoreB = 0;
 		float time;
+		float _dt;
 		bool sprintA = false;
 		bool sprintD = false;
 		bool empty = false;
@@ -95,7 +97,8 @@ private:
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
-		ID_SPRINT_EMPTY
+		ID_SPRINT_EMPTY,
+		ID_INCOMING_FLOOR
 	};
 
 	static RakPeerInterface * peer;
@@ -107,6 +110,7 @@ private:
 	std::vector<CLIENT_GAME_STATE> * clientStates;
 	std::vector<CLIENT_GAME_STATE> * myState;
 	std::vector<GAME_STATE> * gameState;
+	std::vector<XMFLOAT3> * floorState;
 
 	UINT8 curNumOfClients;
 	UINT8 objID;
@@ -177,6 +181,12 @@ public:
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
+	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
+
+	bool floorIsEmpty() { if (floorState[0].size() == 0) return true; return false; }
+	int floorSize() { return floorState[0].size(); }
+	int stateSize() { return clientStates[0].size(); }
+	float getDT() { return gameState[0][0]._dt; }
 
 private:
 	bool gameStart = false;
@@ -188,5 +198,7 @@ private:
 	void registerName();
 	void receivePackets();
 	void receiveGameState();
+	void receiveFloor();
+
 };
 
