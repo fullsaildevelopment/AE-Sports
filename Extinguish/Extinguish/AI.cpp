@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 8
+#define RunSpeed 10
 #define AttackSpeed 20
 #define StumbleSpeed 10
 
@@ -12,7 +12,6 @@
 // players/AI will be tagged as Team1 or Team2
 // 
 /////////////////////////////////////////////////////////////////////////////////////////
-
 
 AI::AI(GameObject* obj) : Component(obj)
 {
@@ -283,6 +282,9 @@ void AI::Update(float dt)
 			pos1.z *= -1;
 			pos2.z *= -1;
 		}
+
+		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
+			Score();
 
 		// if the enemy team has the ball, attack their tank
 		if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
