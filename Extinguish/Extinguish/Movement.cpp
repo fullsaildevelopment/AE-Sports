@@ -36,9 +36,9 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 	//footstepsPlayed = false;
 }
 
-void Movement::Update(float dt)
+void Movement::Update(float _dt)
 {
-	this->dt = dt;
+	this->_dt = _dt;
 	//animation feedback
 	if (isMoving)
 	{
@@ -136,7 +136,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt});
+		transform->AddVelocity({ forward.x * moveSpeed * _dt, forward.y * moveSpeed * _dt,  forward.z * moveSpeed * _dt});
 		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
 	}
@@ -146,7 +146,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 		XMFLOAT3 forward = transform->GetForward();
 		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * -moveSpeed* dt, forward.y * -moveSpeed* dt,  forward.z * -moveSpeed * dt });
+		transform->AddVelocity({ forward.x * -moveSpeed* _dt, forward.y * -moveSpeed* _dt,  forward.z * -moveSpeed * _dt });
 		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		isMoving = true;
 	}
@@ -155,7 +155,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * -moveSpeed* dt, right.y * -moveSpeed* dt,  right.z * -moveSpeed * dt });
+		transform->AddVelocity({ right.x * -moveSpeed* _dt, right.y * -moveSpeed* _dt,  right.z * -moveSpeed * _dt });
 		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		isMoving = true;
 	}
@@ -164,7 +164,7 @@ void Movement::HandleInput(InputDownEvent* e)
 	{
 		XMFLOAT3 right = transform->GetRight();
 		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * moveSpeed* dt, right.y * moveSpeed* dt,  right.z * moveSpeed * dt });
+		transform->AddVelocity({ right.x * moveSpeed* _dt, right.y * moveSpeed* _dt,  right.z * moveSpeed * _dt });
 		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;

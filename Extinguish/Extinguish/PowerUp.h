@@ -21,7 +21,7 @@ private:
 	float duration; // how long the powerup lasts for
 public:
 
-	void Update(float dt) override;
+	void Update(float _dt) override;
 	void Shutdown() override;
 	void HandleEvent(Event* e) override;
 

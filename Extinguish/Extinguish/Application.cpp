@@ -19,7 +19,7 @@ void Application::Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmd
 
 }
 
-bool Application::Update(float dt)
+bool Application::Update(float _dt)
 {
 	bool result = true;
 	int windowResult;
@@ -29,6 +29,9 @@ bool Application::Update(float dt)
 
 	//check window for messages and get input
 	windowResult = window.Update(input);
+
+	//if (ResourceManager::GetSingleton()->IsServer())
+	//	Game::dt = _dt;
 
 	//std::cout << windowResult << std::endl;
 	if (windowResult == WM_QUIT)
@@ -41,7 +44,7 @@ bool Application::Update(float dt)
 		//TODO: make input inside of game, and only allow server to update it
 		input->Update();
 		//soundEngine.ProcessAudio();
-		int gResult = game.Update(dt);
+		int gResult = game.Update();
 		if (gResult == 0)
 			result = false;
 		game.Render();
@@ -56,9 +59,9 @@ bool Application::Update(float dt)
 	return result;
 }
 
-bool Application::FixedUpdate(float dt)
+bool Application::FixedUpdate(float _dt)
 {
-	game.FixedUpdate(dt);
+	game.FixedUpdate();
 	return true;
 }
 

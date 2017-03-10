@@ -35,7 +35,7 @@ BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : 
 	min = _min;
 }
 
-void BoxCollider::FixedUpdate(float dt)
+void BoxCollider::FixedUpdate(float _dt)
 {
 	if (objects.size() == 0)
 	{
@@ -73,14 +73,14 @@ void BoxCollider::FixedUpdate(float dt)
 			else
 			{
 				float normx, normy, normz;
-				float t = SweptAABBtoAABB(GetWorldAABB(), box->GetWorldAABB(), tg->GetTransform()->GetVelocity() * dt, normx, normy, normz);
+				float t = SweptAABBtoAABB(GetWorldAABB(), box->GetWorldAABB(), tg->GetTransform()->GetVelocity() * _dt, normx, normy, normz);
 				if (t < 1)
 				{
 					float3 pos = tg->GetTransform()->GetPosition();
 					float3 vel = tg->GetTransform()->GetVelocity();
-					pos.x += vel.x * dt * t;
-					pos.y += vel.y * dt * t;
-					pos.z += vel.z * dt * t;
+					pos.x += vel.x * _dt * t;
+					pos.y += vel.y * _dt * t;
+					pos.z += vel.z * _dt * t;
 					tg->GetTransform()->SetPosition(pos);
 					float rt = 1 - t;
 					float3 v = vel * rt;

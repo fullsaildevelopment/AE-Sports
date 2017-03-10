@@ -21,14 +21,14 @@ void State::Init(AnimatorController* controller, Animation* anim, bool isLooping
 	transitionIndex = -1;
 }
 
-Transition* State::Update(float dt)
+Transition* State::Update(float _dt)
 {
 	Transition* result = nullptr;
 	transitionIndex = -1;
 
 	for (int i = 0; i < transitions.size(); ++i)
 	{
-		if (transitions[i]->Update(dt))
+		if (transitions[i]->Update(_dt))
 		{
 			result = transitions[i];
 			transitions[i]->GetToState()->SetTransitionIndex(i);

@@ -19,9 +19,9 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	direction = 1;
 }
 
-void FloorController::WavePattern(float dt)
+void FloorController::WavePattern(float _dt)
 {
-	ratios += dt * transSpeed;
+	ratios += _dt * transSpeed;
 	if (ratios > 1) ratios = 1;
 	for (int i = 0; i < row; ++i)
 	{
@@ -33,9 +33,9 @@ void FloorController::WavePattern(float dt)
 	if (ratios >= 1.0f) currPattern = 2;
 }
 
-void FloorController::BigHexPattern(float dt)
+void FloorController::BigHexPattern(float _dt)
 {
-	ratios += dt * transSpeed;
+	ratios += _dt * transSpeed;
 	for (int i = 0; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
@@ -47,9 +47,9 @@ void FloorController::BigHexPattern(float dt)
 	if (ratios >= 1.0f) currPattern = 3;
 }
 
-void FloorController::StripPattern(float dt)
+void FloorController::StripPattern(float _dt)
 {
-	ratios += dt * transSpeed;
+	ratios += _dt * transSpeed;
 	for (int i = 0; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
@@ -61,7 +61,7 @@ void FloorController::StripPattern(float dt)
 	if (ratios >= 1.0f) currPattern = 1;
 }
 
-void FloorController::InitialPattern(float dt)
+void FloorController::InitialPattern(float _dt)
 {
 	//decide which way to make the side pillars move up
 	if (ratios > 1.0f)
@@ -75,7 +75,7 @@ void FloorController::InitialPattern(float dt)
 		direction = 1;
 	}
 
-	ratios += dt * transSpeed * direction;
+	ratios += _dt * transSpeed * direction;
 
 	//red goal
 	MovePillar(15, ratios);
@@ -96,9 +96,9 @@ void FloorController::MovePillar(int pillar, float ratio)
 	if (floor[pillar].y > -0.0001f) floor[pillar].y = 0;
 }
 
-void FloorController::LevelFloor(float dt)
+void FloorController::LevelFloor(float _dt)
 {
-	ratios += dt * transSpeed;
+	ratios += _dt * transSpeed;
 	for (int i = 0; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
@@ -106,7 +106,7 @@ void FloorController::LevelFloor(float dt)
 			if (floor[i * col + j].y != -10)
 			{
 				float r = 1 - floor[i * col + j].y * -0.1f;
-				MovePillar(i * col + j, r - dt * transSpeed);
+				MovePillar(i * col + j, r - _dt * transSpeed);
 				if (floor[i * col + j].y < -9.899f) floor[i * col + j].y = -10;
 			}
 		}
@@ -114,16 +114,16 @@ void FloorController::LevelFloor(float dt)
 	if (ratios >= 1.0f) currPattern = 0;
 }
 
-void FloorController::Strips(float dt)
+void FloorController::Strips(float _dt)
 {
 
 }
 
-void FloorController::ControlMovement(float dt)
+void FloorController::ControlMovement(float _dt)
 {
-	timeing += dt;
+	timeing += _dt;
 
-	InitialPattern(dt);
+	InitialPattern(_dt);
 
 	//if (timeing < 10 && currPattern != 1)
 	//{
@@ -179,7 +179,7 @@ void FloorController::ControlMovement(float dt)
 	//	timeing = 0;
 }
 
-void FloorController::ControlColors(float dt)
+void FloorController::ControlColors(float _dt)
 {
 	score = false;
 	int tr = (int)(row * 0.5f);
@@ -255,24 +255,24 @@ void FloorController::ScoreColor()
 	scorer = 2;
 }
 
-void FloorController::Update(float dt)
+void FloorController::Update(float _dt)
 {
-	ControlMovement(dt);
+	ControlMovement(_dt);
 	//ControlColors(dt);
 	if (score)
 	{
 		if (scorer != 2)
 			ScoreColor();
-		sinceScore += dt;
+		sinceScore += _dt;
 		if (sinceScore >= 2.5)
 		{
-			ControlColors(dt);
+			ControlColors(_dt);
 			sinceScore = 0;
 		}
 	}
 }
 
-void FloorController::SetState(int state, float dt)
+void FloorController::SetState(int state, float _dt)
 {
 	if (state == -1)
 	{
@@ -282,13 +282,13 @@ void FloorController::SetState(int state, float dt)
 	{
 		currPattern = 1;
 		timeing = 10;
-		Update(dt);
+		Update(_dt);
 	}
 	else if (state == 1)
 	{
 		currPattern = 0;
 		timeing = 0;
-		Update(dt);
+		Update(_dt);
 	}
 	else if (state == 10)
 	{
@@ -298,7 +298,7 @@ void FloorController::SetState(int state, float dt)
 	{
 		currPattern = 0;
 		timeing = 20;
-		Update(dt);
+		Update(_dt);
 	}
 	else if (state == 20)
 	{
@@ -308,7 +308,7 @@ void FloorController::SetState(int state, float dt)
 	{
 		currPattern = 0;
 		timeing = 40;
-		Update(dt);
+		Update(_dt);
 	}
 	else if (state == 30)
 	{
@@ -316,7 +316,7 @@ void FloorController::SetState(int state, float dt)
 	}
 	else if (420)
 	{
-		InitialPattern(dt);
+		InitialPattern(_dt);
 	}
 }
 
