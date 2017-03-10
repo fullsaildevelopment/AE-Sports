@@ -5,6 +5,7 @@
 #include "vec3.h"
 #include "matrix4.h"
 #include <DirectXMath.h>
+#include "EDMesh.h"
 
 struct Plane
 {
@@ -97,9 +98,9 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 
 bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel);
 
-float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel);
+float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& Stime, ED2Mesh* mesh = nullptr);
 
-float3 HexagonToCapsule(const Hexagon& hex, Capsule& s, float3& vel);
+float3 HexagonToCapsule(const Hexagon& hex, Capsule& s, float3& pastPos, float& time, ED2Mesh* mesh = nullptr);
 
 float3 XMtoF(DirectX::XMFLOAT3 m);
 

@@ -347,6 +347,9 @@
     <ClInclude Include="Server Wrapper.h">
       <Filter>Network Wrappers</Filter>
     </ClInclude>
+    <ClInclude Include="EDMesh.h">
+      <Filter>Collision</Filter>
+    </ClInclude>  </ItemGroup>
     <ClInclude Include="Scoreboard.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
