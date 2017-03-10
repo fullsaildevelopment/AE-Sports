@@ -46,7 +46,7 @@ private:
 	string fps;
 	wstring text;
 	float time = 300.0f;
-	float clickCooldown = 1.0f;
+	float clickCooldown = 2.0f;
 	bool isActive;
 	bool isClickable;
 	bool isTimer = false;
@@ -102,6 +102,7 @@ public:
 
 		return theTime;
 	}
+	float* GetTime() { return &time; }
 
 	unsigned int getLength() { return textLength; }
 	IDWriteTypography * getTypography() { return pTypography.Get(); }
@@ -135,7 +136,7 @@ public:
 	void setHelper(int index) { helperIndex.push_back(index); }
 	void setStayHovered(bool b) { stayOnClick = b; }
 
-	void resetTime() { time = 300.0f; }
+	void resetTime() { time = 10.0f; }
 
 	/* HELPERS*/
 

@@ -18,17 +18,21 @@ private:
 		tank, // protects teammate with ball
 	};
 
+
+	bool at1 = false;
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
 	float timer = 2; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
 
 	State currState; // the AI's current state or position that they'll take
+	Transform *camera; // gives me access to the camera transform
 
 	GameObject *myGoal; // my goal object
 	GameObject *enemyGoal; // the enemy's goal object
 	GameObject *ball; // the ball object
 	GameObject *realTarget; // holder for attacking
+	GameObject *eTank; // enemy's tank
 	GameObject *me; // access to the gameObject stuff through me
 
 	BallController *ballClass; // gives me access to the balls script
@@ -56,14 +60,16 @@ public:
 	void Paranoia(); // checks how close enemy is to them when they have the ball and acts on it
 	bool RunTo(GameObject *target); // returns true when near target
 	bool RunTo(GameObject *target, float dist); // returns true when near target, but you can pass in how close you want to be to target
+	bool RunTo(float3 target, float dist); // returns true when near position
+	void TurnTo(float3 target); // makes the AI turn to the desired position
 	void TurnTo(GameObject *target); // makes the AI turn to the desired object
 	void Score(); // throw the ball into the goal
 
 	// Accessors
-	State GetCurrState();
-	bool GetIsAttacking();
+	State GetCurrState(); // returns what position of the team the AI is
+	bool GetIsAttacking(); // returns if im attacking
+	GameObject *GetTarget(); // returns the target the AI is attacking
 
 	// Mutators
-
 
 };

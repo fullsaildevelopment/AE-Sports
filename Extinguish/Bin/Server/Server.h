@@ -58,10 +58,13 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
-		int scoreA;
-		int scoreB;
-		float time;
-
+		int scoreA = 0;
+		int scoreB = 0;
+		float time = 300.0f;
+		bool sprintA = false;
+		bool sprintD = true;
+		bool down = false;
+		bool empty = false;
 
 		GAME_STATE() {}
 	};
@@ -86,7 +89,8 @@ private:
 		ID_INCOMING_MESSAGE,
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
-		ID_CLIENT_OBJ
+		ID_CLIENT_OBJ,
+		ID_SPRINT_EMPTY
 	};
 
 #pragma pack(push, 1)
@@ -168,6 +172,9 @@ public:
 	uint16_t GetStride() { return stride; }
 	bool isPlayer(unsigned int i) { return objIDs[i].inUse; }
 	UINT8 getObjID(unsigned int i) { return objIDs[i].id; }
+	bool getMeterDrain(unsigned int i) { return gameState[0][i].sprintD; }
+	bool getMeterActive(unsigned int i) { return gameState[0][i].sprintA; }
+	bool getEmpty(unsigned int i) { return gameState[0][i].empty; }
 
 	/* setters */
 	void setStateSize(unsigned int size) { 
@@ -182,6 +189,9 @@ public:
 	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound);
 	void setObjectCount(int count);
 	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight);
+	void setMeterActive(bool toggle, unsigned int index) { gameState[0][index].sprintA = toggle; }
+	void setMeterDrain(bool toggle, unsigned int index) { gameState[0][index].sprintD = toggle; }
+	void setMeterDown(bool toggle, unsigned int index) { gameState[0][index].down = toggle; }
 
 
 	/* game stuff*/
