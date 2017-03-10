@@ -6,6 +6,10 @@
 
 #define clamp(a) (max(0,min(1,a)))
 
+#ifndef SameSign
+#define SameSign(a,b) ( ((*(unsigned int*)&(a)) & 0x80000000) == ((*(unsigned int*)&(b)) & 0x80000000) )
+#endif 
+
 bool isZero(float3 v)
 {
 	if (v.x <= FLT_EPSILON && v.x >= -FLT_EPSILON)
@@ -48,19 +52,20 @@ int ClassifyPointToPlane(const Plane& plane, const vec3f& point)
 // Returns 0 if on plane 1 if in front of -1 if behind
 int ClassifyPointToPlane(const NewPlane& plane, const vec3f& point)
 {
-	float r = dot_product(point - plane.p, plane.n);
-	if (r == 0)
+	float r = dot_product(plane.p - point, plane.n);
+	if (r <= 0.000001f && r >= -0.000001f)
 	{
 		return 0;
 	}
-	else if (r > 0) return 1;
+	else if (r < 0) return 1;
 	else return -1;
 }
 
-float3 LS2PI(const float3& p0, const float3& p1, const NewPlane& plane)
+//If d == 0  then it gives you the point at which it crosses the plane else it just gives you the point on the line at that percentage
+float3 LS2PI(const float3& p0, const float3& p1, const NewPlane& plane, float& d)
 {
 	float3 L = p1 - p0;
-	float d = -(dot_product(plane.n, p0) - dot_product(plane.n, plane.p)) / (dot_product(plane.n, L));
+	d = dot_product(plane.p - p0, plane.n) / dot_product(plane.n, L);
 	return p0 + L * d;
 }
 
@@ -303,7 +308,7 @@ bool CapsuleToCapsule(const Capsule& capl, const Capsule& capr)
 	bl.max = capl.m_Segment.m_End + float3(capl.m_Radius, capl.m_Radius, capl.m_Radius);
 
 	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
-	br.max = capr.m_Segment.m_End +   float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
+	br.max = capr.m_Segment.m_End + float3(capr.m_Radius, capr.m_Radius, capr.m_Radius);
 
 	if (!AABBtoAABB(bl, br)) return false;
 
@@ -537,7 +542,7 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 	float3 v1(offset.min.x, offset.max.y, offset.max.z);
 	float3 v7(offset.max.x, offset.min.y, offset.min.z);
 
-	float3 y(0,1,0);
+	float3 y(0, 1, 0);
 	float3 ny(0, -1, 0);
 	float3 x(1, 0, 0);
 	float3 nx(-1, 0, 0);
@@ -830,12 +835,12 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 	br.min = capr.m_Segment.m_Start - float3(capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius);
 	br.max = capr.m_Segment.m_End + float3(capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius, capr.m_Radius + capr.m_Radius);
 
-	if (!AABBtoAABB(bl, br)) 
+	if (!AABBtoAABB(bl, br))
 		return false;
 
 
 	float3 cpol = capl.m_Segment.m_Start;
-	cpol.y = min(max(capl.m_Segment.m_Start.y, capr.m_Segment.m_Start.y),capl.m_Segment.m_End.y);
+	cpol.y = min(max(capl.m_Segment.m_Start.y, capr.m_Segment.m_Start.y), capl.m_Segment.m_End.y);
 	float3 cpor = capr.m_Segment.m_Start;
 	cpor.y = min(max(capl.m_Segment.m_Start.y, capr.m_Segment.m_Start.y), capr.m_Segment.m_End.y);
 
@@ -854,8 +859,8 @@ bool SweptCaptoSweptCap(Capsule& capl, Capsule& capr, float3& vell, float3& velr
 		ml = mid + ((cpol - mid).normalize() * (capl.m_Radius));
 		mr = mid + ((cpor - mid).normalize() * (capr.m_Radius));
 
-		pos = float3( 0, capl.m_Segment.m_Start.y - ml.y, 0) + ml;
-		opos = float3( 0, capr.m_Segment.m_Start.y - mr.y, 0) + mr;
+		pos = float3(0, capl.m_Segment.m_Start.y - ml.y, 0) + ml;
+		opos = float3(0, capr.m_Segment.m_Start.y - mr.y, 0) + mr;
 
 		return true;
 	}
@@ -1008,7 +1013,7 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 		pos = cp;
 		return ref;
 	}
-	return float3(0,0,0);
+	return float3(0, 0, 0);
 }
 
 bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
@@ -1057,7 +1062,7 @@ bool OldHexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	bottom.max = float3(hex.seg.m_Start.x + hh * 0.9f, hex.seg.m_Start.y + 0.33f, hex.seg.m_Start.z + hex.s * 0.4f);
 
 	float3 tc = SweptSpheretoAABB(s, top, vel);
-	if (!tc.isEquil(float3(0,0,0)))
+	if (!tc.isEquil(float3(0, 0, 0)))
 	{
 		vel *= tc;
 		return true;
@@ -1080,7 +1085,7 @@ bool OldHexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	float3 n = (sc - SE).normalize();
 	vel = vel - n * 2 * dot_product(vel, n);
 
-	//vel *= 0.04f;
+	//pastPos *= 0.04f;
 
 	if (velc.x < 0) vel.x *= -1;
 	if (velc.y < 0) vel.y *= -1;
@@ -1096,50 +1101,653 @@ float3 SpherePlanePoint(const NewPlane& p, const Sphere& s)
 	return s.m_Center + np;
 }
 
+bool IntersectRayTriangle(const vec3f &vert0, const vec3f &vert1, const vec3f &vert2, const vec3f &norm, const vec3f &start, const vec3f &d, float &t)
+{
+	// TODO: Read the header file comments for this function!
+
+	// TODO: Complete this function
+	// Tip: Use the SameSign() macro
+	vec3f dirtopoint = start - vert0;
+	if (dot_product(dirtopoint, norm) < 0) return false;
+	if (dot_product(norm, d) > 0) return false;
+	// *Skip testing against backfacing triangles*
+	//	If the ray starts behind the triangle plane OR the angle between ray direction and tri normal is greater than 90 degrees
+	//		Stop testing
+	vec3f s1 = vert0 - start;
+	vec3f s2 = vert1 - start;
+	vec3f s3 = vert2 - start;
+	vec3f sa;
+	vec3f sb;
+	vec3f sc;
+	cross_product(sa, s3, s2);
+	cross_product(sb, s1, s3);
+	cross_product(sc, s2, s1);
+	float n1 = dot_product(sa, d);
+	float n2 = dot_product(sb, d);
+	float n3 = dot_product(sc, d);
+	if (SameSign(n1, n2) && SameSign(n1, n3) && SameSign(n2, n3))
+	{
+		float D = dot_product(norm, vert0);
+		t = (D - dot_product(start, norm)) / dot_product(norm, d);
+		return true;
+	}
+	return false;
+}
+
+bool IntersectRaySphere(const vec3f &p, const vec3f &d, const vec3f &center, float radius, float &t, vec3f &q)
+{
+	t = FLT_MAX;
+	vec3f dirP = p - center;
+	// TODO: Read the header file comments for this function!
+	//if (dot_product(d, dirP) < 0) return false;
+	// TODO: Complete this function
+	//		 BE SURE TO MODIFY THE ALGORITHM AS SPECIFIED IN THE HEADER FILE COMMENTS
+	float b = dot_product(dirP, d);
+	float c = dot_product(dirP, dirP) - radius * radius;
+	if (c > 0 && b > 0) return false;
+	float discr = b*b - c;
+	if (discr < 0) return false;
+	t = -b - sqrt(discr);
+	if (t < 0) t = 0;
+	q = p + (d * t);
+	return true;
+}
+
+bool IntersectRayCylinder(const vec3f &sa, const vec3f &n, const vec3f &p, const vec3f &q, float r, float &t)
+{
+	// TODO: Read the header file comments for this function!
+
+	vec3f d = q - p; // vector from first point on cylinder segment to the end point on cylinder segment
+	vec3f m = sa - p; // vector from first point on cylinder segment to start point of ray
+
+					  // Values used to calculate coefficients of quadratic formula.
+					  // You do not necessarily have to use any of these directly for the rest of the algorithm.
+	float dd = dot_product(d, d); // dot product of d with d (squared magnitude of d)
+	float nd = dot_product(n, d); // dot product of ray normal (n) with d
+	float mn = dot_product(m, n);
+	float md = dot_product(m, d);
+	float mm = dot_product(m, m);
+
+
+	// TODO: Optimization by early out
+	//		 If the ray starts outside the top or bottom planes and points away, there can be no intersection.
+	if (dot_product(sa - p, d) < 0 && dot_product(d, n) < 0) return false;
+	if (dot_product(sa - q, d) > 0 && dot_product(d, n) > 0) return false;
+
+	// Coefficients for the quadratic formula
+	float a = dd - nd * nd;
+	float b = dd*mn - nd*md;
+	float c = dd*(mm - r*r) - md*md;
+
+	// If a is approximately 0.0 then the ray is parallel to the cylinder and can't intersect
+	if (abs(a) < FLT_EPSILON)
+		return false;
+	t = FLT_MAX;
+	// TODO: Find time of intersection, if any
+	//		 Use the quadratic formula to solve for t. Reference "Advanced Ray to Sphere.ppt" for an example.
+	//		 As with "Advanced Ray to Sphere", the 2s and 4 in the formula ( x = (-b - sqrt(b*b - 4ac)) / 2a )
+	//		 are cancelled out, resulting in a simplified form.
+	if (b*b - a*c < 0) return false;
+	t = (-b - sqrt(b*b - a *c)) / a;
+	if (t < 0)
+	{
+		t = FLT_MAX;
+		return false;
+	}
+	vec3f cp = sa + n * t;
+	if (dot_product(cp - p, d) < 0)
+		return false;
+	if (dot_product(cp - q, d) > 0)
+		return false;
+	return true;
+}
+
+bool IntersectRayCapsule(const vec3f &sa, const vec3f &n, const vec3f &p, const vec3f &q, float r, float &t)
+{
+	// TODO: Read the header file comments for this function!
+
+	float fTime = FLT_MAX;
+	t = FLT_MAX;
+	bool bReturn = false;
+
+	// TODO: Complete this function
+	if (IntersectRayCylinder(sa, n, p, q, r, t))
+		return true;
+	vec3f point;
+	if (IntersectRaySphere(sa, n, p, r, fTime, point))
+		bReturn = true;
+	if (IntersectRaySphere(sa, n, q, r, t, point))
+		bReturn = true;
+	if (fTime < t) t = fTime;
+	return bReturn;
+}
+
+bool IntersectMovingSphereTriangle(const vec3f &vert0, const vec3f &vert1, const vec3f &vert2, const vec3f &norm, const vec3f &start, const vec3f &d, float r, float &t, vec3f &outNormal)
+{
+	// TODO: Read the header file comments for this function!
+
+	bool bReturn = false;
+	float fTime = FLT_MAX;
+	t = FLT_MAX;
+
+	vec3f verts[3] = { vert0, vert1, vert2 };
+	verts[0] += norm * r;
+	verts[1] += norm * r;
+	verts[2] += norm * r;
+	// TODO: Complete this function	
+	if (IntersectRayTriangle(verts[0], verts[1], verts[2], norm, start, d, t))
+	{
+		outNormal = norm;
+		return true;
+	}
+	vec3f l;
+	vec3f n;
+	vec3f v;
+	float dis;
+	vec3f cp;
+	if (IntersectRayCapsule(start, d, vert0, vert1, r, t))
+	{
+		l = vert1 - vert0;
+		n = l.normalize();
+		cp = start + d * t;
+		v = cp - vert0;
+		dis = dot_product(n, v);
+		n = n * dis;
+		outNormal = (cp - (vert0 + n)).normalize();
+		return true;
+	}
+	if (IntersectRayCapsule(start, d, vert1, vert2, r, t))
+	{
+		l = vert2 - vert1;
+		n = l.normalize();
+		cp = start + d * t;
+		v = cp - vert1;
+		dis = dot_product(n, v);
+		n = n * dis;
+		outNormal = (cp - (vert1 + n)).normalize();
+		return true;
+	}
+	if (IntersectRayCapsule(start, d, vert2, vert0, r, t))
+	{
+		l = vert0 - vert2;
+		n = l.normalize();
+		cp = start + d * t;
+		v = cp - vert2;
+		dis = dot_product(n, v);
+		n = n * dis;
+		outNormal = (cp - (vert2 + n)).normalize();
+		return true;
+	}
+	return false;
+}
+
+struct Triangle
+{
+	float3* p0 = nullptr;
+	float3* p1 = nullptr;
+	float3* p2 = nullptr;
+	float3* n = nullptr;
+	void SetTriangle(float3* _p0, float3* _p1, float3* _p2, float3* _n) { p0 = _p0; p1 = _p1; p2 = _p2; n = _n; };
+};
+
+bool SphereToTriangle(const Sphere& sphere, const Triangle& tri)
+{
+
+	vec3f ppt = sphere.m_Center - (*tri.n * (dot_product(sphere.m_Center - *tri.p0, *tri.n)));
+	if (dot_product(sphere.m_Center - ppt, sphere.m_Center - ppt) > sphere.m_Radius * sphere.m_Radius) return false;
+	vec3f edge0 = *tri.p1 - *tri.p0;
+	vec3f edge1 = *tri.p2 - *tri.p1;
+	vec3f edge2 = *tri.p0 - *tri.p2;
+	vec3f normal0;
+	cross_product(normal0, edge0, *tri.n);
+	vec3f normal1;
+	cross_product(normal1, edge1, *tri.n);
+	vec3f normal2;
+	cross_product(normal2, edge2, *tri.n);
+	bool test = true;
+	vec3f p0 = ppt - *tri.p0;
+	if (dot_product(normal0, p0) > 0)
+	{
+		test = false;
+	}
+	vec3f p1 = ppt - *tri.p1;
+	if (dot_product(normal1, p1) > 0)
+	{
+		test = false;
+	}
+	vec3f p2 = ppt - *tri.p2;
+	if (dot_product(normal2, p2) > 0)
+	{
+		test = false;
+	}
+	if (!test)
+	{
+		float d0 = dot_product(sphere.m_Center - *tri.p0, edge0);
+		float d1 = dot_product(sphere.m_Center - *tri.p1, edge1);
+		float d2 = dot_product(sphere.m_Center - *tri.p2, edge2);
+		d0 = clamp(d0);
+		d1 = clamp(d1);
+		d2 = clamp(d2);
+		vec3f cp0 = *tri.p0 + edge0 * d0;
+		vec3f cp1 = *tri.p1 + edge1 * d1;
+		vec3f cp2 = *tri.p2 + edge2 * d2;
+		float r2 = sphere.m_Radius * sphere.m_Radius;
+		if (dot_product(sphere.m_Center - cp0, sphere.m_Center - cp0) < r2) return true;
+		if (dot_product(sphere.m_Center - cp1, sphere.m_Center - cp1) < r2) return true;
+		if (dot_product(sphere.m_Center - cp2, sphere.m_Center - cp2) < r2) return true;
+		else return false;
+	}
+	return true;
+}
+
+bool SphereToTriangle(const Sphere& sphere, const Triangle& tri, vec3f& displacement)
+{
+	vec3f ppt = sphere.m_Center - (*tri.n * (dot_product(sphere.m_Center - *tri.p0, *tri.n)));
+	if (dot_product(sphere.m_Center - ppt, sphere.m_Center - ppt) > sphere.m_Radius * sphere.m_Radius) return false;
+	if (dot_product(sphere.m_Center - *tri.p0, *tri.n) < 0) return false;
+	vec3f edge0 = *tri.p1 - *tri.p0;
+	vec3f edge1 = *tri.p2 - *tri.p1;
+	vec3f edge2 = *tri.p0 - *tri.p2;
+	vec3f normal0;
+	cross_product(normal0, edge0, *tri.n);
+	vec3f normal1;
+	cross_product(normal1, edge1, *tri.n);
+	vec3f normal2;
+	cross_product(normal2, edge2, *tri.n);
+	bool test = true;
+	vec3f p0 = ppt - *tri.p0;
+	if (dot_product(normal0, p0) > 0)
+	{
+		test = false;
+	}
+	vec3f p1 = ppt - *tri.p1;
+	if (dot_product(normal1, p1) > 0)
+	{
+		test = false;
+	}
+	vec3f p2 = ppt - *tri.p2;
+	if (dot_product(normal2, p2) > 0)
+	{
+		test = false;
+	}
+	if (!test)
+	{
+
+		float d0 = dot_product(sphere.m_Center - *tri.p0, edge0);
+		float d1 = dot_product(sphere.m_Center - *tri.p1, edge1);
+		float d2 = dot_product(sphere.m_Center - *tri.p2, edge2);
+		d0 = clamp(d0);
+		d1 = clamp(d1);
+		d2 = clamp(d2);
+		vec3f cp0 = *tri.p0 + edge0 * d0;
+		vec3f cp1 = *tri.p1 + edge1 * d1;
+		vec3f cp2 = *tri.p2 + edge2 * d2;
+		float r2 = sphere.m_Radius * sphere.m_Radius;
+		if (dot_product(sphere.m_Center - cp0, sphere.m_Center - cp0) < r2)
+		{
+			vec3f v = sphere.m_Center - cp0;
+			float dist = v.magnitude();
+			vec3f n = v / dist;
+			displacement = n * (sphere.m_Radius - dist);
+			return true;
+		}
+		if (dot_product(sphere.m_Center - cp1, sphere.m_Center - cp1) < r2)
+		{
+			vec3f v = sphere.m_Center - cp1;
+			float dist = v.magnitude();
+			vec3f n = v / dist;
+			displacement = n * (sphere.m_Radius - dist);
+			return true;
+		}
+		if (dot_product(sphere.m_Center - cp2, sphere.m_Center - cp2) < r2)
+		{
+			vec3f v = sphere.m_Center - cp2;
+			float dist = v.magnitude();
+			vec3f n = v / dist;
+			displacement = n * (sphere.m_Radius - dist);
+			return true;
+		}
+		else return false;
+	}
+	vec3f v = sphere.m_Center - ppt;
+	float dist = v.magnitude();
+	vec3f n = v / dist;
+	displacement = n * (sphere.m_Radius - dist);
+	return true;
+}
+
+bool IntersectMovingSphereMesh(const vec3f &start, const vec3f &d, float r, const ED2Mesh* mesh, float &t, vec3f &outNormal)
+{
+	// TODO: Read the header file comments for this function!
+	//std::vector<unsigned int[3]> index;
+
+	bool bCollision = false;
+	t = FLT_MAX;
+	float fTime = FLT_MAX;
+
+	// TODO: Complete this function
+	for (int i = 0; i < mesh->m_Triangles.size(); ++i)
+	{
+		unsigned int temp[3];
+		if (mesh->m_Triangles[i].indices[1] < mesh->m_Triangles[i].indices[0])
+		{
+			if (mesh->m_Triangles[i].indices[2] < mesh->m_Triangles[i].indices[1])
+			{
+				temp[0] = mesh->m_Triangles[i].indices[2];
+				temp[1] = mesh->m_Triangles[i].indices[1];
+				temp[2] = mesh->m_Triangles[i].indices[0];
+			}
+			else
+			{
+				temp[0] = mesh->m_Triangles[i].indices[1];
+				if (mesh->m_Triangles[i].indices[2] < mesh->m_Triangles[i].indices[0])
+				{
+					temp[1] = mesh->m_Triangles[i].indices[2];
+					temp[2] = mesh->m_Triangles[i].indices[0];
+				}
+				else
+				{
+					temp[1] = mesh->m_Triangles[i].indices[0];
+					temp[2] = mesh->m_Triangles[i].indices[2];
+				}
+			}
+		}
+		else if (mesh->m_Triangles[i].indices[2] < mesh->m_Triangles[i].indices[0])
+		{
+			temp[0] = mesh->m_Triangles[i].indices[2];
+			temp[1] = mesh->m_Triangles[i].indices[0];
+			temp[2] = mesh->m_Triangles[i].indices[1];
+		}
+		else
+		{
+			temp[0] = mesh->m_Triangles[i].indices[0];
+			temp[1] = mesh->m_Triangles[i].indices[1];
+			temp[2] = mesh->m_Triangles[i].indices[2];
+		}
+		if (IntersectMovingSphereTriangle(mesh->m_Vertices[temp[0]].pos, mesh->m_Vertices[temp[1]].pos, mesh->m_Vertices[temp[2]].pos, mesh->m_TriNorms[i], start, d, r, t, outNormal))
+		{
+			if (t < fTime)
+				fTime = t;
+			bCollision = true;
+		}
+	}
+	t = fTime;
+	return bCollision;
+}
+
+Triangle tris[18];
+
 float3 zeroF = float3(0, 0, 0);
 float3 tpln = float3(0.5f, 0, 0.866025f);
 float3 rpln = float3(1.0f, 0, 0);
+float3 tplnnz = float3(0.5f, 0, -0.866025f);
+float3 tplnnznx = float3(-0.5f, 0, -0.866025f);
+float3 rplnnx = float3(-1.0f, 0, 0);
+float3 tplnnx = float3(-0.5f, 0, 0.866025f);
+float3 topn = float3(0, 1, 0);
 
-float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
+float3 top;
+float3 topP0;
+float3 topP1;
+float3 topP2;
+float3 topP3;
+float3 topP4;
+float3 topP5;
+float3 bottom;
+float3 bottomP0;
+float3 bottomP1;
+float3 bottomP2;
+float3 bottomP3;
+float3 bottomP4;
+float3 bottomP5;
+
+void BuildTris(const Hexagon& hex)
+{
+	top = hex.seg.m_End;
+	topP0 = float3(top.x, top.y, top.z + hex.s);
+	topP1 = float3(top.x + hex.h * 0.5f, top.y, top.z + hex.s * 0.5f);
+	topP2 = float3(top.x + hex.h * 0.5f, top.y, top.z - hex.s * 0.5f);
+	topP3 = float3(top.x, top.y, -hex.s);
+	topP4 = float3(top.x - hex.h * 0.5f, top.y, top.z - hex.s * 0.5f);
+	topP5 = float3(top.x - hex.h * 0.5f, top.y, top.z + hex.s * 0.5f);
+	bottom = hex.seg.m_Start;
+	bottomP0 = float3(bottom.x, bottom.y, bottom.z + hex.s);
+	bottomP1 = float3(bottom.x + hex.h * 0.5f, bottom.y, bottom.z + hex.s * 0.5f);
+	bottomP2 = float3(bottom.x + hex.h * 0.5f, bottom.y, bottom.z - hex.s * 0.5f);
+	bottomP3 = float3(bottom.x, bottom.y, bottom.z - hex.s);
+	bottomP4 = float3(bottom.x + hex.h * 0.5f, bottom.y, bottom.z - hex.s * 0.5f);
+	bottomP5 = float3(bottom.x - hex.h * 0.5f, bottom.y, bottom.z + hex.s * 0.5f);
+
+	//Triangle 1 topP0 -> bottomP0 -> bottomP1
+	//Triangle 2 topP1 -> bottomP1 -> topP0
+	//Triangle 3 topP1 -> bottomP1 -> bottomP2
+	//Triangle 4 topP2 -> bottomP2 -> topP1
+	//Triangle 5 topP2 -> bottomP2 -> bottomP3
+	//Triangle 6 topP3 -> bootomP3 -> topP2
+	//Triangle 7 topP3 -> bootomP3 -> bottomP4
+	//Triangle 8 topP4 -> bootomP4 -> topP3
+	//Triangle 9 topP4 -> bootomP4 -> bottomP5
+	//Triangle 10 topP5 -> bootomP5 -> topP4
+	//Triangle 11 topP5 -> bootomP5 -> bottomP0
+	//Triangle 12 topP0 -> bootomP0 -> topP5
+
+	
+	tris[0].SetTriangle( &topP0, &bottomP0, &bottomP1, &tpln );
+	tris[1].SetTriangle( &topP1, &bottomP1, &topP0, &tpln );
+	tris[2].SetTriangle( &topP1, &bottomP1, &bottomP2, &rpln );
+	tris[3].SetTriangle( &topP2, &bottomP2, &topP1, &rpln );
+	tris[4].SetTriangle( &topP2, &bottomP2, &bottomP3, &tplnnz );
+	tris[5].SetTriangle( &topP3, &bottomP3, &topP2, &tplnnz );
+	tris[6].SetTriangle( &topP3, &bottomP3, &bottomP4, &tplnnznx );
+	tris[7].SetTriangle( &topP4, &bottomP4, &topP3, &tplnnznx );
+	tris[8].SetTriangle( &topP4, &bottomP4, &bottomP5, &rplnnx );
+	tris[9].SetTriangle( &topP5, &bottomP5, &topP4, &rplnnx );
+	tris[10].SetTriangle( &topP5, &bottomP5, &bottomP0, &tplnnx );
+	tris[11].SetTriangle(&topP0, &topP0, &topP5, &tplnnx);
+	tris[12].SetTriangle(&topP0, &topP1, &top, &topn);
+	tris[13].SetTriangle(&topP1, &topP2, &top, &topn);
+	tris[14].SetTriangle(&topP2, &topP3, &top, &topn);
+	tris[15].SetTriangle(&topP3, &topP4, &top, &topn);
+	tris[16].SetTriangle(&topP4, &topP5, &top, &topn);
+	tris[17].SetTriangle(&topP5, &topP0, &top, &topn);
+}
+
+float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& Stime, ED2Mesh* mesh)
 {
 	AABB bounding;
-	bounding.min = float3(hex.seg.m_Start.x - 3, hex.seg.m_Start.y - 3, hex.seg.m_Start.z - 3);
-	bounding.max = float3(hex.seg.m_End.x + 3, hex.seg.m_End.y + 3, hex.seg.m_End.z + 3);
-	
-	if (!SphereToAABB(s, bounding))
+	bounding.min = float3(hex.seg.m_Start.x - 1, hex.seg.m_Start.y - 1, hex.seg.m_Start.z - 1);
+	bounding.max = float3(hex.seg.m_End.x + 1, hex.seg.m_End.y + 1, hex.seg.m_End.z + 1);
+	AABB sbox;
+	sbox.min = s.m_Center - s.m_Radius - 1;
+	sbox.max = s.m_Center + s.m_Radius + 1;
+	if (!AABBtoAABB(sbox, bounding))
 		return zeroF;
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*
+	float3 top = hex.seg.m_End;
+	float3 topP0 = float3(top.x, top.y, top.z + hex.s);
+	float3 topP1 = float3(top.x + hex.h * 0.5f, top.y, top.z + hex.s * 0.5f);
+	float3 topP2 = float3(top.x + hex.h * 0.5f, top.y, top.z - hex.s * 0.5f);
+	float3 topP3 = float3(top.x, top.y, -hex.s);
+	float3 topP4 = float3(top.x - hex.h * 0.5f, top.y, top.z - hex.s * 0.5f);
+	float3 topP5 = float3(top.x - hex.h * 0.5f, top.y, top.z + hex.s * 0.5f);
+	float3 bottom = hex.seg.m_Start;
+	float3 bottomP0 = float3(bottom.x, bottom.y,bottom.z + hex.s);
+	float3 bottomP1 = float3(bottom.x + hex.h * 0.5f, bottom.y, bottom.z + hex.s * 0.5f);
+	float3 bottomP2 = float3(bottom.x + hex.h * 0.5f, bottom.y, bottom.z - hex.s * 0.5f);
+	float3 bottomP3 = float3(bottom.x, bottom.y, bottom.z - hex.s);
+	float3 bottomP4 = float3(bottom.x + hex.h * 0.5f, bottom.y, bottom.z - hex.s * 0.5f);
+	float3 bottomP5 = float3(bottom.x - hex.h * 0.5f, bottom.y, bottom.z + hex.s * 0.5f);
 
-	//vec3f SE = hex.seg.m_End - hex.seg.m_Start;
-	//float ratio = dot_product(SE, s.m_Center - hex.seg.m_Start) / dot_product(SE, SE);
-	//ratio = max(0, min(ratio, 1));
-	//SE = hex.seg.m_Start + SE * ratio;
+	//Triangle 1 topP0 -> bottomP0 -> bottomP1
+	//Triangle 2 topP1 -> bottomP1 -> topP0
+	//Triangle 3 topP1 -> bottomP1 -> bottomP2
+	//Triangle 4 topP2 -> bottomP2 -> topP1
+	//Triangle 5 topP2 -> bottomP2 -> bottomP3
+	//Triangle 6 topP3 -> bootomP3 -> topP2
+	//Triangle 7 topP3 -> bootomP3 -> bottomP4
+	//Triangle 8 topP4 -> bootomP4 -> topP3
+	//Triangle 9 topP4 -> bootomP4 -> bottomP5
+	//Triangle 10 topP5 -> bootomP5 -> topP4
+	//Triangle 11 topP5 -> bootomP5 -> bottomP1
+	//Triangle 12 topP1 -> bootomP1 -> topP5
+	*/
 
-	float3 rels = float3(s.m_Center.x - hex.seg.m_Start.x, s.m_Center.y - hex.seg.m_Start.y, s.m_Center.z - hex.seg.m_Start.z);
+	//useless triangle shit
+	/*BuildTris(hex);
 
-	float3 relVel;
-	relVel.x = (rels.x < 0) ? -vel.x : vel.x;
-	relVel.z = (rels.z < 0) ? -vel.z : vel.z;
-	relVel.y = vel.y;
+	float3 Sdirection = s.m_Center - pastPos;
 
-	float3 startPoint = float3(abs(rels.x), rels.y, abs(rels.z)) - relVel;
+	float time = 0;
+	float3 outN = zeroF;
+	bool test = false;
+	float smallest = 1;
+	float3 smallestN = zeroF;
+	float dot = 1;
 
-	float3 endPoint = float3(abs(rels.x), rels.y, abs(rels.z)) + relVel;
+	for (int i = 0; i < 18; ++i)
+	{
+		test = false;
+		dot = dot_product(Sdirection.normalize(), *tris[i].n);
+		if (dot < 0)
+		{
+			test = IntersectMovingSphereTriangle(*tris[i].p0, *tris[i].p1, *tris[i].p2, *tris[i].n, pastPos, Sdirection, s.m_Radius, time, outN);
+		}
+		if (test)
+		{
+			if (time < smallest)
+			{
+				smallest = time;
+				smallestN = *tris[i].n;
+			}
+		}
+	}
+	if(!smallestN.isEquil(zeroF) && smallest < Stime)
+	{
+		float3 NPos = pastPos + Sdirection * smallest;
 
-	NewPlane toptest;
-	toptest.n = float3(0, 1, 0);
-	toptest.p = hex.seg.m_End + toptest.n * s.m_Radius;
+		s.m_Center = NPos;
+		Stime = smallest;
+		return smallestN;
+	}
+	return zeroF;*/
+	/*
+	if (mesh)
+	{
+		float3 Sdirection = s.m_Center - pastPos;
 
-	NewPlane tpl;
-	tpl.n = tpln;
-	tpl.p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + tpln * s.m_Radius;
+		float3 CurRelitivePos = s.m_Center - hex.seg.m_Start;
+		float3 PastRelitivePos = pastPos - hex.seg.m_Start;
 
-	NewPlane rpl;
-	rpl.n = rpln;
-	rpl.p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + rpln * s.m_Radius;
-	//////////////////////Check if crosses the Top plane/////////////////////////////////////////////
-	int TstartTest = ClassifyPointToPlane(toptest, startPoint);
-	int TendTest = ClassifyPointToPlane(toptest, endPoint);
-	
+		float time = 0;
+		float3 outN = zeroF;
+
+		bool test = IntersectMovingSphereMesh(PastRelitivePos, Sdirection.normalize(), s.m_Radius, mesh, time, outN);
+
+		if (test && time < 1)
+		{
+			s.m_Center = pastPos + Sdirection * time;
+
+			return outN;
+		}
+	}
+	return zeroF;*/
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3 endPoint = float3(s.m_Center.x - hex.seg.m_Start.x, s.m_Center.y - hex.seg.m_Start.y, s.m_Center.z - hex.seg.m_Start.z);
+	float3 startPoint = float3(pastPos.x - hex.seg.m_Start.x, pastPos.y - hex.seg.m_Start.y, pastPos.z - hex.seg.m_Start.z);
+
+	NewPlane planes[7];
+	planes[0].n = float3(0, 1, 0);
+	planes[0].p = hex.seg.m_End + float3(0,1,0) * s.m_Radius;
+
+	planes[1].n = tpln;
+	planes[1].p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + tpln * s.m_Radius;
+
+	planes[2].n = rpln;
+	planes[2].p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + rpln * s.m_Radius;
+
+	planes[3].n = tplnnz;
+	planes[3].p = float3(hex.h * 0.5f, 0, -hex.s * 0.5f) + tplnnz * s.m_Radius;
+
+	planes[4].n = tplnnznx;
+	planes[4].p = float3(-hex.h * 0.5f, 0, -hex.s * 0.5f) + tplnnznx * s.m_Radius;
+
+	planes[5].n = rplnnx;
+	planes[5].p = float3(-hex.h * 0.5f, 0, hex.s * 0.5f) + rplnnx * s.m_Radius;
+
+	planes[6].n = tplnnx;
+	planes[6].p = float3(-hex.h * 0.5f, 0, hex.s * 0.5f) + tplnnx * s.m_Radius;
+
+	////////////////////////////////////////////////////////////////////////
+
+	float times[7] = { 100 };
+	float3 InPoints[7];
+
+	for (int i = 0; i < 7; ++i)
+	{
+		int Stest = ClassifyPointToPlane(planes[i], startPoint);
+		int Etest = ClassifyPointToPlane(planes[i], endPoint);
+		if (Stest == 1 && Etest == 1)
+		{
+			return zeroF;
+		}
+		if (Stest >= 0 && Etest == -1)
+		{
+			InPoints[i] = LS2PI(startPoint, endPoint, planes[i], times[i]);
+		}
+		else
+		{
+			InPoints[i] = float3(100, 100, 100);
+			times[i] = 100;
+		}
+	}
+
+	int at = -1;
+
+	for (int i = 0; i < 7; ++i)
+	{
+		int testInside;
+		bool isInside = true;
+		for (int j = 0; j < 7; ++j)
+		{
+			if (j == i || times[i] == 100)
+			{
+				continue;
+			}
+			testInside = ClassifyPointToPlane(planes[j], InPoints[i]);
+			if (testInside > 0)
+			{
+				isInside = false;
+				break;
+			}
+		}
+		if (isInside)
+		{
+			if (at == -1 && times[i] < 1)
+			{
+				at = i;
+			}
+			else if (times[i] < times[at])
+			{
+				at = i;
+			}
+		}
+	}
+
+	if (at != -1 && times[at] < Stime)
+	{
+		float3 L = s.m_Center - pastPos;
+		if (dot_product(L, planes[at].n) < 0)
+		{
+			s.m_Center = pastPos + L * (times[at] - 0.00001f);
+			Stime = times[at];
+
+			return planes[at].n;
+		}
+	}
+	return zeroF;
+
+	/*
 	//If above top plane then no collision with anything return zero
 	if (TstartTest == 1 && TendTest == 1)
 	{
@@ -1159,20 +1767,20 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		//If on both planes then collide with corner
 		if (toprightresult == 0 && rightresult == 0)
 		{
-			float3 dff = InPoint - startPoint;
-
-			if (rels.x < 0)
+			if (relPos.x < 0)
 			{
-				dff.x *= -1;
+				InPoint.x *= -1;
 				rpl.n.x *= -1;
 				tpl.n.x *= -1;
 			}
-			if (rels.z < 0)
+			if (relPos.z < 0)
 			{
-				dff.z *= -1;
+				InPoint.z *= -1;
 				rpl.n.z *= -1;
 				tpl.n.x *= -1;
 			}
+
+			float3 dff = InPoint - relPos;
 
 			s.m_Center += dff;
 
@@ -1181,10 +1789,10 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		//If in both then collides with top
 		else if (toprightresult == -1 && rightresult == -1)
 		{
-			float3 dff = InPoint - startPoint;
+			if (relPos.x < 0) InPoint.x *= -1;
+			if (relPos.z < 0) InPoint.z *= -1;
 
-			if (rels.x < 0) dff.x *= -1;
-			if (rels.z < 0) dff.z *= -1;
+			float3 dff = InPoint - relPos;
 
 			s.m_Center += dff;
 
@@ -1193,18 +1801,18 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		//If on the edge of one of the planes
 		else if (toprightresult == 0)
 		{
-			float3 dff = InPoint - startPoint;
+			if (relPos.x < 0)
+			{
+				InPoint.x *= -1;
+				tpl.n.x *= -1;
+			}
+			if (relPos.z < 0)
+			{
+				InPoint.z *= -1;
+				tpl.n.x *= -1;
+			}
 
-			if (rels.x < 0)
-			{
-				dff.x *= -1;
-				tpl.n.x *= -1;
-			}
-			if (rels.z < 0)
-			{
-				dff.z *= -1;
-				tpl.n.x *= -1;
-			}
+			float3 dff = InPoint - relPos;
 
 			s.m_Center += dff;
 
@@ -1212,18 +1820,18 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		}
 		else if (rightresult == 0)
 		{
-			float3 dff = InPoint - startPoint;
-
-			if (rels.x < 0)
+			if (relPos.x < 0)
 			{
-				dff.x *= -1;
+				InPoint.x *= -1;
 				rpl.n.x *= -1;
 			}
-			if (rels.z < 0)
+			if (relPos.z < 0)
 			{
-				dff.z *= -1;
+				InPoint.z *= -1;
 				rpl.n.z *= -1;
 			}
+
+			float3 dff = InPoint - relPos;
 
 			s.m_Center += dff;
 
@@ -1264,20 +1872,20 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			int rightresult = ClassifyPointToPlane(rpl, InPoint);
 			if (rightresult == 0)
 			{
-				float3 dff = InPoint - startPoint;
-
-				if (rels.x < 0)
+				if (relPos.x < 0)
 				{
-					dff.x *= -1;
+					InPoint.x *= -1;
 					rpl.n.x *= -1;
 					tpl.n.x *= -1;
 				}
-				if (rels.z < 0)
+				if (relPos.z < 0)
 				{
-					dff.z *= -1;
+					InPoint.z *= -1;
 					rpl.n.z *= -1;
 					tpl.n.x *= -1;
 				}
+
+				float3 dff = InPoint - relPos;
 
 				s.m_Center += dff;
 
@@ -1285,18 +1893,18 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			}
 			else if (rightresult == -1)
 			{
-				float3 dff = InPoint - startPoint;
+				if (relPos.x < 0)
+				{
+					InPoint.x *= -1;
+					tpl.n.x *= -1;
+				}
+				if (relPos.z < 0)
+				{
+					InPoint.z *= -1;
+					tpl.n.x *= -1;
+				}
 
-				if (rels.x < 0)
-				{
-					dff.x *= -1;
-					tpl.n.x *= -1;
-				}
-				if (rels.z < 0)
-				{
-					dff.z *= -1;
-					tpl.n.x *= -1;
-				}
+				float3 dff = InPoint - relPos;
 
 				s.m_Center += dff;
 
@@ -1309,7 +1917,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			int RendTest = ClassifyPointToPlane(rpl, endPoint);
 			if (RstartTest == 1 && RendTest == 1)
 			{
-				return zeroF;
+				//return zeroF;
 			}
 			if (RstartTest == 0 && RendTest == 0)
 			{
@@ -1332,18 +1940,18 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				{
 					return zeroF;
 				}
-				float3 dff = InPoint - startPoint;
-
-				if (rels.x < 0)
+				if (relPos.x < 0)
 				{
-					dff.x *= -1;
+					InPoint.x *= -1;
 					rpl.n.x *= -1;
 				}
-				if (rels.z < 0)
+				if (relPos.z < 0)
 				{
-					dff.z *= -1;
+					InPoint.z *= -1;
 					rpl.n.z *= -1;
 				}
+
+				float3 dff = InPoint - relPos;
 
 				s.m_Center += dff;
 
@@ -1351,6 +1959,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 			}
 		}
 	}
+	*/  //NewOld
 	////////////////////////////////////////////////////////////////////Test Top & Bottom/////////////////////////////////////////////////////////////        OLD
 	/*
 	int topcify = ClassifySphereToPlane(toptest, s);
@@ -1363,7 +1972,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	if (bottomcify == 2 && topcify == 2)
 	{
 		///////////////////////////////////////////////////////////////////////Test Sides/////////////////////////////////////////////////////////////////
-		// Perform a sphere-to-plane test. 
+		// Perform a sphere-to-plane test.
 		// Returns 1 if the sphere is in front of the plane.
 		// Returns 2 if the sphere is behind the plane.
 		// Returns 3 if the sphere straddles the plane.
@@ -1377,7 +1986,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		}
 		else if (cify == 2)
 		{
-			
+
 			Sphere rScopy;
 			rScopy.m_Center = float3(abs(s.m_Center.x - SE.x), 0, abs(s.m_Center.z - SE.z));
 			rScopy.m_Radius = s.m_Radius;
@@ -1399,8 +2008,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				{
 					float3 dff = p1 - rScopy.m_Center;
 
-					if (rels.x < 0) dff.x *= -1;
-					if (rels.z < 0) dff.z *= -1;
+					if (relPos.x < 0) dff.x *= -1;
+					if (relPos.z < 0) dff.z *= -1;
 
 					s.m_Center += dff - 0.00001f;
 
@@ -1415,8 +2024,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				{
 					float3 dff = p2 - rScopy.m_Center;
 
-					if (rels.x < 0) dff.x *= -1;
-					if (rels.z < 0) dff.z *= -1;
+					if (relPos.x < 0) dff.x *= -1;
+					if (relPos.z < 0) dff.z *= -1;
 
 					s.m_Center += dff - 0.00001f;
 
@@ -1431,8 +2040,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				{
 					float3 dff = p0 - rScopy.m_Center;
 
-					if (rels.x < 0) dff.x *= -1;
-					if (rels.z < 0) dff.z *= -1;
+					if (relPos.x < 0) dff.x *= -1;
+					if (relPos.z < 0) dff.z *= -1;
 
 					s.m_Center += dff - 0.00001f;
 
@@ -1450,8 +2059,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 				float3 dff = cc - rScopy.m_Center;
 
-				if (rels.x < 0) dff.x *= -1;
-				if (rels.z < 0) dff.z *= -1;
+				if (relPos.x < 0) dff.x *= -1;
+				if (relPos.z < 0) dff.z *= -1;
 
 				s.m_Center += dff - 0.00001f;
 
@@ -1476,8 +2085,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 
 				float3 dff = cc - rScopy.m_Center;
 
-				if (rels.x < 0) dff.x *= -1;
-				if (rels.z < 0) dff.z *= -1;
+				if (relPos.x < 0) dff.x *= -1;
+				if (relPos.z < 0) dff.z *= -1;
 
 				s.m_Center += dff - 0.00001f;
 
@@ -1498,8 +2107,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				{
 					float3 dff = p1 - rScopy.m_Center;
 
-					if (rels.x < 0) dff.x *= -1;
-					if (rels.z < 0) dff.z *= -1;
+					if (relPos.x < 0) dff.x *= -1;
+					if (relPos.z < 0) dff.z *= -1;
 
 					s.m_Center += dff - 0.00001f;
 
@@ -1514,8 +2123,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 				{
 					float3 dff = p2 - rScopy.m_Center;
 
-					if (rels.x < 0) dff.x *= -1;
-					if (rels.z < 0) dff.z *= -1;
+					if (relPos.x < 0) dff.x *= -1;
+					if (relPos.z < 0) dff.z *= -1;
 
 					s.m_Center += dff - 0.00001f;
 
@@ -1550,16 +2159,17 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 		}
 	}
 	*/
-	return zeroF;
 }
 
-float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& vel)
+float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& pastPos, float& time, ED2Mesh* mesh)
 {
 	Sphere s;
 	s.m_Center = c.m_Segment.m_Start;
 	s.m_Radius = c.m_Radius;
-	float3 n = HexagonToSphere(hex, s, vel);
-	c.m_Segment.m_Start = s.m_Center;
+	float3 n = HexagonToSphere(hex, s, pastPos, time, mesh);
+	float3 diff = c.m_Segment.m_Start - s.m_Center;
+	diff = n * dot_product(diff, n);
+	c.m_Segment.m_Start = c.m_Segment.m_Start - diff;
 	return n;
 }
 

@@ -1,6 +1,5 @@
 #include "PostProcess.h"
 
-
 namespace BLOOM
 {
 	struct VS_BLOOM_PARAMETERS
