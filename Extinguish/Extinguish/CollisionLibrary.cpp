@@ -1551,15 +1551,68 @@ void BuildTris(const Hexagon& hex)
 	tris[16].SetTriangle(&topP4, &topP5, &top, &topn);
 	tris[17].SetTriangle(&topP5, &topP0, &top, &topn);
 }
+AABB bounding;
+AABB sbox;
+NewPlane planes[7];
+
+void BuildPlanes(const Hexagon& hex, float r)
+{
+	if (planes[0].n.y != 0 || planes[1].n.x != 0.5f)
+	{
+		planes[0].n.x = 0;
+		planes[0].n.y = 1;
+		planes[0].n.z = 0;
+		planes[1].n = tpln;
+		planes[2].n = rpln;
+		planes[3].n = tplnnz;
+		planes[4].n = tplnnznx;
+		planes[5].n = rplnnx;
+		planes[6].n = tplnnx;
+	}
+	
+	planes[0].p.x = 0;
+	planes[0].p.y = hex.seg.m_End.y + r;
+	planes[0].p.z = 0;
+
+	planes[1].p.x = hex.h * 0.5f + tpln.x * r;
+	planes[1].p.y = 0 + tpln.y * r;
+	planes[1].p.z = hex.s * 0.5f + tpln.z * r;
+
+	planes[2].p.x = hex.h * 0.5f + rpln.x * r;
+	planes[2].p.y = rpln.y * r;
+	planes[2].p.z = hex.s * 0.5f + rpln.z * r;
+
+	planes[3].p.x = hex.h * 0.5f + tplnnz.x * r;
+	planes[3].p.y = tplnnz.y * r;
+	planes[3].p.z = -hex.s * 0.5f + tplnnz.z * r;
+
+	planes[4].p.x = -hex.h * 0.5f + tplnnznx.x * r;
+	planes[4].p.y = tplnnznx.y * r;
+	planes[4].p.z = -hex.s * 0.5f + tplnnznx.z * r;
+
+	planes[5].p.x = -hex.h * 0.5f + rplnnx.x * r;
+	planes[5].p.y = rplnnx.y * r;
+	planes[5].p.z = hex.s * 0.5f + rplnnx.z * r;
+
+	planes[6].p.x = -hex.h * 0.5f + tplnnx.x * r;
+	planes[6].p.y = tplnnx.y * r;
+	planes[6].p.z = hex.s * 0.5f + tplnnx.z * r;
+}
 
 float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& Stime, ED2Mesh* mesh)
 {
-	AABB bounding;
-	bounding.min = float3(hex.seg.m_Start.x - 1, hex.seg.m_Start.y - 1, hex.seg.m_Start.z - 1);
-	bounding.max = float3(hex.seg.m_End.x + 1, hex.seg.m_End.y + 1, hex.seg.m_End.z + 1);
-	AABB sbox;
-	sbox.min = s.m_Center - s.m_Radius - 1;
-	sbox.max = s.m_Center + s.m_Radius + 1;
+	bounding.min.x = hex.seg.m_Start.x - 1;
+	bounding.min.y = hex.seg.m_Start.y - 1;
+	bounding.min.z = hex.seg.m_Start.z - 1;
+	bounding.max.x = hex.seg.m_End.x + 1;
+	bounding.max.y = hex.seg.m_End.y + 1;
+	bounding.max.z = hex.seg.m_End.z + 1;
+	sbox.min.x = s.m_Center.x - s.m_Radius - 1;
+	sbox.min.y = s.m_Center.y - s.m_Radius - 1;
+	sbox.min.z = s.m_Center.z - s.m_Radius - 1;
+	sbox.max.x = s.m_Center.x + s.m_Radius + 1;
+	sbox.max.y = s.m_Center.y + s.m_Radius + 1;
+	sbox.max.z = s.m_Center.z + s.m_Radius + 1;
 	if (!AABBtoAABB(sbox, bounding))
 		return zeroF;
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1642,11 +1695,11 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		float time = 0;
 		float3 outN = zeroF;
 
-		bool test = IntersectMovingSphereMesh(PastRelitivePos, Sdirection.normalize(), s.m_Radius, mesh, time, outN);
+		bool test = IntersectMovingSphereMesh(PastRelitivePos, Sdirection, s.m_Radius, mesh, time, outN);
 
 		if (test && time < 1)
 		{
-			s.m_Center = pastPos + Sdirection * time;
+			s.m_Center = pastPos + Sdirection * (time - 0.0001f);
 
 			return outN;
 		}
@@ -1656,27 +1709,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	float3 endPoint = float3(s.m_Center.x - hex.seg.m_Start.x, s.m_Center.y - hex.seg.m_Start.y, s.m_Center.z - hex.seg.m_Start.z);
 	float3 startPoint = float3(pastPos.x - hex.seg.m_Start.x, pastPos.y - hex.seg.m_Start.y, pastPos.z - hex.seg.m_Start.z);
 
-	NewPlane planes[7];
-	planes[0].n = float3(0, 1, 0);
-	planes[0].p = hex.seg.m_End + float3(0,1,0) * s.m_Radius;
-
-	planes[1].n = tpln;
-	planes[1].p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + tpln * s.m_Radius;
-
-	planes[2].n = rpln;
-	planes[2].p = float3(hex.h * 0.5f, 0, hex.s * 0.5f) + rpln * s.m_Radius;
-
-	planes[3].n = tplnnz;
-	planes[3].p = float3(hex.h * 0.5f, 0, -hex.s * 0.5f) + tplnnz * s.m_Radius;
-
-	planes[4].n = tplnnznx;
-	planes[4].p = float3(-hex.h * 0.5f, 0, -hex.s * 0.5f) + tplnnznx * s.m_Radius;
-
-	planes[5].n = rplnnx;
-	planes[5].p = float3(-hex.h * 0.5f, 0, hex.s * 0.5f) + rplnnx * s.m_Radius;
-
-	planes[6].n = tplnnx;
-	planes[6].p = float3(-hex.h * 0.5f, 0, hex.s * 0.5f) + tplnnx * s.m_Radius;
+	BuildPlanes(hex, s.m_Radius);
 
 	////////////////////////////////////////////////////////////////////////
 
@@ -2160,16 +2193,18 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	}
 	*/
 }
-
+Sphere s;
 float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& pastPos, float& time, ED2Mesh* mesh)
 {
-	Sphere s;
 	s.m_Center = c.m_Segment.m_Start;
 	s.m_Radius = c.m_Radius;
 	float3 n = HexagonToSphere(hex, s, pastPos, time, mesh);
-	float3 diff = c.m_Segment.m_Start - s.m_Center;
-	diff = n * dot_product(diff, n);
-	c.m_Segment.m_Start = c.m_Segment.m_Start - diff;
+	if (!n.isEquil(zeroF))
+	{
+		float3 diff = c.m_Segment.m_Start - s.m_Center;
+		diff = n * dot_product(diff, n);
+		c.m_Segment.m_Start = c.m_Segment.m_Start - diff;
+	}
 	return n;
 }
 
