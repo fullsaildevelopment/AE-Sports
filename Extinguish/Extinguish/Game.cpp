@@ -2143,7 +2143,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	rButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	rButton->SetGameObject(resumeGame);
 	rButton->showFPS(false);
-	rButton->setPositionMultipliers(0.80f, 0.30f);
+	rButton->setPositionMultipliers(0.1f, 0.30f);
 	resumeGame->AddComponent(rButton);
 	UIRenderer * rRender = new UIRenderer();
 	rRender->Init(true, 25.0f, devResources, rButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2165,7 +2165,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	eButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setPositionMultipliers(0.80f, 0.40f);
+	eButton->setPositionMultipliers(0.1f, 0.40f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
 	eRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2187,7 +2187,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	mButton->SetGameObject(exitMenu);
 	mButton->showFPS(false);
-	mButton->setPositionMultipliers(0.80f, 0.50f);
+	mButton->setPositionMultipliers(0.1f, 0.50f);
 	exitMenu->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
 	mRender->Init(true, 25.0f, devResources, mButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
