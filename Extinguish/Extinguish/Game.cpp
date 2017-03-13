@@ -511,7 +511,7 @@ void Game::CreateScenes(InputManager* input)
 		menu->Init(devResources, input);
 
 		menu->set2DRenderTarget(devResources->GetRenderTarget());
-		CreateScoreBoard(menu); // uncomment when testing scoreboard
+		//CreateScoreBoard(menu); // uncomment when testing scoreboard
 		// move CreateScoreBoard into Pause Menu or whatever whenever you have everything positioned as you want.
 		// We will need an easier way to turn on the pause menu, however. There are too many UI objects to make up the scoreboard as is, and it might eat up too much time getting all those game objects. might.
 		CreateMenu(menu); // comment when testing scoreboard
