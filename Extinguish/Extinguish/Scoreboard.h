@@ -23,11 +23,17 @@ private:
 	GameObject* scoreboardBackground;
 	Scene* scene;
 	DeviceResources* devResources;
+	bool alreadyCreated;
 
 	//const members
 	const int numOfTeams = 2;
 	const int numOfLabels = 10;
 	const int sceneID = 2;
+	const float ySpacing = 0.06f;
+	const float yPos = 0.40f;
+	const float yPosLabel = 0.35f;
+	//const float yPos = 0.23f;
+	//const float yPosLabel = 0.18f;
 
 	//private helper functions
 	void CreateLabels(float position);
