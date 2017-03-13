@@ -575,7 +575,7 @@ void Server::sendFloor()
 	int size = floorState[0].size();
 	int tempSize = size / 40;
 
-	for (unsigned int x = 1; x <= tempSize; ++x) {
+	for (unsigned int x = 1; x <= (unsigned int)tempSize; ++x) {
 		BitStream bOut;
 		bOut.Write((MessageID)ID_INCOMING_FLOOR);
 
