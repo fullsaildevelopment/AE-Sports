@@ -112,7 +112,7 @@ public:
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-			newServer.setStates(i, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation, gameStates[i]->parentIndex, gameStates[i]->animationIndex, gameStates[i]->otherIndex, gameStates[i]->transitionIndex, gameStates[i]->soundID, gameStates[i]->hasSound);
+			newServer.setStates(i, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation, gameStates[i]->parentIndex, gameStates[i]->animationIndex, gameStates[i]->otherIndex, gameStates[i]->_dt, gameStates[i]->transitionIndex, gameStates[i]->soundID, gameStates[i]->hasSound);
 		}
 	}
 
@@ -170,7 +170,7 @@ public:
 	unsigned int getObjCount() { return objCount; }
 
 	void setScores(int scoreA, int scoreB) { newServer.setScores(scoreA, scoreB); }
-	void setTime(float time) { newServer.setTime(time); }
+	void setTime(float time, float _dt) { newServer.setTime(time, _dt); }
 
 	void sendGameState() { newServer.sendState(); }
 	void StartGame() { newServer.StartGame(); }
@@ -200,4 +200,12 @@ public:
 	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i);}
 	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
 	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
+
+	void resetFloor() { newServer.clearFloor(); }
+	void SetFloor(float3 hex)
+	{
+		newServer.setFloorState(hex.x, hex.y, hex.z);
+	}
+
+	void SendFloor() { newServer.sendFloor(); }
 };

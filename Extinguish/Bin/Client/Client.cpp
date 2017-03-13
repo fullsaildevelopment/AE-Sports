@@ -18,6 +18,8 @@ Client::Client()
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
 	gameState[0].resize(1);
+	floorState = new std::vector<XMFLOAT3>();
+	floorState[0].resize(2090);
 }
 
 Client::~Client()
@@ -202,6 +204,11 @@ int Client::run()
 			GetID();
 			if (!gameStart)
 				return 7;
+			break;
+		}
+		case ID_INCOMING_FLOOR:
+		{
+			receiveFloor();
 			break;
 		}
 		}
@@ -423,6 +430,7 @@ void Client::receiveGameState()
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
+	bIn.Read(gameState[0][0]._dt);
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
 		if (i == clientID - 1)
@@ -460,4 +468,25 @@ void Client::sendEmpty(bool empty)
 	bsOut.Write(clientID);
 	bsOut.Write(empty);
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
+}
+
+void Client::receiveFloor()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	UINT8 numFloor;
+	bIn.Read(numFloor);
+	//floorState[0].clear();
+
+	for (unsigned int i = 0; i < (unsigned int)numFloor; ++i)
+	{
+		UINT8 index;
+		bIn.Read(index);
+		XMFLOAT3 hex;
+		bIn.Read(hex.x);
+		bIn.Read(hex.y);
+		bIn.Read(hex.z);
+		floorState[0][index] = hex;
+	}
 }

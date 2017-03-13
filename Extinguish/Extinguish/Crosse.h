@@ -25,7 +25,7 @@ private:
 	const float maxX = 43.0f;
 	const float maxY = 46.0f;
 	float minX, minY;
-	float dt;
+	float _dt;
 	bool catchMode;
 	//float catchAgainTimer;
 	//const float timeUntilCatchAgain = 0.0f;
@@ -41,7 +41,7 @@ public:
 
 	//basic
 	void Init();
-	void Update(float dt) override;
+	void Update(float _dt) override;
 	void OnTriggerEnter(Collider* collider) override;
 
 	//misc

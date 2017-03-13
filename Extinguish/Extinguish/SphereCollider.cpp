@@ -16,7 +16,7 @@ SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Colli
 	GetGameObject()->GetTransform()->AddVelocity(v * 3);
 }
 
-void SphereCollider::FixedUpdate(float dt)
+void SphereCollider::FixedUpdate(float _dt)
 {
 	if (objects.size() == 0)
 	{
@@ -55,14 +55,14 @@ void SphereCollider::FixedUpdate(float dt)
 			else
 			{
 				Sphere s = GetWorldSphere();
-				float3 vel = tgt->GetVelocity() * dt;
+				float3 vel = tgt->GetVelocity() * _dt;
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c.x == 1 || c.y == 1)
 				{
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel * c / dt, s.m_Center, true);
+						op->HandlePhysics(tgt, vel * c / _dt, s.m_Center, true);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
@@ -75,7 +75,7 @@ void SphereCollider::FixedUpdate(float dt)
 					{
 						tgt->SetPosition(s.m_Center);
 						vel *= c;
-						tgt->SetVelocity(vel / dt);
+						tgt->SetVelocity(vel / _dt);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
@@ -160,16 +160,16 @@ void SphereCollider::FixedUpdate(float dt)
 			{
 				Sphere s = GetWorldSphere();
 				Sphere os = sphere->GetWorldSphere();
-				float3 vel = tgt->GetVelocity() * dt;
-				float3 bvel = tgt->GetVelocity() * dt;
-				float3 svel = sphere->GetGameObject()->GetTransform()->GetVelocity() * dt;
-				float3 bsvel = sphere->GetGameObject()->GetTransform()->GetVelocity() * dt;
+				float3 vel = tgt->GetVelocity() * _dt;
+				float3 bvel = tgt->GetVelocity() * _dt;
+				float3 svel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
+				float3 bsvel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
 				if (!vel.isEquil(float3(0, 0, 0)) && svel.isEquil(float3().make_zero()))
 				{
 					float3 n = SweptSpheretoSphere(s, os, vel);
 					if (!n.isEquil(float3(0, 0, 0)))
 					{
-						tgt->SetVelocity(vel / dt);
+						tgt->SetVelocity(vel / _dt);
 						tgt->SetPosition(s.m_Center);
 						if (!CollidingWith[i])
 						{
@@ -192,9 +192,9 @@ void SphereCollider::FixedUpdate(float dt)
 					{
 						checked.push_back(sphere);
 						sphere->checked.push_back((Collider*)this);
-						tgt->SetVelocity(vel / dt);
+						tgt->SetVelocity(vel / _dt);
 						tgt->SetPosition(s.m_Center);
-						objects[i]->GetTransform()->SetVelocity(svel / dt);
+						objects[i]->GetTransform()->SetVelocity(svel / _dt);
 						objects[i]->GetTransform()->SetPosition(os.m_Center);
 						objects[i]->OnCollisionEnter(this);
 						tg->OnCollisionEnter(sphere);

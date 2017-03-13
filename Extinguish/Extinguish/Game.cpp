@@ -49,6 +49,8 @@ Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
 float Game::Time = 300.0f;
 
+float Game::dt = 0.0333f;
+
 Game::~Game()
 {
 	
@@ -146,7 +148,7 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 	}
 }
 
-int Game::Update(float dt)
+int Game::Update()
 {
 	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 	{
@@ -175,7 +177,7 @@ int Game::Update(float dt)
 		if (currentScene >= 2) {
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
-				server.setTime(Time);
+				server.setTime(Time, dt);
 
 				if (server.getObjCount() == 0)
 					server.setObjCount(scenes[currentScene]->GetNumObjects());
@@ -189,6 +191,7 @@ int Game::Update(float dt)
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
 				UpdateServerStates();
+				//SendFloor();
 			}
 
 			//run server
@@ -216,7 +219,7 @@ int Game::Update(float dt)
 			// so that it can be included in update
 			if ((clientState == 2 || clientState == 4) && client.getID() > 0)
 			{
-				UpdateClientObjects(dt);
+				UpdateClientObjects();
 
 				if (clientState == 4)
 				{
@@ -273,7 +276,7 @@ int Game::Update(float dt)
 	return returnResult;
 }
 
-void Game::FixedUpdate(float dt)
+void Game::FixedUpdate()
 {
 	scenes[currentScene]->FixedUpdate(dt);
 }
@@ -337,9 +340,14 @@ void Game::HandleEvent(Event* e)
 				Button * exitButton = pauseExit->GetComponent<Button>();
 				Button * menuButton = pauseMenu->GetComponent<Button>();
 				//Button * scoreButton = pauseScore->GetComponent<Button>();
-				resumeButton->SetActive(true);
-				exitButton->SetActive(true);
-				menuButton->SetActive(true);
+				bool toggle = !resumeButton->getActive();
+				resumeButton->SetActive(toggle);
+				exitButton->SetActive(toggle);
+				menuButton->SetActive(toggle);
+
+				GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
+				Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
+				scoreBoard2->Toggle(toggle);
 			}
 		}
 
@@ -995,6 +1003,7 @@ void Game::CreateUI(Scene * basic)
 	scoreBoard->AddComponent(scoreBoardRenderer);
 	scoreBoardRenderer->Init(false, devResources, nullptr);
 	//CreateScoreBoard(basic);
+
 	//create game over menu
 
 
@@ -2134,7 +2143,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	rButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	rButton->SetGameObject(resumeGame);
 	rButton->showFPS(false);
-	rButton->setPositionMultipliers(0.80f, 0.30f);
+	rButton->setPositionMultipliers(0.1f, 0.30f);
 	resumeGame->AddComponent(rButton);
 	UIRenderer * rRender = new UIRenderer();
 	rRender->Init(true, 25.0f, devResources, rButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2156,7 +2165,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	eButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	eButton->SetGameObject(exitGame);
 	eButton->showFPS(false);
-	eButton->setPositionMultipliers(0.80f, 0.40f);
+	eButton->setPositionMultipliers(0.1f, 0.40f);
 	exitGame->AddComponent(eButton);
 	UIRenderer * eRender = new UIRenderer();
 	eRender->Init(true, 25.0f, devResources, eButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2178,7 +2187,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	mButton->SetGameObject(exitMenu);
 	mButton->showFPS(false);
-	mButton->setPositionMultipliers(0.80f, 0.50f);
+	mButton->setPositionMultipliers(0.1f, 0.50f);
 	exitMenu->AddComponent(mButton);
 	UIRenderer * mRender = new UIRenderer();
 	mRender->Init(true, 25.0f, devResources, mButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2190,6 +2199,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 	mButton->SetActive(false);
+
+	rButton->setHelper(scene->GetNumUIObjects());
 }
 
 void Game::AssignPlayers()
@@ -2295,6 +2306,7 @@ void Game::UpdateServerStates()
 		if (gameObject->GetName() == "HexFloor")
 		{
 			state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
+			state->_dt = dt;
 		}
 
 		float3 position = gameObject->GetTransform()->GetPosition();
@@ -2359,7 +2371,7 @@ void Game::UpdateServerStates()
 	}
 }
 
-void Game::UpdateClientObjects(float dt)
+void Game::UpdateClientObjects()
 {
 	// get current game states
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
@@ -2367,9 +2379,11 @@ void Game::UpdateClientObjects(float dt)
 	unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 
 	int id = client.getID();
+	dt = client.getDT();
 
 	if (!ResourceManager::GetSingleton()->IsServer())
 	{
+		if (client.stateSize() > 0){
 		//remove children of every object
 		for (unsigned int i = 0; i < numobjs; ++i)
 		{
@@ -2387,7 +2401,7 @@ void Game::UpdateClientObjects(float dt)
 				if (gameObject->GetName() == "HexFloor")
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
-					if (fC->GetState() != client.getFloorState(i))
+					//if (fC->GetState() != client.getFloorState(i))
 						fC->SetState(client.getFloorState(i), dt);
 				}
 
@@ -2400,7 +2414,7 @@ void Game::UpdateClientObjects(float dt)
 				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
 
 				INT8 parentIndex = client.GetParentIndex(i);
-				if (parentIndex >= 0)
+				if (parentIndex >= 0 && parentIndex <= gameObjects->size())
 				{
 					gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
 				}
@@ -2441,11 +2455,14 @@ void Game::UpdateClientObjects(float dt)
 					//cout << "play sound" << endl;
 				}
 				Crosse* crosse = gameObject->GetComponent<Crosse>();
-				if(crosse)
+				if (crosse)
 					crosse->SetColor(client.hasBall(i));
 			}
 		}
+		}
 	}
+
+	//GetFloor();
 }
 
 void Game::UpdateScoreUI()
@@ -2544,4 +2561,49 @@ int Game::UpdateLobby()
 	}
 
 	return 1;
+}
+
+void Game::SendFloor()
+{
+	GameObject * floor = scenes[2]->GetGameObject("HexFloor");
+	FloorController * fc = floor->GetComponent<FloorController>();
+	unsigned int col = (unsigned int)fc->getCol();
+	unsigned int row = (unsigned int)fc->getRow();
+	float3 * thefloor = fc->getFloor();
+	server.resetFloor();
+	unsigned int total = row * col;
+
+	for (unsigned int i = 0; i < total; ++i)
+	{
+		server.SetFloor(thefloor[i]);
+		/*for (unsigned int j = 0; j < col; ++j)
+		{
+			server.SetFloor(thefloor[i * col + j]);
+		}*/
+	}
+
+	server.SendFloor();
+}
+
+void Game::GetFloor()
+{
+	if (!client.floorIsEmpty()) {
+		GameObject * floor = scenes[2]->GetGameObject("HexFloor");
+		FloorController * fc = floor->GetComponent<FloorController>();
+		unsigned int col = (unsigned int)fc->getCol();
+		unsigned int row = (unsigned int)fc->getRow();
+		float3 * thefloor = fc->getFloor();
+		//unsigned int x = 0;
+		int floorSize = client.floorSize();
+
+		for (unsigned int i = 0; i < (unsigned int)floorSize; ++i)
+		{
+			thefloor[i] = client.getFloorHex(i);
+			/*for (unsigned int j = 0; j < col; ++j)
+			{
+				thefloor[i * col + j] = client.getFloorHex(x);
+				++x;
+			}*/
+		}
+	}
 }

@@ -24,7 +24,7 @@ private:
 	//reg members
 	std::string name;
 	unsigned int playerID = 0;
-	float dt;
+	float _dt;
 	bool justJumped;
 	bool isSprinting;
 	bool isCharging;
@@ -70,7 +70,7 @@ public:
 
 	//basic
 	void Init();
-	void Update(float dt) override;
+	void Update(float _dt) override;
 	void Shutdown() override;
 	void HandleEvent(Event* e) override;
 
