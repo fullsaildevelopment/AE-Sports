@@ -29,6 +29,7 @@
 #include "SoundEvent.h"
 #include "CoughtEvent.h"
 #include "GamePadEvent.h"
+#include "Scoreboard.h"
 
 using namespace DirectX;
 using namespace std;
@@ -988,6 +989,14 @@ void Game::CreateUI(Scene * basic)
 
 	CreatePauseMenu(basic);
 
+	GameObject* scoreBoard = new GameObject();
+	basic->AddUIObject(scoreBoard);
+	scoreBoard->Init("Scoreboard");
+	Scoreboard* scoreBoardController = new Scoreboard(basic, devResources);
+	scoreBoard->AddComponent(scoreBoardController);
+	UIRenderer* scoreBoardRenderer = new UIRenderer();
+	scoreBoard->AddComponent(scoreBoardRenderer);
+	scoreBoardRenderer->Init(false, devResources, nullptr);
 	//CreateScoreBoard(basic);
 
 	//create game over menu
@@ -1394,729 +1403,729 @@ void Game::CreateLobby(Scene * scene)
 
 void Game::CreateScoreBoard(Scene * scene)
 {
-	// test stuff, looks "beautiful"
-	GameObject * scoreBack = new GameObject();
-	scene->AddUIObject(scoreBack);
-	scoreBack->Init("scoreboard0");
-	{
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 700.0f, 450.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreBack);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.50f, 0.45f); // second field as 0.5f if height changes to 500
-		scoreBack->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/scoreback.png");
-		scoreBack->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-	}
-
-	// you had a weird icon beside the team name soo???
-	GameObject * scoreRed = new GameObject();
-	scene->AddUIObject(scoreRed);
-	scoreRed->Init("scoreboardRed");
-	{
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 100.0f, 100.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreRed);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.25f, 0.28f);
-		scoreRed->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/smallHexR.png");
-		scoreRed->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-	}
-
-
-
-	// first team
-	GameObject * scoreBar0_Name = new GameObject();
-	scene->AddUIObject(scoreBar0_Name);
-	scoreBar0_Name->Init("scoreboard1_name");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"RED", (unsigned int)strlen("RED"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar0_Name);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.40f, 0.24f);
-		scoreBar0_Name->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar0_Name->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first score
-	GameObject * scoreBar0_Score = new GameObject();
-	scene->AddUIObject(scoreBar0_Score);
-	scoreBar0_Score->Init("scoreboard0_score");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"SCORE", (unsigned int)strlen("SCORE"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar0_Score);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.50f, 0.24f);
-		scoreBar0_Score->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar0_Score->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-
-	GameObject * scoreBar0_Goal = new GameObject();
-	scene->AddUIObject(scoreBar0_Goal);
-	scoreBar0_Goal->Init("scoreboard0_goal");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"GOALS", (unsigned int)strlen("GOALS"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar0_Goal);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.59f, 0.24f);
-		scoreBar0_Goal->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar0_Goal->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first assists
-	GameObject * scoreBar0_Assist = new GameObject();
-	scene->AddUIObject(scoreBar0_Assist);
-	scoreBar0_Assist->Init("scoreboard0_Assists");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"ASSISTS", (unsigned int)strlen("ASSISTS"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar0_Assist);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.70f, 0.24f);
-		scoreBar0_Assist->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar0_Assist->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// title saves
-	GameObject * scoreBar0_Saves = new GameObject();
-	scene->AddUIObject(scoreBar0_Saves);
-	scoreBar0_Saves->Init("scoreboard0_save");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"SAVES", (unsigned int)strlen("SAVES"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar0_Saves);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.80f, 0.24f);
-		scoreBar0_Saves->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar0_Saves->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-	{
-	GameObject * scoreBar = new GameObject();
-	scene->AddUIObject(scoreBar);
-	scoreBar->Init("scoreboard1");
-	{
-		// graphic
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreBar);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.60f, 0.30f);
-		scoreBar->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/scorebarRed.png");
-		scoreBar->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-
-	}
-
-	// first name
-	GameObject * scoreBar_Name = new GameObject();
-	scene->AddUIObject(scoreBar_Name);
-	scoreBar_Name->Init("scoreboard1_name");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Name);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.40f, 0.30f);
-		scoreBar_Name->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Name->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first score
-	GameObject * scoreBar_Score = new GameObject();
-	scene->AddUIObject(scoreBar_Score);
-	scoreBar_Score->Init("scoreboard1_score");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Score);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.50f, 0.30f);
-		scoreBar_Score->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Score->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	GameObject * scoreBar_Goal = new GameObject();
-	scene->AddUIObject(scoreBar_Goal);
-	scoreBar_Score->Init("scoreboard1_Goal");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Score);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.59f, 0.30f);
-		scoreBar_Goal->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Goal->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first assists
-	GameObject * scoreBar_Assist = new GameObject();
-	scene->AddUIObject(scoreBar_Assist);
-	scoreBar_Assist->Init("scoreboard1_Assists");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Assist);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.70f, 0.30f);
-		scoreBar_Assist->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Assist->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first saves
-	GameObject * scoreBar_Saves = new GameObject();
-	scene->AddUIObject(scoreBar_Saves);
-	scoreBar_Saves->Init("scoreboard1_save");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Saves);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.80f, 0.30f);
-		scoreBar_Saves->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Saves->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	GameObject * scoreBar2 = new GameObject();
-	scene->AddUIObject(scoreBar2);
-	scoreBar2->Init("scoreboard2");
-	{
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreBar2);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.60f, 0.38f);
-		scoreBar2->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/scorebarRed.png");
-		scoreBar2->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-	}
-
-
-
-	// second name
-	GameObject * scoreBar2_Name = new GameObject();
-	scene->AddUIObject(scoreBar2_Name);
-	scoreBar2_Name->Init("scoreboard2_name");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Name);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.40f, 0.38f);
-		scoreBar2_Name->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Name->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second score
-	GameObject * scoreBar2_Score = new GameObject();
-	scene->AddUIObject(scoreBar2_Score);
-	scoreBar2_Score->Init("scoreboard1_score");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Score);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.50f, 0.38f);
-		scoreBar2_Score->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Score->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second assists
-	GameObject * scoreBar2_Assist = new GameObject();
-	scene->AddUIObject(scoreBar2_Assist);
-	scoreBar2_Assist->Init("scoreboard2_Assists");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Assist);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.63f, 0.38f);
-		scoreBar2_Assist->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Assist->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second  saves
-	GameObject * scoreBar2_Saves = new GameObject();
-	scene->AddUIObject(scoreBar2_Saves);
-	scoreBar2_Saves->Init("scoreboard2_save");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Saves);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.75f, 0.38f);
-		scoreBar2_Saves->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Saves->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-}
-
-	// SECOND TEAM
-
-
-	// you had a weird icon beside the team name soo???
-	GameObject * scoreBlue = new GameObject();
-	scene->AddUIObject(scoreBlue);
-	scoreBlue->Init("scoreboardBlue");
-	{
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 100.0f, 100.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreBlue);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.25f, 0.54f);
-		scoreBlue->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/smallHexB.png");
-		scoreBlue->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-	}
-
-
-
-	// first team
-	GameObject * scoreBar3_Name = new GameObject();
-	scene->AddUIObject(scoreBar3_Name);
-	scoreBar3_Name->Init("scoreboard3_name");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"BLUE", (unsigned int)strlen("BLUE"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar3_Name);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.40f, 0.48f);
-		scoreBar3_Name->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar3_Name->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	{
-	GameObject * scoreBar = new GameObject();
-	scene->AddUIObject(scoreBar);
-	scoreBar->Init("scoreboard1");
-	{
-		// graphic
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreBar);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.60f, 0.54f);
-		scoreBar->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/scorebarBlue.png");
-		scoreBar->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-
-	}
-
-	// first name
-	GameObject * scoreBar_Name = new GameObject();
-	scene->AddUIObject(scoreBar_Name);
-	scoreBar_Name->Init("scoreboard3_name");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Name);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.40f, 0.54f);
-		scoreBar_Name->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Name->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first score
-	GameObject * scoreBar_Score = new GameObject();
-	scene->AddUIObject(scoreBar_Score);
-	scoreBar_Score->Init("scoreboard3_score");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Score);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.50f, 0.54f);
-		scoreBar_Score->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Score->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first assists
-	GameObject * scoreBar_Assist = new GameObject();
-	scene->AddUIObject(scoreBar_Assist);
-	scoreBar_Assist->Init("scoreboard3_Assists");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Assist);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.63f, 0.54f);
-		scoreBar_Assist->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Assist->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// first saves
-	GameObject * scoreBar_Saves = new GameObject();
-	scene->AddUIObject(scoreBar_Saves);
-	scoreBar_Saves->Init("scoreboard3_save");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar_Saves);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.75f, 0.54f);
-		scoreBar_Saves->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar_Saves->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	GameObject * scoreBar2 = new GameObject();
-	scene->AddUIObject(scoreBar2);
-	scoreBar2->Init("scoreboard4");
-	{
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
-		button->setSceneIndex((unsigned int)scenes.size());
-		button->SetGameObject(scoreBar2);
-		button->showFPS(false);
-		button->setPositionMultipliers(0.60f, 0.62f);
-		scoreBar2->AddComponent(button);
-		UIRenderer * render = new UIRenderer();
-		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
-		render->DecodeBitmap(L"../Assets/UI/scorebarBlue.png");
-		scoreBar2->AddComponent(render);
-		render->MakeRTSize();
-		button->MakeRect();
-		//button->MakeHandler();
-		render->InitMetrics();
-		button->SetActive(true);
-		button->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second name
-	GameObject * scoreBar2_Name = new GameObject();
-	scene->AddUIObject(scoreBar2_Name);
-	scoreBar2_Name->Init("scoreboard4_name");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Name);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.40f, 0.62f);
-		scoreBar2_Name->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Name->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second score
-	GameObject * scoreBar2_Score = new GameObject();
-	scene->AddUIObject(scoreBar2_Score);
-	scoreBar2_Score->Init("scoreboard4_score");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Score);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.50f, 0.62f);
-		scoreBar2_Score->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Score->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second assists
-	GameObject * scoreBar2_Assist = new GameObject();
-	scene->AddUIObject(scoreBar2_Assist);
-	scoreBar2_Assist->Init("scoreboard4_Assists");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Assist);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.63f, 0.62f);
-		scoreBar2_Assist->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Assist->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-
-	// second  saves
-	GameObject * scoreBar2_Saves = new GameObject();
-	scene->AddUIObject(scoreBar2_Saves);
-	scoreBar2_Saves->Init("scoreboard4_save");
-	{
-		// text
-		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
-		textbutton->setSceneIndex((unsigned int)scenes.size());
-		textbutton->SetGameObject(scoreBar2_Saves);
-		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.75f, 0.62f);
-		scoreBar2_Saves->AddComponent(textbutton);
-		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
-		scoreBar2_Saves->AddComponent(textrender);
-		textrender->MakeRTSize();
-		textbutton->MakeRect();
-		textbutton->setOrigin();
-		//button->MakeHandler();
-		textrender->InitMetrics();
-		textbutton->SetActive(true);
-		textbutton->setHelper(scene->GetNumUIObjects());
-	}
-};
+//	// test stuff, looks "beautiful"
+//	GameObject * scoreBack = new GameObject();
+//	scene->AddUIObject(scoreBack);
+//	scoreBack->Init("scoreboard0");
+//	{
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 700.0f, 450.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreBack);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.50f, 0.45f); // second field as 0.5f if height changes to 500
+//		scoreBack->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/scoreback.png");
+//		scoreBack->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// you had a weird icon beside the team name soo???
+//	GameObject * scoreRed = new GameObject();
+//	scene->AddUIObject(scoreRed);
+//	scoreRed->Init("scoreboardRed");
+//	{
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 100.0f, 100.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreRed);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.25f, 0.28f);
+//		scoreRed->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/smallHexR.png");
+//		scoreRed->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//
+//
+//	// first team
+//	GameObject * scoreBar0_Name = new GameObject();
+//	scene->AddUIObject(scoreBar0_Name);
+//	scoreBar0_Name->Init("scoreboard1_name");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"RED", (unsigned int)strlen("RED"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar0_Name);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.40f, 0.24f);
+//		scoreBar0_Name->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar0_Name->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first score
+//	GameObject * scoreBar0_Score = new GameObject();
+//	scene->AddUIObject(scoreBar0_Score);
+//	scoreBar0_Score->Init("scoreboard0_score");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"SCORE", (unsigned int)strlen("SCORE"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar0_Score);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.50f, 0.24f);
+//		scoreBar0_Score->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar0_Score->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//
+//	GameObject * scoreBar0_Goal = new GameObject();
+//	scene->AddUIObject(scoreBar0_Goal);
+//	scoreBar0_Goal->Init("scoreboard0_goal");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"GOALS", (unsigned int)strlen("GOALS"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar0_Goal);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.59f, 0.24f);
+//		scoreBar0_Goal->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar0_Goal->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first assists
+//	GameObject * scoreBar0_Assist = new GameObject();
+//	scene->AddUIObject(scoreBar0_Assist);
+//	scoreBar0_Assist->Init("scoreboard0_Assists");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"ASSISTS", (unsigned int)strlen("ASSISTS"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar0_Assist);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.70f, 0.24f);
+//		scoreBar0_Assist->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar0_Assist->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// title saves
+//	GameObject * scoreBar0_Saves = new GameObject();
+//	scene->AddUIObject(scoreBar0_Saves);
+//	scoreBar0_Saves->Init("scoreboard0_save");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"SAVES", (unsigned int)strlen("SAVES"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar0_Saves);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.80f, 0.24f);
+//		scoreBar0_Saves->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar0_Saves->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//	{
+//	GameObject * scoreBar = new GameObject();
+//	scene->AddUIObject(scoreBar);
+//	scoreBar->Init("scoreboard1");
+//	{
+//		// graphic
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreBar);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.60f, 0.30f);
+//		scoreBar->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/scorebarRed.png");
+//		scoreBar->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//
+//	}
+//
+//	// first name
+//	GameObject * scoreBar_Name = new GameObject();
+//	scene->AddUIObject(scoreBar_Name);
+//	scoreBar_Name->Init("scoreboard1_name");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Name);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.40f, 0.30f);
+//		scoreBar_Name->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Name->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first score
+//	GameObject * scoreBar_Score = new GameObject();
+//	scene->AddUIObject(scoreBar_Score);
+//	scoreBar_Score->Init("scoreboard1_score");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Score);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.50f, 0.30f);
+//		scoreBar_Score->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Score->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	GameObject * scoreBar_Goal = new GameObject();
+//	scene->AddUIObject(scoreBar_Goal);
+//	scoreBar_Score->Init("scoreboard1_Goal");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Score);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.59f, 0.30f);
+//		scoreBar_Goal->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Goal->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first assists
+//	GameObject * scoreBar_Assist = new GameObject();
+//	scene->AddUIObject(scoreBar_Assist);
+//	scoreBar_Assist->Init("scoreboard1_Assists");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Assist);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.70f, 0.30f);
+//		scoreBar_Assist->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Assist->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first saves
+//	GameObject * scoreBar_Saves = new GameObject();
+//	scene->AddUIObject(scoreBar_Saves);
+//	scoreBar_Saves->Init("scoreboard1_save");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Saves);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.80f, 0.30f);
+//		scoreBar_Saves->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Saves->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	GameObject * scoreBar2 = new GameObject();
+//	scene->AddUIObject(scoreBar2);
+//	scoreBar2->Init("scoreboard2");
+//	{
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreBar2);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.60f, 0.38f);
+//		scoreBar2->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/scorebarRed.png");
+//		scoreBar2->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//
+//
+//	// second name
+//	GameObject * scoreBar2_Name = new GameObject();
+//	scene->AddUIObject(scoreBar2_Name);
+//	scoreBar2_Name->Init("scoreboard2_name");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Name);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.40f, 0.38f);
+//		scoreBar2_Name->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Name->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second score
+//	GameObject * scoreBar2_Score = new GameObject();
+//	scene->AddUIObject(scoreBar2_Score);
+//	scoreBar2_Score->Init("scoreboard1_score");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Score);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.50f, 0.38f);
+//		scoreBar2_Score->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Score->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second assists
+//	GameObject * scoreBar2_Assist = new GameObject();
+//	scene->AddUIObject(scoreBar2_Assist);
+//	scoreBar2_Assist->Init("scoreboard2_Assists");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Assist);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.63f, 0.38f);
+//		scoreBar2_Assist->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Assist->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second  saves
+//	GameObject * scoreBar2_Saves = new GameObject();
+//	scene->AddUIObject(scoreBar2_Saves);
+//	scoreBar2_Saves->Init("scoreboard2_save");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Saves);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.75f, 0.38f);
+//		scoreBar2_Saves->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Saves->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//}
+//
+//	// SECOND TEAM
+//
+//
+//	// you had a weird icon beside the team name soo???
+//	GameObject * scoreBlue = new GameObject();
+//	scene->AddUIObject(scoreBlue);
+//	scoreBlue->Init("scoreboardBlue");
+//	{
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 100.0f, 100.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreBlue);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.25f, 0.54f);
+//		scoreBlue->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/smallHexB.png");
+//		scoreBlue->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//
+//
+//	// first team
+//	GameObject * scoreBar3_Name = new GameObject();
+//	scene->AddUIObject(scoreBar3_Name);
+//	scoreBar3_Name->Init("scoreboard3_name");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"BLUE", (unsigned int)strlen("BLUE"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar3_Name);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.40f, 0.48f);
+//		scoreBar3_Name->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar3_Name->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	{
+//	GameObject * scoreBar = new GameObject();
+//	scene->AddUIObject(scoreBar);
+//	scoreBar->Init("scoreboard1");
+//	{
+//		// graphic
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreBar);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.60f, 0.54f);
+//		scoreBar->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/scorebarBlue.png");
+//		scoreBar->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//
+//	}
+//
+//	// first name
+//	GameObject * scoreBar_Name = new GameObject();
+//	scene->AddUIObject(scoreBar_Name);
+//	scoreBar_Name->Init("scoreboard3_name");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Name);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.40f, 0.54f);
+//		scoreBar_Name->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Name->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first score
+//	GameObject * scoreBar_Score = new GameObject();
+//	scene->AddUIObject(scoreBar_Score);
+//	scoreBar_Score->Init("scoreboard3_score");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Score);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.50f, 0.54f);
+//		scoreBar_Score->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Score->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first assists
+//	GameObject * scoreBar_Assist = new GameObject();
+//	scene->AddUIObject(scoreBar_Assist);
+//	scoreBar_Assist->Init("scoreboard3_Assists");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Assist);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.63f, 0.54f);
+//		scoreBar_Assist->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Assist->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// first saves
+//	GameObject * scoreBar_Saves = new GameObject();
+//	scene->AddUIObject(scoreBar_Saves);
+//	scoreBar_Saves->Init("scoreboard3_save");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar_Saves);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.75f, 0.54f);
+//		scoreBar_Saves->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar_Saves->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	GameObject * scoreBar2 = new GameObject();
+//	scene->AddUIObject(scoreBar2);
+//	scoreBar2->Init("scoreboard4");
+//	{
+//		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 50.0f, devResources, 0);
+//		button->setSceneIndex((unsigned int)scenes.size());
+//		button->SetGameObject(scoreBar2);
+//		button->showFPS(false);
+//		button->setPositionMultipliers(0.60f, 0.62f);
+//		scoreBar2->AddComponent(button);
+//		UIRenderer * render = new UIRenderer();
+//		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+//		render->DecodeBitmap(L"../Assets/UI/scorebarBlue.png");
+//		scoreBar2->AddComponent(render);
+//		render->MakeRTSize();
+//		button->MakeRect();
+//		//button->MakeHandler();
+//		render->InitMetrics();
+//		button->SetActive(true);
+//		button->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second name
+//	GameObject * scoreBar2_Name = new GameObject();
+//	scene->AddUIObject(scoreBar2_Name);
+//	scoreBar2_Name->Init("scoreboard4_name");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"Name", (unsigned int)strlen("Name"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Name);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.40f, 0.62f);
+//		scoreBar2_Name->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Name->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second score
+//	GameObject * scoreBar2_Score = new GameObject();
+//	scene->AddUIObject(scoreBar2_Score);
+//	scoreBar2_Score->Init("scoreboard4_score");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Score);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.50f, 0.62f);
+//		scoreBar2_Score->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Score->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second assists
+//	GameObject * scoreBar2_Assist = new GameObject();
+//	scene->AddUIObject(scoreBar2_Assist);
+//	scoreBar2_Assist->Init("scoreboard4_Assists");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Assist);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.63f, 0.62f);
+//		scoreBar2_Assist->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Assist->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//
+//	// second  saves
+//	GameObject * scoreBar2_Saves = new GameObject();
+//	scene->AddUIObject(scoreBar2_Saves);
+//	scoreBar2_Saves->Init("scoreboard4_save");
+//	{
+//		// text
+//		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+//		textbutton->setSceneIndex((unsigned int)scenes.size());
+//		textbutton->SetGameObject(scoreBar2_Saves);
+//		textbutton->showFPS(false);
+//		textbutton->setPositionMultipliers(0.75f, 0.62f);
+//		scoreBar2_Saves->AddComponent(textbutton);
+//		UIRenderer * textrender = new UIRenderer();
+//		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+//		scoreBar2_Saves->AddComponent(textrender);
+//		textrender->MakeRTSize();
+//		textbutton->MakeRect();
+//		textbutton->setOrigin();
+//		//button->MakeHandler();
+//		textrender->InitMetrics();
+//		textbutton->SetActive(true);
+//		textbutton->setHelper(scene->GetNumUIObjects());
+//	}
+//};
 }
 
 void Game::CreatePauseMenu(Scene * scene)
@@ -2488,6 +2497,7 @@ void Game::LoadScene(std::string name)
 	else if (currentScene == 2)
 	{
 		AssignPlayers();
+		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
 	}
 
 	//resize gamestates
