@@ -5,8 +5,9 @@
 #include "Physics.h"
 #include "GameObject.h"
 
-HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collider(o, false)
+HexagonCollider::HexagonCollider(GameObject* o, float d, float _height, ED2Mesh* colMesh) : Collider(o, false)
 {
+	mesh = colMesh;
 	poses = nullptr;
 	hex.d = d;
 	hex.s = d * 0.5f;
@@ -18,8 +19,9 @@ HexagonCollider::HexagonCollider(GameObject* o, float d, float _height) : Collid
 	col = 0;
 }
 
-HexagonCollider::HexagonCollider(int _row, int _col, float3* positions, float _height, float d, GameObject* o) : Collider(o, false)
+HexagonCollider::HexagonCollider(int _row, int _col, float3* positions, float _height, float d, GameObject* o, ED2Mesh* colMesh) : Collider(o, false)
 {
+	mesh = colMesh;
 	poses = positions;
 	height = _height;
 	hex.d = d;
@@ -81,12 +83,13 @@ bool HexagonCollider::CheckCapsuleAABB(AABB test, Capsule s)
 	return AABBtoAABB(test, cap);
 }
 
-bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
+bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 {
 	Capsule c = cap->GetWorldCapsule();
-	float3 vel = objects[f]->GetTransform()->GetVelocity();
+	float3 pastPos = objects[f]->GetComponent<Physics>()->pastPos;
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
+	float smallestT = 100;
 	bool collided = false;
 	//Top
 	if (CheckCapsuleAABB((int)(floor(row * 0.49f)) * col, row * col - 1, c))
@@ -97,7 +100,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//TopTopTop
 			if (CheckCapsuleAABB((int)floor(row * 0.821f) * col, row * col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row*0.821f), row, cap, c, vel, f,_dt))
+				if (CheckCapsule(tg, (int)floor(row*0.821f), row, cap, c, pastPos, f,dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.821f); i < row; ++i)
@@ -108,13 +111,13 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, vel);
+							float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos);
 							if (!n.isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -125,7 +128,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -143,7 +146,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//TopTopBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.741f) * col, (int)ceil(row * 0.839f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row * 0.741f), (int)ceil(row * 0.839f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, (int)floor(row * 0.741f), (int)ceil(row * 0.839f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.741f); i < (int)ceil(row * 0.83f); ++i)
@@ -154,12 +157,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -170,7 +173,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -192,7 +195,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//TopBottomTop
 			if (CheckCapsuleAABB((int)floor(row * 0.621f) * col, (int)ceil(row * 0.759f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row * 0.621f), (int)ceil(row * 0.759f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, (int)floor(row * 0.621f), (int)ceil(row * 0.759f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.621f); i < (int)ceil(row * 0.759f); ++i)
@@ -203,12 +206,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -219,7 +222,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -237,7 +240,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//TopBottomBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.639f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row * 0.49f), (int)ceil(row * 0.639f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, (int)floor(row * 0.49f), (int)ceil(row * 0.639f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.639f); ++i)
@@ -248,12 +251,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -264,7 +267,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -290,7 +293,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//BottomTopTop
 			if (CheckCapsuleAABB((int)floor(row * 0.371f) * col, (int)ceil(row * 0.51f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row * 0.371f), (int)ceil(row * 0.51f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, (int)floor(row * 0.371f), (int)ceil(row * 0.51f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.371f); i < (int)ceil(row * 0.51f); ++i)
@@ -301,12 +304,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -317,7 +320,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -335,7 +338,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//BottomTopBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.389f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row * 0.241f), (int)ceil(row * 0.389f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, (int)floor(row * 0.241f), (int)ceil(row * 0.389f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.389f); ++i)
@@ -346,12 +349,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -362,7 +365,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -384,7 +387,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//BottomBottomTop
 			if (CheckCapsuleAABB((int)floor(row * 0.121f) * col, (int)ceil(row * 0.259f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, (int)floor(row * 0.121f), (int)ceil(row * 0.259f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, (int)floor(row * 0.121f), (int)ceil(row * 0.259f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.121f); i < (int)ceil(row * 0.259f); ++i)
@@ -395,12 +398,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -411,7 +414,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 								otherCapsule = cap;
@@ -429,7 +432,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 			//BottomBottomBottom
 			if (CheckCapsuleAABB(0, (int)ceil(row * 0.121f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, 0, (int)ceil(row * 0.121f), cap, c, vel, f, _dt))
+				if (CheckCapsule(tg, 0, (int)ceil(row * 0.121f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = 0; i < (int)ceil(row * 0.121f); ++i)
@@ -440,12 +443,12 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 					{
 						for (int j = 0; j < col; ++j)
 						{
-							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, vel).isEquil(zeroF))
+							if (!HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos).isEquil(zeroF))
 							{
 								Physics* op = objects[f]->GetComponent<Physics>();
 								if (op)
 								{
-									op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
+									op->HandlePhysics(objects[f]->GetTransform(), pastPos, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false);
 									if (!CollidingWith[f])
 									{
 										tg->OnCollisionEnter(cap);
@@ -456,7 +459,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 								}
 								else
 								{
-									objects[f]->GetTransform()->SetVelocity(vel);
+									objects[f]->GetTransform()->SetVelocity(pastPos);
 									objects[f]->GetTransform()->SetPosition(c.m_Segment.m_Start);
 								}
 
@@ -487,20 +490,21 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float _dt)
 	return collided;
 }
 
-bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCollider* cap, Capsule c, float3 vel, int f, float _dt)
+bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCollider* cap, Capsule c, float3 pastPos, int f, float dt, float& St)
 {
 	AABB test;
 	bool collided = false;
+	float smallT = St;
 	for (int i = _min; i < _max; ++i)
 	{
-		test.min = poses[i * col] - float3(3, 10, 3);
-		test.max = poses[i * col + col - 1] + float3(3, 20, 3);
+		test.min = poses[i * col] - float3(2, 2, 2);
+		test.max = poses[i * col + col - 1] + float3(2, 12, 2);
 		if (AABBToCapsule(test, c))
 		{
 			for (int j = 0; j < col; ++j)
 			{
-				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, vel * _dt);
-				if (!n.isEquil(zeroF))
+				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos + cap->GetCapsule().m_Segment.m_Start, smallT);
+				if (!n.isEquil(zeroF) && smallT < St)
 				{
 					bool apg = false;
 					if (!n.isEquil(float3(0, 1, 0)))
@@ -508,7 +512,7 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCo
 					Physics* op = objects[f]->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(objects[f]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false, n, apg, true);
+						op->HandlePhysics(objects[f]->GetTransform(), objects[f]->GetTransform()->GetVelocity(), c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false, n, apg, true);
 						if (!CollidingWith[f])
 						{
 							tg->OnCollisionEnter(cap);
@@ -524,13 +528,13 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCo
 	return collided;
 }
 
-bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt)
+bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 {
 	Sphere s = sphere->GetWorldSphere();
-	float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
+	float3 pastPos = objects[f]->GetComponent<Physics>()->pastPos;
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
-
+	float smallestT = 100;
 	bool collided = false;
 	//Top
 	if (CheckSphereAABB((int)floor(row * 0.49f) * col, row * col - 1, s))
@@ -538,7 +542,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 		//TopTop
 		if (CheckSphereAABB((int)floor(row * 0.741f) * col, row * col - 1, s))
 		{
-			if (CheckSphere(tg, (int)floor(row * 0.741f), row, sphere, s, vel, f, _dt))
+			if (CheckSphere(tg, (int)floor(row * 0.741f), row, sphere, s, pastPos, f, dt, smallestT))
 				collided = true;
 			/*AABB test;
 			for (int i = (int)floor(row * 0.741f); i < row; ++i)
@@ -549,13 +553,13 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 				{
 					for (int j = 0; j < col; ++j)
 					{
-						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel);
+						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), pastPos);
 						if (!n.isEquil(zeroF))
 						{
 							Physics* op = objects[f]->GetComponent<Physics>();
 							if (op)
 							{
-								op->HandlePhysics(objects[f]->GetTransform(), vel, s.m_Center, true, n);
+								op->HandlePhysics(objects[f]->GetTransform(), pastPos, s.m_Center, true, n);
 								if (!CollidingWith[f])
 								{
 									tg->OnCollisionEnter(sphere);
@@ -574,7 +578,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 		//TopBottom
 		if (CheckSphereAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.759f) * col + col - 1, s))
 		{
-			if (CheckSphere(tg, (int)floor(row * 0.49f), (int)ceil(row * 0.759f), sphere, s, vel, f, _dt))
+			if (CheckSphere(tg, (int)floor(row * 0.49f), (int)ceil(row * 0.759f), sphere, s, pastPos, f, dt, smallestT))
 				collided = true;
 			/*AABB test;
 			for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.759f); ++i)
@@ -585,13 +589,13 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 				{
 					for (int j = 0; j < col; ++j)
 					{
-						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel);
+						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), pastPos);
 						if (!n.isEquil(zeroF))
 						{
 							Physics* op = objects[f]->GetComponent<Physics>();
 							if (op)
 							{
-								op->HandlePhysics(objects[f]->GetTransform(), vel, s.m_Center, true, n);
+								op->HandlePhysics(objects[f]->GetTransform(), pastPos, s.m_Center, true, n);
 								if (!CollidingWith[f])
 								{
 									tg->OnCollisionEnter(sphere);
@@ -602,7 +606,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 							}
 							else
 							{
-								sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+								sphere->GetGameObject()->GetTransform()->SetVelocity(pastPos);
 								sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
 							}
 						}
@@ -619,7 +623,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 		//BottomTop
 		if (CheckSphereAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.59f) * col + col - 1, s))
 		{
-			if (CheckSphere(tg, (int)floor(row * 0.241f), (int)ceil(row * 0.59f), sphere, s, vel, f, _dt))
+			if (CheckSphere(tg, (int)floor(row * 0.241f), (int)ceil(row * 0.59f), sphere, s, pastPos, f, dt, smallestT))
 				collided = true;
 			/*AABB test;
 			for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.59f); ++i)
@@ -630,13 +634,13 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 				{
 					for (int j = 0; j < col; ++j)
 					{
-						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel);
+						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), pastPos);
 						if (!n.isEquil(zeroF))
 						{
 							Physics* op = objects[f]->GetComponent<Physics>();
 							if (op)
 							{
-								op->HandlePhysics(objects[f]->GetTransform(), vel, s.m_Center, true, n);
+								op->HandlePhysics(objects[f]->GetTransform(), pastPos, s.m_Center, true, n);
 								if (!CollidingWith[f])
 								{
 									tg->OnCollisionEnter(sphere);
@@ -647,7 +651,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 							}
 							else
 							{
-								sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+								sphere->GetGameObject()->GetTransform()->SetVelocity(pastPos);
 								sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
 							}
 						}
@@ -660,7 +664,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 		//BottomBottom
 		if (CheckSphereAABB(0, (int)ceil(row * 0.259f) * col + col - 1, s))
 		{
-			if (CheckSphere(tg, 0, (int)ceil(row * 0.259f), sphere, s, vel, f, _dt))
+			if (CheckSphere(tg, 0, (int)ceil(row * 0.259f), sphere, s, pastPos, f, dt, smallestT))
 				collided = true;
 			/*AABB test;
 			for (int i = 0; i < (int)ceil(row * 0.259f); ++i)
@@ -671,13 +675,13 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 				{
 					for (int j = 0; j < col; ++j)
 					{
-						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel);
+						float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), pastPos);
 						if (!n.isEquil(zeroF))
 						{
 							Physics* op = objects[f]->GetComponent<Physics>();
 							if (op)
 							{
-								op->HandlePhysics(objects[f]->GetTransform(), vel, s.m_Center, true, n);
+								op->HandlePhysics(objects[f]->GetTransform(), pastPos, s.m_Center, true, n);
 								if (!CollidingWith[f])
 								{
 									tg->OnCollisionEnter(sphere);
@@ -688,7 +692,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 							}
 							else
 							{
-								sphere->GetGameObject()->GetTransform()->SetVelocity(vel);
+								sphere->GetGameObject()->GetTransform()->SetVelocity(pastPos);
 								sphere->GetGameObject()->GetTransform()->SetPosition(s.m_Center);
 							}
 						}
@@ -711,10 +715,11 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float _dt
 	return collided;
 }
 
-bool HexagonCollider::CheckSphere(GameObject* tg, int _min, int _max, SphereCollider* sphere, Sphere s, float3 vel, int f, float _dt)
+bool HexagonCollider::CheckSphere(GameObject* tg, int _min, int _max, SphereCollider* sphere, Sphere s, float3 pastPos, int f, float dt, float& St)
 {
 	bool collided = false;
 	AABB test;
+	float smallT = St;
 	for (int i = _min; i < _max; ++i)
 	{
 		test.min = poses[i * col] - float3(1, 10, 1);
@@ -723,13 +728,13 @@ bool HexagonCollider::CheckSphere(GameObject* tg, int _min, int _max, SphereColl
 		{
 			for (int j = 0; j < col; ++j)
 			{
-				float3 n = HexagonToSphere(*GetWorldHex(i * col + j), sphere->GetWorldSphere(), vel * _dt);
-				if (!n.isEquil(zeroF))
+				float3 n = HexagonToSphere(*GetWorldHex(i * col + j), s, pastPos, smallT);
+				if (!n.isEquil(zeroF) && smallT < St)
 				{
 					Physics* op = objects[f]->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(objects[f]->GetTransform(), vel, s.m_Center, true, n);
+						op->HandlePhysics(objects[f]->GetTransform(), objects[f]->GetTransform()->GetVelocity(), s.m_Center, true, n);
 						if (!CollidingWith[f])
 						{
 							tg->OnCollisionEnter(sphere);
@@ -745,7 +750,7 @@ bool HexagonCollider::CheckSphere(GameObject* tg, int _min, int _max, SphereColl
 	return collided;
 }
 
-void HexagonCollider::FixedUpdate(float _dt)
+void HexagonCollider::FixedUpdate(float dt)
 {
 	if (objects.size() == 0)
 	{
@@ -766,15 +771,16 @@ void HexagonCollider::FixedUpdate(float _dt)
 			{
 				if (!sphere->isTrigger() && sphere->isEnabled())
 				{
-					float3 vel = sphere->GetGameObject()->GetTransform()->GetVelocity();
+					float3 pastPos = objects[i]->GetComponent<Physics>()->pastPos;
 					Sphere s = sphere->GetWorldSphere();
-					float3 n = HexagonToSphere(*GetWorldHex(), s, vel * _dt);
+					float t = 100;
+					float3 n = HexagonToSphere(*GetWorldHex(), s, pastPos, t, mesh);
 					if (!n.isEquil(zeroF))
 					{
 						Physics* op = objects[i]->GetComponent<Physics>();
 						if (op)
 						{
-							op->HandlePhysics(objects[i]->GetTransform(), vel, s.m_Center, true, n);
+							op->HandlePhysics(objects[i]->GetTransform(), objects[i]->GetTransform()->GetVelocity(), s.m_Center, true, n);
 							if (!CollidingWith[i])
 							{
 								tg->OnCollisionEnter(sphere);
@@ -797,9 +803,11 @@ void HexagonCollider::FixedUpdate(float _dt)
 			{
 				if (!cap->isTrigger() && cap->isEnabled())
 				{
-					float3 vel = objects[i]->GetTransform()->GetVelocity();
+					float3 pastPos = objects[i]->GetComponent<Physics>()->pastPos + cap->GetCapsule().m_Segment.m_Start;
+					float3 nvel = objects[i]->GetTransform()->GetVelocity();
 					Capsule c = cap->GetWorldCapsule();
-					float3 n = HexagonToCapsule(*GetWorldHex(), cap->GetWorldCapsule(), vel * _dt);
+					float t = 100;
+					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t);
 					if (!n.isEquil(zeroF))
 					{
 						bool apg = false;
@@ -808,7 +816,7 @@ void HexagonCollider::FixedUpdate(float _dt)
 						Physics* op = objects[i]->GetComponent<Physics>();
 						if (op)
 						{
-							op->HandlePhysics(objects[i]->GetTransform(), vel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false, n, apg, true);
+							op->HandlePhysics(objects[i]->GetTransform(), nvel, c.m_Segment.m_Start - cap->GetCapsule().m_Segment.m_Start, false, n, apg, true);
 							if (!CollidingWith[i])
 							{
 								tg->OnCollisionEnter(cap);
@@ -839,7 +847,7 @@ void HexagonCollider::FixedUpdate(float _dt)
 			{
 				if (!sphere->isTrigger() && sphere->isEnabled())
 				{
-					CheckFloor2Sphere(sphere, f, _dt);
+					CheckFloor2Sphere(sphere, f, dt);
 				}
 			}
 
@@ -848,7 +856,7 @@ void HexagonCollider::FixedUpdate(float _dt)
 			{
 				if (!cap->isTrigger() && cap->isEnabled())
 				{
-					CheckFloor2Capsule(cap, f, _dt);
+					CheckFloor2Capsule(cap, f, dt);
 				}
 			}
 		}

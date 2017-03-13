@@ -182,6 +182,9 @@
     <ClCompile Include="BallController.cpp">
       <Filter>Components\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="Scoreboard.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parameter.h" />
@@ -343,6 +346,12 @@
     </ClInclude>
     <ClInclude Include="Server Wrapper.h">
       <Filter>Network Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="EDMesh.h">
+      <Filter>Collision</Filter>
+    </ClInclude>  </ItemGroup>
+    <ClInclude Include="Scoreboard.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

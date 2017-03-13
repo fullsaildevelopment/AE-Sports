@@ -34,7 +34,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -334,9 +334,11 @@ void Game::HandleEvent(Event* e)
 				GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
 				GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
 				GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
+				//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
 				Button * resumeButton = pauseResume->GetComponent<Button>();
 				Button * exitButton = pauseExit->GetComponent<Button>();
 				Button * menuButton = pauseMenu->GetComponent<Button>();
+				//Button * scoreButton = pauseScore->GetComponent<Button>();
 				resumeButton->SetActive(true);
 				exitButton->SetActive(true);
 				menuButton->SetActive(true);
@@ -639,7 +641,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(4.4f, 0.75f);
+		mageMover->Init(8.8f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
@@ -857,7 +859,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
-	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor);
+	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor,resourceManager->collisionMeshes[0]);
 	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
@@ -871,7 +873,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Hex->AddComponent(ballrenderer3);
 	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
 	Movement* ballMover3 = new Movement();
-	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10);
+	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10, resourceManager->collisionMeshes[0]);
 	Hex->AddComponent(HexPillar);
 
 	GameObject* axis = new GameObject();
@@ -985,7 +987,9 @@ void Game::CreateUI(Scene * basic)
 	sprintMeter->setCanRecharge(true);
 
 	CreatePauseMenu(basic);
-//	CreateScoreBoard(basic);
+
+	//CreateScoreBoard(basic);
+
 	//create game over menu
 
 
@@ -1451,7 +1455,7 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setPositionMultipliers(0.40f, 0.24f);
 		scoreBar0_Name->AddComponent(textbutton);
 		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		scoreBar0_Name->AddComponent(textrender);
 		textrender->MakeRTSize();
 		textbutton->MakeRect();
@@ -1475,8 +1479,32 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setPositionMultipliers(0.50f, 0.24f);
 		scoreBar0_Score->AddComponent(textbutton);
 		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		scoreBar0_Score->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
+
+	GameObject * scoreBar0_Goal = new GameObject();
+	scene->AddUIObject(scoreBar0_Goal);
+	scoreBar0_Goal->Init("scoreboard0_goal");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"GOALS", (unsigned int)strlen("GOALS"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar0_Goal);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.59f, 0.24f);
+		scoreBar0_Goal->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar0_Goal->AddComponent(textrender);
 		textrender->MakeRTSize();
 		textbutton->MakeRect();
 		textbutton->setOrigin();
@@ -1496,10 +1524,10 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setSceneIndex((unsigned int)scenes.size());
 		textbutton->SetGameObject(scoreBar0_Assist);
 		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.63f, 0.24f);
+		textbutton->setPositionMultipliers(0.70f, 0.24f);
 		scoreBar0_Assist->AddComponent(textbutton);
 		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		scoreBar0_Assist->AddComponent(textrender);
 		textrender->MakeRTSize();
 		textbutton->MakeRect();
@@ -1520,10 +1548,10 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setSceneIndex((unsigned int)scenes.size());
 		textbutton->SetGameObject(scoreBar0_Saves);
 		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.75f, 0.24f);
+		textbutton->setPositionMultipliers(0.80f, 0.24f);
 		scoreBar0_Saves->AddComponent(textbutton);
 		UIRenderer * textrender = new UIRenderer();
-		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		textrender->Init(true, 20.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
 		scoreBar0_Saves->AddComponent(textrender);
 		textrender->MakeRTSize();
 		textbutton->MakeRect();
@@ -1606,6 +1634,29 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setHelper(scene->GetNumUIObjects());
 	}
 
+	GameObject * scoreBar_Goal = new GameObject();
+	scene->AddUIObject(scoreBar_Goal);
+	scoreBar_Score->Init("scoreboard1_Goal");
+	{
+		// text
+		Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
+		textbutton->setSceneIndex((unsigned int)scenes.size());
+		textbutton->SetGameObject(scoreBar_Score);
+		textbutton->showFPS(false);
+		textbutton->setPositionMultipliers(0.59f, 0.30f);
+		scoreBar_Goal->AddComponent(textbutton);
+		UIRenderer * textrender = new UIRenderer();
+		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+		scoreBar_Goal->AddComponent(textrender);
+		textrender->MakeRTSize();
+		textbutton->MakeRect();
+		textbutton->setOrigin();
+		//button->MakeHandler();
+		textrender->InitMetrics();
+		textbutton->SetActive(true);
+		textbutton->setHelper(scene->GetNumUIObjects());
+	}
+
 	// first assists
 	GameObject * scoreBar_Assist = new GameObject();
 	scene->AddUIObject(scoreBar_Assist);
@@ -1616,7 +1667,7 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setSceneIndex((unsigned int)scenes.size());
 		textbutton->SetGameObject(scoreBar_Assist);
 		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.63f, 0.30f);
+		textbutton->setPositionMultipliers(0.70f, 0.30f);
 		scoreBar_Assist->AddComponent(textbutton);
 		UIRenderer * textrender = new UIRenderer();
 		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -1640,7 +1691,7 @@ void Game::CreateScoreBoard(Scene * scene)
 		textbutton->setSceneIndex((unsigned int)scenes.size());
 		textbutton->SetGameObject(scoreBar_Saves);
 		textbutton->showFPS(false);
-		textbutton->setPositionMultipliers(0.75f, 0.30f);
+		textbutton->setPositionMultipliers(0.80f, 0.30f);
 		scoreBar_Saves->AddComponent(textbutton);
 		UIRenderer * textrender = new UIRenderer();
 		textrender->Init(true, 25.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -2149,12 +2200,24 @@ void Game::AssignPlayers()
 
 			for (unsigned int i = 0; i < 8; ++i) 
 			{
+				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+
 				if (!server.isPlayer(i)) 
 				{
-					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 					AI *mageAI = new AI(mage1);
 					mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+				}
+				else
+				{
+					unsigned int teamID = PLAYER_TEAM::TEAM_A;
+
+					if (i > 4)
+					{
+						teamID = PLAYER_TEAM::TEAM_B;
+					}
+
+					mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
 				}
 			}
 
