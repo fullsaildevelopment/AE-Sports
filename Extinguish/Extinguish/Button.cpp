@@ -265,8 +265,6 @@ void Button::HandleEvent(Event* e)
 						GameObject * scoreB = GetGameObject()->GetUIGameObjects(helperIndex[helperIndex.size() - 1]);
 						Scoreboard * scoreBoard = scoreB->GetComponent<Scoreboard>();
 						scoreBoard->Toggle(false);
-
-
 					}
 
 					
