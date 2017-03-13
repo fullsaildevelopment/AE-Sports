@@ -340,9 +340,14 @@ void Game::HandleEvent(Event* e)
 				Button * exitButton = pauseExit->GetComponent<Button>();
 				Button * menuButton = pauseMenu->GetComponent<Button>();
 				//Button * scoreButton = pauseScore->GetComponent<Button>();
-				resumeButton->SetActive(true);
-				exitButton->SetActive(true);
-				menuButton->SetActive(true);
+				bool toggle = !resumeButton->getActive();
+				resumeButton->SetActive(toggle);
+				exitButton->SetActive(toggle);
+				menuButton->SetActive(toggle);
+
+				GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
+				Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
+				scoreBoard2->Toggle(toggle);
 			}
 		}
 
@@ -2194,6 +2199,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 	mButton->SetActive(false);
+
+	rButton->setHelper(scene->GetNumUIObjects());
 }
 
 void Game::AssignPlayers()
@@ -2589,7 +2596,7 @@ void Game::GetFloor()
 		//unsigned int x = 0;
 		int floorSize = client.floorSize();
 
-		for (unsigned int i = 0; i < floorSize; ++i)
+		for (unsigned int i = 0; i < (unsigned int)floorSize; ++i)
 		{
 			thefloor[i] = client.getFloorHex(i);
 			/*for (unsigned int j = 0; j < col; ++j)

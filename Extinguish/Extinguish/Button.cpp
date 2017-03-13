@@ -6,6 +6,7 @@
 #include "LoadSceneEvent.h"
 #include "SoundEvent.h"
 #include "SoundEngine.h"
+#include "Scoreboard.h"
 
 void StartGame()
 {
@@ -255,11 +256,17 @@ void Button::HandleEvent(Event* e)
 					{
 						isActive = false;
 
-						for (unsigned int i = 0; i < helperIndex.size(); ++i) {
+						for (unsigned int i = 0; i < helperIndex.size() - 1; ++i) {
 							GameObject * exitObj = GetGameObject()->GetUIGameObjects(helperIndex[i]);
 							Button * exitButton = exitObj->GetComponent<Button>();
 							exitButton->SetActive(false);
 						}
+
+						GameObject * scoreB = GetGameObject()->GetUIGameObjects(helperIndex[helperIndex.size() - 1]);
+						Scoreboard * scoreBoard = scoreB->GetComponent<Scoreboard>();
+						scoreBoard->Toggle(false);
+
+
 					}
 
 					

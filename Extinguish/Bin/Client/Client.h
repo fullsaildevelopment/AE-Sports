@@ -184,8 +184,8 @@ public:
 	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
 
 	bool floorIsEmpty() { if (floorState[0].size() == 0) return true; return false; }
-	int floorSize() { return floorState[0].size(); }
-	int stateSize() { return clientStates[0].size(); }
+	int floorSize() { return (int)floorState[0].size(); }
+	int stateSize() { return (int)clientStates[0].size(); }
 	float getDT() { return gameState[0][0]._dt; }
 
 private:
