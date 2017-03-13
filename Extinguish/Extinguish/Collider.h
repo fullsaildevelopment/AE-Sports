@@ -23,7 +23,7 @@ public:
 	Collider(GameObject* o, bool trigger);
 	Transform GetTransform() { return transform; };
 	bool isTrigger(void) { return IsTrigger; };
-	virtual void Update(float dt) {};
+	virtual void Update(float _dt) {};
 	void SetTransform(Transform t) { transform = t; };
 	void SetTrigger(bool trigger) { IsTrigger = trigger; };
 	bool isColliding(Collider* c);

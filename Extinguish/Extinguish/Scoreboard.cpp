@@ -522,6 +522,8 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 		Button* textbutton = playerSaves[i]->GetComponent<Button>();
 		textbutton->SetActive(false);
 	}
+
+	Toggle(false);
 }
 
 void Scoreboard::Update(float dt)
@@ -567,5 +569,45 @@ void Scoreboard::Update(float dt)
 	for (int i = 0; i < numOfLabels; ++i)
 	{
 		labels[i]->GetComponent<UIRenderer>();
+	}
+}
+
+void Scoreboard::Toggle(bool toggle)
+{
+	Button * sbb = scoreboardBackground->GetComponent<Button>();
+	sbb->SetActive(toggle);
+
+	for (unsigned int i = 0; i < 8; ++i)
+	{
+		Button* temp1 = playerBars[i]->GetComponent<Button>();
+		temp1->SetActive(toggle);
+
+		Button* temp2 = playerNames[i]->GetComponent<Button>();
+		temp2->SetActive(toggle);
+
+		Button* temp3 = playerScores[i]->GetComponent<Button>();
+		temp3->SetActive(toggle);
+
+		Button* temp4 = playerGoals[i]->GetComponent<Button>();
+		temp4->SetActive(toggle);
+
+		Button* temp5 = playerAssists[i]->GetComponent<Button>();
+		temp5->SetActive(toggle);
+
+		Button* temp6 = playerSaves[i]->GetComponent<Button>();
+		temp6->SetActive(toggle);
+		
+	}
+
+	/*for (unsigned int i = 0; i < (unsigned int)numOfTeams; ++i)
+	{
+		Button* temp = teamScores[i]->GetComponent<Button>();
+		temp->SetActive(toggle);
+	}*/
+
+	for (unsigned int j = 0; j < (unsigned int)numOfLabels; ++j)
+	{
+		Button* temp = labels[j]->GetComponent<Button>();
+		temp->SetActive(toggle);
 	}
 }

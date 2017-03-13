@@ -43,4 +43,5 @@ public:
 
 	void Init(int numRedPlayers, int numBluePlayers);
 	void Update(float dt) override;
+	void Toggle(bool toggle);
 };

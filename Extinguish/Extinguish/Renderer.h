@@ -51,7 +51,7 @@ public:
 
 	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources);
 	void Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources);
-	void Update(float dt) override;
+	void Update(float _dt) override;
 	void Render();
 
 	//getters

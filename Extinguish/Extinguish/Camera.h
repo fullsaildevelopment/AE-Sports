@@ -20,7 +20,7 @@ private:
 	float moveSpeed;
 	float rotateSpeed;
 	int prevMouseX, prevMouseY;
-	float dt;
+	float _dt;
 	float sensitivityX, sensitivityY;
 	const float padSensitivityX, padSensitivityY;
 
@@ -36,7 +36,7 @@ public:
 
 	//basic
 	void Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel, float rotateVel, bool isEventHandler);
-	void Update(float dt) override;
+	void Update(float _dt) override;
 	void HandleEvent(Event* e);
 
 	//getters

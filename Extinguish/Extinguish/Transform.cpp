@@ -165,7 +165,7 @@ float3 Transform::GetWorldPosition()
 	return float3(world._41, world._42, world._43);
 }
 
-void Transform::FixedUpdate(float dt)
+void Transform::FixedUpdate(float _dt)
 {
 	//Translate({ velocity.x * dt, velocity.y * dt, velocity.z * dt });
 }
