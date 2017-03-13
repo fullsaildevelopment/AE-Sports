@@ -503,7 +503,7 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCo
 		{
 			for (int j = 0; j < col; ++j)
 			{
-				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos + cap->GetCapsule().m_Segment.m_Start, smallT);
+				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos + cap->GetCapsule().m_Segment.m_Start, smallT, mesh);
 				if (!n.isEquil(zeroF) && smallT < St)
 				{
 					bool apg = false;
@@ -807,7 +807,7 @@ void HexagonCollider::FixedUpdate(float dt)
 					float3 nvel = objects[i]->GetTransform()->GetVelocity();
 					Capsule c = cap->GetWorldCapsule();
 					float t = 100;
-					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t);
+					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t, mesh);
 					if (!n.isEquil(zeroF))
 					{
 						bool apg = false;
