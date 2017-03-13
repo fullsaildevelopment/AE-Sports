@@ -18,6 +18,8 @@ private:
 		tank, // protects teammate with ball
 	};
 
+
+	bool at1 = false;
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
 	float timer = 2; // timer for attack

@@ -16,6 +16,7 @@ void Physics::FixedUpdate(float _dt)
 	if (!isKinematic)
 	{
 		float3 nV = transform->GetVelocity();
+		pastPos = transform->GetPosition();
 		//apply gravity
 		if (!colliding || stillapplygravity)
 		{
@@ -66,6 +67,7 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 		nV = nV - invN;
 	}
 	tt->SetVelocity(nV);
+	pastPos = nP;
 	tt->SetPosition(nP);
 	stillapplygravity = _stillApplyGravity;
 	colliding = true;

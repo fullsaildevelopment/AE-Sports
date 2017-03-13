@@ -1,7 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 8
+#define RunSpeed 10
 #define AttackSpeed 20
 #define StumbleSpeed 10
 
@@ -12,7 +12,6 @@
 // players/AI will be tagged as Team1 or Team2
 // 
 /////////////////////////////////////////////////////////////////////////////////////////
-
 
 AI::AI(GameObject* obj) : Component(obj)
 {
@@ -206,7 +205,10 @@ void AI::Update(float _dt)
 		crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
 
 	if (!camera)
+	{
 		camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
+		camera->RotateX(345);
+	}
 
 	if (!eTank)
 	{
@@ -216,6 +218,7 @@ void AI::Update(float _dt)
 				eTank = listOfEnemies[i];
 		}
 	}
+
 
 #pragma region Goalie
 	if (currState == goalie)
@@ -271,22 +274,34 @@ void AI::Update(float _dt)
 #pragma region Goalie2
 	else if (currState == playboy)
 	{
-		float3 pos1;
-		float3 pos2;
+		float3 pos1 = float3(-9, 0.5, -25);
+		float3 pos2 = float3(-30, 0.5, -25);
+
+		if (me->GetTag() == "Team2")
+		{
+			pos1.z *= -1;
+			pos2.z *= -1;
+		}
+
+		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
+			Score();
 
 		// if the enemy team has the ball, attack their tank
 		if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
 			Attack(eTank);
 
-		else if (RunTo(enemyGoal, 25.0f))
+		else
 		{
 			// if the ball gets close
-			if ((ball->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).magnitude() < 15)
+			if (!ballClass->GetIsHeld() && (ball->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).magnitude() < 15)
 				GetBall();
 
 			// run around enemys side
+			else if (!at1 && RunTo(pos1, 1.5f))
+				at1 = true;
 
-
+			else if (at1 && RunTo(pos2, 1.5f))
+				at1 = false;
 
 			TurnTo(myGoal);
 		}
@@ -559,10 +574,7 @@ void AI::Score()
 	Paranoia();
 
 	if (RunTo(enemyGoal, 30.0f))
-	{
-		camera->RotateX(345);
 		crosse->Throw();
-	}
 }
 
 AI::State AI::GetCurrState() { return currState; }
