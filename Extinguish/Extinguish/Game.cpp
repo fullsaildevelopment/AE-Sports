@@ -49,7 +49,7 @@ Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
 float Game::Time = 300.0f;
 
-float Game::dt = 0.0333f;
+float Game::dt = 0.0166f;
 
 Game::~Game()
 {
@@ -2504,7 +2504,7 @@ void Game::LoadScene(std::string name)
 	else if (currentScene == 2)
 	{
 		AssignPlayers();
-		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
+		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(1, 1);
 	}
 
 	//resize gamestates
