@@ -30,8 +30,8 @@ bool Application::Update(float _dt)
 	//check window for messages and get input
 	windowResult = window.Update(input);
 
-	if (ResourceManager::GetSingleton()->IsServer())
-		Game::dt = _dt;
+	//if (ResourceManager::GetSingleton()->IsServer())
+	//	Game::dt = _dt;
 
 	//std::cout << windowResult << std::endl;
 	if (windowResult == WM_QUIT)
