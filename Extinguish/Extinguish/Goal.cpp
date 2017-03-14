@@ -25,17 +25,20 @@ void Goal::OnTriggerEnter(Collider* c)
 void Goal::Score(int team)
 {
 	//give the player who threw the ball a goal
-	PlayerController* throwerPC = ballController->GetThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>();
-	throwerPC->AddGoal(); //GetThrower returns crosse object. GetParent returns camera transform. GetParent again returns the mage transform
-
-	//check if the player was assisted
-	if (ballController->GetPreviousThrower() != ballController->GetThrower() && ballController->GetPreviousThrower()) //can't assist yourself and mustn't be nullptr
+	if (ballController->GetThrower())
 	{
-		//make sure the time isn't greater than the threshold
-		if (ballController->GetTimeSincePreviouslyThrown() <= MAX_SECONDS_FOR_ASSIST)
+		PlayerController* throwerPC = ballController->GetThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>();
+		throwerPC->AddGoal(); //GetThrower returns crosse object. GetParent returns camera transform. GetParent again returns the mage transform
+
+		//check if the player was assisted
+		if (ballController->GetPreviousThrower() != ballController->GetThrower() && ballController->GetPreviousThrower()) //can't assist yourself and mustn't be nullptr
 		{
-			PlayerController* prevThrowerPC = ballController->GetPreviousThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>();
-			prevThrowerPC->AddAssist();
+			//make sure the time isn't greater than the threshold
+			if (ballController->GetTimeSincePreviouslyThrown() <= MAX_SECONDS_FOR_ASSIST)
+			{
+				PlayerController* prevThrowerPC = ballController->GetPreviousThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>();
+				prevThrowerPC->AddAssist();
+			}
 		}
 	}
 
