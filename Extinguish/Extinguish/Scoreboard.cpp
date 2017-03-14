@@ -61,7 +61,7 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		button->setSceneIndex(sceneID);
 		button->SetGameObject(scoreboardBackground);
 		button->showFPS(false);
-		button->setPositionMultipliers(0.50f, 0.45f); // second field as 0.5f if height changes to 500
+		button->setPositionMultipliers(0.56f, 0.45f); // second field as 0.5f if height changes to 500
 		scoreboardBackground->AddComponent(button);
 		UIRenderer * render = new UIRenderer();
 		render->Init(true, 25.0f, devResources, button, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -421,7 +421,7 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 	//newYPos = yPos - 0.16f * (totalNumPlayers / 8.0f); // this is to make up for the background shrinking 
 	//newYLabelPos = yPosLabel - 0.16f * (totalNumPlayers / 8.0f);
 	newYPos = yPos + 0.17f * Clamp((backgroundButton->getRect().top - originalYPosOfBack) / 150.0f); //150 when the box is the difference between the highest and lowest y pos of background
-	newYLabelPos = newYPos + 0.05f;
+	newYLabelPos = newYPos - 0.05f;
 
 	int playerIDOffsest = 0;
 
@@ -436,33 +436,40 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 
 		//player's bar
 		Button* button = playerBars[i + playerIDOffsest]->GetComponent<Button>();
-		button->setPositionMultipliers(0.60f, newYPos + ySpacing * (i + 2)); 
+		button->setPositionMultipliers(0.66f, newYPos + ySpacing * (i + yOffset));
 		button->MakeRect();
+		button->setOrigin();
 
 		// player's name
 		Button* textbutton = playerNames[i + playerIDOffsest]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.40f, newYPos + ySpacing * (i + 2));
+		textbutton->setPositionMultipliers(0.46f, newYPos + ySpacing * (i + yOffset));
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		// player's score
 		textbutton = playerScores[i + playerIDOffsest]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.50f, newYPos + ySpacing * (i + yOffset));
+		textbutton->setPositionMultipliers(0.56f, newYPos + ySpacing * (i + yOffset));
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		//player's goals
 		textbutton = playerGoals[i + playerIDOffsest]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.59f, newYPos + ySpacing * (i + yOffset));
+		textbutton->setPositionMultipliers(0.65f, newYPos + ySpacing * (i + yOffset));
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		// player's assists
 		textbutton = playerAssists[i + playerIDOffsest]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.70f, newYPos + ySpacing * (i + yOffset));
+		textbutton->setPositionMultipliers(0.76f, newYPos + ySpacing * (i + yOffset));
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		// player's saves
 		textbutton = playerSaves[i + playerIDOffsest]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.80f, newYPos + ySpacing * (i + yOffset));
+		textbutton->setPositionMultipliers(0.86f, newYPos + ySpacing * (i + yOffset));
 		textbutton->MakeRect();
+		textbutton->setOrigin();
+
 	}
 
 	wstring wideTeamNames[] = { L"RED", L"BLUE" };
@@ -473,34 +480,39 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 	{
 		//name label
 		Button* textbutton = labels[labelIndex]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.40f, labelYPositions[i]);
+		textbutton->setPositionMultipliers(0.46f, labelYPositions[i]);
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		++labelIndex;
 
 		//score label
 		textbutton = labels[labelIndex]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.50f, labelYPositions[i]);
+		textbutton->setPositionMultipliers(0.56f, labelYPositions[i]);
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		++labelIndex;
 
 		//goal label
 		textbutton = labels[labelIndex]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.59f, labelYPositions[i]);
+		textbutton->setPositionMultipliers(0.66f, labelYPositions[i]);
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 		++labelIndex;
 
 		//assists
 		textbutton = labels[labelIndex]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.70f, labelYPositions[i]);
+		textbutton->setPositionMultipliers(0.76f, labelYPositions[i]);
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 		++labelIndex;
 
 		// Saves label
 		textbutton = labels[labelIndex]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.80f, labelYPositions[i]);
+		textbutton->setPositionMultipliers(0.86f, labelYPositions[i]);
 		textbutton->MakeRect();
+		textbutton->setOrigin();
 
 		++labelIndex;
 	}
