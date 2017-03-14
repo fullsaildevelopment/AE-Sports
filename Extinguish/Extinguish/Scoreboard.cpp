@@ -73,6 +73,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		render->InitMetrics();
 		button->SetActive(true);
 		button->setHelper(scene->GetNumUIObjects());
+
+		originalYPosOfBack = button->getRect().top;
 	}
 
 	float yOffset = 0;
@@ -267,7 +269,7 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 
 		// first score
 		scene->AddUIObject(labels[labelIndex]);
-		labels[labelIndex]->Init("Scoreboard Name" + to_string(i % 4));
+		labels[labelIndex]->Init("Scoreboard Score" + to_string(i % 4));
 		{
 			// text
 			Button * textbutton = new Button(true, true, L"SCORE", (unsigned int)strlen("SCORE"), 100.0f, 50.0f, devResources, 0);
@@ -397,23 +399,29 @@ Scoreboard::~Scoreboard()
 
 void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 {
+	this->numRedPlayers = numRedPlayers;
+	this->numBluePlayers = numBluePlayers;
+
 	int i, teamID = 0;
 	int totalNumPlayers = numRedPlayers + numBluePlayers;
 	string teamNames[] = { "Red", "Blue" };
 	PCWSTR scoreBarPath[] = { L"../Assets/UI/scorebarRed.png", L"../Assets/UI/scorebarBlue.png" };
 
-	float heightOfBackground = 100.0f + 40.0f * (numRedPlayers + numBluePlayers) + 80.0f * (numRedPlayers + numBluePlayers) / 8;//total height of 500 max
-	//for above line... 100 for height of labels (50 each). 40 for player bar height. 80 for total amount of space between everything
+	//100 for height of labels (50 each). 40 for player bar height. 80 for total amount of space between everything. max height of 500 total
+	float heightOfBackground = 100.0f + 40.0f * (numRedPlayers + numBluePlayers) + 80.0f * (numRedPlayers + numBluePlayers) / 8.0f;
 
-	//create scoreboard background
-	Button* button = scoreboardBackground->GetComponent<Button>();
-	button->setHeight(heightOfBackground);
+	//resize scoreboard background
+	Button* backgroundButton = scoreboardBackground->GetComponent<Button>();
+	backgroundButton->setHeight(heightOfBackground);
+	backgroundButton->MakeRect();
 
 	float yOffset = 0;
 	float newYPos, newYLabelPos;
 
-	newYPos = yPos - 0.16f * (totalNumPlayers / 8.0f);
-	newYLabelPos = yPosLabel - 0.16f * (totalNumPlayers / 8.0f);
+	//newYPos = yPos - 0.16f * (totalNumPlayers / 8.0f); // this is to make up for the background shrinking 
+	//newYLabelPos = yPosLabel - 0.16f * (totalNumPlayers / 8.0f);
+	newYPos = yPos + 0.17f * Clamp((backgroundButton->getRect().top - originalYPosOfBack) / 150.0f); //150 when the box is the difference between the highest and lowest y pos of background
+	newYLabelPos = newYPos + 0.05f;
 
 	int playerIDOffsest = 0;
 
@@ -422,33 +430,39 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 		if (i >= numRedPlayers)
 		{
 			teamID = 1;
-			yOffset = 0.9f;
-			playerIDOffsest = 4 - numRedPlayers;
+			yOffset = 0.9f; //to make room for the labels of the blue team
+			playerIDOffsest = 4 - numRedPlayers; //this is to make up for the blue team starting at index 5
 		}
 
 		//player's bar
 		Button* button = playerBars[i + playerIDOffsest]->GetComponent<Button>();
-		button->setPositionMultipliers(0.60f, newYPos + ySpacing * (i + yOffset));
+		button->setPositionMultipliers(0.60f, newYPos + ySpacing * (i + 2)); 
+		button->MakeRect();
 
 		// player's name
 		Button* textbutton = playerNames[i + playerIDOffsest]->GetComponent<Button>();
-		textbutton->setPositionMultipliers(0.40f, newYPos + ySpacing * (i + yOffset));
+		textbutton->setPositionMultipliers(0.40f, newYPos + ySpacing * (i + 2));
+		textbutton->MakeRect();
 
 		// player's score
-		Button* textbutton = playerScores[i + playerIDOffsest]->GetComponent<Button>();
+		textbutton = playerScores[i + playerIDOffsest]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.50f, newYPos + ySpacing * (i + yOffset));
+		textbutton->MakeRect();
 
 		//player's goals
-		Button* textbutton = playerGoals[i + playerIDOffsest]->GetComponent<Button>();
+		textbutton = playerGoals[i + playerIDOffsest]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.59f, newYPos + ySpacing * (i + yOffset));
+		textbutton->MakeRect();
 
 		// player's assists
-		Button* textbutton = playerAssists[i + playerIDOffsest]->GetComponent<Button>();
+		textbutton = playerAssists[i + playerIDOffsest]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.70f, newYPos + ySpacing * (i + yOffset));
+		textbutton->MakeRect();
 
 		// player's saves
-		Button* textbutton = playerSaves[i + playerIDOffsest]->GetComponent<Button>();
+		textbutton = playerSaves[i + playerIDOffsest]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.80f, newYPos + ySpacing * (i + yOffset));
+		textbutton->MakeRect();
 	}
 
 	wstring wideTeamNames[] = { L"RED", L"BLUE" };
@@ -460,67 +474,35 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 		//name label
 		Button* textbutton = labels[labelIndex]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.40f, labelYPositions[i]);
+		textbutton->MakeRect();
 
 		++labelIndex;
 
 		//score label
-		Button* textbutton = labels[labelIndex]->GetComponent<Button>();
+		textbutton = labels[labelIndex]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.50f, labelYPositions[i]);
+		textbutton->MakeRect();
 
 		++labelIndex;
 
 		//goal label
-		Button* textbutton = labels[labelIndex]->GetComponent<Button>();
+		textbutton = labels[labelIndex]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.59f, labelYPositions[i]);
+		textbutton->MakeRect();
 		++labelIndex;
 
 		//assists
-		Button* textbutton = labels[labelIndex]->GetComponent<Button>();
+		textbutton = labels[labelIndex]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.70f, labelYPositions[i]);
+		textbutton->MakeRect();
 		++labelIndex;
 
 		// Saves label
-		Button* textbutton = labels[labelIndex]->GetComponent<Button>();
+		textbutton = labels[labelIndex]->GetComponent<Button>();
 		textbutton->setPositionMultipliers(0.80f, labelYPositions[i]);
+		textbutton->MakeRect();
 
 		++labelIndex;
-	}
-
-	//disable every other player button that isn't being shown
-	for (int i = 0; i < 8; ++i)
-	{
-		if (i >= numRedPlayers && i < 4)
-		{
-
-		}
-		else if (i > numBluePlayers + 3)
-		{
-
-		}
-
-		//player's bar
-		Button* button = playerBars[i]->GetComponent<Button>();
-		button->SetActive(false);
-
-		// player's name
-		Button* textbutton = playerNames[i]->GetComponent<Button>();
-		textbutton->SetActive(false);
-
-		// player's score
-		Button* textbutton = playerScores[i]->GetComponent<Button>();
-		textbutton->SetActive(false);
-
-		//player's goals
-		Button* textbutton = playerGoals[i]->GetComponent<Button>();
-		textbutton->SetActive(false);
-
-		// player's assists
-		Button* textbutton = playerAssists[i]->GetComponent<Button>();
-		textbutton->SetActive(false);
-
-		// player's saves
-		Button* textbutton = playerSaves[i]->GetComponent<Button>();
-		textbutton->SetActive(false);
 	}
 
 	Toggle(false);
@@ -553,22 +535,22 @@ void Scoreboard::Update(float dt)
 	//then render
 	for (i = 0; i < playerBars.size(); ++i)
 	{
-		playerBars[i]->GetComponent<UIRenderer>();
-		playerNames[i]->GetComponent<UIRenderer>();
-		playerScores[i]->GetComponent<UIRenderer>();
-		playerGoals[i]->GetComponent<UIRenderer>();
-		playerAssists[i]->GetComponent<UIRenderer>();
-		playerSaves[i]->GetComponent<UIRenderer>();
+		playerBars[i]->GetComponent<UIRenderer>()->Render();
+		playerNames[i]->GetComponent<UIRenderer>()->Render();
+		playerScores[i]->GetComponent<UIRenderer>()->Render();
+		playerGoals[i]->GetComponent<UIRenderer>()->Render();
+		playerAssists[i]->GetComponent<UIRenderer>()->Render();
+		playerSaves[i]->GetComponent<UIRenderer>()->Render();
 	}
 
-	for (i = 0; i < numOfTeams; ++i)
-	{
-		teamScores[i]->GetComponent<UIRenderer>();
-	}
+	//for (i = 0; i < numOfTeams; ++i)
+	//{
+	//	teamScores[i]->GetComponent<UIRenderer>()->Render();
+	//}
 
 	for (int i = 0; i < numOfLabels; ++i)
 	{
-		labels[i]->GetComponent<UIRenderer>();
+		labels[i]->GetComponent<UIRenderer>()->Render();
 	}
 }
 
@@ -579,24 +561,26 @@ void Scoreboard::Toggle(bool toggle)
 
 	for (unsigned int i = 0; i < 8; ++i)
 	{
-		Button* temp1 = playerBars[i]->GetComponent<Button>();
-		temp1->SetActive(toggle);
+		if ((IsBeingUsed(i) && toggle) || (!toggle))
+		{
+			Button* temp1 = playerBars[i]->GetComponent<Button>();
+			temp1->SetActive(toggle);
 
-		Button* temp2 = playerNames[i]->GetComponent<Button>();
-		temp2->SetActive(toggle);
+			Button* temp2 = playerNames[i]->GetComponent<Button>();
+			temp2->SetActive(toggle);
 
-		Button* temp3 = playerScores[i]->GetComponent<Button>();
-		temp3->SetActive(toggle);
+			Button* temp3 = playerScores[i]->GetComponent<Button>();
+			temp3->SetActive(toggle);
 
-		Button* temp4 = playerGoals[i]->GetComponent<Button>();
-		temp4->SetActive(toggle);
+			Button* temp4 = playerGoals[i]->GetComponent<Button>();
+			temp4->SetActive(toggle);
 
-		Button* temp5 = playerAssists[i]->GetComponent<Button>();
-		temp5->SetActive(toggle);
+			Button* temp5 = playerAssists[i]->GetComponent<Button>();
+			temp5->SetActive(toggle);
 
-		Button* temp6 = playerSaves[i]->GetComponent<Button>();
-		temp6->SetActive(toggle);
-		
+			Button* temp6 = playerSaves[i]->GetComponent<Button>();
+			temp6->SetActive(toggle);
+		}
 	}
 
 	/*for (unsigned int i = 0; i < (unsigned int)numOfTeams; ++i)
@@ -610,4 +594,39 @@ void Scoreboard::Toggle(bool toggle)
 		Button* temp = labels[j]->GetComponent<Button>();
 		temp->SetActive(toggle);
 	}
+}
+
+//private helper functions//
+
+//pass in a zero based index, and this will tell you if a player is inhabiting that
+bool Scoreboard::IsBeingUsed(int index)
+{
+	bool result = true;
+
+	if (index >= numRedPlayers && index < 4)
+	{
+		result = false;
+	}
+	else if (index >= numBluePlayers + 4)
+	{
+		result = false;
+	}
+
+	return result;
+}
+
+float Scoreboard::Clamp(float num)
+{
+	float result = num;
+
+	if (num > 1.0f)
+	{
+		result = 1.0f;
+	}
+	else if (num < 0.0f)
+	{
+		result = 0.0f;
+	}
+
+	return num;
 }
