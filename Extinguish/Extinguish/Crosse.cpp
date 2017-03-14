@@ -80,7 +80,7 @@ void Crosse::SetColor(bool b)
 //misc
 void Crosse::Throw()
 {
-	const float throwSpeed = 25.0f;
+	const float throwSpeed = 18.0f;
 
 	if (ballC->GetCrosseHolder() == GetGameObject())
 	{
