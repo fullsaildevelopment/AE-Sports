@@ -327,7 +327,7 @@ void AI::Update(float _dt)
 			GetBall();
 	}
 #pragma endregion
-	/*
+	
 #pragma region Tank
 	else if (currState == tank)
 	{
@@ -371,7 +371,7 @@ void AI::Update(float _dt)
 		}
 	}
 #pragma endregion
-	*/
+	
 	if (timer <= 0)
 	{
 		timer = 2;
