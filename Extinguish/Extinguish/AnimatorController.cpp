@@ -49,13 +49,13 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 	//blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
 }
 
-void AnimatorController::FixedUpdate(float dt)
+void AnimatorController::FixedUpdate(float _dt)
 {
 	//check states' transitions
-	states[curStateIndex]->Update(dt);
+	states[curStateIndex]->Update(_dt);
 
 	//do interpolation stuff
-	blender->Update(dt, 0);
+	blender->Update(_dt, 0);
 
 	//send renderer the offsets from newly updated blender
 	renderer->SetBoneOffsets(blender->GetBoneOffsets());

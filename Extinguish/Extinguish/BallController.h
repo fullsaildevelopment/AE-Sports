@@ -31,8 +31,8 @@ public:
 	BallController(GameObject* obj);
 	void Init();
 	void LateInit();
-	void Update(float dt) override;
-	void FixedUpdate(float dt) override;
+	void Update(float _dt) override;
+	void FixedUpdate(float _dt) override;
 	void OnTriggerEnter(Collider *obj) override;
 	void OnCollisionEnter(Collider* obj) override;
 

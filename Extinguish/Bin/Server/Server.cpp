@@ -17,6 +17,7 @@ Server::Server()
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
 	gameState[0].resize(MAX_PLAYERS);
+	//floorState = new std::vector<XMFLOAT3>();
 }
 
 Server::~Server()
@@ -510,7 +511,7 @@ void Server::ReceiveMessage()
 	}
 }
 
-void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound)
+void Server::setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, float _dt, int transitionIndex, unsigned int soundID, bool hasSound)
 {
 	//if (serverObjs > 0) {
 		//	memcpy(clientStates[index].animationName, animationName, length);
@@ -538,6 +539,7 @@ void Server::sendState()
 	bOut.Write(gameState[0][0].scoreA);
 	bOut.Write(gameState[0][0].scoreB);
 	bOut.Write(gameState[0][0].time);
+	bOut.Write(gameState[0][0]._dt);
 
 	for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 	{
@@ -566,4 +568,27 @@ void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five
 	objIDs[5].id = six;
 	objIDs[6].id = seven;
 	objIDs[7].id = eight;
+}
+
+void Server::sendFloor()
+{
+	int size = floorState[0].size();
+	int tempSize = size / 40;
+
+	for (unsigned int x = 1; x <= (unsigned int)tempSize; ++x) {
+		BitStream bOut;
+		bOut.Write((MessageID)ID_INCOMING_FLOOR);
+
+		bOut.Write((UINT8)40);
+
+		for (unsigned int i = 0; i < 40; ++i)
+		{
+			bOut.Write((UINT8)i);
+			bOut.Write(floorState[0][i * x].x);
+			bOut.Write(floorState[0][i * x].y);
+			bOut.Write(floorState[0][i * x].z);
+		}
+
+		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+	}
 }

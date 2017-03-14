@@ -194,10 +194,10 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 	Idle();
 }
 
-void AI::Update(float dt)
+void AI::Update(float _dt)
 {
 	if (startTimer)
-		timer -= dt;
+		timer -= _dt;
 
 	if (!crosse)
 		crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
