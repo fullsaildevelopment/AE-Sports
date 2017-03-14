@@ -209,7 +209,8 @@ GameObject* BallController::GetCrosseHolder()
 
 GameObject* BallController::GetThrower()
 {
-	return thrower;
+	if (thrower)
+		return thrower;
 }
 
 GameObject* BallController::GetPreviousThrower()

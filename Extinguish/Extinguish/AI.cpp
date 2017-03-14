@@ -1,13 +1,11 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define RunSpeed 10
-#define AttackSpeed 20
+#define     RunSpeed 10
+#define  AttackSpeed 20
 #define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// 
-// Goals will be tagged as Goal1 or Goal2
 // 
 // players/AI will be tagged as Team1 or Team2
 // 
@@ -207,7 +205,7 @@ void AI::Update(float dt)
 	if (!camera)
 	{
 		camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
-		camera->RotateX(345);
+		camera->RotateX(-0.68f); // 345 -0.68f
 	}
 
 	if (!eTank)
