@@ -1,5 +1,6 @@
 #include "CollisionLibrary.h"
 #include <math.h>
+#include <iostream>
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
@@ -47,7 +48,7 @@ int ClassifyPointToPlane(const Plane& plane, const vec3f& point)
 int ClassifyPointToPlane(const NewPlane& plane, const vec3f& point)
 {
 	float r = dot_product(plane.p - point, plane.n);
-	if (r <= 0.000001f && r >= -0.000001f)
+	if (r <= 0.00001f && r >= -0.00001f)
 	{
 		return 0;
 	}
@@ -1662,6 +1663,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	return zeroF;*/
 
 	float3 Sdirection = s.m_Center - pastPos;
+	
 	if (Sdirection.isEquil(float3(0, 0, 0)))
 		return zeroF;
 	/*
@@ -1704,13 +1706,26 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	float times[7];
 	float3 InPoints[7];
 
+	bool allInside = true;
 	for (int i = 0; i < 7; ++i)
 	{
 		int Stest = ClassifyPointToPlane(planes[i], startPoint);
 		int Etest = ClassifyPointToPlane(planes[i], endPoint);
 		if (Stest == 1 && Etest == 1)
 		{
-			return zeroF;
+			if (i != 0)
+			{
+				return zeroF;
+			}
+			else
+			{
+				times[0] = -1;
+				continue;
+			}
+		}
+		if (Stest != -1 && i != 0)
+		{
+			allInside = false;
 		}
 		if (Stest >= 0 && Etest == -1)
 		{
@@ -1723,11 +1738,36 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		}
 	}
 
+	if (allInside)
+	{
+		if (Sdirection.y < 0)
+		{
+			float3 toFloorB = endPoint;
+			toFloorB.y -= 0.2f;
+			float3 toFloorT = endPoint;
+			toFloorT.y += 0.2f;
+			if (planes[0].p.y <= toFloorT.y && planes[0].p.y >= toFloorB.y)
+			{
+				std::cout << "levelwithTop" << std::endl;
+				s.m_Center.y = planes[0].p.y + 0.0001f;
+				Stime = 0.0001f;
+				return planes[0].n;
+			}
+			if (times[0] != -1)
+			{
+				std::cout << "sendtoTop" << std::endl;
+				s.m_Center.y = planes[0].p.y + 0.0001f;
+				Stime = 0.0001f;
+				return planes[0].n;
+			}
+		}
+	}
+
 	int at = -1;
 
+	int testInside;
 	for (int i = 0; i < 7; ++i)
 	{
-		int testInside;
 		bool isInside = true;
 		for (int j = 0; j < 7; ++j)
 		{
@@ -1757,15 +1797,15 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 
 	if (at != -1 && times[at] < Stime)
 	{
-		float3 L = s.m_Center - pastPos;
-		if (dot_product(L, planes[at].n) < 0)
+		if (dot_product(Sdirection, planes[at].n) < 0)
 		{
-			s.m_Center = pastPos + L * (times[at] - 0.0001f);
+			s.m_Center = pastPos + Sdirection * (times[at] - 0.0008f);
 			Stime = times[at];
 
 			return planes[at].n;
 		}
 	}
+
 	return zeroF;
 
 	/*
