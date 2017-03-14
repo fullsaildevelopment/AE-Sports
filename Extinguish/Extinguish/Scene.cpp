@@ -449,6 +449,12 @@ void Scene::Update(float _dt)
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
+			if (gameObjects[i]->GetName() == "GameBall")
+			{
+				int breakPoint = 0;
+				breakPoint += 69;
+			}
+
 			if (transform)
 			{
 				XMFLOAT4X4 world;
@@ -456,6 +462,7 @@ void Scene::Update(float _dt)
 				renderer->SetModel(world);
 			}
 			
+
 			//don't render yourself
 			if (i != (id - 1) * 3 + 2)
 			{
