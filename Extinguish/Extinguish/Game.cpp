@@ -35,7 +35,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 1
+#define AI_ON 0
 
 //initialize static member
 int Game::clientID = 1;
@@ -592,7 +592,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* gameBall = new GameObject();
 	gameBall->Init("GameBall");
 	basic->AddGameObject(gameBall);
-	gameBall->InitTransform(identity, { -20, 5.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr);
+	gameBall->InitTransform(identity, { -20, 5.0f, 1.8f }, { 0, 0, 0 }, { 0.2f, 0.2f, 0.2f }, nullptr, nullptr, nullptr); //TODO: fix scale of ball. 0.1f looks better.
 	Renderer* gameBallRenderer = new Renderer();
 	gameBall->AddComponent(gameBallRenderer);
 	gameBallRenderer->Init("Ball", "Ball", "Static", "", "", projection, devResources);
@@ -1777,7 +1777,7 @@ void Game::LoadScene(std::string name)
 	else if (currentScene == 2)
 	{
 		AssignPlayers();
-		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(2, 2);
+		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(1, 1);
 	}
 
 	//resize gamestates
