@@ -29,6 +29,12 @@ private:
 	};
 
 
+	// FOR RESIZING:
+	// setPositionMultipliers(x, y);
+	// MakeRect();
+	// if text
+	//		setOrigin();
+
 
 	// for rendering
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
