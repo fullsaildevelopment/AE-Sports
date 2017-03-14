@@ -394,7 +394,7 @@ void Scene::CreateModels()
 }
 
 //void Scene::Update(InputManager input, float dt)
-void Scene::Update(float dt)
+void Scene::Update(float _dt)
 {
 	///////////////Clear BackBuffer//////////////
 	PostProcessing.Clear();
@@ -430,9 +430,9 @@ void Scene::Update(float dt)
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
 		//only update game objects if this is the server
-		if (ResourceManager::GetSingleton()->IsServer())
+		if (ResourceManager::GetSingleton()->IsServer())// || gameObjects[i]->GetName() == "HexFloor")
 		{
-			gameObjects[i]->Update(dt);
+			gameObjects[i]->Update(_dt);
 		}
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
@@ -442,12 +442,18 @@ void Scene::Update(float dt)
 			//client needs to update renderer but not any other component
 			if (!ResourceManager::GetSingleton()->IsServer())
 			{
-				renderer->Update(dt);
+				renderer->Update(_dt);
 			}
 
 			renderer->SetView(cameraCam);
 			
 			Transform* transform = gameObjects[i]->GetTransform();
+
+			if (gameObjects[i]->GetName() == "GameBall")
+			{
+				int breakPoint = 0;
+				breakPoint += 69;
+			}
 
 			if (transform)
 			{
@@ -456,6 +462,7 @@ void Scene::Update(float dt)
 				renderer->SetModel(world);
 			}
 			
+
 			//don't render yourself
 			if (i != (id - 1) * 3 + 2)
 			{
@@ -478,7 +485,7 @@ void Scene::Update(float dt)
 			//don't animate yourself or animate server which has already been animated
 			if (animator && i != (id - 1) * 3 + 2 && id != 1) 
 			{
-				animator->Update(dt);
+				animator->Update(_dt);
 			}
 		}
 	}
@@ -497,14 +504,14 @@ void Scene::Update(float dt)
 
 	for (unsigned int i = 0; i < uiObjects.size(); ++i)
 	{
-		uiObjects[i]->Update(dt);
+		uiObjects[i]->Update(_dt);
 		uiObjects[i]->GetComponent<UIRenderer>()->Render();
 	}
 
 	ImGui::EndFrame();
 }
 
-void Scene::FixedUpdate(float dt)
+void Scene::FixedUpdate(float _dt)
 {
 	int id = Game::GetClientID();
 
@@ -518,7 +525,7 @@ void Scene::FixedUpdate(float dt)
 		//only update game objects if this is the server
 		if (ResourceManager::GetSingleton()->IsServer())
 		{
-			gameObjects[i]->FixedUpdate(dt);
+			gameObjects[i]->FixedUpdate(_dt);
 		}
 
 		AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
@@ -526,7 +533,7 @@ void Scene::FixedUpdate(float dt)
 		//don't animate yourself or animate server which has already been animated
 		if (animator && i != (id - 1) * 3 + 2 && !ResourceManager::GetSingleton()->IsServer())
 		{
-			animator->FixedUpdate(dt);
+			animator->FixedUpdate(_dt);
 		}
 	}
 }
@@ -535,7 +542,7 @@ void Scene::HandleInput()
 {
 }
 
-void Scene::UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed)
+void Scene::UpdateCamera(float _dt, const float moveSpeed, const float rotateSpeed)
 {
 //	if (input->GetKey('W'))
 //	{

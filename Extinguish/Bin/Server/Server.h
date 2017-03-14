@@ -61,6 +61,7 @@ public:
 		int scoreA = 0;
 		int scoreB = 0;
 		float time = 300.0f;
+		float _dt = 0.0333f;
 		bool sprintA = false;
 		bool sprintD = true;
 		bool down = false;
@@ -90,7 +91,8 @@ private:
 		ID_CHANGE_TEAM_A,
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
-		ID_SPRINT_EMPTY
+		ID_SPRINT_EMPTY,
+		ID_INCOMING_FLOOR
 	};
 
 #pragma pack(push, 1)
@@ -128,8 +130,9 @@ private:
 
 #pragma pack(pop)
 
+	
 	//static CLIENT_GAME_STATE * clientStates;
-	InputEventStruct clientInput[8];
+	InputEventStruct clientInput[MAX_PLAYERS];
 	//static GAME_STATE * gameState;
 	//GAME_STATE gameState;
 	//static CLIENT_GAME_STATE * aiStates;
@@ -144,6 +147,7 @@ private:
 	bool newInput[MAX_PLAYERS];
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
+	std::vector<XMFLOAT3> * floorState;
 	SOCKET serverSocket;
 	bool npDec = false;
 
@@ -185,16 +189,21 @@ public:
 		clientStates[0].resize(size);
 	}
 	void setScores(int scoreA, int scoreB) { gameState[0][0].scoreA = scoreA; gameState[0][0].scoreB = scoreB; }
-	void setTime(float time) { gameState[0][0].time = time; }
-	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, int transitionIndex, unsigned int soundID, bool hasSound);
+	void setTime(float time, float _dt) { gameState[0][0].time = time; gameState[0][0]._dt = _dt; }
+	void setStates(unsigned int index, bool hasBall, XMFLOAT3 pos, XMFLOAT3 rot, int parentIndex, int animIndex, int oIndex, float _dt, int transitionIndex, unsigned int soundID, bool hasSound);
 	void setObjectCount(int count);
 	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight);
 	void setMeterActive(bool toggle, unsigned int index) { gameState[0][index].sprintA = toggle; }
 	void setMeterDrain(bool toggle, unsigned int index) { gameState[0][index].sprintD = toggle; }
 	void setMeterDown(bool toggle, unsigned int index) { gameState[0][index].down = toggle; }
+	void setFloorState(float one, float two, float three) {
+		floorState[0].push_back({ one, two, three });
+	}
 
 
 	/* game stuff*/
+	void clearFloor() { floorState[0].clear(); }
+	void sendFloor();
 	void sendPackets();
 	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
 		clientStates[0][index].position = position;

@@ -18,7 +18,7 @@ private:
 
 public:
 	CapsuleCollider(float r, DirectX::XMFLOAT3 s, DirectX::XMFLOAT3 e, GameObject* o, bool t);
-	void FixedUpdate(float dt) override;
+	void FixedUpdate(float _dt) override;
 	void setRadius(float r);
 	void SetSegment(DirectX::XMFLOAT3 s, DirectX::XMFLOAT3 e);
 	float GetRadius();

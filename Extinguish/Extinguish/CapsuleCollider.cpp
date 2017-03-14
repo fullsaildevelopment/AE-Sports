@@ -40,7 +40,7 @@ Capsule CapsuleCollider::GetWorldCapsule()
 	return cap;
 }
 
-void CapsuleCollider::FixedUpdate(float dt)
+void CapsuleCollider::FixedUpdate(float _dt)
 {
 	if (objects.size() == 0)
 	{

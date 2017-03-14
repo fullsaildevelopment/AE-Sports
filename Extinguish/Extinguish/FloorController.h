@@ -19,13 +19,13 @@ class FloorController : public Component
 	float maxHeight;
 	XTime timer;
 	float timeing;
-	void WavePattern(float dt);
-	void BigHexPattern(float dt);
-	void Strips(float dt);
-	void StripPattern(float dt);
-	void InitialPattern(float dt);
-	void ControlMovement(float dt);
-	void ControlColors(float dt);
+	void WavePattern(float _dt);
+	void BigHexPattern(float _dt);
+	void Strips(float _dt);
+	void StripPattern(float _dt);
+	void InitialPattern(float _dt);
+	void ControlMovement(float _dt);
+	void ControlColors(float _dt);
 	void ScoreColor();
 	float sinceScore = 0;
 	bool StripColor();
@@ -40,9 +40,13 @@ public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
 	~FloorController();
 	void MovePillar(int pillar, float ratio);
-	void LevelFloor(float dt);
-	void SetState(int state, float dt);
-	void Update(float dt) override;
+	void LevelFloor(float _dt);
+	void SetState(int state, float _dt);
+	void Update(float _dt) override;
 	int GetState() { return transState; };
 	static void Score(int t);
+	float3* getFloor() { return floor; }
+	int getCol() { return col; }
+	int getRow() { return row; }
+	float getTime() { return timeing; }
 };

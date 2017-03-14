@@ -18,7 +18,7 @@ private:
 
 public:
 	void Init(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow);
-	bool Update(float dt);
-	bool FixedUpdate(float dt);
+	bool Update(float _dt);
+	bool FixedUpdate(float _dt);
 	void Shutdown();
 };

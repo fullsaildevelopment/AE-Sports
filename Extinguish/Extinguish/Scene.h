@@ -82,7 +82,7 @@ private:
 	//private helper functions
 	void CreateDevResources(DeviceResources const * devResources);
 	void CreateLights();
-	void UpdateCamera(float dt, const float moveSpeed, const float rotateSpeed);
+	void UpdateCamera(float _dt, const float moveSpeed, const float rotateSpeed);
 	void CreateModels();
 	void HandleInput();
 
@@ -92,8 +92,8 @@ public:
 
 	//basics
 	void Init(DeviceResources * devResources, InputManager* inputRef);
-	void Update(float dt);
-	void FixedUpdate(float dt);
+	void Update(float _dt);
+	void FixedUpdate(float _dt);
 	void Render();
 	void Shutdown();
 
