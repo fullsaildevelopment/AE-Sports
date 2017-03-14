@@ -28,7 +28,7 @@ public:
 
 	//basic
 	void Init(State* curState, State* nextState, float exitTime, float transitionDuration);
-	bool Update(float dt);
+	bool Update(float _dt);
 
 	//misc//
 	void AddCondition(Parameter* parameter);

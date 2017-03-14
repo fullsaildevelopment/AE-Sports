@@ -29,6 +29,12 @@ private:
 	};
 
 
+	// FOR RESIZING:
+	// setPositionMultipliers(x, y);
+	// MakeRect();
+	// if text
+	//		setOrigin();
+
 
 	// for rendering
 	Microsoft::WRL::ComPtr<IDWriteTypography> pTypography;
@@ -66,7 +72,7 @@ public:
 	
 	Button(bool active, bool clickable, char * newText, unsigned int length);
 
-	void Update(float dt) override;
+	void Update(float _dt) override;
 
 	void HandleEvent(Event* e) override;
 

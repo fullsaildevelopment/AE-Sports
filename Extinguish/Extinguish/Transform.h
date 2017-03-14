@@ -26,7 +26,7 @@ public:
 
 	//basic
 	void Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, float3 tempScale, Transform* parent, Transform* child, Transform* sibling);
-	void FixedUpdate(float dt);
+	void FixedUpdate(float _dt);
 
 	//misc
 	void Translate(DirectX::XMFLOAT3 vector);

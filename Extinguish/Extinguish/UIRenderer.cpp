@@ -135,7 +135,7 @@ void UIRenderer::InitMetrics()
 
 }
 
-void UIRenderer::Update(float dt)
+void UIRenderer::Update(float _dt)
 {
 	if (theButton) {
 		if (theButton->getText() != L"") {

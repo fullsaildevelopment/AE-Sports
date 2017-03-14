@@ -60,7 +60,7 @@ void BallController::LateInit()
 	}
 }
 
-void BallController::Update(float dt)
+void BallController::Update(float _dt)
 {
 	//printf("%f %f %f \n", transform->GetVelocity().x, transform->GetVelocity().y, transform->GetVelocity().z);
 	timer.Signal();
@@ -93,12 +93,12 @@ void BallController::Update(float dt)
 
 	if (thrower)
 	{
-		timeSinceThrown += dt;
+		timeSinceThrown += _dt;
 	}
 
 	if (prevThrower)
 	{
-		timeSincePreviouslyThrown += dt;
+		timeSincePreviouslyThrown += _dt;
 	}
 
 	//cout << thrower << " " << prevThrower << endl;
@@ -106,7 +106,7 @@ void BallController::Update(float dt)
 	//cout << isHeld;
 }
 
-void BallController::FixedUpdate(float dt)
+void BallController::FixedUpdate(float _dt)
 {
 	if (transform->GetWorld()._42 < -0.3f)
 	{
@@ -209,7 +209,8 @@ GameObject* BallController::GetCrosseHolder()
 
 GameObject* BallController::GetThrower()
 {
-	return thrower;
+	if (thrower)
+		return thrower;
 }
 
 GameObject* BallController::GetPreviousThrower()

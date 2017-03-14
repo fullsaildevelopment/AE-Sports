@@ -21,7 +21,7 @@ public:
 	~State();
 	//basic//
 	void Init(AnimatorController* controller, Animation* anim, bool doLoop, float animSpeed, std::string stateName);
-	Transition* Update(float dt);
+	Transition* Update(float _dt);
 
 	//misc//
 	void AddTransition(Transition* transition);

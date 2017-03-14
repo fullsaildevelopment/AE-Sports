@@ -71,25 +71,27 @@ private:
 	void CreateLobby(Scene * scene);
 	void CreatePauseMenu(Scene * scene);
 	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
-	void CreateScoreBoard(Scene * scene);
 	void AssignPlayers();
 
 	void UpdateServerStates();
-	void UpdateClientObjects(float dt);
+	void UpdateClientObjects();
 	void UpdateScoreUI();
 	void UpdateLobbyUI(int _amount);
 
 	void LoadScene(std::string name);
 	int UpdateLobby();
 	void EnableButton(std::string name, bool toggle);
+	void SendFloor();
+	void GetFloor();
 
 public:
+	static float dt;
 	void CreateGameWrapper();
 	~Game();
 	//basic
 	void Init(DeviceResources* _devResources, InputManager* inputManager);
-	int Update(float dt);
-	void FixedUpdate(float dt);
+	int Update();
+	void FixedUpdate();
 	void Render();
 	void Shutdown();
 

@@ -81,7 +81,7 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 	}
 }
 
-void Renderer::Update(float dt)
+void Renderer::Update(float _dt)
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 

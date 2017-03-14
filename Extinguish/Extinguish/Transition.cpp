@@ -35,9 +35,9 @@ void Transition::Init(State* curState, State* nextState, float exitTime, float t
 	}
 }
 
-bool Transition::Update(float dt)
+bool Transition::Update(float _dt)
 {
-	timer += dt;
+	timer += _dt;
 
 	if (!doTransition)
 	{

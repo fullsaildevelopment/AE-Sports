@@ -49,10 +49,10 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 #endif
 }
 
-void Camera::Update(float dt)
+void Camera::Update(float _dt)
 {
 	//this->input = input;
-	this->dt = dt;
+	this->_dt = _dt;
 }
 
 void Camera::HandleEvent(Event* e)
@@ -122,8 +122,8 @@ void Camera::MoveCamera(InputDownEvent* e)
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
 			//store old cam position
-			float radX = dy * rotateSpeed * dt;
-			float radY = dx * rotateSpeed * dt;
+			float radX = dy * rotateSpeed * _dt;
+			float radY = dx * rotateSpeed * _dt;
 
 
 			//limit camera's rotation on x-axis
@@ -215,8 +215,8 @@ void Camera::MoveCamera(GamePadEvent* e)
 			float dy = -padState->thumbSticks.rightY;
 
 			//store old cam position
-			float degX = dy * rotateSpeed * dt * 2.5f;
-			float degY = dx * rotateSpeed * dt * 2.5f;
+			float degX = dy * rotateSpeed * _dt * 2.5f;
+			float degY = dx * rotateSpeed * _dt * 2.5f;
 
 
 			if (curRotX + degX > maxRotX)
