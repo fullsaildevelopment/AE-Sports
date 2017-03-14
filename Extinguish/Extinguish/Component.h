@@ -18,8 +18,8 @@ public:
 
 	//basic
 	virtual void Init(GameObject* obj) { Object = obj; };
-	virtual void Update(float dt) {};
-	virtual void FixedUpdate(float dt) {};
+	virtual void Update(float _dt) {};
+	virtual void FixedUpdate(float _dt) {};
 	virtual void Shutdown() {};
 	virtual void HandleEvent(Event* e) {};
 

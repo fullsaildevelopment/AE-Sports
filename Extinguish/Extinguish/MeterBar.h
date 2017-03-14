@@ -38,7 +38,7 @@ public:
 	~MeterBar();
 
 	/* overrides */
-	void Update(float dt) override;
+	void Update(float _dt) override;
 	void HandleEvent(Event* e) override;
 
 	/* getters */
