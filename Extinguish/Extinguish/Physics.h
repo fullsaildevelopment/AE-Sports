@@ -18,9 +18,9 @@ private:
 	// 0-1 1 being complete reflection 0 no reflection
 	float bounce = 0.70f;
 	// 0-1  1 being all the friction 0 being no friction
-	float friction = 0.20f;
+	float friction = 0.23f;
 	// 0-1 same as others
-	float airdrag = 0.00f;
+	float airdrag = 0.08f;
 
 	bool hasMaxSpeed;
 	float maxMoveSpeed = 50;
