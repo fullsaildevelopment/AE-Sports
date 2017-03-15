@@ -654,7 +654,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 2.0f, 0.07f, 4.4f, -14.8f);
+		Physics* physics = new Physics(0.01f, 4.0f, 0.07f, 6.4f, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 

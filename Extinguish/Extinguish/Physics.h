@@ -16,7 +16,7 @@ private:
 	bool stillapplygravity = true;
 
 	// 0-1 1 being complete reflection 0 no reflection
-	float bounce = 0.70f;
+	float bounce = 0.850f;
 	// 0-1  1 being all the friction 0 being no friction
 	float friction = 0.23f;
 	// 0-1 same as others
@@ -27,6 +27,7 @@ private:
 
 	bool colliding = false;
 	bool resting = false;
+	bool applyFriction = true;
 	//other
 	//TODO: incorporate mass. float mass;
 	bool isKinematic;
@@ -49,4 +50,5 @@ public:
 	void SetIsKinematic(bool toggle);
 	void SetHasMaxSpeed(bool toggle);
 	void SetMaxSpeed(float newMaxSpeed);
+	void SetApplyFriction(bool t);
 };
