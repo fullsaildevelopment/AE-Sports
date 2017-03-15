@@ -83,6 +83,7 @@ private:
 	void EnableButton(std::string name, bool toggle);
 	void SendFloor();
 	void GetFloor();
+	void TogglePauseMenu();
 
 public:
 	static float dt;

@@ -83,6 +83,10 @@ public:
 	std::string GetTag() { return tag; };
 	Scene* GetScene();
 
+	// remove component
+	template <class T>
+	bool RemoveComponent();
+
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
@@ -99,8 +103,27 @@ T*	GameObject::GetComponent()
 	{
 		T* Comp = dynamic_cast<T*>(components[i]);
 		if (Comp != nullptr) return Comp;
+
 	}
 	return nullptr;
+}
+
+
+template <class T>
+bool GameObject::RemoveComponent()
+{
+	for (size_t i = 0; i < components.size(); ++i)
+	{
+		T* Comp = dynamic_cast<T*>(components[i]);
+		if (Comp != nullptr)
+		{
+			components.erase(components.begin() + i);
+			delete Comp;
+			return true;
+		}
+
+	}
+	return false;
 }
 
 template < >
