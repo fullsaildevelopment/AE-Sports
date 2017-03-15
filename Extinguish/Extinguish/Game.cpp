@@ -35,7 +35,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -438,7 +438,7 @@ void Game::HandleEvent(Event* e)
 		}
 		else //client needs to send gamepad state info to sesrver
 		{
-			client.sendMessage((char*)gamePadEvent->GetState(), sizeof(GamePad::State) + 1);
+			client.sendMessage((char*)gamePadEvent->GetState(), sizeof(GamePad::State) + 1); // plus one for the header (size of message)
 		}
 
 		return;
@@ -1479,6 +1479,7 @@ void Game::CreatePauseMenu(Scene * scene)
 void Game::AssignPlayers()
 {
 #if AI_ON
+	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
 	vector<AI*> ai;
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
@@ -1501,7 +1502,7 @@ void Game::AssignPlayers()
 				{
 					unsigned int teamID = PLAYER_TEAM::TEAM_A;
 
-					if (i > 4)
+					if (i > 3)
 					{
 						teamID = PLAYER_TEAM::TEAM_B;
 					}
@@ -1537,6 +1538,10 @@ void Game::AssignPlayers()
 				AI *mageAI = new AI(mage1);
 				mage1->AddComponent(mageAI);
 				ai.push_back(mageAI);
+
+				PlayerController* player = mage1->GetComponent<PlayerController>();
+				player->ReadInStats(aiNames[i]);
+				player->SetTeamID(TEAM_A);
 			}
 			// set mage 5 to player if blue team
 			else if (team == TEAM_B && i!= 4)
@@ -1545,6 +1550,16 @@ void Game::AssignPlayers()
 				AI *mageAI = new AI(mage1);
 				mage1->AddComponent(mageAI);
 				ai.push_back(mageAI);
+
+				PlayerController* player = mage1->GetComponent<PlayerController>();
+				player->ReadInStats(aiNames[i]);
+				player->SetTeamID(TEAM_B);
+			}
+			else
+			{
+				PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
+				player->ReadInStats("Tom"); 
+				player->SetTeamID(team);
 			}
 		}
 		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);

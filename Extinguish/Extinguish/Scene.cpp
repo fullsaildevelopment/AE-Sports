@@ -674,6 +674,7 @@ void Scene::Shutdown()
 {
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
+		gameObjects[i]->Shutdown();
 		delete gameObjects[i];
 	}
 	gameObjects.clear();
