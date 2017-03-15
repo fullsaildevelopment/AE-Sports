@@ -128,10 +128,10 @@ void PlayerController::HandleEvent(Event* e)
 //misc//
 void PlayerController::OnCollisionEnter(Collider* collider)
 {
-	CapsuleCollider* capsCollider = dynamic_cast<CapsuleCollider*>(collider);
 
-	if (capsCollider)
+	if (collider->GetColliderType() == Collider::ColliderType::CTCapsule)
 	{
+		CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
 			//cout << "Collision enter" << endl;
@@ -144,10 +144,9 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		}
 	}
 
-	BoxCollider* boxCollider = dynamic_cast<BoxCollider*>(collider);
-
-	if (boxCollider)
+	if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
 	{
+		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
 			if (justJumped)
@@ -170,10 +169,58 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		}
 	}
 
-	HexagonCollider* hexCollider = dynamic_cast<HexagonCollider*>(collider);
-
-	if (hexCollider)
+	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
+		HexagonCollider* hexCollider = (HexagonCollider*)collider;
+		if (justJumped)
+		{
+			justJumped = false;
+			//do animation
+			AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+			animator->SetTrigger("Land");
+		}
+
+		floor = hexCollider->GetGameObject();
+		//cout << "hex enter" << endl;
+
+		return;
+	}
+}
+
+void PlayerController::OnCollisionStay(Collider* collider)
+{
+
+	if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+	{
+		BoxCollider* boxCollider = (BoxCollider*)collider;
+		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
+		{
+			if (justJumped)
+			{
+				justJumped = false;
+
+				//do animation
+				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
+				animator->SetTrigger("Land");
+
+				//cout << "Land" << endl;
+			}
+
+			floor = boxCollider->GetGameObject();
+
+			//cout << "box enter" << endl;
+
+			return;
+		}
+		return;
+	}
+
+
+	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
+	{
+		HexagonCollider* hexCollider = (HexagonCollider*)collider;
 		if (justJumped)
 		{
 			justJumped = false;
@@ -194,10 +241,9 @@ void PlayerController::OnCollisionExit(Collider* collider)
 {
 	if (otherPlayer)
 	{
-		CapsuleCollider* capsCollider = dynamic_cast<CapsuleCollider*>(collider);
-
-		if (capsCollider)
+		if (collider->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
+			CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
 			if (capsCollider->GetGameObject() == otherPlayer)
 			{
 				otherPlayer = nullptr;
@@ -209,10 +255,9 @@ void PlayerController::OnCollisionExit(Collider* collider)
 
 	if (floor)
 	{
-		BoxCollider* boxCollider = dynamic_cast<BoxCollider*>(collider);
-
-		if (boxCollider)
+		if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
 		{
+			BoxCollider* boxCollider = (BoxCollider*)collider;
 			if (boxCollider->GetGameObject() == floor)
 			{
 				//cout << "floor exit" << endl;
@@ -223,10 +268,9 @@ void PlayerController::OnCollisionExit(Collider* collider)
 			}
 		}
 
-		HexagonCollider* hexCollider = dynamic_cast<HexagonCollider*>(collider);
-
-		if (hexCollider)
+		if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 		{
+			HexagonCollider* hexCollider = (HexagonCollider*)collider;
 			if (hexCollider->GetGameObject() == floor)
 			{
 				floor = nullptr;

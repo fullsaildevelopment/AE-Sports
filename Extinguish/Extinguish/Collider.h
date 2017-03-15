@@ -11,22 +11,33 @@ class GameObject;
 
 class Collider : public Component
 {
+public:
+	enum ColliderType
+	{
+		CTAABB,
+		CTCapsule,
+		CTSphere,
+		CTHex
+	};
 private:
 	bool IsTrigger;
-	Transform transform;
 	bool IsStatic;
+	ColliderType type;
 protected:
+	Transform* transform;
 	std::vector<Collider*> checked;
 	vector<GameObject*> objects;
 	vector<bool> CollidingWith;
 public:
 	Collider(GameObject* o, bool trigger);
-	Transform GetTransform() { return transform; };
+	Collider(GameObject* o, bool trigger, ColliderType t);
+	Transform* GetTransform() { return transform; };
 	bool isTrigger(void) { return IsTrigger; };
 	virtual void Update(float _dt) {};
-	void SetTransform(Transform t) { transform = t; };
+	void SetTransform(Transform* t) { transform = t; };
 	void SetTrigger(bool trigger) { IsTrigger = trigger; };
 	bool isColliding(Collider* c);
 	bool isStatic() { return IsStatic; };
 	void SetStatic(bool s) { IsStatic = s; };
+	ColliderType GetColliderType() { return type; };
 };

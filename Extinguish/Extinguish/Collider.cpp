@@ -1,10 +1,14 @@
 #include "Collider.h"
 #include "GameObject.h"
 
-Collider::Collider(GameObject* o, bool trigger) : Component(o)
+Collider::Collider(GameObject* o, bool trigger) : Component(o), IsTrigger(trigger)
 {
-	//o->GetTransform()->AddChild(&transform);
-	IsTrigger = trigger;
+	transform = o->GetTransform();
+}
+
+Collider::Collider(GameObject* o, bool trigger, ColliderType t) : Component(o), IsTrigger(trigger), type(t)
+{
+
 }
 
 bool Collider::isColliding(Collider* c)
