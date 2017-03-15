@@ -109,7 +109,7 @@ void Camera::MoveCamera(InputDownEvent* e)
 {
 	input = e->GetInput();
 
-#if _DEBUG
+//#if _DEBUG
 	if (input->GetMouseX() && input->GetMouseY())
 	{
 		//if (!input->GetMouseButton(0) && prevMouseX && prevMouseY)
@@ -153,50 +153,50 @@ void Camera::MoveCamera(InputDownEvent* e)
 
 	prevMouseX = input->GetMouseX();
 	prevMouseY = input->GetMouseY();
-#else
-	if (input->GetMouseX() && input->GetMouseY() && input->GetMouseButton(2))
-	{
-		if (prevMouseX && prevMouseY)
-		{
-			XMFLOAT4X4 camera = transform->GetWorld();
-
-			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-
-			//store old cam position
-			float degX = dy * rotateSpeed * _dt * sensitivityX;
-			float degY = dx * rotateSpeed * _dt * sensitivityY;
-
-			cout << _dt << endl;
-
-			if (curRotX + degX > maxRotX)
-			{
-				curRotX = maxRotX;
-				degX = maxRotX - curRotX;
-			}
-
-			else if (curRotX + degX < -maxRotX)
-			{
-				curRotX = -maxRotX;
-				degX = -maxRotX - curRotX;
-			}
-
-			else
-			{
-				curRotX += degX;
-			}
-
-			curRotY += degY;
-
-			transform->RotateX(degX);
-			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
-			playerTransform->RotateY(degY);
-		}
-	}
-
-	prevMouseX = input->GetMouseX();
-	prevMouseY = input->GetMouseY();
-#endif
+//#else
+//	if (input->GetMouseX() && input->GetMouseY() && input->GetMouseButton(2))
+//	{
+//		if (prevMouseX && prevMouseY)
+//		{
+//			XMFLOAT4X4 camera = transform->GetWorld();
+//
+//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+//
+//			//store old cam position
+//			float degX = dy * rotateSpeed * _dt * sensitivityX;
+//			float degY = dx * rotateSpeed * _dt * sensitivityY;
+//
+//			cout << _dt << endl;
+//
+//			if (curRotX + degX > maxRotX)
+//			{
+//				curRotX = maxRotX;
+//				degX = maxRotX - curRotX;
+//			}
+//
+//			else if (curRotX + degX < -maxRotX)
+//			{
+//				curRotX = -maxRotX;
+//				degX = -maxRotX - curRotX;
+//			}
+//
+//			else
+//			{
+//				curRotX += degX;
+//			}
+//
+//			curRotY += degY;
+//
+//			transform->RotateX(degX);
+//			//playerTransform->GetChild(1)->RotateX(degX); //rotate crosse as well
+//			playerTransform->RotateY(degY);
+//		}
+//	}
+//
+//	prevMouseX = input->GetMouseX();
+//	prevMouseY = input->GetMouseY();
+//#endif
 }
 
 void Camera::MoveCamera(GamePadEvent* e)

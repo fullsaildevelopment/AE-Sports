@@ -25,6 +25,7 @@ private:
 
 	std::string resourcesPath = "../Resources/";
 	std::string debugPath = "../Bin/x64/Debug/";
+	std::string releasePath = "../Bin/x64/Release/";
 	std::string ddsPath = "../Assets/Textures/DDS/";
 	std::map<unsigned int, AnimationSet> animationSets;
 	unsigned int animationSetIndex;
