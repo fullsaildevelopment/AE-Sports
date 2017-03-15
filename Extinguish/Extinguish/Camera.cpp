@@ -164,10 +164,10 @@ void Camera::MoveCamera(InputDownEvent* e)
 			float dy = (float)input->GetMouseY() - (float)prevMouseY;
 
 			//store old cam position
-			float degX = dy * rotateSpeed * dt * sensitivityX;
-			float degY = dx * rotateSpeed * dt * sensitivityY;
+			float degX = dy * rotateSpeed * _dt * sensitivityX;
+			float degY = dx * rotateSpeed * _dt * sensitivityY;
 
-			cout << dt << endl;
+			cout << _dt << endl;
 
 			if (curRotX + degX > maxRotX)
 			{

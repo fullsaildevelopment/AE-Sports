@@ -76,6 +76,7 @@ public:
 
 	//misc
 	void OnCollisionEnter(Collider* collider) override;
+	void OnCollisionStay(Collider* collider) override;
 	void OnCollisionExit(Collider* collider) override;
 	void ResetPlayerGameStats();
 	void AddGoal();

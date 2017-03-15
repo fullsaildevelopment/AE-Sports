@@ -29,7 +29,7 @@ AABB BoxCollider::GetWorldAABB()
 	box.min.z += m.z;
 	return box;
 }
-BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : Collider(g, t)
+BoxCollider::BoxCollider(GameObject* g, bool t, XMFLOAT3 _max, XMFLOAT3 _min) : Collider(g, t, CTAABB)
 {
 	max = _max;
 	min = _min;

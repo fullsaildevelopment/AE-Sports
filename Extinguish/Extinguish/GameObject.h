@@ -129,22 +129,19 @@ bool GameObject::RemoveComponent()
 template < >
 BoxCollider* GameObject::GetComponent<BoxCollider>()
 {
-	if (boxcolliders.size() > 0) return boxcolliders[0];
-	return nullptr;
+	return (boxcolliders.size() > 0) ? boxcolliders[0] : nullptr;
 }
 
 template < >
 SphereCollider* GameObject::GetComponent<SphereCollider>()
 {
-	if (spherecolliders.size() > 0) return spherecolliders[0];
-	return nullptr;
+	return (spherecolliders.size() > 0) ? spherecolliders[0] : nullptr;
 }
 
 template < >
 CapsuleCollider* GameObject::GetComponent<CapsuleCollider>()
 {
-	if (capsulecolliders.size() > 0) return capsulecolliders[0];
-	return nullptr;
+	return (capsulecolliders.size() > 0) ? capsulecolliders[0] : nullptr;
 }
 
 template <class T>
