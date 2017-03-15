@@ -58,7 +58,8 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 {
 	if (_bounce)
 	{
-		nV = nV - collisionNormal * bounce * 2 * dot_product(nV, collisionNormal * bounce);
+		nV = nV - collisionNormal * 2 * dot_product(nV, collisionNormal);
+		nV *= bounce;
 	}
 	if (stopMovement)
 	{
@@ -67,7 +68,7 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 		nV = nV - invN;
 	}
 	tt->SetVelocity(nV);
-	pastPos = nP;
+	//pastPos = nP;
 	tt->SetPosition(nP);
 	stillapplygravity = _stillApplyGravity;
 	colliding = true;
