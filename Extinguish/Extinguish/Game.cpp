@@ -1205,12 +1205,15 @@ void Game::ResetPlayers()
 		player->GetTransform()->SetPosition(positions[randIndex]);
 		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 
-		//reset camera
-		string cameraName = "Camera";
-		cameraName += to_string(i);
-		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
+		if (!player->GetComponent<AI>())
+		{
+			//reset camera
+			string cameraName = "Camera";
+			cameraName += to_string(i);
+			GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+		}
 	}
 }
 
