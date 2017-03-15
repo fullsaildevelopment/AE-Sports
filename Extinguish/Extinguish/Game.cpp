@@ -332,22 +332,7 @@ void Game::HandleEvent(Event* e)
 			InputManager* input = inputDownEvent->GetInput();
 			if (input->GetKeyDown('	'))
 			{
-				GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
-				GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
-				GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
-				//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
-				Button * resumeButton = pauseResume->GetComponent<Button>();
-				Button * exitButton = pauseExit->GetComponent<Button>();
-				Button * menuButton = pauseMenu->GetComponent<Button>();
-				//Button * scoreButton = pauseScore->GetComponent<Button>();
-				bool toggle = !resumeButton->getActive();
-				resumeButton->SetActive(toggle);
-				exitButton->SetActive(toggle);
-				menuButton->SetActive(toggle);
-
-				GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
-				Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
-				scoreBoard2->Toggle(toggle);
+				TogglePauseMenu();
 			}
 		}
 
@@ -399,6 +384,7 @@ void Game::HandleEvent(Event* e)
 			{
 				if (loadSceneEvent->GetName() == "Menu" && currentScene == 2)
 				{
+					TogglePauseMenu();
 					CreateGameWrapper();
 				}
 				LoadScene(loadSceneEvent->GetName());
@@ -567,11 +553,18 @@ void Game::CreateGameWrapper()
 
 		for (unsigned int j = 0; j < obj; ++j)
 		{
-			Transform * trans = scenes[i]->GetGameObjects(j)->GetTransform();
+			/*Transform * trans = scenes[i]->GetGameObjects(j)->GetTransform();
 			if (trans)
-				trans->Reset();
+				trans->Reset();*/
+			bool success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+
+			// if false -> no ai attached
 		}
 	}
+
+	ResetBall();
+	ResetPlayers();
+
 	// also need to remove ai?
 	Team1Score = Team2Score = 0;
 	UpdateScoreUI();
@@ -654,7 +647,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 2.0f, 0.07f, 4.4f, -14.8f);
+		Physics* physics = new Physics(0.01f, 4.0f, 0.07f, 6.4f, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -1212,12 +1205,15 @@ void Game::ResetPlayers()
 		player->GetTransform()->SetPosition(positions[randIndex]);
 		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 
-		//reset camera
-		string cameraName = "Camera";
-		cameraName += to_string(i);
-		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
+		if (!player->GetComponent<AI>())
+		{
+			//reset camera
+			string cameraName = "Camera";
+			cameraName += to_string(i);
+			GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+		}
 	}
 }
 
@@ -1894,4 +1890,24 @@ void Game::GetFloor()
 			}*/
 		}
 	}
+}
+
+void Game::TogglePauseMenu()
+{
+	GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
+	GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
+	GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
+	//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
+	Button * resumeButton = pauseResume->GetComponent<Button>();
+	Button * exitButton = pauseExit->GetComponent<Button>();
+	Button * menuButton = pauseMenu->GetComponent<Button>();
+	//Button * scoreButton = pauseScore->GetComponent<Button>();
+	bool toggle = !resumeButton->getActive();
+	resumeButton->SetActive(toggle);
+	exitButton->SetActive(toggle);
+	menuButton->SetActive(toggle);
+
+	GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
+	Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
+	scoreBoard2->Toggle(toggle);
 }

@@ -205,7 +205,7 @@ void AI::Update(float _dt)
 	if (!camera)
 	{
 		camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
-		camera->RotateX(-0.68f); // 345 -0.68f
+		camera->RotateX(-0.9f); // 345 -0.68f
 	}
 
 	if (!eTank)
@@ -327,7 +327,7 @@ void AI::Update(float _dt)
 			GetBall();
 	}
 #pragma endregion
-
+	
 #pragma region Tank
 	else if (currState == tank)
 	{

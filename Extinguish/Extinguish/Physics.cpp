@@ -24,7 +24,7 @@ void Physics::FixedUpdate(float _dt)
 			nV += transform->GetVelocity() * (-airdrag * _dt);
 		}
 		//apply friction if touching
-		if(colliding && !stillapplygravity)
+		if(colliding && !stillapplygravity && applyFriction)
 		{
 			nV += transform->GetVelocity() * -1 * friction * _dt;
 		}
@@ -58,7 +58,8 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 {
 	if (_bounce)
 	{
-		nV = nV - collisionNormal * bounce * dot_product(nV, collisionNormal * bounce);
+		nV = nV - collisionNormal * 2 * dot_product(nV, collisionNormal);
+		nV *= bounce;
 	}
 	if (stopMovement)
 	{
@@ -67,7 +68,7 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 		nV = nV - invN;
 	}
 	tt->SetVelocity(nV);
-	pastPos = nP;
+	//pastPos = nP;
 	tt->SetPosition(nP);
 	stillapplygravity = _stillApplyGravity;
 	colliding = true;
@@ -103,4 +104,9 @@ void Physics::SetHasMaxSpeed(bool toggle)
 void Physics::SetMaxSpeed(float newMaxSpeed)
 {
 	maxMoveSpeed = newMaxSpeed;
+}
+
+void Physics::SetApplyFriction(bool t)
+{
+	applyFriction = t;
 }
