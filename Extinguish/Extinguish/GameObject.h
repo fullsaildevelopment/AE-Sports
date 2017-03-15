@@ -43,6 +43,7 @@ public:
 	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, float3 position, float3 rotation, float3 scale, Transform* parent, Transform* child, Transform* sibling);
 	void Update(float deltaTime);
 	void FixedUpdate(float deltaTime);
+	void Shutdown();
 
 	//misc
 	void AddComponent(Component* component);

@@ -159,63 +159,65 @@ void UIRenderer::Update(float _dt)
 
 void UIRenderer::Render()
 {
-	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
-
-	HRESULT hr;
-	
-	pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
-	//devContext->OMSetDepthStencilState(depthStencilState, 1);
-	d2DevContext->SaveDrawingState(stateBlock.Get());
-
-	d2DevContext->BeginDraw();
-	d2DevContext->SetTransform(D2D1::IdentityMatrix());
-
-	if (theButton) {
-		if (theButton->getActive()) {
-
-			if (pBitmap)
-			{
-				if ((!theButton->isHovered() && !theButton->stayHovered()) || !pBitmapHovered)
-					d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
-				else
-					d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
-			}
-
-			if (theButton->getText() != L"") {
-
-				DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
-				hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
-
-				d2DevContext->DrawTextLayout(
-					D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
-					pTextLayout.Get(),
-					pBrush.Get()
-				);
-			}
-			/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
-			{
-				float t = 0;
-			}*/
-
-			if (GetGameObject()->GetName() == "debugUI") {
-				RenderDebugUI(theButton);
-			}
-		}
-	}
-	
-	if (theBar)
+	if (isEnabled())
 	{
-		if (theBar->getActive())
-		{
-			d2DevContext->DrawBitmap(pBitmap.Get(), theBar->getRect2());
-			d2DevContext->DrawBitmap(pBitmapHovered.Get(), theBar->getRect());
+		ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+
+		HRESULT hr;
+
+		pD2DFactory->CreateDrawingStateBlock(stateBlock.GetAddressOf());
+		//devContext->OMSetDepthStencilState(depthStencilState, 1);
+		d2DevContext->SaveDrawingState(stateBlock.Get());
+
+		d2DevContext->BeginDraw();
+		d2DevContext->SetTransform(D2D1::IdentityMatrix());
+
+		if (theButton) {
+			if (theButton->getActive()) {
+
+				if (pBitmap)
+				{
+					if ((!theButton->isHovered() && !theButton->stayHovered()) || !pBitmapHovered)
+						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
+					else
+						d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
+				}
+
+				if (theButton->getText() != L"") {
+
+					DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
+					hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
+
+					d2DevContext->DrawTextLayout(
+						D2D1::Point2F(theButton->getOriginX(), theButton->getOriginY()),
+						pTextLayout.Get(),
+						pBrush.Get()
+					);
+				}
+				/*if (hr != D2DERR_RECREATE_TARGET && hr != S_OK)
+				{
+					float t = 0;
+				}*/
+
+				if (GetGameObject()->GetName() == "debugUI") {
+					RenderDebugUI(theButton);
+				}
+			}
 		}
+
+		if (theBar)
+		{
+			if (theBar->getActive())
+			{
+				d2DevContext->DrawBitmap(pBitmap.Get(), theBar->getRect2());
+				d2DevContext->DrawBitmap(pBitmapHovered.Get(), theBar->getRect());
+			}
+		}
+
+		hr = d2DevContext->EndDraw();
+		d2DevContext->RestoreDrawingState(stateBlock.Get());
+		stateBlock.Reset();
 	}
-
-	hr = d2DevContext->EndDraw();
-	d2DevContext->RestoreDrawingState(stateBlock.Get());
-	stateBlock.Reset();
-
 }
 
 void UIRenderer::RenderDebugUI(Button * theButton)

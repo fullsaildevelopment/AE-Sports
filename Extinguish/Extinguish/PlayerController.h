@@ -50,7 +50,7 @@ private:
 	//const members
 	const float sprintMultiplier = 2.5f;// 1.75f;
 	const float chargeMultiplier = 2.25f;
-	const float timeTilCharge = 2.5f;
+	const float timeTilCharge = 2.0f;
 	const float sprintCost = 0.15f;
 
 	const unsigned int goalPoints = 100;
@@ -82,6 +82,8 @@ public:
 	void AddGoal();
 	void AddSave();
 	void AddAssist();
+	void AddCatch();
+	void ReadInStats(std::string playerName);
 
 	//actions
 	void Jump();
