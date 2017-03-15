@@ -1544,34 +1544,42 @@ void BuildPlanes(const Hexagon& hex, float r)
 		planes[5].n = rplnnx;
 		planes[6].n = tplnnx;
 	}
+
+	planes[0].p = hex.seg.m_End;
+	planes[1].p = hex.seg.m_End;
+	planes[2].p = hex.seg.m_End;
+	planes[3].p = hex.seg.m_End;
+	planes[4].p = hex.seg.m_End;
+	planes[5].p = hex.seg.m_End;
+	planes[6].p = hex.seg.m_End;
 	
-	planes[0].p.x = 0;
-	planes[0].p.y = hex.seg.m_End.y + r;
-	planes[0].p.z = 0;
-
-	planes[1].p.x = hex.h * 0.5f + tpln.x * r;
-	planes[1].p.y = 0 + tpln.y * r;
-	planes[1].p.z = hex.s * 0.5f + tpln.z * r;
-
-	planes[2].p.x = hex.h * 0.5f + rpln.x * r;
-	planes[2].p.y = rpln.y * r;
-	planes[2].p.z = hex.s * 0.5f + rpln.z * r;
-
-	planes[3].p.x = hex.h * 0.5f + tplnnz.x * r;
-	planes[3].p.y = tplnnz.y * r;
-	planes[3].p.z = -hex.s * 0.5f + tplnnz.z * r;
-
-	planes[4].p.x = -hex.h * 0.5f + tplnnznx.x * r;
-	planes[4].p.y = tplnnznx.y * r;
-	planes[4].p.z = -hex.s * 0.5f + tplnnznx.z * r;
-
-	planes[5].p.x = -hex.h * 0.5f + rplnnx.x * r;
-	planes[5].p.y = rplnnx.y * r;
-	planes[5].p.z = hex.s * 0.5f + rplnnx.z * r;
-
-	planes[6].p.x = -hex.h * 0.5f + tplnnx.x * r;
-	planes[6].p.y = tplnnx.y * r;
-	planes[6].p.z = hex.s * 0.5f + tplnnx.z * r;
+	planes[0].p.x += 0;
+	planes[0].p.y += r;
+	planes[0].p.z += 0;
+				  
+	planes[1].p.x += hex.h * 0.5f + tpln.x * r;
+	planes[1].p.y += 0 + tpln.y * r;
+	planes[1].p.z += hex.s * 0.5f + tpln.z * r;
+				  
+	planes[2].p.x += hex.h * 0.5f + rpln.x * r;
+	planes[2].p.y += rpln.y * r;
+	planes[2].p.z += hex.s * 0.5f + rpln.z * r;
+				  
+	planes[3].p.x += hex.h * 0.5f + tplnnz.x * r;
+	planes[3].p.y += tplnnz.y * r;
+	planes[3].p.z += -hex.s * 0.5f + tplnnz.z * r;
+				  
+	planes[4].p.x += -hex.h * 0.5f + tplnnznx.x * r;
+	planes[4].p.y += tplnnznx.y * r;
+	planes[4].p.z += -hex.s * 0.5f + tplnnznx.z * r;
+				  
+	planes[5].p.x += -hex.h * 0.5f + rplnnx.x * r;
+	planes[5].p.y += rplnnx.y * r;
+	planes[5].p.z += hex.s * 0.5f + rplnnx.z * r;
+				  
+	planes[6].p.x += -hex.h * 0.5f + tplnnx.x * r;
+	planes[6].p.y += tplnnx.y * r;
+	planes[6].p.z += hex.s * 0.5f + tplnnx.z * r;
 }
 
 AABB HexBox;
@@ -1579,10 +1587,10 @@ AABB SHexBox;
 float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& Stime, ED2Mesh* mesh)
 {
 	HexBox.min.x = hex.seg.m_Start.x - 1;
-	HexBox.min.y = hex.seg.m_Start.y - 1;
+	HexBox.min.y = hex.seg.m_Start.y;
 	HexBox.min.z = hex.seg.m_Start.z - 1;
 	HexBox.max.x = hex.seg.m_End.x + 1;
-	HexBox.max.y = hex.seg.m_End.y + 1;
+	HexBox.max.y = hex.seg.m_End.y + 3;
 	HexBox.max.z = hex.seg.m_End.z + 1;
 	SHexBox.min.x = s.m_Center.x - s.m_Radius - 1;
 	SHexBox.min.y = s.m_Center.y - s.m_Radius - 1;
@@ -1664,8 +1672,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 
 	float3 Sdirection = s.m_Center - pastPos;
 	
-	if (Sdirection.isEquil(float3(0, 0, 0)))
-		return zeroF;
+	
 	/*
 	if (mesh)
 	{
@@ -1689,19 +1696,20 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	*/
 	//return zeroF;
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	float3 endPoint;
-	endPoint.x = s.m_Center.x - hex.seg.m_Start.x;
-	endPoint.y = s.m_Center.y - hex.seg.m_Start.y;
-	endPoint.z = s.m_Center.z - hex.seg.m_Start.z;
+	float3 endPoint = s.m_Center;
 
-	float3 startPoint;
-	startPoint.x = pastPos.x - hex.seg.m_Start.x;
-	startPoint.y = pastPos.y - hex.seg.m_Start.y;
-	startPoint.z = pastPos.z - hex.seg.m_Start.z;
+	float3 startPoint = pastPos;
 
 	BuildPlanes(hex, s.m_Radius);
 
 	////////////////////////////////////////////////////////////////////////
+
+	//If not moveing we need to add epsilon so that inf does not happen
+	if (Sdirection.isEquil(float3(0, 0, 0)))
+	{
+		endPoint += 0.00001f;
+		startPoint -= 0.00001f;
+	}
 
 	float times[7];
 	float3 InPoints[7];
@@ -1740,23 +1748,11 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 
 	if (allInside)
 	{
-		if (Sdirection.y < 0)
+		if (Sdirection.y <= 0)
 		{
-			float3 toFloorB = endPoint;
-			toFloorB.y -= 0.2f;
-			float3 toFloorT = endPoint;
-			toFloorT.y += 0.2f;
-			if (planes[0].p.y <= toFloorT.y && planes[0].p.y >= toFloorB.y)
+			if (planes[0].p.y > endPoint.y)
 			{
-				std::cout << "levelwithTop" << std::endl;
-				s.m_Center.y = planes[0].p.y + 0.0001f;
-				Stime = 0.0001f;
-				return planes[0].n;
-			}
-			if (times[0] != -1)
-			{
-				std::cout << "sendtoTop" << std::endl;
-				s.m_Center.y = planes[0].p.y + 0.0001f;
+				s.m_Center.y = hex.seg.m_End.y;
 				Stime = 0.0001f;
 				return planes[0].n;
 			}
@@ -1799,7 +1795,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	{
 		if (dot_product(Sdirection, planes[at].n) < 0)
 		{
-			s.m_Center = pastPos + Sdirection * (times[at] - 0.0008f);
+			s.m_Center = pastPos + Sdirection * (times[at] - 0.001f);
 			Stime = times[at];
 
 			return planes[at].n;
