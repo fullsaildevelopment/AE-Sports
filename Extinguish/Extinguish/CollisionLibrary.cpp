@@ -1803,9 +1803,9 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		{
 			s.m_Center = pastPos + Sdirection * (times[at] - 0.0007f);
 			float goTop = (planes[0].p.y - s.m_Center.y);
-			if (goTop >= -0.095f && goTop < 0)
+			if (goTop >= -0.1f && goTop < 0)
 			{
-				s.m_Center.y = planes[0].p.y;
+				s.m_Center.y += 0.01f;
 			}
 			Stime = times[at];
 
