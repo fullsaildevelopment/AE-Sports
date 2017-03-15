@@ -516,7 +516,12 @@ void ResourceManager::LoadAndCreateShaders()
 	WIN32_FIND_DATA fileData;
 	HANDLE hFileFind;
 
-	std::string filePath = debugPath;
+	std::string filePath;
+#if _DEBUG
+	filePath = debugPath;
+#else
+		filePath = releasePath;
+#endif
 	filePath += "*.cso";
 
 	//find the first shader
@@ -537,7 +542,12 @@ void ResourceManager::LoadAndCreateShaders()
 			std::string curFileName = fileData.cFileName;
 
 			//make full file path
-			std::string filePath = debugPath;
+			std::string filePath;
+			#if _DEBUG
+						filePath = debugPath;
+			#else
+						filePath = releasePath;
+			#endif
 			filePath += curFileName; //this already includes extension
 
 			//open shader
@@ -832,7 +842,7 @@ void ResourceManager::LoadInTextures()
 	//if file location isn't valid, do  
 	if (hFileFind != INVALID_HANDLE_VALUE)
 	{
-		do //for every other .cso
+		do //for every other .dds
 		{
 			std::string fileName = ddsPath;
 			fileName += fileData.cFileName;

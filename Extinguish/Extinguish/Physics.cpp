@@ -58,7 +58,7 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 {
 	if (_bounce)
 	{
-		nV = nV - collisionNormal * bounce * 2 * dot_product(nV, collisionNormal * bounce);
+		nV = nV - collisionNormal * bounce * dot_product(nV, collisionNormal * bounce);
 	}
 	if (stopMovement)
 	{

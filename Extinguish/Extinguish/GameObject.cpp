@@ -60,6 +60,14 @@ void GameObject::FixedUpdate(float deltaTime)
 	transform->FixedUpdate(deltaTime);
 }
 
+void GameObject::Shutdown()
+{
+	for (int i = 0; i < components.size(); ++i)
+	{
+		components[i]->Shutdown();
+	}
+}
+
 //misc//
 
 //automatically sets component's game object pointer

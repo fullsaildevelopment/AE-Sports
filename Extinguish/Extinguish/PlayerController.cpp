@@ -18,6 +18,7 @@
 #include "GamePad.h"
 #include "Game.h"
 #include "GamePadEvent.h"
+#include <fstream>
 
 using namespace std;
 
@@ -74,7 +75,35 @@ void PlayerController::Update(float _dt)
 
 void PlayerController::Shutdown()
 {
-	//save out player stats to 
+	//save out player stats to a file
+	ofstream bout;
+	//name = "";
+	string fileName = "../Resources/Stats/" + name + ".stats";
+
+	bout.open(fileName, ios_base::binary);
+
+	if (bout.is_open())
+	{
+		//write out name
+		unsigned int nameSize = name.size();
+
+		bout.write((const char*)&nameSize, sizeof(unsigned int));
+		bout.write((const char*)&name[0], nameSize);
+
+		//write out total goals
+		bout.write((const char*)&totalGoals, sizeof(totalGoals));
+
+		//write out total assists
+		bout.write((const char*)&totalAssists, sizeof(totalAssists));
+
+		//write out total saves
+		bout.write((const char*)&totalSaves, sizeof(totalSaves));
+
+		//write out total catches
+		bout.write((const char*)&totalCatches, sizeof(totalCatches));
+	}
+
+	bout.close();
 }
 
 void PlayerController::HandleEvent(Event* e)
@@ -262,6 +291,63 @@ void PlayerController::AddAssist()
 
 	score += assistPoints;
 	cout << "ASSIST!" << endl;
+}
+
+void PlayerController::AddCatch()
+{
+	++totalCatches;
+}
+
+void PlayerController::ReadInStats(std::string playerName)
+{
+	ifstream bin;
+	string filePath = "../Resources/Stats/";
+	filePath += playerName;
+	filePath += ".stats";
+	//WIN32_FIND_DATA fileData;
+	//HANDLE filePathH = FindFirstFile(filePath.c_str(), &fileData);
+
+	//if (filePathH != INVALID_HANDLE_VALUE)
+	//{
+	//	if (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+	//	{
+	//		do
+	//		{
+	//string fileName = "../Resources/Stats/";
+	//fileName += fileData.cFileName;
+
+	bin.open(filePath, ios_base::binary);
+
+	if (bin.is_open())
+	{
+		//read in name
+		unsigned int nameSize;
+
+		bin.read((char*)&nameSize, sizeof(unsigned int));
+
+		name.resize(nameSize);
+		bin.read((char*)&name[0], nameSize);
+
+		//read in total goals
+		bin.read((char*)&totalGoals, sizeof(totalGoals));
+
+		//read in total assists
+		bin.read((char*)&totalAssists, sizeof(totalAssists));
+
+		//read intotal saves
+		bin.read((char*)&totalSaves, sizeof(totalSaves));
+
+		//read intotal catches
+		bin.read((char*)&totalCatches, sizeof(totalCatches));
+	}
+	else //no file is there, so just take in name so respective file is made later
+	{
+		name = playerName;
+	}
+	bin.close();
+	/*	} while (FindNextFile(filePathH, &fileData));
+	}
+	}*/
 }
 
 //actions//
@@ -547,7 +633,6 @@ void PlayerController::ResetPlayerGameStats()
 	assists = 0;
 	saves = 0;
 }
-
 
 //getters//
 std::string PlayerController::GetName()
