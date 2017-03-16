@@ -106,7 +106,7 @@ struct GameState //practically an object state
 	XMFLOAT3 rotation;
 	int8_t parentIndex;
 	int8_t animationIndex;
-	int otherIndex;
+	float otherIndex;
 	float _dt;
 	int8_t transitionIndex;
 	int32_t soundID;

@@ -14,9 +14,10 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	maxHeight = _maxHeight;
 	transSpeed = 0.25f;
 	colors = _colors;
-	timer.Restart();
+	timer = 0;
 	ControlColors(0);
 	direction = 1;
+	timeing = 0;
 }
 
 void FloorController::WavePattern(float _dt)
@@ -75,6 +76,7 @@ void FloorController::InitialPattern(float _dt)
 		direction = 1;
 	}
 
+	_dt = fmodf(_dt, 1);
 	ratios += _dt * transSpeed * direction;
 
 	//red goal
@@ -119,11 +121,13 @@ void FloorController::Strips(float _dt)
 
 }
 
-void FloorController::ControlMovement(float _dt)
+void FloorController::ControlMovement(float fullTime)
 {
-	timeing += _dt;
+	timeing = fullTime;
+	float dt = timeing - timer;
+	timer = fullTime;
 
-	InitialPattern(_dt);
+	InitialPattern(dt);
 
 	//if (timeing < 10 && currPattern != 1)
 	//{
@@ -257,8 +261,8 @@ void FloorController::ScoreColor()
 
 void FloorController::Update(float _dt)
 {
-	ControlMovement(_dt);
-	//ControlColors(dt);
+	timeing += _dt;
+	ControlMovement(timeing);
 	if (score)
 	{
 		if (scorer != 2)
@@ -272,52 +276,9 @@ void FloorController::Update(float _dt)
 	}
 }
 
-void FloorController::SetState(int state, float _dt)
+void FloorController::SetState(float fullTime)
 {
-	if (state == -1)
-	{
-		LevelFloor(1000);
-	}
-	else if (state == 0)
-	{
-		currPattern = 1;
-		timeing = 10;
-		Update(_dt);
-	}
-	else if (state == 1)
-	{
-		currPattern = 0;
-		timeing = 0;
-		Update(_dt);
-	}
-	else if (state == 10)
-	{
-		StripPattern(1000);
-	}
-	else if (state == 2)
-	{
-		currPattern = 0;
-		timeing = 20;
-		Update(_dt);
-	}
-	else if (state == 20)
-	{
-		WavePattern(1000);
-	}
-	else if (state == 3)
-	{
-		currPattern = 0;
-		timeing = 40;
-		Update(_dt);
-	}
-	else if (state == 30)
-	{
-		//RandomPattern(1000);
-	}
-	else if (420)
-	{
-		InitialPattern(_dt);
-	}
+	ControlMovement(fullTime);
 }
 
 FloorController::~FloorController()
