@@ -733,7 +733,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
-		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources);
+		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources, true);
 		if (i <= 4)
 			crosseRenderer->SetTeamColor({ 1,0,0,0 });
 		else

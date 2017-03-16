@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "PlayerController.h"
 #include "PostProcess.h"
+#include "SLList.h"
 
 #define NUMOFPOINTLIGHTS 1
 #define NUMOFSPOTLIGHTS 0
@@ -37,12 +38,18 @@ private:
 	//int prevMouseX, prevMouseY;
 
 	//time_t previousTime; //deltaTime
+	struct RenderItem
+	{
+		Renderer* rend;
+		float dist;
+	};
 
 	vector<Model> models;
 	DirectionalLight dirLight;
 	vector<PointLight> pointLights;
 	vector<SpotLight> spotLights;
-	
+	SLList<RenderItem> transparentObjects;
+	SLList<RenderItem> opaqueObjects;
 
 	//ResourceManager* resourceManager;
 	//vector<AnimatedRenderNode*> renderNodes;
