@@ -25,9 +25,9 @@ private:
 	bool CheckCapsuleAABB(AABB test, Capsule s);
 	float3 zeroF = float3(0, 0, 0);
 	bool CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt);
-	bool CheckCapsule(GameObject* tg, int _min, int _max, CapsuleCollider* cap, Capsule c, float3 pastPos, int f, float dt, float& St);
+	bool CheckCapsule(GameObject* tg, GameObject* ob, int _min, int _max, CapsuleCollider* cap, Capsule c, float3 pastPos, int f, float dt, float& St);
 	bool CheckFloor2Sphere(SphereCollider* sphere, int f, float dt);
-	bool CheckSphere(GameObject* tg, int _min, int _max, SphereCollider* sphere, Sphere s, float3 pastPos, int f, float dt, float& St);
+	bool CheckSphere(GameObject* tg, GameObject* ob, int _min, int _max, SphereCollider* sphere, Sphere s, float3 pastPos, int f, float dt, float& St);
 
 public:
 	HexagonCollider(GameObject* o, float v, float height, ED2Mesh* colmesh = nullptr);

@@ -43,6 +43,7 @@ public:
 	void InitTransform(DirectX::XMFLOAT4X4 localMatrix, float3 position, float3 rotation, float3 scale, Transform* parent, Transform* child, Transform* sibling);
 	void Update(float deltaTime);
 	void FixedUpdate(float deltaTime);
+	void Shutdown();
 
 	//misc
 	void AddComponent(Component* component);
@@ -83,6 +84,10 @@ public:
 	std::string GetTag() { return tag; };
 	Scene* GetScene();
 
+	// remove component
+	template <class T>
+	bool RemoveComponent();
+
 	//I want to have the renderer already initialized before I set, so I can keep gameobject simple
 	//void SetRenderer(Renderer* node) { renderer = node; }
 	vector<GameObject*>* const GetGameObjects();
@@ -99,29 +104,45 @@ T*	GameObject::GetComponent()
 	{
 		T* Comp = dynamic_cast<T*>(components[i]);
 		if (Comp != nullptr) return Comp;
+
 	}
 	return nullptr;
+}
+
+
+template <class T>
+bool GameObject::RemoveComponent()
+{
+	for (size_t i = 0; i < components.size(); ++i)
+	{
+		T* Comp = dynamic_cast<T*>(components[i]);
+		if (Comp != nullptr)
+		{
+			components.erase(components.begin() + i);
+			delete Comp;
+			return true;
+		}
+
+	}
+	return false;
 }
 
 template < >
 BoxCollider* GameObject::GetComponent<BoxCollider>()
 {
-	if (boxcolliders.size() > 0) return boxcolliders[0];
-	return nullptr;
+	return (boxcolliders.size() > 0) ? boxcolliders[0] : nullptr;
 }
 
 template < >
 SphereCollider* GameObject::GetComponent<SphereCollider>()
 {
-	if (spherecolliders.size() > 0) return spherecolliders[0];
-	return nullptr;
+	return (spherecolliders.size() > 0) ? spherecolliders[0] : nullptr;
 }
 
 template < >
 CapsuleCollider* GameObject::GetComponent<CapsuleCollider>()
 {
-	if (capsulecolliders.size() > 0) return capsulecolliders[0];
-	return nullptr;
+	return (capsulecolliders.size() > 0) ? capsulecolliders[0] : nullptr;
 }
 
 template <class T>

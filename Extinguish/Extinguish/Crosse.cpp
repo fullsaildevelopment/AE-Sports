@@ -116,11 +116,10 @@ void Crosse::Throw()
 void Crosse::Catch()
 {
 	//increase player's stats
-	//TODO: decide if it is a save or not. If not, then it's just a catch
-	PlayerController* playerController = GetGameObject()->GetComponent<PlayerController>();
+	PlayerController* playerController = player->GetComponent<PlayerController>();
 	float3 goalPos;
 
-	if (Game::team == Game::PLAYER_TEAM::TEAM_A) //red player
+	if (playerController->GetTeamID() == Game::PLAYER_TEAM::TEAM_A) //red player
 	{
 		goalPos = GetGameObject()->FindGameObject("RedGoal")->GetTransform()->GetPosition();
 	}
@@ -141,6 +140,8 @@ void Crosse::Catch()
 			player->GetComponent<PlayerController>()->AddSave();
 		}
 	}
+
+	playerController->AddCatch();
 
 	ballC->SetHolder(GetGameObject());
 	SetColor(true);

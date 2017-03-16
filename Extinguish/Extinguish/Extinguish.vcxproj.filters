@@ -90,15 +90,6 @@
     <ClCompile Include="Application.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="AI.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatorController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="BallController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -114,55 +105,25 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Crosse.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="FloorController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="HexagonCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Goal.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Movement.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Physics.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Scoreboard.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Transition.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Trigger.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="UIRenderer.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="MeterBar.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="..\Bin\imgui\imgui.cpp">
@@ -186,8 +147,47 @@
     <ClCompile Include="DirectionalLight.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="AnimatorController.cpp">
+      <Filter>Components\Animator Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="MeterBar.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Goal.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="FloorController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Crosse.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Components\Animator Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Transition.cpp">
+      <Filter>Components\Animator Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Components\Animator Controller</Filter>
+    </ClCompile>
     <ClCompile Include="Parameter.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Components\Animator Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="AI.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="BallController.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Scoreboard.cpp">
+      <Filter>Components\Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -227,15 +227,6 @@
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="AI.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatorController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="BallController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="BoxCollider.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -254,43 +245,19 @@
     <ClInclude Include="Component.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Crosse.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="FloorController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="HexagonCollider.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Goal.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Movement.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Physics.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerUp.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Scoreboard.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="SphereCollider.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ReadData.h">
@@ -299,16 +266,7 @@
     <ClInclude Include="Transform.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Transition.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Trigger.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="UIRenderer.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="MeterBar.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="..\Bin\imgui\imgui.h">
@@ -356,8 +314,50 @@
     <ClInclude Include="InputManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="AnimatorController.h">
+      <Filter>Components\Animator Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MeterBar.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Movement.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Goal.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="FloorController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Crosse.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Components\Animator Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Transition.h">
+      <Filter>Components\Animator Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger.h">
+      <Filter>Components\Animator Controller</Filter>
+    </ClInclude>
     <ClInclude Include="Parameter.h">
-      <Filter>Engine</Filter>
+      <Filter>Components\Animator Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUp.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="BallController.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="AI.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Scoreboard.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +404,12 @@
     </Filter>
     <Filter Include="DDS">
       <UniqueIdentifier>{46894314-139f-4dca-bde2-d932c4560c9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Scripts">
+      <UniqueIdentifier>{8a2fa4e0-0be4-48c8-9ffe-15546302d4a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Animator Controller">
+      <UniqueIdentifier>{679e5e80-1564-41f7-9fed-ceb0b6ac1f2d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
