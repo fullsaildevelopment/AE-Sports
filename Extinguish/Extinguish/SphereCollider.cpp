@@ -5,12 +5,12 @@
 
 
 
-SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o, t)
+SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o, t, CTSphere)
 {
 	radius = r;
 }
 
-SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Collider(o, t)
+SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Collider(o, t, CTSphere)
 {
 	radius = r;
 	GetGameObject()->GetTransform()->AddVelocity(v * 3);
@@ -26,19 +26,20 @@ void SphereCollider::FixedUpdate(float _dt)
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	size_t size = objects.size();
+	GameObject* ob;
 	for (int i = 0; i < size; ++i)
 	{
-
-		if (objects[i] == GetGameObject()) continue;
+		ob = objects[i];
+		if (ob == GetGameObject()) continue;
 		bool c = false;
 		for (int j = 0; j < checked.size(); ++j)
 		{
-			if (objects[i]->GetComponent<Collider>() == checked[j]) c = true;
+			if (ob->GetComponent<Collider>() == checked[j]) c = true;
 		}
 		if (c) continue;
 
 		///////////////////////////////////////Sphere vs AABB///////////////////////////////////////
-		BoxCollider* box = objects[i]->GetComponent<BoxCollider>();
+		BoxCollider* box = ob->GetComponent<BoxCollider>();
 		if (box)
 		{
 			if (box->isTrigger() || isTrigger())
@@ -69,6 +70,11 @@ void SphereCollider::FixedUpdate(float _dt)
 							tg->OnCollisionEnter(box);
 							CollidingWith[i] = true;
 						}
+						else
+						{
+							tg->OnCollisionStay(box);
+							objects[i]->OnCollisionStay(this);
+						}
 						continue;
 					}
 					else
@@ -82,6 +88,11 @@ void SphereCollider::FixedUpdate(float _dt)
 							tg->OnCollisionEnter(box);
 							CollidingWith[i] = true;
 						}
+						else
+						{
+							tg->OnCollisionStay(box);
+							objects[i]->OnCollisionStay(this);
+						}
 					}
 					if (CollidingWith[i])
 					{
@@ -94,14 +105,14 @@ void SphereCollider::FixedUpdate(float _dt)
 			continue;
 		}
 		///////////////////////////////////////Sphere vs Capsule///////////////////////////////////////
-		CapsuleCollider* capsule = objects[i]->GetComponent<CapsuleCollider>();
+		CapsuleCollider* capsule = ob->GetComponent<CapsuleCollider>();
 		if (capsule)
 		{
 			if (capsule->isTrigger() || isTrigger())
 			{
 				if (CapsuleToSphere(capsule->GetWorldCapsule(), GetWorldSphere()))
 				{
-					capsule->GetGameObject()->OnTriggerEnter(this);
+					ob->OnTriggerEnter(this);
 
 					tg->OnTriggerEnter(capsule);
 				}
@@ -121,8 +132,13 @@ void SphereCollider::FixedUpdate(float _dt)
 							objects[i]->OnCollisionEnter(this);
 							tg->OnCollisionEnter(capsule);
 							CollidingWith[i] = true;
-							continue;
 						}
+						else
+						{
+							tg->OnCollisionStay(capsule);
+							objects[i]->OnCollisionStay(this);
+						}
+							continue;
 					}
 					else
 					{
@@ -143,7 +159,7 @@ void SphereCollider::FixedUpdate(float _dt)
 			continue;
 		}
 		///////////////////////////////////////Sphere vs Sphere///////////////////////////////////////
-		SphereCollider* sphere = objects[i]->GetComponent<SphereCollider>();
+		SphereCollider* sphere = ob->GetComponent<SphereCollider>();
 		if (sphere)
 		{
 			if (sphere->isTrigger() || isTrigger())
@@ -151,7 +167,7 @@ void SphereCollider::FixedUpdate(float _dt)
 				if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
 				{
 
-					sphere->GetGameObject()->OnTriggerEnter(this);
+					ob->OnTriggerEnter(this);
 					tg->OnTriggerEnter(sphere);
 				}
 			}
@@ -173,7 +189,7 @@ void SphereCollider::FixedUpdate(float _dt)
 						tgt->SetPosition(s.m_Center);
 						if (!CollidingWith[i])
 						{
-							objects[i]->OnCollisionEnter(this);
+							ob->OnCollisionEnter(this);
 							tg->OnCollisionEnter(sphere);
 							CollidingWith[i] = true;
 						}
@@ -182,7 +198,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					if (CollidingWith[i])
 					{
 						CollidingWith[i] = false;
-						objects[i]->OnCollisionExit(this);
+						ob->OnCollisionExit(this);
 						tg->OnCollisionExit(sphere);
 					}
 				}
@@ -194,9 +210,9 @@ void SphereCollider::FixedUpdate(float _dt)
 						sphere->checked.push_back((Collider*)this);
 						tgt->SetVelocity(vel / _dt);
 						tgt->SetPosition(s.m_Center);
-						objects[i]->GetTransform()->SetVelocity(svel / _dt);
-						objects[i]->GetTransform()->SetPosition(os.m_Center);
-						objects[i]->OnCollisionEnter(this);
+						ob->GetTransform()->SetVelocity(svel / _dt);
+						ob->GetTransform()->SetPosition(os.m_Center);
+						ob->OnCollisionEnter(this);
 						tg->OnCollisionEnter(sphere);
 					}
 				}
@@ -215,9 +231,13 @@ Sphere SphereCollider::GetSphere()
 }
 Sphere SphereCollider::GetWorldSphere()
 {
-	XMFLOAT4X4 m = *GetGameObject()->GetTransform()->GetWorldP();
+	if (!transform)
+	{
+		transform = GetGameObject()->GetTransform();
+	}
+	XMFLOAT4X4* m = transform->GetWorldP();
 	Sphere s;
-	s.m_Center = float3(m._41, m._42, m._43);
+	s.m_Center = float3(m->_41, m->_42, m->_43);
 	s.m_Radius = radius;
 	return s;
 }

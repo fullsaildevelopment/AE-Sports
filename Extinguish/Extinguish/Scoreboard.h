@@ -5,19 +5,19 @@
 class GameObject;
 class Scene;
 class DeviceResources;
+class PlayerController;
 
 class Scoreboard : public Component
 {
 private:
 	//reg members
-	//std::vector<GameObject*> redPlayerBars;
-	//std::vector<GameObject*> bluePlayerBars;
 	std::vector<GameObject*> playerBars;
 	std::vector<GameObject*> playerNames;
 	std::vector<GameObject*> playerScores;
 	std::vector<GameObject*> playerGoals;
 	std::vector<GameObject*> playerAssists;
 	std::vector<GameObject*> playerSaves;
+	std::vector<PlayerController*> players;
 	GameObject** teamScores;
 	GameObject** labels;
 	GameObject* scoreboardBackground;
@@ -32,13 +32,10 @@ private:
 	const int numOfLabels = 10;
 	const int sceneID = 2;
 	const float ySpacing = 0.06f;
-	//const float yPos = 0.40f;
-	//const float yPosLabel = 0.35f;
 	const float yPos = 0.23f;
 	const float yPosLabel = 0.18f;
 
 	//private helper functions
-	void CreateLabels(float position);
 	bool IsBeingUsed(int index);
 	float Clamp(float num);
 public:

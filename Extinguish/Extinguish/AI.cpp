@@ -18,10 +18,10 @@ AI::AI(GameObject* obj) : Component(obj)
 
 void AI::OnCollisionEnter(Collider *obj)
 {
-	CapsuleCollider *col = dynamic_cast<CapsuleCollider*>(obj);
 
-	if (col)
+	if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 	{
+		CapsuleCollider *col = (CapsuleCollider*)obj;
 		if (obj->GetGameObject() == realTarget)
 		{
 			startTimer = true;

@@ -11,6 +11,7 @@
 #include "SoundEvent.h"
 #include "GamePad.h"
 #include "GamePadEvent.h"
+#include "Physics.h"
 
 namespace Move
 {
@@ -131,6 +132,8 @@ void Movement::HandleInput(InputDownEvent* e)
 {
 	InputManager* input = e->GetInput();
 	isMoving = false;
+	Physics* phys = GetGameObject()->GetComponent<Physics>();
+	bool af = true;
 
 	if (input->GetKey(forward))
 	{
@@ -139,6 +142,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		transform->AddVelocity({ forward.x * moveSpeed * _dt, forward.y * moveSpeed * _dt,  forward.z * moveSpeed * _dt});
 		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 		isMoving = true;
+		af = false;
 	}
 
 	if (input->GetKey(back))
@@ -149,6 +153,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		transform->AddVelocity({ forward.x * -moveSpeed* _dt, forward.y * -moveSpeed* _dt,  forward.z * -moveSpeed * _dt });
 		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 		isMoving = true;
+		af = false;
 	}
 
 	if (input->GetKey(left))
@@ -158,6 +163,7 @@ void Movement::HandleInput(InputDownEvent* e)
 		transform->AddVelocity({ right.x * -moveSpeed* _dt, right.y * -moveSpeed* _dt,  right.z * -moveSpeed * _dt });
 		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 		isMoving = true;
+		af = false;
 	}
 
 	if (input->GetKey(right))
@@ -168,8 +174,9 @@ void Movement::HandleInput(InputDownEvent* e)
 		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 		isMoving = true;
+		af = false;
 	}
-
+	phys->SetApplyFriction(af);
 	//if (input->GetKey(up)) //up
 	//{
 	//	XMFLOAT3 up = transform->GetUp();

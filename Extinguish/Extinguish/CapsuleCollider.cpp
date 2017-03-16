@@ -5,7 +5,7 @@
 
 using namespace DirectX;
 
-CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o, bool t) : Collider(o, t)
+CapsuleCollider::CapsuleCollider(float r, XMFLOAT3 s, XMFLOAT3 e, GameObject* o, bool t) : Collider(o, t, CTCapsule)
 {
 	radius = r;
 	Start = s;
@@ -28,8 +28,20 @@ Capsule CapsuleCollider::GetCapsule()
 
 Capsule CapsuleCollider::GetWorldCapsule()
 {
-	Capsule cap = GetCapsule();
-	float3 pos = GetGameObject()->GetTransform()->GetPosition();
+	if (!transform)
+	{
+		transform = GetGameObject()->GetTransform();
+	}
+	Capsule cap;
+	cap.m_Radius = radius;
+	cap.m_Segment.m_Start.x = Start.x;
+	cap.m_Segment.m_Start.y = Start.y;
+	cap.m_Segment.m_Start.z = Start.z;
+	cap.m_Segment.m_End.x = End.x;
+	cap.m_Segment.m_End.y = End.y;
+	cap.m_Segment.m_End.z = End.z;
+
+	float3 pos = transform->GetPosition();
 	cap.m_Segment.m_Start.x += pos.x;
 	cap.m_Segment.m_Start.y += pos.y;
 	cap.m_Segment.m_Start.z += pos.z;
@@ -50,20 +62,22 @@ void CapsuleCollider::FixedUpdate(float _dt)
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	size_t size = objects.size();
+	GameObject* ob;
 	for (int i = 0; i < size; ++i)
 	{
-		if (objects[i] == GetGameObject()) continue;
+		ob = objects[i];
+		if (ob == GetGameObject()) continue;
 		bool c = false;
 		for (int j = 0; j < checked.size(); ++j)
 		{
 			Collider* ch = objects[i]->GetComponent<Collider>();
-			if (objects[i]->GetComponent<Collider>() == checked[j])
+			if (ob->GetComponent<Collider>() == checked[j])
 				c = true;
 		}
 		if (c) continue;
 
 		///////////////////////////////////////Capsule vs AABB///////////////////////////////////////
-		BoxCollider* box = objects[i]->GetComponent<BoxCollider>();
+		BoxCollider* box = ob->GetComponent<BoxCollider>();
 		if (box)
 		{
 			if (box->isTrigger() || isTrigger())
@@ -99,8 +113,13 @@ void CapsuleCollider::FixedUpdate(float _dt)
 						if (!CollidingWith[i])
 						{
 							tg->OnCollisionEnter(box);
-							objects[i]->OnCollisionEnter(this);
+							ob->OnCollisionEnter(this);
 							CollidingWith[i] = true;
+						}
+						else
+						{
+							tg->OnCollisionStay(box);
+							ob->OnCollisionStay(this);
 						}
 						continue;
 					}
@@ -108,21 +127,21 @@ void CapsuleCollider::FixedUpdate(float _dt)
 				if (CollidingWith[i])
 				{
 					CollidingWith[i] = false;
-					objects[i]->OnCollisionExit(this);
+					ob->OnCollisionExit(this);
 					tg->OnCollisionExit(box);
 				}
 			}
 			continue;
 		}
 		///////////////////////////////////////Capsule vs Capsule///////////////////////////////////////
-		CapsuleCollider* capsule = objects[i]->GetComponent<CapsuleCollider>();
+		CapsuleCollider* capsule = ob->GetComponent<CapsuleCollider>();
 		if (capsule)
 		{
 			if (isTrigger() || capsule->isTrigger())
 			{
 				if (CapsuleToCapsule(GetWorldCapsule(), capsule->GetWorldCapsule()))
 				{
-					objects[i]->OnTriggerEnter(this);
+					ob->OnTriggerEnter(this);
 					tg->OnTriggerEnter(capsule);
 				}
 			}
@@ -131,9 +150,9 @@ void CapsuleCollider::FixedUpdate(float _dt)
 				Capsule c = GetWorldCapsule();
 				Capsule o = capsule->GetWorldCapsule();
 				float3 pos = tgt->GetPosition();
-				float3 opos = objects[i]->GetTransform()->GetPosition();
+				float3 opos = ob->GetTransform()->GetPosition();
 				float3 vel = tgt->GetVelocity();
-				float3 ovel = objects[i]->GetTransform()->GetVelocity();
+				float3 ovel = ob->GetTransform()->GetVelocity();
 				if (SweptCaptoSweptCap(c, o, vel, ovel, pos, opos))
 				{
 					capsule->checked.push_back(this);
@@ -141,24 +160,29 @@ void CapsuleCollider::FixedUpdate(float _dt)
 					if (op)
 					{
 						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false, float3(0, 0, 0), true);
-						Physics* nop = objects[i]->GetComponent<Physics>();
+						Physics* nop = ob->GetComponent<Physics>();
 						if (nop)
 						{
-							nop->HandlePhysics(objects[i]->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start, false, float3(0, 0, 0), true);
+							nop->HandlePhysics(ob->GetTransform(), ovel, opos - capsule->GetCapsule().m_Segment.m_Start, false, float3(0, 0, 0), true);
 						}
 					}
 					if (!CollidingWith[i])
 					{
-						objects[i]->OnCollisionEnter(this);
+						ob->OnCollisionEnter(this);
 						tg->OnCollisionEnter(capsule);
 						CollidingWith[i] = true;
+					}
+					else
+					{
+						tg->OnCollisionStay(capsule);
+						ob->OnCollisionStay(this);
 					}
 					continue;
 				}
 				if (CollidingWith[i])
 				{
 					CollidingWith[i] = false;
-					objects[i]->OnCollisionExit(this);
+					ob->OnCollisionExit(this);
 					tg->OnCollisionExit(capsule);
 				}
 			}

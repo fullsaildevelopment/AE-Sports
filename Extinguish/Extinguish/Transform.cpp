@@ -304,34 +304,7 @@ DirectX::XMFLOAT4X4 Transform::GetWorld()
 
 DirectX::XMFLOAT4X4* Transform::GetWorldP()
 {
-	if (bDirty)
-	{
-		XMMATRIX identity = XMMatrixIdentity();
-		XMMATRIX tempRotation = XMMatrixMultiply(identity, XMMatrixRotationX(rotation.x));
-		tempRotation = XMMatrixMultiply(tempRotation, XMMatrixRotationY(rotation.y));
-		tempRotation = XMMatrixMultiply(tempRotation, XMMatrixRotationZ(rotation.z));
-		XMMATRIX tempTranslation = XMMatrixMultiply(identity, XMMatrixTranslation(position.x, position.y, position.z));
-		XMMATRIX tempScale = XMMatrixMultiply(identity, XMMatrixScaling(scale.x, scale.y, scale.z));
-
-		XMMATRIX tempWorld = XMMatrixMultiply(tempScale, tempRotation);
-		tempWorld = XMMatrixMultiply(tempWorld, tempTranslation);
-
-		if (parent)
-		{
-			tempWorld = XMMatrixMultiply(tempWorld, XMLoadFloat4x4(&parent->GetWorld()));
-			//tempWorld = XMMatrixMultiply(XMLoadFloat4x4(&parent->GetWorld()), tempWorld);
-		}
-
-		XMStoreFloat4x4(&local, tempWorld);
-
-		world = local;
-
-		bDirty = false;
-	}
-	else
-	{
-		world = local;
-	}
+	world = local;
 
 	return &world;
 }
