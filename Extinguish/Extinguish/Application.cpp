@@ -30,8 +30,8 @@ bool Application::Update(float _dt)
 	//check window for messages and get input
 	windowResult = window.Update(input);
 
-	if (ResourceManager::GetSingleton()->IsServer())
-		Game::dt = _dt;
+	//if (ResourceManager::GetSingleton()->IsServer())
+	//	Game::dt = _dt;
 
 	//std::cout << windowResult << std::endl;
 	if (windowResult == WM_QUIT)
@@ -44,7 +44,7 @@ bool Application::Update(float _dt)
 		//TODO: make input inside of game, and only allow server to update it
 		input->Update();
 		//soundEngine.ProcessAudio();
-		int gResult = game.Update();
+		int gResult = game.Update(_dt);
 		if (gResult == 0)
 			result = false;
 		game.Render();
@@ -61,7 +61,7 @@ bool Application::Update(float _dt)
 
 bool Application::FixedUpdate(float _dt)
 {
-	game.FixedUpdate();
+	game.FixedUpdate(_dt);
 	return true;
 }
 
