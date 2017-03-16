@@ -141,7 +141,7 @@ public:
 		newClient.changeTeam(1);
 	}
 
-	float getFloorState(unsigned int i) { return newClient.getFloorState(i); }
+	int getFloorState(unsigned int i) { return newClient.getFloorState(i); }
 
 	int getScoreA() { return newClient.getScoreA(); }
 	int getScoreB() { return newClient.getScoreB(); }

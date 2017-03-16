@@ -177,7 +177,7 @@ int Game::Update()
 		if (currentScene >= 2) {
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
-				server.setTime(Time, dt);
+				server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
 
 				if (server.getObjCount() == 0)
 					server.setObjCount(scenes[currentScene]->GetNumObjects());
@@ -1686,7 +1686,7 @@ void Game::UpdateClientObjects()
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
 					//if (fC->GetState() != client.getFloorState(i))
-						fC->SetState(client.getFloorState(i));
+						fC->SetState(dt);
 				}
 
 
