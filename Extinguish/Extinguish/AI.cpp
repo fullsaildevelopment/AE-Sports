@@ -1,8 +1,8 @@
 #include "AI.h"
 #include "GameObject.h"
 
-#define     RunSpeed 10
-#define  AttackSpeed 20
+#define     RunSpeed 1 //10
+#define  AttackSpeed 1 //20
 #define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -504,6 +504,7 @@ bool AI::RunTo(GameObject *target)
 			return true;
 
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+		v.y = 0;
 		TurnTo(target);
 		me->GetTransform()->AddVelocity(v * RunSpeed);
 	}
@@ -519,6 +520,7 @@ bool AI::RunTo(GameObject *target, float dist)
 			return true;
 
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+		v.y = 0;
 		TurnTo(target);
 		me->GetTransform()->AddVelocity(v * RunSpeed);
 	}
@@ -532,6 +534,7 @@ bool AI::RunTo(float3 target, float dist)
 		return true;
 
 	float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+	v.y = 0;
 	TurnTo(target);
 	me->GetTransform()->AddVelocity(v * RunSpeed);
 
