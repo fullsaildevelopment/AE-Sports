@@ -18,7 +18,6 @@ AI::AI(GameObject* obj) : Component(obj)
 
 void AI::OnCollisionEnter(Collider *obj)
 {
-
 	if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 	{
 		CapsuleCollider *col = (CapsuleCollider*)obj;
