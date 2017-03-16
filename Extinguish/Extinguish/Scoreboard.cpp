@@ -126,7 +126,7 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 			wstring name(playerName.size(), L' ');
 			copy(playerName.begin(), playerName.end(), name.begin());
 
-			Button * textbutton = new Button(true, true, (wchar_t*)name.c_str(), name.size(), 100.0f, 50.0f, devResources, 0);
+			Button * textbutton = new Button(true, true, (wchar_t*)name.c_str(), (unsigned int)name.size(), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
 			textbutton->SetGameObject(playerNames[i]);
 			textbutton->showFPS(false);
@@ -245,7 +245,7 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		scene->AddUIObject(labels[labelIndex]);
 		labels[labelIndex]->Init("Scoreboard Name" + to_string(i % 4));
 		{
-			Button * textbutton = new Button(true, true, (wchar_t*)wideTeamNames[i].c_str(), wideTeamNames[i].size(), 100.0f, 50.0f, devResources, 0);
+			Button * textbutton = new Button(true, true, (wchar_t*)wideTeamNames[i].c_str(), (unsigned int)wideTeamNames[i].size(), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
 			textbutton->SetGameObject(labels[labelIndex]);
 			textbutton->showFPS(false);
@@ -692,8 +692,9 @@ void Scoreboard::SendScoreboard()
 	{
 		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
 		{
-			const char * name = players[i]->GetName().c_str();
-			Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals(), );
+			wstring name = playerNames[i]->GetComponent<Button>()->getText();
+			string name2 = players[i]->GetName();
+			//Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals(), name);
 		}
 	}
 }
@@ -705,10 +706,15 @@ void Scoreboard::ReceiveScoreboard()
 		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
 		{
 			unsigned int score, assists, saves, goals;
-			char * name;
-			Game::client.updateScoreboard(i, score, assists, saves, goals, name);
+			char name[8];
+			Game::client.updateScoreboard(i, score, assists, saves, goals , name);
 
-			players[i]->SetName(name);
+			vector<char> _name(name, name + 8);
+			wstring thename(_name.begin(), _name.end());
+			
+			playerNames[i]->GetComponent<Button>()->setText(thename);
+			
+		//	players[i]->SetName(name);
 			players[i]->SetAssists(assists);
 			players[i]->SetGoals(goals);
 			players[i]->SetSaves(saves);
