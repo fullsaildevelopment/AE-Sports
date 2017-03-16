@@ -13,13 +13,13 @@ private:
 	enum State
 	{
 		goalie, // stays at teams goal
-		playboy, // stays at enemy's goal
+		playboy, // paces at enemy's goal
 		guy, // runs after ball to score
 		tank, // protects teammate with ball
 	};
 
 
-	bool at1 = false;
+	bool at1 = false; // if goalie2 is at it's first checkpoint
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
 	float timer = 2; // timer for attack
@@ -43,7 +43,6 @@ private:
 	std::vector<GameObject*> AIbuddies; // list of AI on my team
 
 
-
 public:
 	AI(GameObject *obj);
 	void Init(GameObject *goal1, GameObject *goal2);
@@ -51,9 +50,9 @@ public:
 	void OnCollisionEnter(Collider *obj) override;
 
 	// States
-	void Idle();
-	void GetBall();
-	void DefendTeammate();
+	void Idle(); // sets velocity to 0
+	void GetBall(); // chases after ball
+	void DefendTeammate(); // attacks enemy closest to teammate
 
 	// Actions
 	void Attack(GameObject *target); // pass in the person you want to attack
