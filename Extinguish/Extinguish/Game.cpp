@@ -1477,6 +1477,8 @@ void Game::AssignPlayers()
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
 	vector<AI*> ai;
+	PLAYER_TEAM teamID = TEAM_A;
+
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (ResourceManager::GetSingleton()->IsServer())
@@ -1487,6 +1489,12 @@ void Game::AssignPlayers()
 			for (unsigned int i = 0; i < 8; ++i) 
 			{
 				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+				teamID = TEAM_A;
+
+				if (i > 3)
+				{
+					teamID = TEAM_B;
+				}
 
 				if (!server.isPlayer(i)) 
 				{
@@ -1496,15 +1504,12 @@ void Game::AssignPlayers()
 				}
 				else
 				{
-					unsigned int teamID = PLAYER_TEAM::TEAM_A;
-
-					if (i > 3)
-					{
-						teamID = PLAYER_TEAM::TEAM_B;
-					}
-
 					mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
 				}
+
+				PlayerController* player = mage1->GetComponent<PlayerController>();
+				player->ReadInStats(aiNames[i]);
+				player->SetTeamID(teamID);
 			}
 
 			GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
@@ -1788,7 +1793,7 @@ void Game::LoadScene(std::string name)
 	else if (currentScene == 2)
 	{
 		AssignPlayers();
-		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(1, 1);
+		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
 	}
 
 	//resize gamestates
