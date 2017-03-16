@@ -522,62 +522,65 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 
 void Scoreboard::Update(float dt)
 {
-	int i;
+	//because I added these to a scene, they will be updated there
+	//this was super wasteful
 
-	for (i = 0; i < playerBars.size(); ++i)
-	{
-		//if (IsBeingUsed(i))
-		{
-			playerBars[i]->Update(dt);
-			playerNames[i]->Update(dt);
+	//int i;
 
-			playerScores[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetScore()).c_str());
-			playerScores[i]->Update(dt);
+	//for (i = 0; i < playerBars.size(); ++i)
+	//{
+	//	//if (IsBeingUsed(i))
+	//	{
+	//		playerBars[i]->Update(dt);
+	//		playerNames[i]->Update(dt);
 
-			playerGoals[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetGoals()).c_str());
-			playerGoals[i]->Update(dt);
+	//		playerScores[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetScore()).c_str());
+	//		playerScores[i]->Update(dt);
 
-			playerAssists[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetAssists()).c_str());
-			playerAssists[i]->Update(dt);
+	//		playerGoals[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetGoals()).c_str());
+	//		playerGoals[i]->Update(dt);
 
-			playerSaves[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetSaves()).c_str());
-			playerSaves[i]->Update(dt);
-		}
-	}
+	//		playerAssists[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetAssists()).c_str());
+	//		playerAssists[i]->Update(dt);
 
-	for (i = 0; i < numOfTeams; ++i)
-	{
-		teamScores[i]->Update(dt);
-	}
-
-	for (int i = 0; i < numOfLabels; ++i)
-	{
-		labels[i]->Update(dt);
-	}
-
-	//then render
-	for (i = 0; i < playerBars.size(); ++i)
-	{
-		//if (IsBeingUsed(i))
-		{
-			playerBars[i]->GetComponent<UIRenderer>()->Render();
-			playerNames[i]->GetComponent<UIRenderer>()->Render();
-			playerScores[i]->GetComponent<UIRenderer>()->Render();
-			playerGoals[i]->GetComponent<UIRenderer>()->Render();
-			playerAssists[i]->GetComponent<UIRenderer>()->Render();
-			playerSaves[i]->GetComponent<UIRenderer>()->Render();
-		}
-	}
+	//		playerSaves[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetSaves()).c_str());
+	//		playerSaves[i]->Update(dt);
+	//	}
+	//}
 
 	//for (i = 0; i < numOfTeams; ++i)
 	//{
-	//	teamScores[i]->GetComponent<UIRenderer>()->Render();
+	//	teamScores[i]->Update(dt);
 	//}
 
-	for (int i = 0; i < numOfLabels; ++i)
-	{
-		labels[i]->GetComponent<UIRenderer>()->Render();
-	}
+	//for (int i = 0; i < numOfLabels; ++i)
+	//{
+	//	labels[i]->Update(dt);
+	//}
+
+	////then render
+	//for (i = 0; i < playerBars.size(); ++i)
+	//{
+	//	//if (IsBeingUsed(i))
+	//	{
+	//		playerBars[i]->GetComponent<UIRenderer>()->Render();
+	//		playerNames[i]->GetComponent<UIRenderer>()->Render();
+	//		playerScores[i]->GetComponent<UIRenderer>()->Render();
+	//		playerGoals[i]->GetComponent<UIRenderer>()->Render();
+	//		playerAssists[i]->GetComponent<UIRenderer>()->Render();
+	//		playerSaves[i]->GetComponent<UIRenderer>()->Render();
+	//	}
+	//}
+
+	////for (i = 0; i < numOfTeams; ++i)
+	////{
+	////	teamScores[i]->GetComponent<UIRenderer>()->Render();
+	////}
+
+	//for (int i = 0; i < numOfLabels; ++i)
+	//{
+	//	labels[i]->GetComponent<UIRenderer>()->Render();
+	//}
 }
 
 void Scoreboard::Toggle(bool toggle)
