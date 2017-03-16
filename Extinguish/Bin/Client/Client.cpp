@@ -333,8 +333,8 @@ void Client::registerName()
 {
 	char test[10];
 	test[0] = clientID;
-	test[1] = (char)strlen(clientName);
-	strcpy(&test[2], clientName);
+	test[1] = (char)strlen(gameState[0][clientID - 1].name);
+	strcpy(&test[2], gameState[0][clientID - 1].name);
 	
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
@@ -450,6 +450,9 @@ void Client::receiveGameState()
 		bIn.Read(gameState[0][i].assists);
 		bIn.Read(gameState[0][i].saves);
 		bIn.Read(gameState[0][i].goals);
+		UINT8 nameLength;
+		bIn.Read(nameLength);
+		bIn.Read(gameState[0][i].name, nameLength);
 	}
 }
 
