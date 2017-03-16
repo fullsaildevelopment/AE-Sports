@@ -18,7 +18,6 @@ AI::AI(GameObject* obj) : Component(obj)
 
 void AI::OnCollisionEnter(Collider *obj)
 {
-
 	if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 	{
 		CapsuleCollider *col = (CapsuleCollider*)obj;
@@ -361,7 +360,7 @@ void AI::Update(float _dt)
 			
 			for (int i = 0; i < listOfMates.size(); ++i)
 			{
-				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy) /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 					myGuy = listOfMates[i];
 
 				else if (!listOfMates[i]->GetComponent<AI>())
@@ -484,7 +483,7 @@ void AI::Paranoia()
 			{
 				float3 tmp2 = listOfMates[i]->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
-				if (fakeTeam > 2 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
+				if (fakeTeam > 2 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy) ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 					target = listOfMates[i];
 
 				// if they're closer to the goal
