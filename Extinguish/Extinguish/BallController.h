@@ -11,14 +11,14 @@ class GameObject;
 class BallController : public Component
 {
 private:
-	bool isHeld = false;
-	bool isThrown = false;
-	GameObject *me;
-	GameObject *holder;
-	XTime timer;
+	bool isHeld = false; // if someone is holding the ball
+	bool isThrown = false; // is the holder threw the ball
+	GameObject *me; // the ball
+	GameObject *holder; // the crosse that holds the ball
+	XTime timer; // timer until someone else can catch the ball
 	Transform* transform;
 	Physics* physics;
-	void SetIsHeld(bool ans);
+	
 	std::vector<Transform*> nets;
 
 	//members for scoring
@@ -37,19 +37,20 @@ public:
 	void OnCollisionEnter(Collider* obj) override;
 
 	// actions
-	void DropBall(GameObject *holder);
-	void Throw();
+	void Throw(); 
+	void DropBall(GameObject *holder); // pass in the holder and makes them drop the bal
 
 	// accessors
-	bool GetIsHeld();
-	bool GetIsThrown();
-	GameObject *GetHolder();
-	GameObject *GetCrosseHolder();
-	GameObject* GetThrower();
-	GameObject* GetPreviousThrower();
-	float GetTimeSinceThrown();
-	float GetTimeSincePreviouslyThrown();
+	bool GetIsHeld(); // returns if someone is holding it
+	bool GetIsThrown(); // returns if the holder just threw it
+	GameObject *GetHolder(); // returns the Mage holding the ball
+	GameObject *GetCrosseHolder(); // returns the crosse holding the ball
+	GameObject *GetThrower(); // returns the last person who threw the ball
+	GameObject *GetPreviousThrower(); // returns the previous to last person who threw the ball
+	float GetTimeSinceThrown(); // returns how long it's been since the ball has been thrown
+	float GetTimeSincePreviouslyThrown(); // returns how long it's been since the previous to last person threw the ball
 
 	// mutators
-	void SetHolder(GameObject *person);
+	void SetIsHeld(bool ans); // sets if the ball is held
+	void SetHolder(GameObject *person); // sets who is holding the ball
 };
