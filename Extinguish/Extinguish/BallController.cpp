@@ -10,8 +10,8 @@
 
 using namespace std;
 
-#define ThrowSpeed 28
-#define DropSpeed 10
+//#define ThrowSpeed 28
+//#define DropSpeed 10
 
 void BallController::OnTriggerEnter(Collider *obj)
 {

@@ -187,7 +187,6 @@ bool InputManager::GetKeyUp(unsigned int button)
 	return result;
 }
 
-
 int InputManager::GetMouseX()
 {
 	return mouseX;
