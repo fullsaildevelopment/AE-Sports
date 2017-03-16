@@ -86,13 +86,12 @@ private:
 	void TogglePauseMenu();
 
 public:
-	static float dt;
 	void CreateGameWrapper();
 	~Game();
 	//basic
 	void Init(DeviceResources* _devResources, InputManager* inputManager);
-	int Update();
-	void FixedUpdate();
+	int Update(float dt);
+	void FixedUpdate(float dt);
 	void Render();
 	void Shutdown();
 

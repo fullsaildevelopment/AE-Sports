@@ -333,8 +333,8 @@ void Client::registerName()
 {
 	char test[10];
 	test[0] = clientID;
-	test[1] = (char)strlen(gameState[0][clientID - 1].name);
-	strcpy(&test[2], gameState[0][clientID - 1].name);
+	test[1] = (char)strlen("Player");
+	strcpy(&test[2], "Player");
 	
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID_CLIENT_REGISTER);
