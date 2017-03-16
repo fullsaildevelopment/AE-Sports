@@ -85,7 +85,7 @@ void PlayerController::Shutdown()
 	if (bout.is_open())
 	{
 		//write out name
-		unsigned int nameSize = name.size();
+		unsigned int nameSize = (unsigned int)name.size();
 
 		bout.write((const char*)&nameSize, sizeof(unsigned int));
 		bout.write((const char*)&name[0], nameSize);
@@ -749,6 +749,12 @@ void PlayerController::SetTotalAssists(unsigned int ttlAssists)
 {
 	totalAssists = ttlAssists;
 }
+
+
+void PlayerController::SetScore(unsigned int amount) { score = amount; }
+void PlayerController::SetGoals(unsigned int amount) { goals = amount; }
+void PlayerController::SetSaves(unsigned int amount) { saves = amount; }
+void PlayerController::SetAssists(unsigned int amount) { assists = amount; }
 
 void PlayerController::SetTeamID(unsigned int id)
 {

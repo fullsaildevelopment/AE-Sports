@@ -17,7 +17,7 @@ Client::Client()
 	myState[0].resize(1);
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
-	gameState[0].resize(1);
+	gameState[0].resize(MAX_PLAYERS);
 	floorState = new std::vector<XMFLOAT3>();
 	floorState[0].resize(2090);
 }
@@ -438,13 +438,18 @@ void Client::receiveGameState()
 			bIn.Read(gameState[0][0].sprintA);
 			bIn.Read(gameState[0][0].sprintD);
 			bIn.Read(gameState[0][0].down);
-			break;
 		}
-		
-		bool temp, temp2;
-		bIn.Read(temp);
-		bIn.Read(temp2);
-		bIn.Read(temp2);
+		else {
+			bool temp, temp2;
+			bIn.Read(temp);
+			bIn.Read(temp2);
+			bIn.Read(temp2);
+		}
+
+		bIn.Read(gameState[0][i].score);
+		bIn.Read(gameState[0][i].assists);
+		bIn.Read(gameState[0][i].saves);
+		bIn.Read(gameState[0][i].goals);
 	}
 }
 

@@ -208,4 +208,9 @@ public:
 	}
 
 	void SendFloor() { newServer.sendFloor(); }
+
+	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals)
+	{
+		newServer.updateScoreboard(index, score, assists, saves, goals);
+	}
 };

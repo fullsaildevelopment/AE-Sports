@@ -66,6 +66,10 @@ public:
 		bool sprintD = true;
 		bool down = false;
 		bool empty = false;
+		UINT8 score = 0;
+		UINT8 assists = 0;
+		UINT8 saves = 0;
+		UINT8 goals = 0;
 
 		GAME_STATE() {}
 	};
@@ -198,6 +202,13 @@ public:
 	void setMeterDown(bool toggle, unsigned int index) { gameState[0][index].down = toggle; }
 	void setFloorState(float one, float two, float three) {
 		floorState[0].push_back({ one, two, three });
+	}
+	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals)
+	{
+		gameState[0][index].score = (UINT8)score;
+		gameState[0][index].assists = (UINT8)assists;
+		gameState[0][index].goals = (UINT8)goals;
+		gameState[0][index].saves = (UINT8)saves;
 	}
 
 

@@ -107,4 +107,8 @@ public:
 	void SetTotalSaves(unsigned int ttlSaves);
 	void SetTotalAssists(unsigned int ttlAssists);
 	void SetTeamID(unsigned int id);
+	void SetScore(unsigned int amount);
+	void SetGoals(unsigned int amount);
+	void SetSaves(unsigned int amount);
+	void SetAssists(unsigned int amount);
 };

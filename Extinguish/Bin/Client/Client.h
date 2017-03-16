@@ -72,6 +72,10 @@ public:
 		bool sprintD = false;
 		bool empty = false;
 		bool down = false;
+		UINT8 score = 0;
+		UINT8 assists = 0;
+		UINT8 saves = 0;
+		UINT8 goals = 0;
 
 		GAME_STATE() {}
 	};
@@ -163,10 +167,10 @@ public:
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
-	bool getMeterActive() { return gameState[0][0].sprintA; }
-	bool getMeterDrain() { return gameState[0][0].sprintD; }
-	bool getMeterEmpty() { return gameState[0][0].empty; }
-	bool getMeterDown() { return gameState[0][0].down; }
+	bool getMeterActive() { return gameState[0][clientID - 1].sprintA; }
+	bool getMeterDrain() { return gameState[0][clientID - 1].sprintD; }
+	bool getMeterEmpty() { return gameState[0][clientID - 1].empty; }
+	bool getMeterDown() { return gameState[0][clientID - 1].down; }
 	UINT8 getNumClients() { return curNumOfClients; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
@@ -182,6 +186,13 @@ public:
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
 	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
+	void getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals)
+	{
+		score = gameState[0][i].score;
+		assists = gameState[0][i].assists;
+		saves = gameState[0][i].saves;
+		goals = gameState[0][i].goals;
+	}
 
 	bool floorIsEmpty() { if (floorState[0].size() == 0) return true; return false; }
 	int floorSize() { return (int)floorState[0].size(); }

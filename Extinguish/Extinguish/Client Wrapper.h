@@ -172,4 +172,9 @@ public:
 	int floorSize() { return newClient.floorSize(); }
 	int stateSize() { return newClient.stateSize(); }
 	float getDT() { return newClient.getDT(); }
+
+	void updateScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals)
+	{
+		newClient.getScoreboard(i, score, assists, saves, goals);
+	}
 };
