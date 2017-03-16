@@ -546,6 +546,14 @@ void Server::sendState()
 		bOut.Write(gameState[0][i].sprintA);
 		bOut.Write(gameState[0][i].sprintD);
 		bOut.Write(gameState[0][i].down);
+		bOut.Write(gameState[0][i].score);
+		bOut.Write(gameState[0][i].assists);
+		bOut.Write(gameState[0][i].saves);
+		bOut.Write(gameState[0][i].goals);
+
+		UINT8 nameLength = (UINT8)strlen(gameState[0][i].name);
+		bOut.Write(nameLength);
+		bOut.Write(gameState[0][i].name, nameLength);
 	}
 
 
@@ -572,7 +580,7 @@ void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five
 
 void Server::sendFloor()
 {
-	int size = floorState[0].size();
+	int size = (int)floorState[0].size();
 	int tempSize = size / 40;
 
 	for (unsigned int x = 1; x <= (unsigned int)tempSize; ++x) {
