@@ -76,8 +76,7 @@ void FloorController::InitialPattern(float _dt)
 		direction = 1;
 	}
 
-	_dt = fmodf(_dt, 1);
-	ratios += _dt * transSpeed * direction;
+	ratios = sin(_dt);
 
 	//red goal
 	MovePillar(15, ratios);
@@ -127,7 +126,7 @@ void FloorController::ControlMovement(float fullTime)
 	float dt = timeing - timer;
 	timer = fullTime;
 
-	InitialPattern(dt);
+	InitialPattern(timer);
 
 	//if (timeing < 10 && currPattern != 1)
 	//{
