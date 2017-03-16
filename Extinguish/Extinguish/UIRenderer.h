@@ -26,6 +26,8 @@ private:
 	Microsoft::WRL::ComPtr<IDWriteTextFormat> pTextFormat;
 	Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;
 	Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pBrush;
+	DWRITE_TEXT_ALIGNMENT alignmentText = DWRITE_TEXT_ALIGNMENT_CENTER;
+	DWRITE_PARAGRAPH_ALIGNMENT alignmentParagrah = DWRITE_PARAGRAPH_ALIGNMENT_CENTER;
 	
 	Microsoft::WRL::ComPtr<IWICBitmap>		   pWBitmap;
 	Microsoft::WRL::ComPtr<ID2D1Bitmap>		   pBitmap;
@@ -53,5 +55,6 @@ public:
 	void DecodeBitmap(PCWSTR address);
 	void MakeRTSize();
 	void InitMetrics();
+	void setAlignment(DWRITE_TEXT_ALIGNMENT text, DWRITE_PARAGRAPH_ALIGNMENT paragraph) { alignmentText = text; alignmentParagrah = paragraph; }
 };
 

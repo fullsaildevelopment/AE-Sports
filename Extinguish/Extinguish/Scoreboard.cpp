@@ -439,11 +439,13 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 		// player's name
 		Button* textbutton = playerNames[i + playerIDOffsest]->GetComponent<Button>();
 		string playerName = players[i]->GetName();
+		UIRenderer* buttonRender = playerNames[i + playerIDOffsest]->GetComponent<UIRenderer>();
+		buttonRender->setAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 
 		wstring name(playerName.size(), L' ');
 		copy(playerName.begin(), playerName.end(), name.begin());
 		textbutton->setText(name);
-		textbutton->setPositionMultipliers(0.46f, newYPos + ySpacing * (i + yOffset));
+		textbutton->setPositionMultipliers(0.47f, newYPos + ySpacing * (i + yOffset));
 		textbutton->MakeRect();
 		textbutton->setOrigin();
 
@@ -680,4 +682,34 @@ float Scoreboard::Clamp(float num)
 	}
 
 	return num;
+}
+
+
+
+void Scoreboard::SendScoreboard()
+{
+	if (ResourceManager::GetSingleton()->IsServer())
+	{
+		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
+		{
+			Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals());
+		}
+	}
+}
+
+void Scoreboard::ReceiveScoreboard()
+{
+	if (!ResourceManager::GetSingleton()->IsServer())
+	{
+		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
+		{
+			unsigned int score, assists, saves, goals;
+			Game::client.updateScoreboard(i, score, assists, saves, goals);
+
+			players[i]->SetAssists(assists);
+			players[i]->SetGoals(goals);
+			players[i]->SetSaves(saves);
+			players[i]->SetScore(score);
+		}
+	}
 }
