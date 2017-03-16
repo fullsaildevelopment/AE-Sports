@@ -401,7 +401,10 @@ void Scene::Update(float _dt)
 	/////////////////////////////////////////////
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
-
+	transparentObjects.clear();
+	opaqueObjects.clear();
+	SLLIter<RenderItem> transparentIter(transparentObjects);
+	SLLIter<RenderItem> opaqueIter(opaqueObjects);
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
 
@@ -415,7 +418,7 @@ void Scene::Update(float _dt)
 	//get camera object
 	cameraName += to_string(id);
 	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
-
+	float3 camPosition = camObject->GetTransform()->GetWorldPosition();
 	//get view
 	XMFLOAT4X4 cameraCam;
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
@@ -442,7 +445,7 @@ void Scene::Update(float _dt)
 			//client needs to update renderer but not any other component
 			if (!ResourceManager::GetSingleton()->IsServer())
 			{
-				renderer->Update(_dt);
+				//renderer->Update(_dt);
 			}
 
 			renderer->SetView(cameraCam);
@@ -466,12 +469,67 @@ void Scene::Update(float _dt)
 			//don't render yourself
 			if (i != (id - 1) * 3 + 2)
 			{
-				renderer->Render();
+				float3 inBetween = gameObjects[i]->GetTransform()->GetWorldPosition() - camPosition;
+				float dist = dot_product(inBetween, inBetween);
+				if (renderer->GetTransparent())
+				{
+					RenderItem r;
+					r.dist = dist;
+					r.rend = renderer;
+					if (transparentObjects.size() == 0)
+					{
+						transparentObjects.addHead(r);
+					}
+					else
+					{
+						for (transparentIter.begin(); true; ++transparentIter)
+						{
+							if (transparentIter.end())
+							{
+								transparentObjects.insert(transparentIter, r);
+								break;
+							}
+							if (r.dist > transparentIter.current().dist)
+							{
+								transparentObjects.insert(transparentIter, r);
+								break;
+							}
+						}
+					}
+
+					
+				}
+				else
+				{
+					RenderItem r;
+					r.dist = dist;
+					r.rend = renderer;
+					if (opaqueObjects.size() == 0)
+					{
+						opaqueObjects.addHead(r);
+					}
+					else
+					{
+						for (opaqueIter.begin(); true; ++opaqueIter)
+						{
+							if (opaqueIter.end())
+							{
+								opaqueObjects.insert(opaqueIter, r);
+								break;
+							}
+							if (r.dist < opaqueIter.current().dist)
+							{
+								opaqueObjects.insert(opaqueIter, r);
+								break;
+							}
+						}
+					}
+				}
 			}
 			else
 			{
 				float3 tp = transform->GetPosition();
-				XMFLOAT4 cps = {tp.x,tp.y + 5,tp.z + 1 ,1 };
+				XMFLOAT4 cps = {tp.x,tp.y + 1.85f,tp.z + 1 ,1 };
 
 				devContext->UpdateSubresource(BallConstantBuffer.Get(), NULL, NULL, &cps, NULL, NULL);
 				devContext->PSSetConstantBuffers(2, 1, BallConstantBuffer.GetAddressOf());
@@ -488,6 +546,18 @@ void Scene::Update(float _dt)
 				animator->Update(_dt);
 			}
 		}
+	}
+	//////////////////////////RenderOpaqueObjects/////////////////////////
+	for (opaqueIter.begin(); !opaqueIter.end(); ++opaqueIter)
+	{
+		opaqueIter.current().rend->Update(_dt);
+		opaqueIter.current().rend->Render();
+	}
+	////////////////////////RenderTransparentObjects//////////////////////
+	for (transparentIter.begin(); !transparentIter.end(); ++transparentIter)
+	{
+		transparentIter.current().rend->Update(_dt);
+		transparentIter.current().rend->Render();
 	}
 	////////////////////////////DO POST PROCESSING////////////////////////
 	PostProcessing.DoPostProcess();
