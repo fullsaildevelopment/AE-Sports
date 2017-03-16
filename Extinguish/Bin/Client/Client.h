@@ -76,6 +76,7 @@ public:
 		UINT8 assists = 0;
 		UINT8 saves = 0;
 		UINT8 goals = 0;
+		char name[8];
 
 		GAME_STATE() {}
 	};
@@ -124,7 +125,7 @@ private:
 	int numPackets = 0;
 	bool disconnect = false;
 	UINT8 clientID;
-	char clientName[8];
+//	char clientName[8];
 public:
 
 #pragma pack(push, 1)
@@ -186,8 +187,9 @@ public:
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
 	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
-	void getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals)
+	void getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
 	{
+		memcpy(name, gameState[0][i].name, strlen(gameState[0][i].name));
 		score = gameState[0][i].score;
 		assists = gameState[0][i].assists;
 		saves = gameState[0][i].saves;

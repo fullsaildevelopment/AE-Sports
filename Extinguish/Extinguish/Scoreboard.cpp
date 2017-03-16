@@ -692,7 +692,8 @@ void Scoreboard::SendScoreboard()
 	{
 		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
 		{
-			Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals());
+			const char * name = players[i]->GetName().c_str();
+			Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals(), );
 		}
 	}
 }
@@ -704,8 +705,10 @@ void Scoreboard::ReceiveScoreboard()
 		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
 		{
 			unsigned int score, assists, saves, goals;
-			Game::client.updateScoreboard(i, score, assists, saves, goals);
+			char * name;
+			Game::client.updateScoreboard(i, score, assists, saves, goals, name);
 
+			players[i]->SetName(name);
 			players[i]->SetAssists(assists);
 			players[i]->SetGoals(goals);
 			players[i]->SetSaves(saves);

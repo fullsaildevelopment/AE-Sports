@@ -551,6 +551,9 @@ void Server::sendState()
 		bOut.Write(gameState[0][i].saves);
 		bOut.Write(gameState[0][i].goals);
 
+		UINT8 nameLength = (UINT8)strlen(gameState[0][i].name);
+		bOut.Write(nameLength);
+		bOut.Write(gameState[0][i].name, nameLength);
 	}
 
 
