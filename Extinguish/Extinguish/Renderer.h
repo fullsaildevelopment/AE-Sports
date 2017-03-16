@@ -44,13 +44,14 @@ private:
 	unsigned int* m_instancedcolor;
 	int numIns;
 	std::vector<DirectX::XMFLOAT4X4> boneOffsets;
+	bool isTransparent;
 
 public:
 	Renderer();
 	~Renderer();
 
-	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources);
-	void Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources);
+	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha = false);
+	void Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha = false);
 	void Update(float _dt) override;
 	void Render();
 
@@ -58,7 +59,7 @@ public:
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets();
 	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds();
 	Blender* GetBlender();
-
+	bool GetTransparent();
 	//setters
 	void SetCurAnimation(int animIndex);
 	void SetNextAnimation(std::string animName);
