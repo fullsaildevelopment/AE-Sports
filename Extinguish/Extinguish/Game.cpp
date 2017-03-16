@@ -862,7 +862,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
-	fcon->SetState(420, 1 / 6.0f);
+	fcon->SetState(1 / 6.0f);
 
 	GameObject* Hex = new GameObject();
 	Hex->Init("Team2");
@@ -1686,7 +1686,7 @@ void Game::UpdateClientObjects()
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
 					//if (fC->GetState() != client.getFloorState(i))
-						fC->SetState(client.getFloorState(i), dt);
+						fC->SetState(client.getFloorState(i));
 				}
 
 

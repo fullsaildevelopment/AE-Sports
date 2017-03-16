@@ -17,14 +17,14 @@ class FloorController : public Component
 	int row;
 	int col;
 	float maxHeight;
-	XTime timer;
+	float timer;
 	float timeing;
 	void WavePattern(float _dt);
 	void BigHexPattern(float _dt);
 	void Strips(float _dt);
 	void StripPattern(float _dt);
 	void InitialPattern(float _dt);
-	void ControlMovement(float _dt);
+	void ControlMovement(float fullTime);
 	void ControlColors(float _dt);
 	void ScoreColor();
 	float sinceScore = 0;
@@ -41,9 +41,9 @@ public:
 	~FloorController();
 	void MovePillar(int pillar, float ratio);
 	void LevelFloor(float _dt);
-	void SetState(int state, float _dt);
+	void SetState(float fullTime);
 	void Update(float _dt) override;
-	int GetState() { return transState; };
+	float GetState() { return timeing; };
 	static void Score(int t);
 	float3* getFloor() { return floor; }
 	int getCol() { return col; }
