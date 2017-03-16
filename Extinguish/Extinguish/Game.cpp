@@ -1481,8 +1481,11 @@ void Game::AssignPlayers()
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
+	string ourNames[] = { "Tom", "Nick", "Sam", "Lynda" };
 	vector<AI*> ai;
 	PLAYER_TEAM teamID = TEAM_A;
+
+	int ourNameIndex = 0;
 
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
@@ -1493,6 +1496,7 @@ void Game::AssignPlayers()
 
 			for (unsigned int i = 0; i < 8; ++i) 
 			{
+				string name;
 				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 				teamID = TEAM_A;
 
@@ -1506,14 +1510,18 @@ void Game::AssignPlayers()
 					AI *mageAI = new AI(mage1);
 					mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+
+					name = aiNames[i];
+
 				}
 				else
 				{
-					mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
+					name = ourNames[ourNameIndex++];
+					//mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
 				}
 
 				PlayerController* player = mage1->GetComponent<PlayerController>();
-				player->ReadInStats(aiNames[i]);
+				player->ReadInStats(name);
 				player->SetTeamID(teamID);
 			}
 

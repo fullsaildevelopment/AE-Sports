@@ -87,9 +87,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -191,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="Countdown.cpp">
       <Filter>Components\Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
