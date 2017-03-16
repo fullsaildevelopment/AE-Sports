@@ -49,8 +49,6 @@ Game::PLAYER_TEAM Game::team = PLAYER_TEAM::TEAM_A;
 UINT8 Game::objIDs[10];
 float Game::Time = 300.0f;
 
-float Game::dt = 0.0166f;
-
 Game::~Game()
 {
 	
@@ -148,7 +146,7 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 	}
 }
 
-int Game::Update()
+int Game::Update(float dt)
 {
 	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 	{
@@ -182,6 +180,9 @@ int Game::Update()
 				if (server.getObjCount() == 0)
 					server.setObjCount(scenes[currentScene]->GetNumObjects());
 
+				GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+				Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+				scoreboard->SendScoreboard();
 				server.sendGameState();
 			}
 			//set client id
@@ -223,6 +224,10 @@ int Game::Update()
 
 				if (clientState == 4)
 				{
+					GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+					Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+					scoreboard->ReceiveScoreboard();
+
 					Time = client.getTime();
 					Team1Score = client.getScoreA();
 					Team2Score = client.getScoreB();
@@ -276,7 +281,7 @@ int Game::Update()
 	return returnResult;
 }
 
-void Game::FixedUpdate()
+void Game::FixedUpdate(float dt)
 {
 	scenes[currentScene]->FixedUpdate(dt);
 }
@@ -327,7 +332,7 @@ void Game::HandleEvent(Event* e)
 			client.sendInput(inputDownEvent);
 		}
 
-		if (ResourceManager::GetSingleton()->IsServer() && currentScene == 2)
+		if (currentScene == 2)
 		{
 			InputManager* input = inputDownEvent->GetInput();
 			if (input->GetKeyDown('	'))
@@ -1590,7 +1595,7 @@ void Game::UpdateServerStates()
 		if (gameObject->GetName() == "HexFloor")
 		{
 			state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
-			state->_dt = dt;
+		//	state->_dt = dt;
 		}
 
 		float3 position = gameObject->GetTransform()->GetPosition();
@@ -1663,7 +1668,7 @@ void Game::UpdateClientObjects()
 	unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
 
 	int id = client.getID();
-	dt = client.getDT();
+	//dt = client.getDT();
 
 	if (!ResourceManager::GetSingleton()->IsServer())
 	{
@@ -1788,7 +1793,7 @@ void Game::LoadScene(std::string name)
 	else if (currentScene == 2)
 	{
 		AssignPlayers();
-		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(1, 1);
+		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
 	}
 
 	//resize gamestates

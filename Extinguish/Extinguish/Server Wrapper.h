@@ -112,7 +112,17 @@ public:
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-			newServer.setStates(i, gameStates[i]->hasBall, gameStates[i]->position, gameStates[i]->rotation, gameStates[i]->parentIndex, gameStates[i]->animationIndex, gameStates[i]->otherIndex, gameStates[i]->_dt, gameStates[i]->transitionIndex, gameStates[i]->soundID, gameStates[i]->hasSound);
+			newServer.setStates(i,
+				gameStates[i]->hasBall, 
+				gameStates[i]->position, 
+				gameStates[i]->rotation,
+				gameStates[i]->parentIndex,
+				gameStates[i]->animationIndex,
+				gameStates[i]->otherIndex,
+				gameStates[i]->_dt,
+				gameStates[i]->transitionIndex,
+				gameStates[i]->soundID,
+				gameStates[i]->hasSound);
 		}
 	}
 
@@ -208,4 +218,9 @@ public:
 	}
 
 	void SendFloor() { newServer.sendFloor(); }
+
+	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals, char * name)
+	{
+		newServer.updateScoreboard(index, score, assists, saves, goals, name);
+	}
 };
