@@ -32,6 +32,7 @@ void AI::OnCollisionEnter(Collider *obj)
 
 			realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
 			realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
+			// add stun somewhere here
 			realTarget = nullptr;
 
 			//me->GetTransform()->AddVelocity(float3(0, 2, 0));
@@ -196,6 +197,8 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float _dt)
 {
+	if (!isAttacking) realTarget = nullptr;
+
 	if (startTimer)
 		timer -= _dt;
 
@@ -441,6 +444,7 @@ void AI::DefendTeammate()
 void AI::Attack(GameObject *target)
 {
 	realTarget = target;
+	isAttacking = true;
 
 	// if they're not on my team and if the timer isn't going
 	if (target->GetTag() != me->GetTag() && timer == 2)
@@ -449,6 +453,7 @@ void AI::Attack(GameObject *target)
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 		v.y = 0;
 		me->GetTransform()->AddVelocity(v * AttackSpeed);
+		isAttacking = false;
 	}
 }
 
