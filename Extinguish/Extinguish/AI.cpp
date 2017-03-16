@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 #define     RunSpeed 1 //10
-#define  AttackSpeed 1 //20
+#define  AttackSpeed 20
 #define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -446,7 +446,9 @@ void AI::Attack(GameObject *target)
 	if (target->GetTag() != me->GetTag() && timer == 2)
 	{
 		TurnTo(target);
-		me->GetTransform()->AddVelocity(((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize() * AttackSpeed);
+		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+		v.y = 0;
+		me->GetTransform()->AddVelocity(v * AttackSpeed);
 	}
 }
 

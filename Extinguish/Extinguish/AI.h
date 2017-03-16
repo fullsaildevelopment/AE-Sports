@@ -51,9 +51,9 @@ public:
 	void OnCollisionEnter(Collider *obj) override;
 
 	// States
-	void Idle();
-	void GetBall();
-	void DefendTeammate();
+	void Idle(); // sets velocity to 0
+	void GetBall(); // chases after ball
+	void DefendTeammate(); // attacks enemy closest to teammate
 
 	// Actions
 	void Attack(GameObject *target); // pass in the person you want to attack
