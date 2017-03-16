@@ -1756,7 +1756,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 				Stime = 1;
 				return planes[0].n;
 			}
-			if (planes[0].p.y < endPoint.y && (endPoint.y - planes[0].p.y) < 0.03f)
+			if (planes[0].p.y < endPoint.y && (endPoint.y - planes[0].p.y) < 0.055f && Sdirection.y == 0)
 			{
 				s.m_Center.y = planes[0].p.y;
 				Stime = 1;
@@ -1802,10 +1802,13 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		if (dot_product(Sdirection, planes[at].n) < 0)
 		{
 			s.m_Center = pastPos + Sdirection * (times[at] - 0.0007f);
-			float goTop = (planes[0].p.y - s.m_Center.y);
-			if (goTop >= -0.1f && goTop < 0)
+			if (at != 0)
 			{
-				s.m_Center.y += 0.01f;
+				float goTop = (planes[0].p.y - s.m_Center.y);
+				if (goTop >= -0.1f && goTop < 0)
+				{
+					s.m_Center.y += 0.01f;
+				}
 			}
 			Stime = times[at];
 
