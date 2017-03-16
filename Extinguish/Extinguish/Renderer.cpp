@@ -15,7 +15,7 @@ Renderer::~Renderer()
 
 
 //basic
-void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources)
+void Renderer::Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha)
 {
 	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
 	vertexBuffer = ResourceManager::GetSingleton()->GetVertexBuffer(mesh);
@@ -48,9 +48,13 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
 		blender->Init(curAnimName, "");
 	}
+	if (alpha)
+	{
+		isTransparent = alpha;
+	}
 }
 
-void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources)
+void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha)
 {
 	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
 	vertexBuffer = ResourceManager::GetSingleton()->GetVertexBuffer(mesh);
@@ -78,6 +82,10 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 		blender = new Blender();
 		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
 		blender->Init(curAnimName, "");
+	}
+	if (alpha)
+	{
+		isTransparent = alpha;
 	}
 }
 
@@ -280,4 +288,9 @@ void Renderer::SetBlendInfo(BlendInfo info)
 void Renderer::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets)
 {
 	this->boneOffsets = boneOffsets;
+}
+
+bool Renderer::GetTransparent()
+{
+	return isTransparent;
 }
