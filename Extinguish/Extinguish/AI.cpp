@@ -366,7 +366,7 @@ void AI::Update(float _dt)
 			}
 
 			// hover around guy
-			if (myGuy && RunTo(myGuy, 15.0f))
+			if (myGuy && RunTo(myGuy, 10.0f))
 				Idle();
 		}
 	}
@@ -446,7 +446,7 @@ void AI::Attack(GameObject *target)
 	if (target->GetTag() != me->GetTag() && timer == 2)
 	{
 		TurnTo(target);
-		me->GetTransform()->AddVelocity(((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize() * AttackSpeed);
+		me->GetTransform()->AddVelocity(((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize() * AttackSpeed);
 	}
 }
 
@@ -503,7 +503,7 @@ bool AI::RunTo(GameObject *target)
 		if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 5)
 			return true;
 
-		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 		TurnTo(target);
 		me->GetTransform()->AddVelocity(v * RunSpeed);
 	}
@@ -518,7 +518,7 @@ bool AI::RunTo(GameObject *target, float dist)
 		if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
 			return true;
 
-		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 		TurnTo(target);
 		me->GetTransform()->AddVelocity(v * RunSpeed);
 	}
@@ -531,7 +531,7 @@ bool AI::RunTo(float3 target, float dist)
 	if ((target - me->GetTransform()->GetPosition()).magnitude() < dist)
 		return true;
 
-	float3 v = ((target - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 	TurnTo(target);
 	me->GetTransform()->AddVelocity(v * RunSpeed);
 
@@ -541,10 +541,10 @@ bool AI::RunTo(float3 target, float dist)
 void AI::TurnTo(float3 target)
 {
 	//u - forward vector
-	float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3 u = (me->GetTransform()->GetRightf3() * (-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//v - vector between me and destination
-	float3 v = ((target - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+	float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 
 	//degRad - degrees/radians between me and target
 	float degRad = dot_product(u, v);
@@ -556,10 +556,10 @@ void AI::TurnTo(GameObject *target)
 	if (target)
 	{
 		//u - forward vector
-		float3 u = (me->GetTransform()->GetRightf3() * float3(-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 u = (me->GetTransform()->GetRightf3() * (-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		//v - vector between me and destination
-		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * float3(1, 0, 1)).normalize();
+		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 
 		//degRad - degrees/radians between me and target
 		float degRad = dot_product(u, v);
