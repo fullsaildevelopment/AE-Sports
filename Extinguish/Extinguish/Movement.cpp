@@ -12,11 +12,12 @@
 #include "GamePad.h"
 #include "GamePadEvent.h"
 #include "Physics.h"
+#include "CanPlayEvent.h"
 
-namespace Move
-{
-	DirectX::GamePad::State gamePadState;
-};
+//namespace Move
+//{
+//	DirectX::GamePad::State gamePadState;
+//};
 
 void Movement::Init(float moveVelocity, float rotateVelocity)
 {
@@ -32,6 +33,8 @@ void Movement::Init(float moveVelocity, float rotateVelocity)
 
 	//register movement event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+
+	canMove = false;
 
 	//timeSincePlayed = 0.0f;
 	//footstepsPlayed = false;
@@ -108,6 +111,15 @@ void Movement::HandleEvent(Event* e)
 
 		return;
 	}
+
+	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
+
+	if (playEvent)
+	{
+		canMove = playEvent->CanPlay();
+
+		return;
+	}
 }
 
 //getters
@@ -135,47 +147,51 @@ void Movement::HandleInput(InputDownEvent* e)
 	Physics* phys = GetGameObject()->GetComponent<Physics>();
 	bool af = true;
 
-	if (input->GetKey(forward))
+	if (canMove)
 	{
-		XMFLOAT3 forward = transform->GetForward();
-		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * moveSpeed * _dt, forward.y * moveSpeed * _dt,  forward.z * moveSpeed * _dt});
-		//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
-		isMoving = true;
-		af = false;
+		if (input->GetKey(forward))
+		{
+			XMFLOAT3 forward = transform->GetForward();
+			forward = { -forward.x, -forward.y, -forward.z };
+			transform->AddVelocity({ forward.x * moveSpeed * _dt, forward.y * moveSpeed * _dt,  forward.z * moveSpeed * _dt });
+			//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
+			isMoving = true;
+			af = false;
+		}
+
+		if (input->GetKey(back))
+		{
+			//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
+			XMFLOAT3 forward = transform->GetForward();
+			forward = { -forward.x, -forward.y, -forward.z };
+			transform->AddVelocity({ forward.x * -moveSpeed* _dt, forward.y * -moveSpeed* _dt,  forward.z * -moveSpeed * _dt });
+			//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
+			isMoving = true;
+			af = false;
+		}
+
+		if (input->GetKey(left))
+		{
+			XMFLOAT3 right = transform->GetRight();
+			right = { -right.x, -right.y, -right.z };
+			transform->AddVelocity({ right.x * -moveSpeed* _dt, right.y * -moveSpeed* _dt,  right.z * -moveSpeed * _dt });
+			//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
+			isMoving = true;
+			af = false;
+		}
+
+		if (input->GetKey(right))
+		{
+			XMFLOAT3 right = transform->GetRight();
+			right = { -right.x, -right.y, -right.z };
+			transform->AddVelocity({ right.x * moveSpeed* _dt, right.y * moveSpeed* _dt,  right.z * moveSpeed * _dt });
+			//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
+			//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
+			isMoving = true;
+			af = false;
+		}
 	}
 
-	if (input->GetKey(back))
-	{
-		//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
-		XMFLOAT3 forward = transform->GetForward();
-		forward = { -forward.x, -forward.y, -forward.z };
-		transform->AddVelocity({ forward.x * -moveSpeed* _dt, forward.y * -moveSpeed* _dt,  forward.z * -moveSpeed * _dt });
-		//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
-		isMoving = true;
-		af = false;
-	}
-
-	if (input->GetKey(left))
-	{
-		XMFLOAT3 right = transform->GetRight();
-		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * -moveSpeed* _dt, right.y * -moveSpeed* _dt,  right.z * -moveSpeed * _dt });
-		//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
-		isMoving = true;
-		af = false;
-	}
-
-	if (input->GetKey(right))
-	{
-		XMFLOAT3 right = transform->GetRight();
-		right = { -right.x, -right.y, -right.z };
-		transform->AddVelocity({ right.x * moveSpeed* _dt, right.y * moveSpeed* _dt,  right.z * moveSpeed * _dt });
-		//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
-		//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
-		isMoving = true;
-		af = false;
-	}
 	phys->SetApplyFriction(af);
 	//if (input->GetKey(up)) //up
 	//{
