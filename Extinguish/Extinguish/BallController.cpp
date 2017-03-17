@@ -200,6 +200,7 @@ GameObject* BallController::GetHolder()
 {
 	if (!isThrown && holder)
 		return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	return nullptr;
 }
 
 GameObject* BallController::GetCrosseHolder()
@@ -211,6 +212,7 @@ GameObject* BallController::GetThrower()
 {
 	if (thrower)
 		return thrower;
+	return nullptr;
 }
 
 GameObject* BallController::GetPreviousThrower()
