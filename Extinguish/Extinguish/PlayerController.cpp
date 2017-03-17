@@ -22,6 +22,8 @@
 
 using namespace std;
 
+static float3 UP = float3(0, 1, 0);
+
 //charge is the ability to attack a player (and it makes you go faster)
 //after *blank* seconds of sprinting, you automatically charge
 
@@ -163,7 +165,6 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-			//cout << "Collision enter" << endl;
 
 			otherPlayer = capsCollider->GetGameObject();
 
@@ -178,21 +179,21 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (justJumped)
+			if (boxCollider->collisionNormal.isEquil(UP))
 			{
-				justJumped = false;
+				if (justJumped)
+				{
+					justJumped = false;
 
-				//do animation
-				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+					//do animation
+					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-				animator->SetTrigger("Land");
+					animator->SetTrigger("Land");
 
-				//cout << "Land" << endl;
+				}
+
+				floor = boxCollider->GetGameObject();
 			}
-
-			floor = boxCollider->GetGameObject();
-
-			//cout << "box enter" << endl;
 
 			return;
 		}
@@ -201,17 +202,19 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (justJumped)
+		if (hexCollider->collisionNormal.isEquil(UP))
 		{
-			justJumped = false;
-			//do animation
-			AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+			if (justJumped)
+			{
+				justJumped = false;
+				//do animation
+				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-			animator->SetTrigger("Land");
+				animator->SetTrigger("Land");
+			}
+
+			floor = hexCollider->GetGameObject();
 		}
-
-		floor = hexCollider->GetGameObject();
-		//cout << "hex enter" << endl;
 
 		return;
 	}
@@ -225,21 +228,20 @@ void PlayerController::OnCollisionStay(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (justJumped)
+			if (boxCollider->collisionNormal.isEquil(UP))
 			{
-				justJumped = false;
+				if (justJumped)
+				{
+					justJumped = false;
 
-				//do animation
-				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+					//do animation
+					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-				animator->SetTrigger("Land");
+					animator->SetTrigger("Land");
+				}
 
-				//cout << "Land" << endl;
+				floor = boxCollider->GetGameObject();
 			}
-
-			floor = boxCollider->GetGameObject();
-
-			//cout << "box enter" << endl;
 
 			return;
 		}
@@ -250,17 +252,19 @@ void PlayerController::OnCollisionStay(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (justJumped)
+		if (hexCollider->collisionNormal.isEquil(UP))
 		{
-			justJumped = false;
-			//do animation
-			AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+			if (justJumped)
+			{
+				justJumped = false;
+				//do animation
+				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-			animator->SetTrigger("Land");
+				animator->SetTrigger("Land");
+			}
+
+			floor = hexCollider->GetGameObject();
 		}
-
-		floor = hexCollider->GetGameObject();
-		//cout << "hex enter" << endl;
 
 		return;
 	}

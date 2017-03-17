@@ -176,7 +176,7 @@ int Game::Update(float dt)
 		if (currentScene >= 2) {
 			if (ResourceManager::GetSingleton()->IsServer())
 			{
-				server.setTime(Time, dt);
+				server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
 
 				if (server.getObjCount() == 0)
 					server.setObjCount(scenes[currentScene]->GetNumObjects());
@@ -336,7 +336,7 @@ void Game::HandleEvent(Event* e)
 		if (currentScene == 2)
 		{
 			InputManager* input = inputDownEvent->GetInput();
-			if (input->GetKeyDown('	'))
+			if (input->GetKeyDown('	') && inputDownEvent->GetID() == clientID)
 			{
 				TogglePauseMenu();
 			}
@@ -1225,6 +1225,16 @@ void Game::ResetPlayers()
 			cameraName += to_string(i);
 			GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
+			if (Team1Score > 0 || Team2Score > 0) 
+			{
+				Camera * cam = camera->GetComponent<Camera>();
+				float3 dest;
+				dest = positions[randIndex];
+				
+				cam->SetDestination(dest);
+				cam->StartLerp();
+			}
+
 			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
 	}
@@ -1613,11 +1623,11 @@ void Game::UpdateServerStates()
 		GameState* state = gameStates[i];
 		GameObject* gameObject = (*gameObjects)[i];
 
-		if (gameObject->GetName() == "HexFloor")
-		{
-			state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
-		//	state->_dt = dt;
-		}
+		//if (gameObject->GetName() == "HexFloor")
+		//{
+		//	state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
+		////	state->_dt = dt;
+		//}
 
 		float3 position = gameObject->GetTransform()->GetPosition();
 		float3 rotation = gameObject->GetTransform()->GetRotation();
@@ -1712,7 +1722,7 @@ void Game::UpdateClientObjects()
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
 					//if (fC->GetState() != client.getFloorState(i))
-						fC->SetState(client.getFloorState(i));
+						fC->SetState(client.getDT());
 				}
 
 
@@ -1920,20 +1930,23 @@ void Game::GetFloor()
 
 void Game::TogglePauseMenu()
 {
-	GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
-	GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
-	GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
-	//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
-	Button * resumeButton = pauseResume->GetComponent<Button>();
-	Button * exitButton = pauseExit->GetComponent<Button>();
-	Button * menuButton = pauseMenu->GetComponent<Button>();
-	//Button * scoreButton = pauseScore->GetComponent<Button>();
-	bool toggle = !resumeButton->getActive();
-	resumeButton->SetActive(toggle);
-	exitButton->SetActive(toggle);
-	menuButton->SetActive(toggle);
-
+	bool toggle;
+	if (ResourceManager::GetSingleton()->IsServer()) {
+		GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
+		GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
+		GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
+		//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
+		Button * resumeButton = pauseResume->GetComponent<Button>();
+		Button * exitButton = pauseExit->GetComponent<Button>();
+		Button * menuButton = pauseMenu->GetComponent<Button>();
+		//Button * scoreButton = pauseScore->GetComponent<Button>();
+		toggle = !resumeButton->getActive();
+		resumeButton->SetActive(toggle);
+		exitButton->SetActive(toggle);
+		menuButton->SetActive(toggle);
+	}
 	GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
 	Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
+	toggle = !scoreBoard2->isActive();
 	scoreBoard2->Toggle(toggle);
 }

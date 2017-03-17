@@ -85,6 +85,7 @@ void BoxCollider::FixedUpdate(float _dt)
 					float rt = 1 - t;
 					float3 v = vel * rt;
 					float3 norms = float3(normx, normy, normz);
+					collisionNormal = norms;
 					float3 rejv = v - norms * dot_product(norms, v);
 					vel.x = rejv.x;
 					vel.y = rejv.y;

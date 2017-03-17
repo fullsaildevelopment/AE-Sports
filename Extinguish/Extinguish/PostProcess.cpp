@@ -1,4 +1,8 @@
 #include "PostProcess.h"
+#include "InputManager.h"
+
+static bool buttonDown = false;
+static int buttonTimer = 0;
 
 namespace BLOOM
 {
@@ -193,6 +197,45 @@ void PostProcess::DoPostProcess()
 {
 	ID3D11ShaderResourceView* null[] = { nullptr, nullptr };
 
+#if _DEBUG
+	if (InputManager::GetSingleton()->GetKey(39) && !buttonDown && buttonTimer <= 0)
+	{
+		buttonDown = true;
+		buttonTimer = 12;
+		switch (g_Bloom)
+		{
+		case BLOOM::Default:
+			g_Bloom = Soft;
+			break;
+		case BLOOM::Soft:
+			g_Bloom = Desaturated;
+			break;
+		case BLOOM::Desaturated:
+			g_Bloom = Saturated;
+			break;
+		case BLOOM::Saturated:
+			g_Bloom = Blurry;
+			break;
+		case BLOOM::Blurry:
+			g_Bloom = Subtle;
+			break;
+		case BLOOM::Subtle:
+			g_Bloom = None;
+			break;
+		case BLOOM::None:
+			g_Bloom = Default;
+			break;
+		default:
+			break;
+		}
+		deviceContext->UpdateSubresource(m_bloomParams.Get(),NULL,NULL,&g_BloomPresets[g_Bloom],NULL,NULL);
+	}
+	else
+	{
+		buttonDown = false;
+		buttonTimer -= 1;
+	}
+#endif
 	if (g_Bloom == None)
 	{
 		// Pass-through test
