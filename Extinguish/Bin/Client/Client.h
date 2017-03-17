@@ -50,7 +50,7 @@ public:
 		XMFLOAT3 rotation;
 		INT8 parentIndex;
 		INT8 animationIndex;
-		float otherIndex;
+		int otherIndex;
 		float _dt;
 		INT8 transitionIndex;
 		UINT32 soundID;
@@ -164,7 +164,7 @@ public:
 	void setRotation(XMFLOAT3 rot) { myState[0][0].rotation = rot; }
 
 	// getters
-	float getFloorState(unsigned int i) { return clientStates[0][i].otherIndex; }
+	int getFloorState(unsigned int i) { return clientStates[0][i].otherIndex; }
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
