@@ -38,6 +38,7 @@ private:
 	D2D1_RECT_F * layoutRect;
 	bool isButton = false;
 	float left;
+	wstring font;
 
 	/* Decides which renderer function to call in render */
 	Button * theButton;
@@ -56,5 +57,7 @@ public:
 	void MakeRTSize();
 	void InitMetrics();
 	void setAlignment(DWRITE_TEXT_ALIGNMENT text, DWRITE_PARAGRAPH_ALIGNMENT paragraph) { alignmentText = text; alignmentParagrah = paragraph; }
+	void SetFontSize(float fontSize);
+	void SetColor(D2D1::ColorF fontColor);
 };
 

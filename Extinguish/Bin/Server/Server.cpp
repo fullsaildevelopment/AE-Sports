@@ -17,6 +17,12 @@ Server::Server()
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
 	gameState[0].resize(MAX_PLAYERS);
+
+	for (int i = 0; i < gameState->size(); ++i)
+	{
+		gameState[0][i].name = nullptr;
+	}
+
 	//floorState = new std::vector<XMFLOAT3>();
 }
 
@@ -24,6 +30,11 @@ Server::~Server()
 {
 	/*for (unsigned int i = 0; i < MAX_PLAYERS; ++i)
 		delete names[i];*/
+	for (int i = 0; i < gameState->size(); ++i)
+	{
+		delete gameState[0][i].name;
+	}
+
 
 	delete clientStates;
 	delete gameState;

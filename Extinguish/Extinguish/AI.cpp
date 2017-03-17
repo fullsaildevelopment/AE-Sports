@@ -217,6 +217,15 @@ void AI::Update(float _dt)
 			if (listOfEnemies[i]->GetComponent<AI>() && listOfEnemies[i]->GetComponent<AI>()->GetCurrState() == tank)
 				eTank = listOfEnemies[i];
 		}
+
+		for (int i = 0; i < listOfMates.size(); ++i)
+		{
+			if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
+				mGo2 = listOfMates[i];
+
+			else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+				mGuy = listOfMates[i];
+		}
 	}
 
 
@@ -358,13 +367,15 @@ void AI::Update(float _dt)
 		{
 			GameObject *myGuy = nullptr;
 			
-			for (int i = 0; i < listOfMates.size(); ++i)
-			{
-				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy) /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					myGuy = listOfMates[i];
+			if (mGuy) myGuy = mGuy;
 
-				else if (!listOfMates[i]->GetComponent<AI>())
-					myGuy = listOfMates[i];
+			else
+			{
+				for (int i = 0; i < listOfMates.size(); ++i)
+				{
+					if (!listOfMates[i]->GetComponent<AI>())
+						myGuy = listOfMates[i];
+				}
 			}
 
 			// hover around guy
@@ -483,8 +494,7 @@ void AI::Paranoia()
 			{
 				float3 tmp2 = listOfMates[i]->GetTransform()->GetWorldPosition() - enemyGoal->GetTransform()->GetPosition();
 
-				if (fakeTeam > 2 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy) ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-					target = listOfMates[i];
+				if (mGo2) target = mGo2;
 
 				// if they're closer to the goal
 				else if (tmp2.magnitude() < mdist)

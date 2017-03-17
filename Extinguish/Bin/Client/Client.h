@@ -76,7 +76,7 @@ public:
 		UINT8 assists = 0;
 		UINT8 saves = 0;
 		UINT8 goals = 0;
-		char name[8];
+		char* name;
 
 		GAME_STATE() {}
 	};
@@ -187,13 +187,17 @@ public:
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
 	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
-	void getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
+	char* getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
 	{
-		memcpy(name, gameState[0][i].name, strlen(gameState[0][i].name));
+		//name = gameState[0][i].name;
+		name = new char[strlen(gameState[0][i].name) + 1];
+		strcpy(name, gameState[0][i].name);
 		score = gameState[0][i].score;
 		assists = gameState[0][i].assists;
 		saves = gameState[0][i].saves;
 		goals = gameState[0][i].goals;
+
+		return name;
 	}
 
 	bool floorIsEmpty() { if (floorState[0].size() == 0) return true; return false; }

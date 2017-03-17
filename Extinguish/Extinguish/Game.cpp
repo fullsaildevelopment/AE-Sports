@@ -30,6 +30,7 @@
 #include "CoughtEvent.h"
 #include "GamePadEvent.h"
 #include "Scoreboard.h"
+#include "Countdown.h"
 
 using namespace DirectX;
 using namespace std;
@@ -1002,6 +1003,13 @@ void Game::CreateUI(Scene * basic)
 	scoreBoardRenderer->Init(false, devResources, nullptr);
 	//CreateScoreBoard(basic);
 
+	//create countdown
+	//GameObject* countdown = new GameObject();
+	//basic->AddGameObject(countdown);
+	//countdown->Init("Countdown");
+	//Countdown* countdownController = new Countdown(basic, devResources);
+	//countdown->AddComponent(countdownController);
+
 	//create game over menu
 
 
@@ -1481,7 +1489,12 @@ void Game::AssignPlayers()
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
+	string ourNames[] = { "Tom", "Nick", "Sam", "Lynda" };
 	vector<AI*> ai;
+	PLAYER_TEAM teamID = TEAM_A;
+
+	int ourNameIndex = 0;
+
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (ResourceManager::GetSingleton()->IsServer())
@@ -1491,25 +1504,33 @@ void Game::AssignPlayers()
 
 			for (unsigned int i = 0; i < 8; ++i) 
 			{
+				string name;
 				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+				teamID = TEAM_A;
+
+				if (i > 3)
+				{
+					teamID = TEAM_B;
+				}
 
 				if (!server.isPlayer(i)) 
 				{
 					AI *mageAI = new AI(mage1);
 					mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+
+					name = aiNames[i];
+
 				}
 				else
 				{
-					unsigned int teamID = PLAYER_TEAM::TEAM_A;
-
-					if (i > 3)
-					{
-						teamID = PLAYER_TEAM::TEAM_B;
-					}
-
-					mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
+					name = ourNames[ourNameIndex++];
+					//mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
 				}
+
+				PlayerController* player = mage1->GetComponent<PlayerController>();
+				player->ReadInStats(name);
+				player->SetTeamID(teamID);
 			}
 
 			GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
