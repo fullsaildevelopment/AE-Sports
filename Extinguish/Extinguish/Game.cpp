@@ -30,6 +30,7 @@
 #include "CoughtEvent.h"
 #include "GamePadEvent.h"
 #include "Scoreboard.h"
+#include "Countdown.h"
 
 using namespace DirectX;
 using namespace std;
@@ -1001,6 +1002,13 @@ void Game::CreateUI(Scene * basic)
 	scoreBoard->AddComponent(scoreBoardRenderer);
 	scoreBoardRenderer->Init(false, devResources, nullptr);
 	//CreateScoreBoard(basic);
+
+	//create countdown
+	//GameObject* countdown = new GameObject();
+	//basic->AddGameObject(countdown);
+	//countdown->Init("Countdown");
+	//Countdown* countdownController = new Countdown(basic, devResources);
+	//countdown->AddComponent(countdownController);
 
 	//create game over menu
 
