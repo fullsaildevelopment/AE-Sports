@@ -419,6 +419,7 @@ void Scene::Update(float _dt)
 	cameraName += to_string(id);
 	GameObject* camObject = gameObjects[0]->FindGameObject(cameraName);
 	float3 camPosition = camObject->GetTransform()->GetWorldPosition();
+	camPosition.y += 1.85f;
 	//get view
 	XMFLOAT4X4 cameraCam;
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;

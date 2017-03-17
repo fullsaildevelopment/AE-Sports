@@ -54,6 +54,7 @@ Capsule CapsuleCollider::GetWorldCapsule()
 
 void CapsuleCollider::FixedUpdate(float _dt)
 {
+	collisionNormal = { 0,0,0 };
 	if (objects.size() == 0)
 	{
 		objects = *GetGameObject()->GetGameObjects();
@@ -97,6 +98,8 @@ void CapsuleCollider::FixedUpdate(float _dt)
 				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos);
 				if (!result.isEquil(float3(0, 0, 0)))
 				{
+					box->collisionNormal = result;
+					collisionNormal = result;
 					bool aG = false;
 
 					if (!result.isEquil(float3(0, 1, 0)))
