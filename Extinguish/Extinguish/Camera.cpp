@@ -51,8 +51,11 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 
 void Camera::Update(float _dt)
 {
+	if (lerp)
+		LerpCamera(_dt);
 	//this->input = input;
 	this->_dt = _dt;
+
 }
 
 void Camera::HandleEvent(Event* e)
@@ -62,7 +65,7 @@ void Camera::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		if (GetGameObject()->GetTransform()->GetParent()) {
+		if (GetGameObject()->GetTransform()->GetParent() && !lerp) {
 			//if (inputDownEvent->IsServer())
 			{
 				string name;
@@ -256,4 +259,39 @@ XMFLOAT4X4 Camera::GetView()
 	//transform->RotateY(-XM_PI);
 
 	return view;
+}
+
+
+void Camera::SetDestination(float3 des) 
+{
+	destination = des;
+	destination.y = playerTransform->GetPosition().y;
+}
+
+void Camera::LerpCamera(float dt)
+{
+	if (lerp) {
+		XMFLOAT4X4 camera = transform->GetWorld();
+		XMFLOAT3 current;
+		current = { camera._41, camera._42, camera._43 };
+
+		curTime += dt;
+		if (curTime > maxTime)
+		{
+			curTime = maxTime;
+			lerp = false;
+		}
+		float ratio = curTime / maxTime;
+		XMFLOAT3 newposition;
+
+		newposition.x = (destination.x - current.x) * ratio + current.x;
+		newposition.y = (destination.y - current.y) * ratio + current.y;
+		newposition.z = (destination.z - current.z) * ratio + current.z;	
+
+		float3 newpos(newposition.x, newposition.y, newposition.z);
+		// rebuild camera
+		transform->SetPosition(newpos);
+	}
+	else
+		curTime = 0.0f;
 }

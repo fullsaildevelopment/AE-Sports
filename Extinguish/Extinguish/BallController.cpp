@@ -116,7 +116,7 @@ void BallController::FixedUpdate(float _dt)
 	{
 		transform->SetPosition(float3(transform->GetPosition().x, 1.5f, transform->GetPosition().z));
 	}
-	if (!isHeld && !isThrown)
+	/*if (!isHeld && !isThrown)
 	{
 		int s = (int)nets.size();
 		for (int i = 0; i < s; ++i)
@@ -132,7 +132,7 @@ void BallController::FixedUpdate(float _dt)
 				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
 			}
 		}
-	}
+	}*/
 }
 
 void BallController::HandleEvent(Event* e)
@@ -216,6 +216,7 @@ GameObject* BallController::GetHolder()
 {
 	if (!isThrown && holder)
 		return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	return nullptr;
 }
 
 GameObject* BallController::GetCrosseHolder()
@@ -227,6 +228,7 @@ GameObject* BallController::GetThrower()
 {
 	if (thrower)
 		return thrower;
+	return nullptr;
 }
 
 GameObject* BallController::GetPreviousThrower()
