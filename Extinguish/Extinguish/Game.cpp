@@ -1691,7 +1691,7 @@ void Game::UpdateClientObjects()
 				{
 					FloorController * fC = gameObject->GetComponent<FloorController>();
 					//if (fC->GetState() != client.getFloorState(i))
-						fC->SetState(dt);
+						fC->SetState(client.getDT());
 				}
 
 
