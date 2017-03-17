@@ -48,7 +48,7 @@ void Countdown::Update(float dt)
 //misc//
 void Countdown::ResetTimer()
 {
-	timer = timeTilPlay;
+	timer = (float)timeTilPlay;
 }
 
 void Countdown::DoAnimation(int number)
