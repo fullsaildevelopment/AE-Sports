@@ -79,7 +79,7 @@ void Countdown::Update(float dt)
 //misc//
 void Countdown::Reset()
 {
-	timer = timeTilPlay;
+	timer = (float)timeTilPlay;
 	canPlay = false;
 	curSecond = -1;
 	playSound = false;
