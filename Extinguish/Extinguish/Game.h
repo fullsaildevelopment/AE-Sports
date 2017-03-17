@@ -64,6 +64,7 @@ private:
 	void ReceiveServerMessage();
 	void ResetPlayers();
 	void ResetBall();
+	void ResetCountdown();
 
 	/* to separate all the ui */
 	void CreateUI(Scene * basic);

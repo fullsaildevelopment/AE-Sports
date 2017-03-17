@@ -31,13 +31,13 @@
 #include "GamePadEvent.h"
 #include "Scoreboard.h"
 #include "Countdown.h"
+#include "CanPlayEvent.h"
 
 using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
 #define AI_ON 1
-
 //initialize static member
 int Game::clientID = 1;
 
@@ -371,6 +371,7 @@ void Game::HandleEvent(Event* e)
 		{
 			ResetPlayers();
 			ResetBall();
+			ResetCountdown();
 		}
 
 		return;
@@ -435,6 +436,22 @@ void Game::HandleEvent(Event* e)
 
 		return;
 	}
+
+	//CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
+
+	//if (playEvent)
+	//{
+	//	if (ResourceManager::GetSingleton()->IsServer())
+	//	{
+	//		EventDispatcher::GetSingleton()->DispatchExcept(playEvent, "Game"); //this way it doesn't create an infinite loop... and it does this without any booleans and such
+	//	}
+	//	else //client needs to send canPlay bool to sesrver
+	//	{
+	//		client.sendMessage((char*)playEvent->CanPlay(), sizeof(bool) + 1); // plus one for the header (size of message)
+	//	}
+
+	//	return;
+	//}
 }
 
 //getters//
@@ -570,6 +587,7 @@ void Game::CreateGameWrapper()
 
 	ResetBall();
 	ResetPlayers();
+	ResetCountdown();
 
 	// also need to remove ai?
 	Team1Score = Team2Score = 0;
@@ -918,8 +936,8 @@ void Game::CreateUI(Scene * basic)
 {
 	// trapezoid backing
 	GameObject * scoreA = new GameObject();
-	basic->AddUIObject(scoreA);
 	scoreA->Init("gameScoreBase");
+	basic->AddUIObject(scoreA);
 	Button * theSButton = new Button(true, true, L"05:00", (unsigned int)strlen("05:00"), 500.0f, 100.0f, devResources, 0);
 	theSButton->SetGameObject(scoreA);
 	theSButton->setTimer(true);
@@ -940,8 +958,8 @@ void Game::CreateUI(Scene * basic)
 
 
 	GameObject * scoreB = new GameObject();
-	basic->AddUIObject(scoreB);
 	scoreB->Init("gameScoreA");
+	basic->AddUIObject(scoreB);
 	Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
 	theSButtonB->SetGameObject(scoreB);
 	theSButtonB->showFPS(false);
@@ -958,8 +976,8 @@ void Game::CreateUI(Scene * basic)
 
 
 	GameObject * scoreC = new GameObject();
-	basic->AddUIObject(scoreC);
 	scoreC->Init("gameScoreB");
+	basic->AddUIObject(scoreC);
 	Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
 	theSButtonC->SetGameObject(scoreC);
 	theSButtonC->showFPS(false);
@@ -975,8 +993,8 @@ void Game::CreateUI(Scene * basic)
 	scoreCRender->InitMetrics();
 
 	GameObject * sprintBar = new GameObject();
-	basic->AddUIObject(sprintBar);
 	sprintBar->Init("sprintBar");
+	basic->AddUIObject(sprintBar);
 	MeterBar * sprintMeter = new MeterBar(false, 200.0f, 20.0f, 0.2f, 0.95f);
 	sprintBar->AddComponent(sprintMeter);
 	sprintMeter->MakeHandler();
@@ -994,8 +1012,8 @@ void Game::CreateUI(Scene * basic)
 	CreatePauseMenu(basic);
 
 	GameObject* scoreBoard = new GameObject();
-	basic->AddUIObject(scoreBoard);
 	scoreBoard->Init("Scoreboard");
+	basic->AddUIObject(scoreBoard);
 	Scoreboard* scoreBoardController = new Scoreboard(basic, devResources);
 	scoreBoard->AddComponent(scoreBoardController);
 	UIRenderer* scoreBoardRenderer = new UIRenderer();
@@ -1004,19 +1022,19 @@ void Game::CreateUI(Scene * basic)
 	//CreateScoreBoard(basic);
 
 	//create countdown
-	//GameObject* countdown = new GameObject();
-	//basic->AddGameObject(countdown);
-	//countdown->Init("Countdown");
-	//Countdown* countdownController = new Countdown(basic, devResources);
-	//countdown->AddComponent(countdownController);
+	GameObject* countdown = new GameObject();
+	countdown->Init("Countdown");
+	basic->AddGameObject(countdown);
+	Countdown* countdownController = new Countdown(basic, devResources);
+	countdown->AddComponent(countdownController);
 
 	//create game over menu
 
 
 	#ifdef DEBUG
 		GameObject * debugUI = new GameObject();
-		basic->AddUIObject(debugUI);
 		debugUI->Init("debugUI");
+		basic->AddUIObject(debugUI);
 		Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
 		theButton->SetGameObject(debugUI);
 		theButton->showFPS(true);
@@ -1034,8 +1052,8 @@ void Game::CreateMenu(Scene * scene)
 {
 	// background
 	GameObject * bg = new GameObject();
-	scene->AddUIObject(bg);
 	bg->Init("background");
+	scene->AddUIObject(bg);
 	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
@@ -1050,8 +1068,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// title
 	GameObject * title = new GameObject();
-	scene->AddUIObject(title);
 	title->Init("title");
+	scene->AddUIObject(title);
 	Button * tButton = new Button(true, false, L"", 0, 450.0f, 236.0f, devResources, 0);
 	tButton->SetGameObject(title);
 	tButton->showFPS(false);
@@ -1066,8 +1084,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// solo button
 	GameObject * soloPlayer = new GameObject();
-	scene->AddUIObject(soloPlayer);
 	soloPlayer->Init("soloPlayer");
+	scene->AddUIObject(soloPlayer);
 	Button * sButton = new Button(true, true, L"", (unsigned int)strlen(""), 300.0f, 60.0f, devResources, 10);
 	sButton->SetGameObject(soloPlayer);
 	sButton->showFPS(false);
@@ -1085,8 +1103,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// host button
 	GameObject * multiPlayer = new GameObject();
-	scene->AddUIObject(multiPlayer);
 	multiPlayer->Init("multiHost");
+	scene->AddUIObject(multiPlayer);
 	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 1);
 	mButton->SetGameObject(multiPlayer);
 	mButton->showFPS(false);
@@ -1104,8 +1122,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
-	scene->AddUIObject(multiPlayer2);
 	multiPlayer->Init("multiJoin");
+	scene->AddUIObject(multiPlayer2);
 	Button * mButton2 = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 2);
 	mButton2->SetGameObject(multiPlayer2);
 	mButton2->showFPS(false);
@@ -1123,8 +1141,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// credits
 	GameObject * credits = new GameObject();
-	scene->AddUIObject(credits);
 	credits->Init("credits");
+	scene->AddUIObject(credits);
 	Button * cButton = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 4);
 	cButton->SetGameObject(credits);
 	cButton->showFPS(false);
@@ -1162,8 +1180,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// background 2.0
 	GameObject * bg2 = new GameObject();
-	scene->AddUIObject(bg2);
 	bg2->Init("background2");
+	scene->AddUIObject(bg2);
 	Button * bg2Button = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bg2Button->SetGameObject(bg2);
 	bg2Button->showFPS(false);
@@ -1238,6 +1256,13 @@ void Game::ResetBall()
 	ball->GetComponent<BallController>()->SetHolder(nullptr);
 }
 
+void Game::ResetCountdown()
+{
+	GameObject* countdown = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject("Countdown");
+
+	countdown->GetComponent<Countdown>()->Reset();
+}
+
 void Game::ReceiveServerMessage()
 {
 	char* message = server.getMessage();
@@ -1252,8 +1277,11 @@ void Game::ReceiveServerMessage()
 			gamePadEvent->Init((GamePad::State*)message + 1, message[0]);
 			HandleEvent(gamePadEvent);
 			delete gamePadEvent;
+			break;
 		}
-		break;
+		//case sizeof(bool) :
+
+		//	break;
 	}
 
 }

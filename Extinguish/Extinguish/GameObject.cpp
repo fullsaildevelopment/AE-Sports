@@ -28,6 +28,8 @@ GameObject::~GameObject()
 }
 
 //basic//
+
+//the init must be done first before it's added to the scene; otherwise, the name won't be added to the scene hash table
 void GameObject::Init(std::string name)
 {
 	this->name = name;

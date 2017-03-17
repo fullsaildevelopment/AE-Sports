@@ -1,5 +1,7 @@
 #include "AI.h"
 #include "GameObject.h"
+#include "EventDispatcher.h"
+#include "CanPlayEvent.h"
 
 #define     RunSpeed 1 //10
 #define  AttackSpeed 20
@@ -14,6 +16,9 @@
 AI::AI(GameObject* obj) : Component(obj)
 {
 	me = obj;
+
+	//register as eventhandler
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 }
 
 void AI::OnCollisionEnter(Collider *obj)
@@ -42,6 +47,8 @@ void AI::OnCollisionEnter(Collider *obj)
 
 void AI::Init(GameObject *goal1, GameObject *goal2)
 {
+	cout << canMove;
+
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(3);
 	AIbuddies.reserve(3);
@@ -392,6 +399,18 @@ void AI::Update(float _dt)
 	}
 }
 
+void AI::HandleEvent(Event* e)
+{
+	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
+
+	if (playEvent)
+	{
+		canMove = playEvent->CanPlay();
+
+		return;
+	}
+}
+
 void AI::Idle()
 {
 	me->GetTransform()->AddVelocity(float3(0, 0, 0));
@@ -514,15 +533,18 @@ void AI::Paranoia()
 
 bool AI::RunTo(GameObject *target)
 {
-	if (target)
+	if (canMove)
 	{
-		if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 5)
-			return true;
+		if (target)
+		{
+			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 5)
+				return true;
 
-		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
-		v.y = 0;
-		TurnTo(target);
-		me->GetTransform()->AddVelocity(v * RunSpeed);
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+			v.y = 0;
+			TurnTo(target);
+			me->GetTransform()->AddVelocity(v * RunSpeed);
+		}
 	}
 
 	return false;
@@ -530,15 +552,18 @@ bool AI::RunTo(GameObject *target)
 
 bool AI::RunTo(GameObject *target, float dist)
 {
-	if (target)
+	if (canMove)
 	{
-		if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
-			return true;
+		if (target)
+		{
+			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
+				return true;
 
-		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
-		v.y = 0;
-		TurnTo(target);
-		me->GetTransform()->AddVelocity(v * RunSpeed);
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+			v.y = 0;
+			TurnTo(target);
+			me->GetTransform()->AddVelocity(v * RunSpeed);
+		}
 	}
 
 	return false;
@@ -546,15 +571,18 @@ bool AI::RunTo(GameObject *target, float dist)
 
 bool AI::RunTo(float3 target, float dist)
 {
-	if ((target - me->GetTransform()->GetPosition()).magnitude() < dist)
-		return true;
+	if (canMove)
+	{
+		if ((target - me->GetTransform()->GetPosition()).magnitude() < dist)
+			return true;
 
-	float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
-	v.y = 0;
-	TurnTo(target);
-	me->GetTransform()->AddVelocity(v * RunSpeed);
+		float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+		v.y = 0;
+		TurnTo(target);
+		me->GetTransform()->AddVelocity(v * RunSpeed);
 
-	return false;
+		return false;
+	}
 }
 
 void AI::TurnTo(float3 target)
