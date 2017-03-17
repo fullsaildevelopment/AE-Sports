@@ -210,7 +210,10 @@ public:
 		gameState[0][index].assists = (UINT8)assists;
 		gameState[0][index].goals = (UINT8)goals;
 		gameState[0][index].saves = (UINT8)saves;
-		memcpy(gameState[0][index].name, name, strlen(name));
+
+		delete gameState[0][index].name;
+		gameState[0][index].name = new char[strlen(name) + 1];
+		strcpy(gameState[0][index].name, name);
 	}
 
 
