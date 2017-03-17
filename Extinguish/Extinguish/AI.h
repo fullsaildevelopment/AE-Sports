@@ -28,12 +28,14 @@ private:
 	State currState; // the AI's current state or position that they'll take
 	Transform *camera; // gives me access to the camera transform
 
-	GameObject *myGoal; // my goal object
-	GameObject *enemyGoal; // the enemy's goal object
-	GameObject *ball; // the ball object
-	GameObject *realTarget; // holder for attacking
-	GameObject *eTank; // enemy's tank
-	GameObject *me; // access to the gameObject stuff through me
+	GameObject *myGoal = nullptr; // my goal object
+	GameObject *enemyGoal = nullptr; // the enemy's goal object
+	GameObject *ball = nullptr; // the ball object
+	GameObject *realTarget = nullptr; // holder for attacking
+	GameObject *eTank = nullptr; // enemy's tank
+	GameObject *mGo2 = nullptr; // my goalie2
+	GameObject *mGuy = nullptr; // my Guy
+	GameObject *me = nullptr; // access to the gameObject stuff through me
 
 	BallController *ballClass; // gives me access to the balls script
 	Crosse *crosse; // gives me access to the crosse script

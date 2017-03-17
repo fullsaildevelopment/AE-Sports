@@ -72,6 +72,7 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	isButton = _isButton;
 	theButton = button;
 	d2DevContext = deviceResources->Get2DContext();
+	this->font = font;
 
 	if (font != L"") {
 		HRESULT result;
@@ -313,4 +314,28 @@ void UIRenderer::MakeRTSize()
 		theButton->setRT(rtSize);
 	if (theBar)
 		theBar->setRT(rtSize);
+}
+
+//setters
+void UIRenderer::SetFontSize(float fontSize)
+{
+	IDWriteFontCollection* pFontCollection = NULL;
+	pDWriteFactory->GetSystemFontCollection(&pFontCollection);
+
+	pDWriteFactory->CreateTextFormat(font.c_str(),
+		pFontCollection,
+		DWRITE_FONT_WEIGHT_REGULAR,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		fontSize,
+		L"en-us",
+		pTextFormat.GetAddressOf());
+}
+
+void UIRenderer::SetColor(D2D1::ColorF fontColor)
+{
+	d2DevContext->CreateSolidColorBrush(
+		D2D1::ColorF(fontColor),
+		pBrush.GetAddressOf()
+	);
 }

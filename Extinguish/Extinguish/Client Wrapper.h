@@ -173,8 +173,8 @@ public:
 	int stateSize() { return newClient.stateSize(); }
 	float getDT() { return newClient.getDT(); }
 
-	void updateScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
+	char* updateScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
 	{
-		newClient.getScoreboard(i, score, assists, saves, goals, name);
+		return newClient.getScoreboard(i, score, assists, saves, goals, name);
 	}
 };

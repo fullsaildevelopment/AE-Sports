@@ -524,62 +524,65 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 
 void Scoreboard::Update(float dt)
 {
+	//because I added these to a scene, they will be updated there
+	//this was super wasteful
+
 	int i;
 
 	for (i = 0; i < playerBars.size(); ++i)
 	{
 		//if (IsBeingUsed(i))
 		{
-			playerBars[i]->Update(dt);
-			playerNames[i]->Update(dt);
+			//playerBars[i]->Update(dt);
+			//playerNames[i]->Update(dt);
 
 			playerScores[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetScore()).c_str());
-			playerScores[i]->Update(dt);
+			//playerScores[i]->Update(dt);
 
 			playerGoals[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetGoals()).c_str());
-			playerGoals[i]->Update(dt);
+			//playerGoals[i]->Update(dt);
 
 			playerAssists[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetAssists()).c_str());
-			playerAssists[i]->Update(dt);
+			//playerAssists[i]->Update(dt);
 
 			playerSaves[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetSaves()).c_str());
-			playerSaves[i]->Update(dt);
-		}
-	}
-
-	for (i = 0; i < numOfTeams; ++i)
-	{
-		teamScores[i]->Update(dt);
-	}
-
-	for (int i = 0; i < numOfLabels; ++i)
-	{
-		labels[i]->Update(dt);
-	}
-
-	//then render
-	for (i = 0; i < playerBars.size(); ++i)
-	{
-		//if (IsBeingUsed(i))
-		{
-			playerBars[i]->GetComponent<UIRenderer>()->Render();
-			playerNames[i]->GetComponent<UIRenderer>()->Render();
-			playerScores[i]->GetComponent<UIRenderer>()->Render();
-			playerGoals[i]->GetComponent<UIRenderer>()->Render();
-			playerAssists[i]->GetComponent<UIRenderer>()->Render();
-			playerSaves[i]->GetComponent<UIRenderer>()->Render();
+			//playerSaves[i]->Update(dt);
 		}
 	}
 
 	//for (i = 0; i < numOfTeams; ++i)
 	//{
-	//	teamScores[i]->GetComponent<UIRenderer>()->Render();
+	//	teamScores[i]->Update(dt);
 	//}
 
-	for (int i = 0; i < numOfLabels; ++i)
-	{
-		labels[i]->GetComponent<UIRenderer>()->Render();
-	}
+	//for (int i = 0; i < numOfLabels; ++i)
+	//{
+	//	labels[i]->Update(dt);
+	//}
+
+	////then render
+	//for (i = 0; i < playerBars.size(); ++i)
+	//{
+	//	//if (IsBeingUsed(i))
+	//	{
+	//		playerBars[i]->GetComponent<UIRenderer>()->Render();
+	//		playerNames[i]->GetComponent<UIRenderer>()->Render();
+	//		playerScores[i]->GetComponent<UIRenderer>()->Render();
+	//		playerGoals[i]->GetComponent<UIRenderer>()->Render();
+	//		playerAssists[i]->GetComponent<UIRenderer>()->Render();
+	//		playerSaves[i]->GetComponent<UIRenderer>()->Render();
+	//	}
+	//}
+
+	////for (i = 0; i < numOfTeams; ++i)
+	////{
+	////	teamScores[i]->GetComponent<UIRenderer>()->Render();
+	////}
+
+	//for (int i = 0; i < numOfLabels; ++i)
+	//{
+	//	labels[i]->GetComponent<UIRenderer>()->Render();
+	//}
 }
 
 void Scoreboard::Toggle(bool toggle)
@@ -694,7 +697,7 @@ void Scoreboard::SendScoreboard()
 		{
 			wstring name = playerNames[i]->GetComponent<Button>()->getText();
 			string name2 = players[i]->GetName();
-			//Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals(), name);
+			Game::server.updateScoreboard(i, players[i]->GetScore(), players[i]->GetAssists(), players[i]->GetSaves(), players[i]->GetGoals(), &name2[0]);
 		}
 	}
 }
@@ -706,11 +709,12 @@ void Scoreboard::ReceiveScoreboard()
 		for (unsigned int i = 0; i < (unsigned int)players.size(); ++i)
 		{
 			unsigned int score, assists, saves, goals;
-			char name[8];
-			Game::client.updateScoreboard(i, score, assists, saves, goals , name);
+			char* name = nullptr;
+			name = Game::client.updateScoreboard(i, score, assists, saves, goals , name);
 
-			vector<char> _name(name, name + 8);
-			wstring thename(_name.begin(), _name.end());
+			string stringName = name;
+			//vector<char> _name(name, name + 8);
+			wstring thename(stringName.begin(), stringName.end());
 			
 			playerNames[i]->GetComponent<Button>()->setText(thename);
 			
@@ -719,6 +723,8 @@ void Scoreboard::ReceiveScoreboard()
 			players[i]->SetGoals(goals);
 			players[i]->SetSaves(saves);
 			players[i]->SetScore(score);
+
+			//delete name;
 		}
 	}
 }
