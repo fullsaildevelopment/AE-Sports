@@ -64,19 +64,22 @@ void FloorController::StripPattern(float _dt)
 
 void FloorController::InitialPattern(float _dt)
 {
+	float TIME = timeing * transSpeed;
+
+	direction = (int)(TIME) % 2;
+	direction = (direction < 1) ? -1 : 1;
+	float change = fmodf(TIME,1.0f);
+	ratios = (direction == 1) ? change : 1 - change;
+
 	//decide which way to make the side pillars move up
 	if (ratios > 1.0f)
 	{
 		ratios = 1.0f;
-		direction = -1;
 	}
 	else if (ratios < 0.0f)
 	{
 		ratios = 0.0f;
-		direction = 1;
 	}
-
-	ratios = sin(_dt);
 
 	//red goal
 	MovePillar(15, ratios);
@@ -124,10 +127,10 @@ void FloorController::ControlMovement(float fullTime)
 {
 	timeing = fullTime;
 	float dt = timeing - timer;
+
+	InitialPattern(dt);
+
 	timer = fullTime;
-
-	InitialPattern(timer);
-
 	//if (timeing < 10 && currPattern != 1)
 	//{
 	//	transState = 1;
