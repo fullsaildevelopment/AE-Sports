@@ -60,6 +60,7 @@ void SphereCollider::FixedUpdate(float _dt)
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
 				if (c.x == 1 || c.y == 1)
 				{
+					collisionNormal = c;
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
@@ -185,6 +186,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					float3 n = SweptSpheretoSphere(s, os, vel);
 					if (!n.isEquil(float3(0, 0, 0)))
 					{
+						collisionNormal = n;
 						tgt->SetVelocity(vel / _dt);
 						tgt->SetPosition(s.m_Center);
 						if (!CollidingWith[i])

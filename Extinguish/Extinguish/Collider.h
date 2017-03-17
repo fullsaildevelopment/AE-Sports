@@ -29,6 +29,7 @@ protected:
 	vector<GameObject*> objects;
 	vector<bool> CollidingWith;
 public:
+	float3 collisionNormal;
 	Collider(GameObject* o, bool trigger);
 	Collider(GameObject* o, bool trigger, ColliderType t);
 	Transform* GetTransform() { return transform; };
