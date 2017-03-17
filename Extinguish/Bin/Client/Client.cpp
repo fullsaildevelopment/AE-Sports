@@ -20,6 +20,11 @@ Client::Client()
 	gameState[0].resize(MAX_PLAYERS);
 	floorState = new std::vector<XMFLOAT3>();
 	floorState[0].resize(2090);
+
+	for (int i = 0; i < gameState->size(); ++i)
+	{
+		gameState[0][i].name = nullptr;
+	}
 }
 
 Client::~Client()
@@ -27,6 +32,12 @@ Client::~Client()
 	delete myState;
 	delete clientStates;
 	delete gameState;
+
+
+	for (int i = 0; i < gameState->size(); ++i)
+	{
+		delete gameState[0][i].name;
+	}
 
 	if (peer)
 	peer->DestroyInstance(peer);
@@ -450,9 +461,14 @@ void Client::receiveGameState()
 		bIn.Read(gameState[0][i].assists);
 		bIn.Read(gameState[0][i].saves);
 		bIn.Read(gameState[0][i].goals);
+
 		UINT8 nameLength;
 		bIn.Read(nameLength);
+
+		delete gameState[0][i].name;
+		gameState[0][i].name = new char[nameLength + 1];
 		bIn.Read(gameState[0][i].name, nameLength);
+		gameState[0][i].name[nameLength] = '\0';
 	}
 }
 
