@@ -106,6 +106,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		}
 	}
 
+#pragma region Switch
 	switch (fakeTeam)
 	{
 		case 0: // if I'm the only AI
@@ -189,6 +190,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 		default: break;
 	}
+#pragma endregion
 
 	ballClass = ball->GetComponent<BallController>();
 	Idle();
@@ -196,6 +198,8 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float _dt)
 {
+
+#pragma region Setting Objects
 	if (!isAttacking) realTarget = nullptr;
 
 	if (startTimer)
@@ -227,7 +231,7 @@ void AI::Update(float _dt)
 				mGuy = listOfMates[i];
 		}
 	}
-
+#pragma endregion
 
 #pragma region Goalie
 	if (currState == goalie)
@@ -387,7 +391,7 @@ void AI::Update(float _dt)
 	
 	if (timer <= 0)
 	{
-		timer = 2;
+		timer = 3.5f;
 		startTimer = false;
 	}
 }
@@ -457,7 +461,7 @@ void AI::Attack(GameObject *target)
 	isAttacking = true;
 
 	// if they're not on my team and if the timer isn't going
-	if (target->GetTag() != me->GetTag() && timer == 2)
+	if (target->GetTag() != me->GetTag() && timer == 3.5f)
 	{
 		TurnTo(target);
 		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
@@ -574,14 +578,10 @@ void AI::TurnTo(GameObject *target)
 {
 	if (target)
 	{
-		//u - forward vector
 		float3 u = (me->GetTransform()->GetRightf3() * (-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		//v - vector between me and destination
 		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
-
-		//degRad - degrees/radians between me and target
 		float degRad = dot_product(u, v);
+		
 		me->GetTransform()->RotateY(degRad);
 	}
 }
