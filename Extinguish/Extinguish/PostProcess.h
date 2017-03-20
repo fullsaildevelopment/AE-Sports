@@ -45,4 +45,8 @@ public:
 
 	void Clear();
 
+	void ResizeWindow(uint16_t w, uint16_t h);
+
+	void Release();
+
 };
