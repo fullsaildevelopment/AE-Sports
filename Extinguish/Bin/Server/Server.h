@@ -58,6 +58,8 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
+		bool paused = false;
+		UINT8 scene = 1;
 		int scoreA = 0;
 		int scoreB = 0;
 		float time = 300.0f;
@@ -184,6 +186,7 @@ public:
 	bool getMeterDrain(unsigned int i) { return gameState[0][i].sprintD; }
 	bool getMeterActive(unsigned int i) { return gameState[0][i].sprintA; }
 	bool getEmpty(unsigned int i) { return gameState[0][i].empty; }
+	bool getPaused() { return gameState[0][0].paused; }
 
 	/* setters */
 	void setStateSize(unsigned int size) { 
@@ -215,6 +218,8 @@ public:
 		gameState[0][index].name = new char[strlen(name) + 1];
 		strcpy(gameState[0][index].name, name);
 	}
+	void gamePaused(bool tf) { gameState[0][0].paused = tf; }
+	void setCurScene(int scene) { gameState[0][0].scene = scene; }
 
 
 	/* game stuff*/

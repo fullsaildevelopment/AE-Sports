@@ -58,6 +58,7 @@ private:
 	static int objID;
 
 	float* gameTime;
+	float endTimer;
 
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
@@ -84,7 +85,7 @@ private:
 	void EnableButton(std::string name, bool toggle);
 	void SendFloor();
 	void GetFloor();
-	void TogglePauseMenu();
+	void TogglePauseMenu(bool endGame, bool scoreboard);
 
 public:
 	void CreateGameWrapper();

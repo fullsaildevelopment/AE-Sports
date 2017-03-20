@@ -76,40 +76,42 @@ void Movement::Update(float _dt)
 
 void Movement::HandleEvent(Event* e)
 {
-	//filter events
-	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+	if (!ResourceManager::GetSingleton()->IsPaused()) {
+		//filter events
+		InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-	if (inputDownEvent)
-	{
-		//if (inputDownEvent->IsServer())
+		if (inputDownEvent)
+		{
+			//if (inputDownEvent->IsServer())
+			{
+				string name;
+				name = "Mage";
+				name += to_string(inputDownEvent->GetID());
+
+				if (GetGameObject()->GetName() == name)
+				{
+					HandleInput(inputDownEvent);
+				}
+			}
+
+			return;
+		}
+
+		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+		if (gamePadEvent)
 		{
 			string name;
 			name = "Mage";
-			name += to_string(inputDownEvent->GetID());
+			name += to_string(gamePadEvent->GetClientID());
 
 			if (GetGameObject()->GetName() == name)
 			{
-				HandleInput(inputDownEvent);
+				HandleGamePad(gamePadEvent);
 			}
+
+			return;
 		}
-
-		return;
-	}
-
-	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
-
-	if (gamePadEvent)
-	{
-		string name;
-		name = "Mage";
-		name += to_string(gamePadEvent->GetClientID());
-
-		if (GetGameObject()->GetName() == name)
-		{
-			HandleGamePad(gamePadEvent);
-		}
-
-		return;
 	}
 
 	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);

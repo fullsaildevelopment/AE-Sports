@@ -258,12 +258,14 @@ int  Server::update()
 
 void Server::stop()
 {
+	float time = 0.0f;
 	shutdown = true;
 	while (true)
 	{
+		time += 0.001f;
 		sendDisconnect(true);
 		int result = update();
-		if (result == 0 || numPlayers <= 1)
+		if (result == 0 || numPlayers <= 1 || time >= 1.0f)
 			break;
 	}
 	//RakPeerInterface::DestroyInstance(peer);
@@ -472,7 +474,7 @@ void Server::recieveInput()
 void Server::sendPackets()
 {
 	// send packet x8 to all clients
-	if (serverObjs > 0)
+	if (serverObjs > 0 && gameState[0][0].scene == 2)
 	{
 
 		if (!peer)
@@ -546,7 +548,8 @@ void Server::sendState()
 {
 	BitStream bOut;
 	bOut.Write((MessageID)ID_INCOMING_STATE);
-
+	bOut.Write(gameState[0][0].scene);
+	bOut.Write(gameState[0][0].paused);
 	bOut.Write(gameState[0][0].scoreA);
 	bOut.Write(gameState[0][0].scoreB);
 	bOut.Write(gameState[0][0].time);
@@ -573,6 +576,7 @@ void Server::sendState()
 
 void Server::StartGame()
 {
+	gameState[0][0].paused = false;
 	sendMessage(UINT8(11), ID_START_GAME, true);
 }
 
