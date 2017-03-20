@@ -631,10 +631,12 @@ void Game::CreateGameWrapper()
 
 		for (unsigned int j = 0; j < obj; ++j)
 		{
-			/*Transform * trans = scenes[i]->GetGameObjects(j)->GetTransform();
-			if (trans)
-				trans->Reset();*/
-			bool success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+			AI * ai = scenes[i]->GetGameObjects(j)->GetComponent<AI>();
+			if (ai)
+			{
+				EventDispatcher::GetSingleton()->RemoveHandler(scenes[i]->GetGameObjects(j)->GetName() + "AI");
+				bool success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+			}
 
 
 			// if false -> no ai attached

@@ -22,7 +22,7 @@ AI::AI(GameObject* obj) : Component(obj)
 	me = obj;
 
 	//register as eventhandler
-	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName() + "AI");
 }
 
 void AI::OnCollisionEnter(Collider *obj)
