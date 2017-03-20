@@ -10,8 +10,11 @@
 
 void StartGame()
 {
+	ResourceManager::GetSingleton()->SetPaused(false);
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 		Game::server.StartGame();
+
+	Game::server.sceneChange(2);
 
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("FirstLevel");
@@ -26,6 +29,10 @@ void StartGame()
 
 void StartLobby()
 {
+	if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
+		Game::server.sceneChange(1);
+
+	ResourceManager::GetSingleton()->SetPaused(false);
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("Lobby");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");

@@ -48,4 +48,5 @@ public:
 	void SendScoreboard();
 	void ReceiveScoreboard();
 	bool isActive();
+	bool isInit() { return alreadyCreated; }
 };

@@ -204,6 +204,7 @@ int Client::run()
 			bIn.Read(temp);
 			if (temp == 11)
 			{
+				gameState[0][0].paused = false;
 				gameStart = true;
 				return 6;
 			}
@@ -438,6 +439,8 @@ void Client::receiveGameState()
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
+	bIn.Read(gameState[0][0].scene);
+	bIn.Read(gameState[0][0].paused);
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
