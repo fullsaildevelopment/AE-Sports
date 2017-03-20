@@ -15,6 +15,8 @@ private:
 	bool isMoving;
 	float _dt;
 	char forward, back, left, right, up, down;
+	bool canMove;
+
 	//bool footstepsPlayed;
 	//float timeSincePlayed;
 
@@ -26,7 +28,7 @@ public:
 	//basic
 	void Init(float moveVelocity, float rotateVelocity);
 	void Update(float _dt) override;
-	void HandleEvent(Event* e);
+	void HandleEvent(Event* e) override;
 	//void ToggleFootstepsSound(int sound);
 
 	//getters
@@ -34,4 +36,5 @@ public:
 
 	//setters//
 	void SetKeys(char forward, char back, char left, char right, char up, char down);
+	void SetCanMove(bool toggle);
 };

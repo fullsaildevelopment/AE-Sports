@@ -1,14 +1,19 @@
+#include <iostream>
 #include "Countdown.h"
 #include "GameObject.h"
 #include "UIRenderer.h"
 #include "Button.h"
 #include "Scene.h"
 #include "DeviceResources.h"
+#include "EventDispatcher.h"
+#include "CanPlayEvent.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
+
+using namespace std;
 
 Countdown::Countdown(Scene* scene, DeviceResources* devResources)
 {
-	ResetTimer();
-	
 	//create object and components
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, XMMatrixIdentity());
@@ -33,10 +38,9 @@ Countdown::Countdown(Scene* scene, DeviceResources* devResources)
 	button->SetActive(true);
 	button->setHelper(scene->GetNumUIObjects());
 
-	//initialize numbers
-	canPlay = false;
-	//playSound = true;
-	curSecond = -1;
+	//initialize members
+	Reset();
+	prevTime = 0;
 }
 
 //basic//
@@ -44,17 +48,19 @@ void Countdown::Update(float dt)
 {
 	timer -= dt;
 
-	if (timer <= 3.0f && curSecond != 3)
+	//cout << canPlay << endl;
+
+	if (timer <= 3.0f && timer > 2.0f && curSecond != 3)
 	{
 		curSecond = 3;
 		playSound = true;
 	}
-	else if (timer <= 2.0f && curSecond != 2)
+	else if (timer <= 2.0f && timer > 1.0f && curSecond != 2)
 	{
 		curSecond = 2;
 		playSound = true;
 	}
-	else if (timer <= 1.0f && curSecond != 1)
+	else if (timer <= 1.0f && timer > 0.0f && curSecond != 1)
 	{
 		curSecond = 1;
 		playSound = true;
@@ -63,17 +69,29 @@ void Countdown::Update(float dt)
 	{
 		curSecond = 0;
 		canPlay = true;
+		playSound = true;
 		button->SetEnabled(false);
 		uiRenderer->SetEnabled(false);
+
+		//send can play event
+		SendPlayEvent(true);
 	}
 
 	DoAnimation(curSecond);
 }
 
 //misc//
-void Countdown::ResetTimer()
+void Countdown::Reset()
 {
-	timer = timeTilPlay;
+	timer = (float)timeTilPlay;
+	canPlay = false;
+	curSecond = -1;
+	playSound = false;
+	button->SetEnabled(true);
+	uiRenderer->SetEnabled(true);
+
+	//send can play event to prevent movement
+	SendPlayEvent(false);
 }
 
 void Countdown::DoAnimation(int number)
@@ -88,15 +106,32 @@ void Countdown::DoAnimation(int number)
 		button->setText(to_wstring(number));
 		button->MakeRect();
 		button->setOrigin();
-
-		//play beep sound if first time called for this number
-		if (playSound)
-		{
-			//switch on number to choose right sound
-
-			playSound = false;
-		}
 	}
+
+	//play beep sound if first time called for this number
+	if (playSound)
+	{
+		//switch on number to choose right sound
+		SoundEvent* soundEvent = new SoundEvent();
+		if (number > 0)
+		{
+			soundEvent->Init(AK::EVENTS::PLAY_BEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		}
+		else
+		{
+			soundEvent->Init(AK::EVENTS::PLAY_FINALBEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		}
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+
+		playSound = false;
+	}
+}
+
+void Countdown::CreateDeltaTime(float totalTime)
+{
+	Update(totalTime - prevTime);
+	prevTime = totalTime;
 }
 
 //getters//
@@ -109,4 +144,12 @@ bool Countdown::CanPlay()
 void Countdown::SetPlay(bool play)
 {
 	canPlay = play;
+}
+
+//private helper functions//
+void Countdown::SendPlayEvent(bool toggle)
+{
+	CanPlayEvent* playEvent = new CanPlayEvent(toggle);
+	EventDispatcher::GetSingleton()->Dispatch(playEvent);
+	delete playEvent;
 }

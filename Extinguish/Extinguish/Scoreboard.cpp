@@ -585,8 +585,15 @@ void Scoreboard::Update(float dt)
 	//}
 }
 
+bool Scoreboard::isActive()
+{
+	Button * sbb = scoreboardBackground->GetComponent<Button>();
+	return sbb->getActive();
+}
+
 void Scoreboard::Toggle(bool toggle)
 {
+	
 	Button * sbb = scoreboardBackground->GetComponent<Button>();
 	sbb->SetActive(toggle);
 

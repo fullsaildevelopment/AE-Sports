@@ -10,6 +10,7 @@
 						<ObjectRef Name="Stop_Footsteps__Sprint_" ID="{3D96B7CC-D935-4329-9C1A-68E37754F0EE}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Charge_" ID="{1C3FA430-5470-45F5-B213-315DE5F1B04D}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Walk____" ID="{6291372F-2A14-462A-AADD-D5FA64AF6D1E}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Beep" ID="{921EDF1B-1AB3-4643-B1BA-4F60B9B20AF4}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Catch" ID="{7ADB84C9-9414-481F-8B44-AD9C25B82B47}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Throw" ID="{F8F957C4-4828-48A0-ABAA-942206EBA786}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_RunningPantShort" ID="{AB7D6FDE-1CF4-48C5-84B3-78883F81014A}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
@@ -18,6 +19,7 @@
 						<ObjectRef Name="Stop_Backboard_Bounce_Song" ID="{7E1CEE49-E896-4DA3-B7C4-1793528EC690}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Footsteps__Sprint_" ID="{3238E085-B286-4DB9-987D-548088DA6238}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_RunningPantShort" ID="{B9320BD1-E8A4-4DBE-9B6C-5942880A110E}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_FinalBeep" ID="{3683B564-80CE-4E39-BE4D-3C4ABB156F47}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 					</ObjectInclusionList>
 					<ObjectExclusionList/>
 					<GameSyncExclusionList/>

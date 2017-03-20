@@ -141,6 +141,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CanPlayEvent.h" />
     <ClInclude Include="CoughtEvent.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventDispatcher.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="WindowResizeEvent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CanPlayEvent.cpp" />
     <ClCompile Include="EventDispatcher.cpp" />
     <ClCompile Include="GamePadEvent.cpp" />
     <ClCompile Include="HashStringCopy.cpp" />
