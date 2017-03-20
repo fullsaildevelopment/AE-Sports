@@ -18,10 +18,7 @@ public:
 
 	//static HashString* GetSingleton() { if (!singleton) { singleton = new HashString(); } return singleton; }
 	int GetKey(std::string key);
-	void Insert(std::string key) { 
-		if (index == 44) 
-			float temp = 0.0f;
-	hashTable[key] = index++; }
+	void Insert(std::string key) { hashTable[key] = index++; }
 	void Clear() { hashTable.clear(); index = 0; }
 	bool IsUsed(std::string key) { return (hashTable[key] != 0); }
 	//void Insert(std::string key, unsigned int theirIndex) { hashTable[key] = theirIndex; }
