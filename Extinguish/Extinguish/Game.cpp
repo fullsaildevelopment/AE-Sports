@@ -1249,8 +1249,8 @@ void Game::ResetPlayers()
 				float3 dest;
 				dest = positions[randIndex];
 				
-				cam->SetDestination(dest);
-				cam->StartLerp();
+				//cam->SetDestination(dest);
+				//cam->StartLerp();
 			}
 
 			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
@@ -1751,6 +1751,12 @@ void Game::UpdateClientObjects()
 					FloorController * fC = gameObject->GetComponent<FloorController>();
 					//if (fC->GetState() != client.getFloorState(i))
 						fC->SetState(client.getDT());
+				}
+
+				if (gameObject->GetName() == "Countdown")
+				{
+					Countdown* countDown = gameObject->GetComponent<Countdown>();
+					countDown->CreateDeltaTime(client.getDT());
 				}
 
 				XMFLOAT3 position, rotation;

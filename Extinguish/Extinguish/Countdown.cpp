@@ -7,6 +7,8 @@
 #include "DeviceResources.h"
 #include "EventDispatcher.h"
 #include "CanPlayEvent.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
 
 using namespace std;
 
@@ -38,6 +40,7 @@ Countdown::Countdown(Scene* scene, DeviceResources* devResources)
 
 	//initialize members
 	Reset();
+	prevTime = 0;
 }
 
 //basic//
@@ -66,6 +69,7 @@ void Countdown::Update(float dt)
 	{
 		curSecond = 0;
 		canPlay = true;
+		playSound = true;
 		button->SetEnabled(false);
 		uiRenderer->SetEnabled(false);
 
@@ -102,15 +106,32 @@ void Countdown::DoAnimation(int number)
 		button->setText(to_wstring(number));
 		button->MakeRect();
 		button->setOrigin();
-
-		//play beep sound if first time called for this number
-		if (playSound)
-		{
-			//switch on number to choose right sound
-
-			playSound = false;
-		}
 	}
+
+	//play beep sound if first time called for this number
+	if (playSound)
+	{
+		//switch on number to choose right sound
+		SoundEvent* soundEvent = new SoundEvent();
+		if (number > 0)
+		{
+			soundEvent->Init(AK::EVENTS::PLAY_BEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		}
+		else
+		{
+			soundEvent->Init(AK::EVENTS::PLAY_FINALBEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		}
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+
+		playSound = false;
+	}
+}
+
+void Countdown::CreateDeltaTime(float totalTime)
+{
+	Update(totalTime - prevTime);
+	prevTime = totalTime;
 }
 
 //getters//
