@@ -139,6 +139,11 @@ void Movement::SetKeys(char forward, char back, char left, char right, char up, 
 	this->down = down;
 }
 
+void Movement::SetCanMove(bool toggle)
+{
+	canMove = toggle;
+}
+
 //private helper functions
 void Movement::HandleInput(InputDownEvent* e)
 {

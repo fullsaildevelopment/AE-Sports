@@ -627,3 +627,13 @@ AI::State AI::GetCurrState() { return currState; }
 bool AI::GetIsAttacking() { return isAttacking; }
 
 GameObject * AI::GetTarget() { return (realTarget) ? realTarget : nullptr; }
+
+bool AI::CanMove()
+{
+	return canMove;
+}
+
+void AI::SetCanMove(bool toggle)
+{
+	canMove = toggle;
+}
