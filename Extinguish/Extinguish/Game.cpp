@@ -1167,8 +1167,8 @@ void Game::CreateMenu(Scene * scene)
 
 	// exit
 	GameObject * exit = new GameObject();
-	scene->AddUIObject(exit);
 	exit->Init("exit");
+	scene->AddUIObject(exit);
 	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 5);
 	eButton->SetGameObject(exit);
 	eButton->showFPS(false);
