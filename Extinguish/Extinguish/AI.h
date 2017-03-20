@@ -6,6 +6,7 @@
 #include "CapsuleCollider.h"
 
 class GameObject;
+class AnimatorController;
 
 class AI : public Component
 {
@@ -22,9 +23,9 @@ private:
 	bool at1 = false; // if goalie2 is at it's first checkpoint
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
+	bool canMove = false; //added by Tom for countdown portion
 	float timer = 3.5f; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
-	bool canMove = false; //added by Tom for countdown portion
 
 	State currState; // the AI's current state or position that they'll take
 	Transform *camera; // gives me access to the camera transform
@@ -40,6 +41,8 @@ private:
 
 	BallController *ballClass; // gives me access to the balls script
 	Crosse *crosse; // gives me access to the crosse script
+	AnimatorController* anim; // gives access to animations
+
 
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
 	std::vector<GameObject*> listOfMates; // list of AI's teammates
@@ -48,10 +51,10 @@ private:
 
 public:
 	AI(GameObject *obj);
-	void Init(GameObject *goal1, GameObject *goal2);
-	void Update(float _dt) override;
 	void OnCollisionEnter(Collider *obj) override;
 	void HandleEvent(Event* e) override;
+	void Init(GameObject *goal1, GameObject *goal2);
+	void Update(float _dt) override;
 
 	// States
 	void Idle(); // sets velocity to 0

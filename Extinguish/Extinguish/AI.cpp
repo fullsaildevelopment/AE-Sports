@@ -1,5 +1,6 @@
 #include "AI.h"
 #include "GameObject.h"
+#include "AnimatorController.h"
 #include "EventDispatcher.h"
 #include "CanPlayEvent.h"
 
@@ -34,8 +35,10 @@ void AI::OnCollisionEnter(Collider *obj)
 			if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
 				ballClass->DropBall(realTarget);
 
+			realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 			realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
 			realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
+
 			// add stun somewhere here
 			realTarget = nullptr;
 
@@ -45,10 +48,20 @@ void AI::OnCollisionEnter(Collider *obj)
 	}
 }
 
+void AI::HandleEvent(Event* e)
+{
+	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
+
+	if (playEvent)
+	{
+		canMove = playEvent->CanPlay();
+
+		return;
+	}
+}
+
 void AI::Init(GameObject *goal1, GameObject *goal2)
 {
-	cout << canMove;
-
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(3);
 	AIbuddies.reserve(3);
@@ -200,11 +213,14 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 #pragma endregion
 
 	ballClass = ball->GetComponent<BallController>();
+	anim = me->GetComponent<AnimatorController>();
+
 	Idle();
 }
 
 void AI::Update(float _dt)
 {
+	if (canMove) Idle();
 
 #pragma region Setting Objects
 	if (!isAttacking) realTarget = nullptr;
@@ -400,18 +416,6 @@ void AI::Update(float _dt)
 	{
 		timer = 3.5f;
 		startTimer = false;
-	}
-}
-
-void AI::HandleEvent(Event* e)
-{
-	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
-
-	if (playEvent)
-	{
-		canMove = playEvent->CanPlay();
-
-		return;
 	}
 }
 
