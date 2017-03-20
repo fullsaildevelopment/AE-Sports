@@ -22,7 +22,7 @@ private:
 	bool at1 = false; // if goalie2 is at it's first checkpoint
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
-	float timer = 2; // timer for attack
+	float timer = 3.5f; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
 	bool canMove = false; //added by Tom for countdown portion
 
