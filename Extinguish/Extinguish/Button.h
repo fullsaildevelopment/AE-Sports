@@ -45,6 +45,7 @@ private:
 	D2D1_SIZE_F rtSize;
 	D2D1_RECT_F rect;
 	BUTTON_TYPE buttonType;
+	GameObject * object;
 
 	// text and functionality
 	unsigned int textLength;
@@ -141,7 +142,7 @@ public:
 	void setTimer(bool active) { isTimer = active; }
 	void setHelper(int index) { helperIndex.push_back(index); }
 	void setStayHovered(bool b) { stayOnClick = b; }
-
+	void setGameObject(GameObject* obj) { object = obj; }
 	void resetTime() { time = 10.0f; }
 
 	/* HELPERS*/
