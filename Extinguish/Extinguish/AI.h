@@ -22,8 +22,9 @@ private:
 	bool at1 = false; // if goalie2 is at it's first checkpoint
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
-	float timer = 2; // timer for attack
+	float timer = 3.5f; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
+	bool canMove = false; //added by Tom for countdown portion
 
 	State currState; // the AI's current state or position that they'll take
 	Transform *camera; // gives me access to the camera transform
@@ -50,6 +51,7 @@ public:
 	void Init(GameObject *goal1, GameObject *goal2);
 	void Update(float _dt) override;
 	void OnCollisionEnter(Collider *obj) override;
+	void HandleEvent(Event* e) override;
 
 	// States
 	void Idle(); // sets velocity to 0
@@ -70,7 +72,8 @@ public:
 	State GetCurrState(); // returns what position of the team the AI is
 	bool GetIsAttacking(); // returns if im attacking
 	GameObject *GetTarget(); // returns the target the AI is attacking
+	bool CanMove();
 
 	// Mutators
-
+	void SetCanMove(bool toggle);
 };

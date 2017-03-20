@@ -7,6 +7,7 @@
 #include "SoundEngine.h"
 #include "SoundEvent.h"
 #include "EventDispatcher.h"
+#include "CanPlayEvent.h"
 
 using namespace std;
 
@@ -37,6 +38,9 @@ void BallController::OnCollisionEnter(Collider* obj)
 BallController::BallController(GameObject* obj) : Component(obj)
 {
 	me = obj;
+
+	//register as event handler
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
 }
 
 void BallController::Init()
@@ -130,6 +134,18 @@ void BallController::FixedUpdate(float _dt)
 	}
 }
 
+void BallController::HandleEvent(Event* e)
+{
+	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
+
+	if (playEvent)
+	{
+		physics->SetEnabled(playEvent->CanPlay());
+
+		return;
+	}
+}
+
 void BallController::Throw()
 {
 	//store prevThrower even if null
@@ -199,6 +215,7 @@ GameObject* BallController::GetHolder()
 {
 	if (!isThrown && holder)
 		return holder->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	return nullptr;
 }
 
 GameObject* BallController::GetCrosseHolder()
@@ -210,6 +227,7 @@ GameObject* BallController::GetThrower()
 {
 	if (thrower)
 		return thrower;
+	return nullptr;
 }
 
 GameObject* BallController::GetPreviousThrower()

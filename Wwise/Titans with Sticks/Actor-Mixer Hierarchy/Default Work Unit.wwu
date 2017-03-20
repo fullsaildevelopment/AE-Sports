@@ -184,6 +184,56 @@
 								<ActiveSource Name="Footsteps (Sprint)" ID="{7D1846D6-FFD0-409C-9B4E-53F8AAF4CBE8}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
+						<Sound Name="Beep" ID="{7A7FBED2-AE01-426E-9CD5-E8E8D34D6CF6}" ShortID="679063104" Type="SoundFX">
+							<PropertyList>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Beep" ID="{482B17C0-05B7-43C8-BDB4-EFC1A5555056}" ShortID="7247516">
+									<Language>SFX</Language>
+									<AudioFile>Beep.wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="Beep" ID="{482B17C0-05B7-43C8-BDB4-EFC1A5555056}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
+						<Sound Name="FinalBeep" ID="{F252DE59-B343-4224-896F-108C8D7FF51E}" ShortID="832372973" Type="SoundFX">
+							<PropertyList>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="FinalBeep" ID="{CE065CAC-9AED-42E1-B5D9-1380BCDB4A4B}" ShortID="990930174">
+									<Language>SFX</Language>
+									<AudioFile>FinalBeep.wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="FinalBeep" ID="{CE065CAC-9AED-42E1-B5D9-1380BCDB4A4B}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
 					</ChildrenList>
 				</Folder>
 				<Sound Name="Backboard Bounce Song" ID="{E62757B0-5ACA-44F4-8368-30A91CE80B75}" ShortID="173608183" Type="SoundFX">

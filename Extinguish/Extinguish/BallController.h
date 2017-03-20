@@ -35,6 +35,7 @@ public:
 	void FixedUpdate(float _dt) override;
 	void OnTriggerEnter(Collider *obj) override;
 	void OnCollisionEnter(Collider* obj) override;
+	void HandleEvent(Event* e) override;
 
 	// actions
 	void Throw(); 

@@ -54,6 +54,9 @@
     <ClInclude Include="GamePadEvent.h">
       <Filter>Events</Filter>
     </ClInclude>
+    <ClInclude Include="CanPlayEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">
@@ -72,6 +75,9 @@
       <Filter>Events</Filter>
     </ClCompile>
     <ClCompile Include="GamePadEvent.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="CanPlayEvent.cpp">
       <Filter>Events</Filter>
     </ClCompile>
   </ItemGroup>
