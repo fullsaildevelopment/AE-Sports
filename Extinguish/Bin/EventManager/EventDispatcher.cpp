@@ -13,7 +13,8 @@ EventDispatcher::~EventDispatcher()
 void EventDispatcher::RegisterHandler(EventHandler* handler, string handlerName)
 {
 	handlers.push_back(handler);
-	handlersTable.Insert(handlerName);
+	if (!handlersTable.IsUsed(handlerName))
+		handlersTable.Insert(handlerName);
 }
 
 void EventDispatcher::Shutdown()
@@ -64,4 +65,13 @@ EventDispatcher* EventDispatcher::GetSingleton()
 	}
 
 	return singleton;
+}
+
+void EventDispatcher::RemoveHandler(std::string handleName)
+{
+	int index = handlersTable.GetKey(handleName);
+	EventHandler * even = handlers[index];
+
+	handlers.erase(handlers.begin() + index);
+	delete even;
 }
