@@ -27,7 +27,6 @@ private:
 	//DirectX::XMFLOAT4X4 camera;
 	//DirectX::XMFLOAT4X4 projection;
 
-	PostProcess PostProcessing;
 
 	//camera movement data
 	//float camYaw;
@@ -97,6 +96,8 @@ public:
 	Scene();
 	~Scene();
 
+	PostProcess PostProcessing;
+
 	//basics
 	void Init(DeviceResources * devResources, InputManager* inputRef);
 	void Update(float _dt);
@@ -121,6 +122,7 @@ public:
 
 	//setters//
 	void set2DRenderTarget(ID2D1HwndRenderTarget * renderTarget) { pRT = renderTarget; }
+	void ResizeWindow(uint16_t w, uint16_t h);
 
 
 	//setters
