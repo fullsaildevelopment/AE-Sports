@@ -75,7 +75,8 @@ public:
 	State GetCurrState(); // returns what position of the team the AI is
 	bool GetIsAttacking(); // returns if im attacking
 	GameObject *GetTarget(); // returns the target the AI is attacking
+	bool CanMove();
 
 	// Mutators
-
+	void SetCanMove(bool toggle);
 };
