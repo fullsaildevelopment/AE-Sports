@@ -188,7 +188,6 @@ Button::Button(bool active, bool clickable, wchar_t * newText, unsigned int leng
 
 void Button::MakeHandler()
 {
-	GameObject * object = GetGameObject();
 	EventDispatcher::GetSingleton()->RegisterHandler(this, object->GetName());
 }
 
