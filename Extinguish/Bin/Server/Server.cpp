@@ -258,12 +258,14 @@ int  Server::update()
 
 void Server::stop()
 {
+	float time = 0.0f;
 	shutdown = true;
 	while (true)
 	{
+		time += 0.001f;
 		sendDisconnect(true);
 		int result = update();
-		if (result == 0 || numPlayers <= 1)
+		if (result == 0 || numPlayers <= 1 || time >= 1.0f)
 			break;
 	}
 	//RakPeerInterface::DestroyInstance(peer);
