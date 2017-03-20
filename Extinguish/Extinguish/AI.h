@@ -34,6 +34,7 @@ private:
 	GameObject *enemyGoal = nullptr; // the enemy's goal object
 	GameObject *ball = nullptr; // the ball object
 	GameObject *realTarget = nullptr; // holder for attacking
+	GameObject *ogTarget = nullptr; // holder for attacking
 	GameObject *eTank = nullptr; // enemy's tank
 	GameObject *mGo2 = nullptr; // my goalie2
 	GameObject *mGuy = nullptr; // my Guy
