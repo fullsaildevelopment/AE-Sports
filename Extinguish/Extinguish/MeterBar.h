@@ -53,6 +53,7 @@ public:
 	float getRechargeTimeElapsed() { return rechargeTime - rTime; } // current time elapsed recharge
 	bool isDraining() { return drain; } // if false == recharge || false && !isActive == fully charged
 	bool isEmpty() { return empty; }
+	float GetPercentage();
 
 	/* setters */
 	void setHeight(float _height) { height = _height; }
@@ -64,6 +65,7 @@ public:
 	void setRechargeTime(float time) { rechargeTime = time; rTime = time; }
 	void setDrainTime(float time) { drainTime = time; dTime = time; }
 	void setCanRecharge(bool recharge) { canRecharge = recharge; }
+	void SetDTimeFromPercentage(float percentage);
 
 	/* helpers */
 	D2D1_RECT_F MakeRect() {
