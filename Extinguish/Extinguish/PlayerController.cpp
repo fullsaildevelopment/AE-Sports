@@ -43,7 +43,7 @@ void PlayerController::Init()
 	transform = GetGameObject()->GetTransform();
 
 	//register as event handler
-	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName() + "Controller");
 
 	//initialize to null
 	otherPlayer = nullptr;

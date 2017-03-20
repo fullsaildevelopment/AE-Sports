@@ -625,7 +625,7 @@ void Game::CreateScenes(InputManager* input)
 
 void Game::CreateGameWrapper()
 {
-	for (unsigned int i = 0; i < scenes.size(); ++i)
+	for (unsigned int i = scenes.size() - 1; i <= 0; --i)
 	{
 		unsigned int obj = scenes[i]->GetNumObjects();
 
@@ -1160,6 +1160,7 @@ void Game::CreateMenu(Scene * scene)
 	soloPlayer->AddComponent(sRender);
 	sRender->MakeRTSize();
 	sButton->MakeRect();
+	sButton->setGameObject(soloPlayer);
 	sButton->MakeHandler();
 	sRender->InitMetrics();
 
@@ -1179,12 +1180,13 @@ void Game::CreateMenu(Scene * scene)
 	multiPlayer->AddComponent(mRender);
 	mRender->MakeRTSize();
 	mButton->MakeRect();
+	mButton->setGameObject(multiPlayer);
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
-	multiPlayer->Init("multiJoin");
+	multiPlayer2->Init("multiJoin");
 	scene->AddUIObject(multiPlayer2);
 	Button * mButton2 = new Button(true, true, L"", (unsigned int)strlen(""), 150.0f, 60.0f, devResources, 2);
 	mButton2->SetGameObject(multiPlayer2);
@@ -1198,6 +1200,7 @@ void Game::CreateMenu(Scene * scene)
 	multiPlayer2->AddComponent(mRender2);
 	mRender2->MakeRTSize();
 	mButton2->MakeRect();
+	mButton2->setGameObject(multiPlayer2);
 	mButton2->MakeHandler();
 	mRender2->InitMetrics();
 
@@ -1217,6 +1220,7 @@ void Game::CreateMenu(Scene * scene)
 	credits->AddComponent(cRender);
 	cRender->MakeRTSize();
 	cButton->MakeRect();
+	cButton->setGameObject(credits);
 	cButton->MakeHandler();
 	cRender->InitMetrics();
 
@@ -1236,6 +1240,7 @@ void Game::CreateMenu(Scene * scene)
 	exit->AddComponent(eRender);
 	eRender->MakeRTSize();
 	eButton->MakeRect();
+	eButton->setGameObject(exit);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
 
@@ -1398,6 +1403,7 @@ void Game::CreateLobby(Scene * scene)
 	startGame->AddComponent(sRender);
 	sRender->MakeRTSize();
 	sButton->MakeRect();
+	sButton->setGameObject(startGame);
 	sButton->MakeHandler();
 	sRender->InitMetrics();
 
@@ -1418,6 +1424,7 @@ void Game::CreateLobby(Scene * scene)
 	exitGame->AddComponent(eRender);
 	eRender->MakeRTSize();
 	eButton->MakeRect();
+	eButton->setGameObject(exitGame);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
 
@@ -1437,7 +1444,8 @@ void Game::CreateLobby(Scene * scene)
 	nRender->MakeRTSize();
 	nButton->MakeRect();
 	nButton->setOrigin();
-	nButton->MakeHandler();
+	//nButton->setGameObject(numPlayers);
+	//nButton->MakeHandler();
 	nRender->InitMetrics();
 
 	// change team to A
@@ -1457,6 +1465,7 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamA->AddComponent(eaRender);
 	eaRender->MakeRTSize();
 	caButton->MakeRect();
+	caButton->setGameObject(changeTeamA);
 	caButton->MakeHandler();
 	eaRender->InitMetrics();
 	caButton->setHelper(scene->GetNumUIObjects());
@@ -1478,6 +1487,7 @@ void Game::CreateLobby(Scene * scene)
 	changeTeamB->AddComponent(ebRender);
 	ebRender->MakeRTSize();
 	cbButton->MakeRect();
+	cbButton->setGameObject(changeTeamB);
 	cbButton->MakeHandler();
 	ebRender->InitMetrics();
 	cbButton->setHelper(scene->GetNumUIObjects() - 2);
@@ -1498,7 +1508,8 @@ void Game::CreateLobby(Scene * scene)
 	changeTeam->AddComponent(ctRender);
 	ctRender->MakeRTSize();
 	ctButton->MakeRect();
-	ctButton->MakeHandler();
+	//ctButton->setGameObject(changeTeam);
+	//ctButton->MakeHandler();
 	ctRender->InitMetrics();
 
 	// background 2.0
@@ -1539,7 +1550,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	winner->AddComponent(wRender);
 	wRender->MakeRTSize();
 	wButton->MakeRect();
-	wButton->MakeHandler();
+	//wButton->MakeHandler();
 	wButton->setOrigin();
 	wRender->InitMetrics();
 	wButton->SetActive(false);
@@ -1566,6 +1577,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	resumeGame->AddComponent(rRender);
 	rRender->MakeRTSize();
 	rButton->MakeRect();
+	rButton->setGameObject(resumeGame);
 	rButton->MakeHandler();
 	rRender->InitMetrics();
 	rButton->SetActive(false);
@@ -1588,6 +1600,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	exitGame->AddComponent(eRender);
 	eRender->MakeRTSize();
 	eButton->MakeRect();
+	eButton->setGameObject(exitGame);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
 	eButton->SetActive(false);
@@ -1611,6 +1624,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	exitMenu->AddComponent(mRender);
 	mRender->MakeRTSize();
 	mButton->MakeRect();
+	mButton->setGameObject(exitMenu);
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 	mButton->SetActive(false);
@@ -1631,6 +1645,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	newGame->AddComponent(nRender);
 	nRender->MakeRTSize();
 	nButton->MakeRect();
+	nButton->setGameObject(newGame);
 	nButton->MakeHandler();
 	nRender->InitMetrics();
 	nButton->SetActive(false);
