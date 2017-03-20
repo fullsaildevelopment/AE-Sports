@@ -34,6 +34,8 @@ class PostProcess
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_rt2SRV;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_rt2RT;
 
+	
+
 	RECT m_bloomRect;
 	/////////////////////////////
 public:
