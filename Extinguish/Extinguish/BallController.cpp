@@ -116,7 +116,7 @@ void BallController::FixedUpdate(float _dt)
 	{
 		transform->SetPosition(float3(transform->GetPosition().x, 1.5f, transform->GetPosition().z));
 	}
-	/*if (!isHeld && !isThrown)
+	if (!isHeld && !isThrown)
 	{
 		int s = (int)nets.size();
 		for (int i = 0; i < s; ++i)
@@ -124,15 +124,14 @@ void BallController::FixedUpdate(float _dt)
 			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
 			XMFLOAT4X4 net = *nets[i]->GetWorldP();
 			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
-			float l = ball2net.magnitude();
-			if (l < 3)
+			float l = dot_product(ball2net,ball2net);
+			if (l < 9.1f)
 			{
-				float s = 1 / l;
-				s > 1.5f ? s = 1.5f : s < 0.0f ? s = 0.0f : s = s;
+				float s = 2 / l;
 				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
 			}
 		}
-	}*/
+	}
 }
 
 void BallController::HandleEvent(Event* e)
