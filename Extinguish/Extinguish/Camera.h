@@ -46,6 +46,10 @@ public:
 	void Update(float _dt) override;
 	void HandleEvent(Event* e);
 
+	//misc
+	void LookAt(XMFLOAT3 pos, float totalTime);
+	void MoveTo(XMFLOAT3 pos, float totalTime);
+
 	//getters
 	XMFLOAT4X4 GetView();
 

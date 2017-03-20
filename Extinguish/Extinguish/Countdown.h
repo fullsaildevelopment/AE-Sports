@@ -23,6 +23,9 @@ private:
 	const int timeTilPlay = 3;
 	const int sceneID = 2;
 
+	//private helper functions
+	void SendPlayEvent(bool toggle);
+
 public:
 	Countdown(Scene* scene, DeviceResources* devResources);
 
@@ -30,7 +33,7 @@ public:
 	void Update(float dt) override;
 
 	//misc
-	void ResetTimer();
+	void Reset();
 	void DoAnimation(int number);
 
 	//getters
