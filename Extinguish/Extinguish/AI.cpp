@@ -244,6 +244,7 @@ void AI::Update(float _dt)
 			ogTarget = nullptr;
 		}
 	}
+	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 	if (canMove) Idle();
 

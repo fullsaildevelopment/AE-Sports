@@ -37,7 +37,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -714,6 +714,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageRun->AddTransition(runToIdle);
 		runToIdle->Init(mageRun, mageIdle, -1, 0.5f);
 		runToIdle->AddCondition(idleTrigger);
+		Transition* runToStumble = new Transition();
+		mageRun->AddTransition(runToIdle);
+		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
+		runToStumble->AddCondition(stumbleTrigger);
 		Transition* idleToStumble = new Transition();
 		mageIdle->AddTransition(idleToStumble);
 		idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
@@ -1258,10 +1262,10 @@ void Game::ResetPlayers()
 			//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
 
-		player->GetTransform()->MoveTo(positions[randIndex], 10.0f);
-		player->GetTransform()->LookAt({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 10.0f);
-		//player->GetTransform()->SetPosition(positions[randIndex]);
-		//player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
+		//player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
+		//player->GetTransform()->LookAt({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
+		player->GetTransform()->SetPosition(positions[randIndex]);
+		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 	}
 }
 
