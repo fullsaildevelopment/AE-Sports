@@ -20,6 +20,7 @@ public:
 	int GetKey(std::string key);
 	void Insert(std::string key) { hashTable[key] = index++; }
 	void Clear() { hashTable.clear(); index = 0; }
+	bool IsUsed(std::string key) { return (hashTable[key] != 0); }
 	//void Insert(std::string key, unsigned int theirIndex) { hashTable[key] = theirIndex; }
 	//void CleanUp() { delete singleton; singleton = nullptr; }
 };

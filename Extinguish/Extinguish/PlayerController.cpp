@@ -110,47 +110,50 @@ void PlayerController::Shutdown()
 
 void PlayerController::HandleEvent(Event* e)
 {
-	//filter throw events to find right one
-	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
-
-	if (inputDownEvent)
+	if (!ResourceManager::GetSingleton()->IsPaused())
 	{
-		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
+		//filter throw events to find right one
+		InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-		//if (inputDownEvent->IsServer())
+		if (inputDownEvent)
+		{
+			//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
+
+			//if (inputDownEvent->IsServer())
+			{
+				string name;
+				name = "Mage";
+				name += to_string(inputDownEvent->GetID());
+
+				if (GetGameObject()->GetName() == name)
+				{
+					//if (!Player::gamePadState.IsConnected())
+					{
+						playerID = inputDownEvent->GetID();
+						input = inputDownEvent->GetInput();
+						HandleInput();
+					}
+				}
+			}
+
+			return;
+		}
+
+		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+		if (gamePadEvent)
 		{
 			string name;
 			name = "Mage";
-			name += to_string(inputDownEvent->GetID());
+			name += to_string(gamePadEvent->GetClientID());
 
 			if (GetGameObject()->GetName() == name)
 			{
-				//if (!Player::gamePadState.IsConnected())
-				{
-					playerID = inputDownEvent->GetID();
-					input = inputDownEvent->GetInput();
-					HandleInput();
-				}
+				HandleGamePad(gamePadEvent);
 			}
+
+			return;
 		}
-
-		return;
-	}
-
-	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
-
-	if (gamePadEvent)
-	{
-		string name;
-		name = "Mage";
-		name += to_string(gamePadEvent->GetClientID());
-
-		if (GetGameObject()->GetName() == name)
-		{
-			HandleGamePad(gamePadEvent);
-		}
-
-		return;
 	}
 }
 

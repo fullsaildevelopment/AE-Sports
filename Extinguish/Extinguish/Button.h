@@ -25,7 +25,8 @@ private:
 		RESUME_GAME,
 		CHANGE_TEAM_A,
 		CHANGE_TEAM_B, 
-		LOBBY
+		LOBBY,
+		NEW_GAME
 	};
 
 
@@ -127,7 +128,6 @@ public:
 	/* SETTERS */
 	void setHeight(float _height) { height = _height; }
 	void setWidth(float _width) { width = _width; }
-	void setText(WCHAR * _text) { text = _text; }
 	void setText(wstring _text) {
 		text = _text; textLength = (unsigned int)text.length();
 	}

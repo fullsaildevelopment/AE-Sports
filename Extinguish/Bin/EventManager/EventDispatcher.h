@@ -30,4 +30,7 @@ public:
 
 	//getters
 	static EventDispatcher* GetSingleton();
+	
+	//delete handler
+	void RemoveHandler(std::string handleName);
 };
