@@ -19,6 +19,17 @@ private:
 	Transform* parent;
 	std::vector<Transform*> children;
 	bool bDirty; //if you change the world of the parent, make all of its children dirty. This means their world needs to be updated. This is beneficial because you could make your children dirty multiple times before you actually update world, thus, saving processing
+
+	//move and look members
+	float3 originalPosition, originalRotation;
+	float moveCurTime, lookCurTime;
+	float3 moveDestination, lookRotation;
+	float moveTotalTime, lookTotalTime;
+
+	//private helper functions
+	void Move();
+	void Look();
+
 public:
 	Transform();
 	Transform(GameObject* o);
@@ -38,6 +49,8 @@ public:
 	void RemoveChildren();
 	void AddSibling(Transform* tempSibling);
 	void Reset();
+	void LookAt(float3 pos, float totalTime);
+	void MoveTo(float3 pos, float totalTime);
 
 	//setters
 	void BDirty();
