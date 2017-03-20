@@ -1,14 +1,17 @@
+#include <iostream>
 #include "Countdown.h"
 #include "GameObject.h"
 #include "UIRenderer.h"
 #include "Button.h"
 #include "Scene.h"
 #include "DeviceResources.h"
+#include "EventDispatcher.h"
+#include "CanPlayEvent.h"
+
+using namespace std;
 
 Countdown::Countdown(Scene* scene, DeviceResources* devResources)
 {
-	ResetTimer();
-	
 	//create object and components
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, XMMatrixIdentity());
@@ -33,10 +36,8 @@ Countdown::Countdown(Scene* scene, DeviceResources* devResources)
 	button->SetActive(true);
 	button->setHelper(scene->GetNumUIObjects());
 
-	//initialize numbers
-	canPlay = false;
-	//playSound = true;
-	curSecond = -1;
+	//initialize members
+	Reset();
 }
 
 //basic//
@@ -44,17 +45,19 @@ void Countdown::Update(float dt)
 {
 	timer -= dt;
 
-	if (timer <= 3.0f && curSecond != 3)
+	//cout << canPlay << endl;
+
+	if (timer <= 3.0f && timer > 2.0f && curSecond != 3)
 	{
 		curSecond = 3;
 		playSound = true;
 	}
-	else if (timer <= 2.0f && curSecond != 2)
+	else if (timer <= 2.0f && timer > 1.0f && curSecond != 2)
 	{
 		curSecond = 2;
 		playSound = true;
 	}
-	else if (timer <= 1.0f && curSecond != 1)
+	else if (timer <= 1.0f && timer > 0.0f && curSecond != 1)
 	{
 		curSecond = 1;
 		playSound = true;
@@ -65,15 +68,26 @@ void Countdown::Update(float dt)
 		canPlay = true;
 		button->SetEnabled(false);
 		uiRenderer->SetEnabled(false);
+
+		//send can play event
+		SendPlayEvent(true);
 	}
 
 	DoAnimation(curSecond);
 }
 
 //misc//
-void Countdown::ResetTimer()
+void Countdown::Reset()
 {
 	timer = (float)timeTilPlay;
+	canPlay = false;
+	curSecond = -1;
+	playSound = false;
+	button->SetEnabled(true);
+	uiRenderer->SetEnabled(true);
+
+	//send can play event to prevent movement
+	SendPlayEvent(false);
 }
 
 void Countdown::DoAnimation(int number)
@@ -109,4 +123,12 @@ bool Countdown::CanPlay()
 void Countdown::SetPlay(bool play)
 {
 	canPlay = play;
+}
+
+//private helper functions//
+void Countdown::SendPlayEvent(bool toggle)
+{
+	CanPlayEvent* playEvent = new CanPlayEvent(toggle);
+	EventDispatcher::GetSingleton()->Dispatch(playEvent);
+	delete playEvent;
 }
