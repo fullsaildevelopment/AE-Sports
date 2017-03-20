@@ -396,9 +396,7 @@ void Scene::CreateModels()
 //void Scene::Update(InputManager input, float dt)
 void Scene::Update(float _dt)
 {
-	///////////////Clear BackBuffer//////////////
-	PostProcessing.Clear();
-	/////////////////////////////////////////////
+	
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 	transparentObjects.clear();
@@ -548,6 +546,8 @@ void Scene::Update(float _dt)
 			}
 		}
 	}
+	///////////////Clear BackBuffer//////////////
+	PostProcessing.Clear();
 	//////////////////////////RenderOpaqueObjects/////////////////////////
 	for (opaqueIter.begin(); !opaqueIter.end(); ++opaqueIter)
 	{
@@ -801,4 +801,9 @@ GameObject* const Scene::GetUIByName(string name)
 	}
 
 	return nullptr;
+}
+
+void Scene::ResizeWindow(uint16_t w, uint16_t h)
+{
+	PostProcessing.ResizeWindow(w, h);
 }
