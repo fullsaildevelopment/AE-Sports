@@ -19,7 +19,7 @@ private:
 		tank, // protects teammate with ball
 	};
 
-
+	bool hitTarget = false; // if you hit the target after attack
 	bool at1 = false; // if goalie2 is at it's first checkpoint
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
@@ -73,9 +73,9 @@ public:
 
 	// Accessors
 	State GetCurrState(); // returns what position of the team the AI is
-	bool GetIsAttacking(); // returns if im attacking
 	GameObject *GetTarget(); // returns the target the AI is attacking
-	bool CanMove();
+	bool GetIsAttacking(); // returns if im attacking
+	bool GetCanMove();
 
 	// Mutators
 	void SetCanMove(bool toggle);
