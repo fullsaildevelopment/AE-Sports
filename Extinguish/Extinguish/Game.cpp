@@ -336,7 +336,7 @@ void Game::HandleEvent(Event* e)
 		if (currentScene == 2)
 		{
 			InputManager* input = inputDownEvent->GetInput();
-			if (input->GetKeyDown('	'))
+			if (input->GetKeyDown('	') && inputDownEvent->GetID() == clientID)
 			{
 				TogglePauseMenu();
 			}
@@ -735,7 +735,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		crosse->Init(crosseName);
 		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
-		SphereCollider* crosseNetCollider = new SphereCollider(0.25f, crosse, true);
+		SphereCollider* crosseNetCollider = new SphereCollider(0.58f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
@@ -1225,6 +1225,16 @@ void Game::ResetPlayers()
 			cameraName += to_string(i);
 			GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
+			if (Team1Score > 0 || Team2Score > 0) 
+			{
+				Camera * cam = camera->GetComponent<Camera>();
+				float3 dest;
+				dest = positions[randIndex];
+				
+				cam->SetDestination(dest);
+				cam->StartLerp();
+			}
+
 			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
 	}
@@ -1613,11 +1623,11 @@ void Game::UpdateServerStates()
 		GameState* state = gameStates[i];
 		GameObject* gameObject = (*gameObjects)[i];
 
-		if (gameObject->GetName() == "HexFloor")
-		{
-			state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
-		//	state->_dt = dt;
-		}
+		//if (gameObject->GetName() == "HexFloor")
+		//{
+		//	state->otherIndex = gameObject->GetComponent<FloorController>()->GetState();
+		////	state->_dt = dt;
+		//}
 
 		float3 position = gameObject->GetTransform()->GetPosition();
 		float3 rotation = gameObject->GetTransform()->GetRotation();
@@ -1920,20 +1930,23 @@ void Game::GetFloor()
 
 void Game::TogglePauseMenu()
 {
-	GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
-	GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
-	GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
-	//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
-	Button * resumeButton = pauseResume->GetComponent<Button>();
-	Button * exitButton = pauseExit->GetComponent<Button>();
-	Button * menuButton = pauseMenu->GetComponent<Button>();
-	//Button * scoreButton = pauseScore->GetComponent<Button>();
-	bool toggle = !resumeButton->getActive();
-	resumeButton->SetActive(toggle);
-	exitButton->SetActive(toggle);
-	menuButton->SetActive(toggle);
-
+	bool toggle;
+	if (ResourceManager::GetSingleton()->IsServer()) {
+		GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
+		GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
+		GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
+		//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
+		Button * resumeButton = pauseResume->GetComponent<Button>();
+		Button * exitButton = pauseExit->GetComponent<Button>();
+		Button * menuButton = pauseMenu->GetComponent<Button>();
+		//Button * scoreButton = pauseScore->GetComponent<Button>();
+		toggle = !resumeButton->getActive();
+		resumeButton->SetActive(toggle);
+		exitButton->SetActive(toggle);
+		menuButton->SetActive(toggle);
+	}
 	GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
 	Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
+	toggle = !scoreBoard2->isActive();
 	scoreBoard2->Toggle(toggle);
 }

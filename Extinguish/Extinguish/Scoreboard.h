@@ -47,4 +47,5 @@ public:
 	void Toggle(bool toggle);
 	void SendScoreboard();
 	void ReceiveScoreboard();
+	bool isActive();
 };
