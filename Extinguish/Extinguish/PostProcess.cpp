@@ -127,8 +127,7 @@ void PostProcess::CreateDevice(DeviceResources* devR)
 	device->CreatePixelShader(&blob.front(), blob.size(), nullptr, m_gaussianBlurPS.ReleaseAndGetAddressOf());
 
 	{
-		CD3D11_BUFFER_DESC cbDesc(sizeof(VS_BLOOM_PARAMETERS),
-			D3D11_BIND_CONSTANT_BUFFER);
+		CD3D11_BUFFER_DESC cbDesc(sizeof(VS_BLOOM_PARAMETERS), D3D11_BIND_CONSTANT_BUFFER);
 		D3D11_SUBRESOURCE_DATA initData;
 		initData.pSysMem = &g_BloomPresets[g_Bloom];
 		initData.SysMemPitch = sizeof(VS_BLOOM_PARAMETERS);
@@ -136,8 +135,7 @@ void PostProcess::CreateDevice(DeviceResources* devR)
 	}
 
 	{
-		CD3D11_BUFFER_DESC cbDesc(sizeof(VS_BLUR_PARAMETERS),
-			D3D11_BIND_CONSTANT_BUFFER);
+		CD3D11_BUFFER_DESC cbDesc(sizeof(VS_BLUR_PARAMETERS), D3D11_BIND_CONSTANT_BUFFER);
 		device->CreateBuffer(&cbDesc, nullptr, m_blurParamsWidth.ReleaseAndGetAddressOf());
 		device->CreateBuffer(&cbDesc, nullptr, m_blurParamsHeight.ReleaseAndGetAddressOf());
 	}
@@ -162,15 +160,13 @@ void PostProcess::CreateResources()
 	device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, devRes->GetRenderTargetViewComPtr().ReleaseAndGetAddressOf());
 
 	// Full-size render target for scene
-	CD3D11_TEXTURE2D_DESC sceneDesc(DXGI_FORMAT_R8G8B8A8_UNORM, 1000, 800,
-		1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
+	CD3D11_TEXTURE2D_DESC sceneDesc(DXGI_FORMAT_R8G8B8A8_UNORM, 1000, 800, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
 	device->CreateTexture2D(&sceneDesc, nullptr, m_sceneTex.GetAddressOf());
 	device->CreateRenderTargetView(m_sceneTex.Get(), nullptr, m_sceneRT.ReleaseAndGetAddressOf());
 	device->CreateShaderResourceView(m_sceneTex.Get(), nullptr, m_sceneSRV.ReleaseAndGetAddressOf());
 
 	// Half-size blurring render targets
-	CD3D11_TEXTURE2D_DESC rtDesc(DXGI_FORMAT_R8G8B8A8_UNORM, 1000 / 2, 800 / 2,
-		1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
+	CD3D11_TEXTURE2D_DESC rtDesc(DXGI_FORMAT_R8G8B8A8_UNORM, 1000 / 2, 800 / 2, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> rtTexture1;
 	device->CreateTexture2D(&rtDesc, nullptr, rtTexture1.GetAddressOf());
 	device->CreateRenderTargetView(rtTexture1.Get(), nullptr, m_rt1RT.ReleaseAndGetAddressOf());
