@@ -729,7 +729,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 4.0f, 0.07f, 6.4f, -14.8f);
+		Physics* physics = new Physics(0.01f, 4.5f, 0.07f, 6.4f, -14.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -769,6 +769,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageRun->AddTransition(runToIdle);
 		runToIdle->Init(mageRun, mageIdle, -1, 0.5f);
 		runToIdle->AddCondition(idleTrigger);
+		Transition* runToStumble = new Transition();
+		mageRun->AddTransition(runToIdle);
+		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
+		runToStumble->AddCondition(stumbleTrigger);
 		Transition* idleToStumble = new Transition();
 		mageIdle->AddTransition(idleToStumble);
 		idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
@@ -1291,9 +1295,7 @@ void Game::ResetPlayers()
 			}
 		}
 
-		player->GetTransform()->SetPosition(positions[randIndex]);
-		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
-
+		//do camera lerp before set position for MoveTo logic
 		if (!player->GetComponent<AI>())
 		{
 			//reset camera
@@ -1309,10 +1311,16 @@ void Game::ResetPlayers()
 				
 				//cam->SetDestination(dest);
 				//cam->StartLerp();
+				//cam->MoveTo(dest, 1.0f);
 			}
 
-			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+			//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
+
+		//player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
+		//player->GetTransform()->LookAt({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
+		player->GetTransform()->SetPosition(positions[randIndex]);
+		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 	}
 }
 
@@ -1964,6 +1972,7 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
+
 		AssignPlayers();
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);

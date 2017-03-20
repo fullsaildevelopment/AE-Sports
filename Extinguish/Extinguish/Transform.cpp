@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Transform.h"
+#include "GameObject.h"
 
 using namespace DirectX;
 using namespace std;
@@ -44,6 +45,9 @@ void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, fl
 	defaultP.push_back(pos);
 	defaultP.push_back(rot);
 	defaultP.push_back(tempScale);
+
+	moveTotalTime = -1;
+	lookTotalTime = -1;
 }
 
 void Transform::Reset()
@@ -168,6 +172,43 @@ float3 Transform::GetWorldPosition()
 void Transform::FixedUpdate(float _dt)
 {
 	//Translate({ velocity.x * dt, velocity.y * dt, velocity.z * dt });
+
+	lookCurTime += _dt;
+	moveCurTime += _dt;
+
+	//if (lerp)
+	//	LerpCamera(_dt);
+	//this->input = input;
+
+	if (moveTotalTime != -1)
+	{
+		Move();
+	}
+
+	if (lookTotalTime != -1)
+	{
+		Look();
+	}
+}
+
+void Transform::LookAt(float3 rot, float totalTime)
+{
+	lookRotation = rot;
+	lookTotalTime = totalTime;
+	lookCurTime = 0.0f;
+
+	//store rotation for lerp
+	originalRotation = GetRotation();
+}
+
+void Transform::MoveTo(float3 pos, float totalTime)
+{
+	moveDestination = pos;
+	moveTotalTime = totalTime;
+	moveCurTime = 0.0f;
+
+	//store position for lerp
+	originalPosition = GetPosition();
 }
 
 //setters
@@ -399,5 +440,52 @@ float3 Transform::GetVelocity()
 
 DirectX::XMFLOAT3 Transform::GetRotationDeg()
 {
-	return{ XMConvertToDegrees(rotation.x), XMConvertToDegrees(rotation.y), XMConvertToDegrees(rotation.z) };
+	return { XMConvertToDegrees(rotation.x), XMConvertToDegrees(rotation.y), XMConvertToDegrees(rotation.z) };
+}
+
+//private helper functions//
+void Transform::Move()
+{
+	float ratio = moveCurTime / moveTotalTime;
+
+	if (ratio <= 1.0f)
+	{
+		float3 newPosition;
+
+		newPosition.x = (moveDestination.x - originalPosition.x) * ratio + originalPosition.x;
+		newPosition.y = (moveDestination.y - originalPosition.y) * ratio + originalPosition.y;
+		newPosition.z = (moveDestination.z - originalPosition.z) * ratio + originalPosition.z;
+
+		SetPosition(newPosition);
+
+		if (GetGameObject()->GetName() == "Mage1")
+		{
+			int breakPoint = 69;
+			breakPoint = breakPoint;
+		}
+	}
+	else
+	{
+		moveTotalTime = -1; //no more moving
+	}
+}
+
+void Transform::Look()
+{
+	float ratio = lookCurTime / lookTotalTime;
+
+	if (ratio <= 1.0f)
+	{
+		float3 newRotation;
+
+		newRotation.x = (lookRotation.x - originalRotation.x) * ratio + originalRotation.x;
+		newRotation.y = (lookRotation.y - originalRotation.y) * ratio + originalRotation.y;
+		newRotation.z = (lookRotation.z - originalRotation.z) * ratio + originalRotation.z;
+
+		SetPosition(newRotation);
+	}
+	else
+	{
+		lookTotalTime = -1; //no more moving
+	}
 }
