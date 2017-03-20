@@ -457,31 +457,34 @@ void PlayerController::Sprint()
 //private helper functions//
 void PlayerController::HandleInput()
 {
-	if (input->GetKeyDown(VK_SPACE))
-	{
-		Jump();
-	}
 
-	//this line will only happen once
-	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
-	{
-		Sprint();
+	if (!ResourceManager::GetSingleton()->IsPaused()) {
+		if (input->GetKeyDown(VK_SPACE))
+		{
+			Jump();
+		}
 
-		//cout << "Sprint" << endl;
-	}
-	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
-	{
-		isSprinting = false;
-		isCharging = false;
+		//this line will only happen once
+		if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
+		{
+			Sprint();
 
-		Physics* physics = GetGameObject()->GetComponent<Physics>();
-		physics->SetMaxSpeed(originalMaxSpeed);
-		//physics->SetHasMaxSpeed(true);
+			//cout << "Sprint" << endl;
+		}
+		else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
+		{
+			isSprinting = false;
+			isCharging = false;
 
-		//cout << "Stop Sprint" << endl;
+			Physics* physics = GetGameObject()->GetComponent<Physics>();
+			physics->SetMaxSpeed(originalMaxSpeed);
+			//physics->SetHasMaxSpeed(true);
 
-		//revert back to walk footsteps
-		SetFootstepsSound(0);
+			//cout << "Stop Sprint" << endl;
+
+			//revert back to walk footsteps
+			SetFootstepsSound(0);
+		}
 	}
 }
 
