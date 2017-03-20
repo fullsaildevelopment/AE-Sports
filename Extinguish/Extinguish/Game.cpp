@@ -753,7 +753,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		crosse->Init(crosseName);
 		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
-		SphereCollider* crosseNetCollider = new SphereCollider(0.58f, crosse, true);
+		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
@@ -1249,8 +1249,8 @@ void Game::ResetPlayers()
 				float3 dest;
 				dest = positions[randIndex];
 				
-				cam->SetDestination(dest);
-				cam->StartLerp();
+				//cam->SetDestination(dest);
+				//cam->StartLerp();
 			}
 
 			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
@@ -1751,6 +1751,12 @@ void Game::UpdateClientObjects()
 					FloorController * fC = gameObject->GetComponent<FloorController>();
 					//if (fC->GetState() != client.getFloorState(i))
 						fC->SetState(client.getDT());
+				}
+
+				if (gameObject->GetName() == "Countdown")
+				{
+					Countdown* countDown = gameObject->GetComponent<Countdown>();
+					countDown->CreateDeltaTime(client.getDT());
 				}
 
 				XMFLOAT3 position, rotation;

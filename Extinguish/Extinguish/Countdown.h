@@ -12,6 +12,7 @@ class Countdown : public Component
 private:
 	//regular members
 	float timer;
+	float prevTime;
 	bool canPlay;
 	int curSecond;
 	bool playSound;
@@ -35,6 +36,7 @@ public:
 	//misc
 	void Reset();
 	void DoAnimation(int number);
+	void CreateDeltaTime(float totalTime);
 
 	//getters
 	bool CanPlay();
