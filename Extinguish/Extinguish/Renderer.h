@@ -21,6 +21,11 @@ private:
 
 	float4 TeamColor = { 1,1,1,1 };
 
+	Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendstate;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerstate;
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+
 	DeviceResources* devResources;
 	ID3D11Buffer* vertexBuffer;
 	///////////Instanced///////////

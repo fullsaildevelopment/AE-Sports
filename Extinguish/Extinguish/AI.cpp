@@ -1,7 +1,10 @@
 #include "AI.h"
 #include "GameObject.h"
+#include "AnimatorController.h"
 #include "EventDispatcher.h"
 #include "CanPlayEvent.h"
+#include "State.h"
+#include "Movement.h"
 
 #define     RunSpeed 1 //10
 #define  AttackSpeed 20
@@ -30,14 +33,22 @@ void AI::OnCollisionEnter(Collider *obj)
 		{
 			startTimer = true;
 
-			// handle the target stumbling and dropping ball
+			// dropping the ball
 			if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
 				ballClass->DropBall(realTarget);
 
-			realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
-			realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
-			// add stun somewhere here
-			realTarget = nullptr;
+			// disabling movement
+			if (realTarget->GetComponent<AI>())
+				realTarget->GetComponent<AI>()->SetCanMove(false);
+
+			else
+				realTarget->GetComponent<Movement>()->SetCanMove(false);
+
+			// trggering the animation
+			realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
+			hitTarget = true;
+			//realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
+			//realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
 
 			//me->GetTransform()->AddVelocity(float3(0, 2, 0));
 			//me->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3() * (2, 0, 2));
@@ -45,10 +56,20 @@ void AI::OnCollisionEnter(Collider *obj)
 	}
 }
 
+void AI::HandleEvent(Event* e)
+{
+	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
+
+	if (playEvent)
+	{
+		canMove = playEvent->CanPlay();
+
+		return;
+	}
+}
+
 void AI::Init(GameObject *goal1, GameObject *goal2)
 {
-	cout << canMove;
-
 	listOfEnemies.reserve(4);
 	listOfMates.reserve(3);
 	AIbuddies.reserve(3);
@@ -200,17 +221,36 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 #pragma endregion
 
 	ballClass = ball->GetComponent<BallController>();
+	anim = me->GetComponent<AnimatorController>();
+
 	Idle();
 }
 
 void AI::Update(float _dt)
 {
+	if (hitTarget)
+	{
+		if (realTarget->GetComponent<AnimatorController>()->GetState(realTarget->GetComponent<AnimatorController>()->GetCurrentStateIndex())->GetName() != "Stumble")
+		{
+			if (realTarget->GetComponent<AI>())
+				realTarget->GetComponent<AI>()->SetCanMove(true);
 
-#pragma region Setting Objects
-	if (!isAttacking) realTarget = nullptr;
+			else
+				realTarget->GetComponent<Movement>()->SetCanMove(true);
+			
+			hitTarget = false;
+			realTarget = nullptr;
+		}
+	}
+
+	if (canMove) Idle();
+
+	//if (!isAttacking) realTarget = nullptr;
 
 	if (startTimer)
 		timer -= _dt;
+
+#pragma region Setting Objects
 
 	if (!crosse)
 		crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
@@ -403,18 +443,6 @@ void AI::Update(float _dt)
 	}
 }
 
-void AI::HandleEvent(Event* e)
-{
-	CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
-
-	if (playEvent)
-	{
-		canMove = playEvent->CanPlay();
-
-		return;
-	}
-}
-
 void AI::Idle()
 {
 	me->GetTransform()->AddVelocity(float3(0, 0, 0));
@@ -476,17 +504,21 @@ void AI::DefendTeammate()
 
 void AI::Attack(GameObject *target)
 {
-	realTarget = target;
-	isAttacking = true;
-
-	// if they're not on my team and if the timer isn't going
-	if (target->GetTag() != me->GetTag() && timer == 3.5f)
+	if (canMove)
 	{
-		TurnTo(target);
-		float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
-		v.y = 0;
-		me->GetTransform()->AddVelocity(v * AttackSpeed);
-		isAttacking = false;
+		// if they're not on my team and if the timer isn't going
+		if (target->GetTag() != me->GetTag() && timer == 3.5f)
+		{
+			realTarget = target;
+			isAttacking = true;
+
+			TurnTo(target);
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
+			v.y = 0;
+			anim->SetTrigger("Run");
+			me->GetTransform()->AddVelocity(v * AttackSpeed);
+			isAttacking = false;
+		}
 	}
 }
 
@@ -547,6 +579,7 @@ bool AI::RunTo(GameObject *target)
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 			v.y = 0;
 			TurnTo(target);
+			anim->SetTrigger("Run");
 			me->GetTransform()->AddVelocity(v * RunSpeed);
 		}
 	}
@@ -566,6 +599,7 @@ bool AI::RunTo(GameObject *target, float dist)
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 			v.y = 0;
 			TurnTo(target);
+			anim->SetTrigger("Run");
 			me->GetTransform()->AddVelocity(v * RunSpeed);
 		}
 	}
@@ -583,6 +617,7 @@ bool AI::RunTo(float3 target, float dist)
 		float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 		v.y = 0;
 		TurnTo(target);
+		anim->SetTrigger("Run");
 		me->GetTransform()->AddVelocity(v * RunSpeed);
 
 		return false;
@@ -624,16 +659,10 @@ void AI::Score()
 
 AI::State AI::GetCurrState() { return currState; }
 
-bool AI::GetIsAttacking() { return isAttacking; }
-
 GameObject * AI::GetTarget() { return (realTarget) ? realTarget : nullptr; }
 
-bool AI::CanMove()
-{
-	return canMove;
-}
+bool AI::GetIsAttacking() { return isAttacking; }
 
-void AI::SetCanMove(bool toggle)
-{
-	canMove = toggle;
-}
+bool AI::GetCanMove() { return canMove; }
+
+void AI::SetCanMove(bool toggle) { canMove = toggle; }
