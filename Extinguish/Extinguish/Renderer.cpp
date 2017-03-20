@@ -51,7 +51,37 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	if (alpha)
 	{
 		isTransparent = alpha;
+		D3D11_BLEND_DESC BlendStateDesc;
+		ZeroMemory(&BlendStateDesc, sizeof(D3D11_BLEND_DESC));
+		BlendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+		BlendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		BlendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		BlendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		BlendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		BlendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		BlendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		BlendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		BlendStateDesc.AlphaToCoverageEnable = FALSE;
+		deviceResources->GetDevice()->CreateBlendState(&BlendStateDesc, m_blendstate.GetAddressOf());
 	}
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
+
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.MipLODBias = 1.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.BorderColor[0] = 1.0f;
+	samplerDesc.BorderColor[1] = 1.0f;
+	samplerDesc.BorderColor[2] = 1.0f;
+	samplerDesc.BorderColor[3] = 1.0f;
+	samplerDesc.MinLOD = -FLT_MAX;
+	samplerDesc.MaxLOD = FLT_MAX;
+
+	deviceResources->GetDevice()->CreateSamplerState(&samplerDesc, m_samplerstate.GetAddressOf());
 }
 
 void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha)
@@ -86,7 +116,37 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 	if (alpha)
 	{
 		isTransparent = alpha;
+		D3D11_BLEND_DESC BlendStateDesc;
+		ZeroMemory(&BlendStateDesc, sizeof(D3D11_BLEND_DESC));
+		BlendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+		BlendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		BlendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		BlendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		BlendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		BlendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		BlendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		BlendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		BlendStateDesc.AlphaToCoverageEnable = FALSE;
+		deviceResources->GetDevice()->CreateBlendState(&BlendStateDesc, m_blendstate.GetAddressOf());
 	}
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
+
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.MipLODBias = 1.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.BorderColor[0] = 1.0f;
+	samplerDesc.BorderColor[1] = 1.0f;
+	samplerDesc.BorderColor[2] = 1.0f;
+	samplerDesc.BorderColor[3] = 1.0f;
+	samplerDesc.MinLOD = -FLT_MAX;
+	samplerDesc.MaxLOD = FLT_MAX;
+
+	deviceResources->GetDevice()->CreateSamplerState(&samplerDesc, m_samplerstate.GetAddressOf());
 }
 
 void Renderer::Update(float _dt)
@@ -147,12 +207,21 @@ void Renderer::Update(float _dt)
 		devContext->PSSetShaderResources(3, 1, &teamcolorSRV);
 	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
-
+	if (isTransparent)
+	{
+		devContext->OMSetBlendState(m_blendstate.Get(), blendFactor, sampleMask);
+	}
+	else
+	{
+		devContext->OMSetBlendState(nullptr, blendFactor, sampleMask);
+	}
+	devContext->PSSetSamplers(0,1,m_samplerstate.GetAddressOf());
 }
 
 void Renderer::Render()
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+	
 	//Draw!
 	if (numIns > 0)
 	{

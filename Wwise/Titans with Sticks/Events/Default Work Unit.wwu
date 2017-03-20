@@ -146,6 +146,28 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Beep" ID="{921EDF1B-1AB3-4643-B1BA-4F60B9B20AF4}">
+					<ChildrenList>
+						<Action Name="Play" ID="{1D603C6C-A0D7-4A68-AC58-BB069AD94A6E}" ShortID="262200714" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{AF5B3BF4-B9E4-44D3-9BAC-A118E8578B1C}" Global="false">
+									<ObjectRef Name="Beep" ID="{7A7FBED2-AE01-426E-9CD5-E8E8D34D6CF6}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_FinalBeep" ID="{3683B564-80CE-4E39-BE4D-3C4ABB156F47}">
+					<ChildrenList>
+						<Action Name="Play" ID="{E6C398EE-C60A-49E3-BE0B-97B5933A75EC}" ShortID="28240172" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{165E3168-3E02-433E-A3F4-F6F821F7B451}" Global="false">
+									<ObjectRef Name="FinalBeep" ID="{F252DE59-B343-4224-896F-108C8D7FF51E}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
