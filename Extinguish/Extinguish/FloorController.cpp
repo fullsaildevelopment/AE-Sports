@@ -85,9 +85,13 @@ void FloorController::InitialPattern(float _dt)
 	MovePillar(15, ratios);
 	MovePillar(16, 1);
 
+	MovePillar(17, 1);
+	MovePillar(18, 1);
 	MovePillar(19, 1);
 	MovePillar(20, 1);
 	MovePillar(21, 1);
+	MovePillar(22, 1);
+	MovePillar(23, 1);
 
 	MovePillar(24, 1);
 	MovePillar(25, ratios);
@@ -95,9 +99,15 @@ void FloorController::InitialPattern(float _dt)
 	//blue goal
 	MovePillar((38 * 54) + 15, ratios);
 	MovePillar((38 * 54) + 16, 1);
+
+	MovePillar((38 * 54) + 17, 1);
+	MovePillar((38 * 54) + 18, 1);
 	MovePillar((38 * 54) + 19, 1);
 	MovePillar((38 * 54) + 20, 1);
 	MovePillar((38 * 54) + 21, 1);
+	MovePillar((38 * 54) + 22, 1);
+	MovePillar((38 * 54) + 23, 1);
+
 	MovePillar((38 * 54) + 24, 1);
 	MovePillar((38 * 54) + 25, ratios);
 }

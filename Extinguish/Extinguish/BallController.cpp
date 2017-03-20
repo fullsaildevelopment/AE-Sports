@@ -112,12 +112,17 @@ void BallController::Update(float _dt)
 
 void BallController::FixedUpdate(float _dt)
 {
-	if (transform->GetWorld()._42 < -0.3f)
+	if (transform->GetWorld()._42 < 0.2f)
 	{
-		transform->SetPosition(float3(transform->GetPosition().x, 1.5f, transform->GetPosition().z));
+		transform->AddVelocity(float3(0, 10, 0));
 	}
 	if (!isHeld && !isThrown)
 	{
+		float3 vel = transform->GetVelocity();
+		if (vel.isEquil(float3(0, 0, 0)))
+		{
+			transform->AddVelocity(float3(0, 10, 0));
+		}
 		int s = (int)nets.size();
 		for (int i = 0; i < s; ++i)
 		{

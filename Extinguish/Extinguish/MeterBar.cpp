@@ -254,4 +254,6 @@ float MeterBar::GetPercentage()
 void MeterBar::SetDTimeFromPercentage(float percentage)
 { 
 	dTime = drainTime * percentage;
+	rTime = dTime * (rechargeTime / drainTime);
+	SetActive(true);
 }
