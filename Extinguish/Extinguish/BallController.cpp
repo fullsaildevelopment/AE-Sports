@@ -174,7 +174,7 @@ void BallController::DropBall(GameObject *person)
 {
 	// add some velocity to me in the holders forward vec
 	float3 vel = holder->GetTransform()->GetForwardf3() * 1;
-	vel.y += 1.0f;
+	vel.y += 2.0f;
 	transform->AddVelocity(vel);
 
 	//need to do this to prevent recolliding with crosse net
