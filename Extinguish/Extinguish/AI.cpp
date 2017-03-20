@@ -47,7 +47,7 @@ void AI::OnCollisionEnter(Collider *obj)
 			else
 				realTarget->GetComponent<Movement>()->SetCanMove(false);
 
-			// trggering the animation
+			// triggering the animation
 			realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 			ogTarget = realTarget;
 			hitTarget = true;
@@ -251,7 +251,6 @@ void AI::Update(float _dt)
 			ogTarget = nullptr;
 		}
 	}
-	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 	if (canMove) Idle();
 
