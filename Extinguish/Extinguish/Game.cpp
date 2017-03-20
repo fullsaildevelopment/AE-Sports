@@ -636,6 +636,7 @@ void Game::CreateGameWrapper()
 				trans->Reset();*/
 			bool success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
 
+
 			// if false -> no ai attached
 		}
 	}

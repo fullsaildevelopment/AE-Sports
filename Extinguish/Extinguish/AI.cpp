@@ -630,6 +630,7 @@ bool AI::RunTo(float3 target, float dist)
 
 		return false;
 	}
+	return false;
 }
 
 void AI::TurnTo(float3 target)
