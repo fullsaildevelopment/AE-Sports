@@ -16,6 +16,7 @@ private:
 	Transform* transform;
 	Transform* playerTransform;
 	DirectX::XMFLOAT4X4 view;
+	//float3 originalPosition;
 
 	float moveSpeed;
 	float rotateSpeed;
@@ -28,14 +29,17 @@ private:
 	const float maxRotX, maxRotY;
 
 	// for lerp
-	float maxTime = 10.0f;
-	float curTime = 0.0f;
-	bool lerp = false;
-	float3 destination;
+	//float maxTime = 10.0f;
+	//float moveCurTime, lookCurTime;
+	////bool moveTo, lookAt;
+	//float3 moveDestination, lookDestination;
+	//float moveTotalTime, lookTotalTime;
 
 	//private helper functions
 	void MoveCamera(InputDownEvent* e);
 	void MoveCamera(GamePadEvent* e);
+	void Move();
+	void Look();
 	void LerpCamera(float dt);
 public:
 	Camera();
@@ -47,13 +51,13 @@ public:
 	void HandleEvent(Event* e);
 
 	//misc
-	void LookAt(XMFLOAT3 pos, float totalTime);
-	void MoveTo(XMFLOAT3 pos, float totalTime);
+	void LookAt(float3 pos, float totalTime);
+	void MoveTo(float3 pos, float totalTime);
 
 	//getters
 	XMFLOAT4X4 GetView();
 
 	// setters
-	void StartLerp() { lerp = true; }
+	//void StartLerp() { lerp = true; }
 	void SetDestination(float3 des);
 };

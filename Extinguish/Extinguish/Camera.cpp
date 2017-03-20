@@ -47,15 +47,31 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 	sensitivityX = 3.5f;
 	sensitivityY = 3.5f;
 #endif
+
+	//moveTotalTime = -1;
+	//lookTotalTime = -1;
 }
 
 void Camera::Update(float _dt)
 {
-	if (lerp)
-		LerpCamera(_dt);
-	//this->input = input;
 	this->_dt = _dt;
 
+//	lookCurTime += _dt;
+//	moveCurTime += _dt;
+//
+//	//if (lerp)
+//	//	LerpCamera(_dt);
+//	//this->input = input;
+//
+//	if (moveTotalTime != -1)
+//	{
+//		Move();
+//	}
+//
+//	if (lookTotalTime != -1)
+//	{
+//		Look();
+//	}
 }
 
 void Camera::HandleEvent(Event* e)
@@ -65,7 +81,7 @@ void Camera::HandleEvent(Event* e)
 
 	if (inputDownEvent)
 	{
-		if (GetGameObject()->GetTransform()->GetParent() && !lerp) {
+		if (GetGameObject()->GetTransform()->GetParent()/* && !lerp*/) {
 			//if (inputDownEvent->IsServer())
 			{
 				string name;
@@ -105,6 +121,53 @@ void Camera::HandleEvent(Event* e)
 
 		return;
 	}
+}
+
+//misc//
+void Camera::LookAt(float3 pos, float totalTime)
+{
+	//lookDestination = pos;
+	//lookTotalTime = totalTime;
+	//lookCurTime = 0.0f;
+}
+
+void Camera::MoveTo(float3 pos, float totalTime)
+{
+	//moveDestination = pos;
+	//moveTotalTime = totalTime;
+	//moveCurTime = 0.0f;
+
+	////detach camera from player
+	//transform->SetPosition(transform->GetWorldPosition());
+
+	////store position for lerp
+	//originalPosition = transform->GetPosition();
+
+	//transform->GetParent()->RemoveChild(transform);
+	//transform->SetParent(nullptr);
+}
+
+//getters//
+XMFLOAT4X4 Camera::GetView()
+{
+	XMFLOAT4X4 view;
+
+	//XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up )));
+	//XMFLOAT3 translation = { 0, 5, 1 };
+	//transform->Translate({ translation.x, translation.y, translation.z });
+	//transform->RotateY(XM_PI);
+	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMLoadFloat4x4(&transform->GetWorld())));
+	//transform->Translate({ -translation.x, -translation.y, -translation.z });
+	//transform->RotateY(-XM_PI);
+
+	return view;
+}
+
+//setters//
+void Camera::SetDestination(float3 des)
+{
+	//destination = des;
+	//destination.y = playerTransform->GetPosition().y;
 }
 
 //private helper functions
@@ -245,53 +308,64 @@ void Camera::MoveCamera(GamePadEvent* e)
 	}
 }
 
-//getters//
-XMFLOAT4X4 Camera::GetView()
+void Camera::Move()
 {
-	XMFLOAT4X4 view;
+	//float ratio = moveCurTime / moveTotalTime;
 
-	//XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up )));
-	//XMFLOAT3 translation = { 0, 5, 1 };
-	//transform->Translate({ translation.x, translation.y, translation.z });
-	//transform->RotateY(XM_PI);
-	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMLoadFloat4x4(&transform->GetWorld())));
-	//transform->Translate({ -translation.x, -translation.y, -translation.z });
-	//transform->RotateY(-XM_PI);
+	////in order to make camera move nicely, I might have to disattach it from the player
 
-	return view;
+	//if (ratio <= 1.0f)
+	//{
+	//	float3 camPosition = transform->GetPosition();
+	//	float3 newPosition;
+
+	//	newPosition.x = (moveDestination.x - originalPosition.x) * ratio + originalPosition.x;
+	//	newPosition.y = (moveDestination.y - originalPosition.y) * ratio + originalPosition.y;
+	//	newPosition.z = (moveDestination.z - originalPosition.z) * ratio + originalPosition.z;
+
+	//	transform->SetPosition(newPosition);
+
+	//	if (GetGameObject()->GetName() == "Camera1")
+	//	{
+	//		int breakPoint = 69;
+	//		breakPoint = breakPoint;
+	//	}
+	//}
+	//else
+	//{
+	//	moveTotalTime = -1; //no more moving
+	//}
 }
 
-
-void Camera::SetDestination(float3 des) 
+void Camera::Look()
 {
-	destination = des;
-	destination.y = playerTransform->GetPosition().y;
+
 }
 
 void Camera::LerpCamera(float dt)
 {
-	if (lerp) {
-		XMFLOAT4X4 camera = transform->GetWorld();
-		XMFLOAT3 current;
-		current = { camera._41, camera._42, camera._43 };
+	//if (lerp) {
+	//	XMFLOAT4X4 camera = transform->GetWorld();
+	//	XMFLOAT3 current;
+	//	current = { camera._41, camera._42, camera._43 };
 
-		curTime += dt;
-		if (curTime > maxTime)
-		{
-			curTime = maxTime;
-			lerp = false;
-		}
-		float ratio = curTime / maxTime;
-		XMFLOAT3 newposition;
+	//	curTime += dt;
+	//	if (curTime > maxTime)
+	//	{
+	//		curTime = maxTime;
+	//		lerp = false;
+	//	}
+	//	float ratio = curTime / maxTime;
+	//	XMFLOAT3 newposition;
 
-		newposition.x = (destination.x - current.x) * ratio + current.x;
-		newposition.y = (destination.y - current.y) * ratio + current.y;
-		newposition.z = (destination.z - current.z) * ratio + current.z;	
+	//	newposition.x = (destination.x - current.x) * ratio + current.x;
+	//	newposition.y = (destination.y - current.y) * ratio + current.y;
+	//	newposition.z = (destination.z - current.z) * ratio + current.z;	
 
-		float3 newpos(newposition.x, newposition.y, newposition.z);
-		// rebuild camera
-		transform->SetPosition(newpos);
-	}
-	else
-		curTime = 0.0f;
+	//	float3 newpos(newposition.x, newposition.y, newposition.z);
+	//	// rebuild camera
+	//	transform->SetPosition(newpos);
+	//}
+	//else
+	//	curTime = 0.0f;
 }
