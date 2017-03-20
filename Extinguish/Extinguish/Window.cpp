@@ -3,6 +3,9 @@
 #include "EventDispatcher.h"
 #include <iostream>
 
+static uint16_t windowWidth = 0;
+static uint16_t windowHeight = 0;
+
 //function prototype
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK InputProc(HWND _hWnd, UINT _msg, WPARAM _w, LPARAM _l);
@@ -141,10 +144,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		PostQuitMessage(0);
 		return 0;
 		break;
-	case WM_SIZE: //lParam holds Width and Height as first 16 bits = width and last are height
+	case WM_SIZE:
+		windowWidth = lParam;
+		windowHeight = lParam >> 16;
+		break;
+	case WM_EXITSIZEMOVE: //lParam holds Width and Height as first 16 bits = width and last are height
 		WindowResizeEvent wre;
-		wre.w = lParam;
-		wre.h = lParam >> 16;
+		wre.w = windowWidth;
+		wre.h = windowHeight;
 		EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
 		break;
 		//default:
