@@ -240,3 +240,15 @@ void MeterBar::Recharge(unsigned int id)
 			Game::server.setMeterDown(false, id - 1);
 	}
 }
+
+//getters//
+float MeterBar::GetPercentage()
+{ 
+	return dTime / drainTime; 
+}
+
+//setters//
+void MeterBar::SetDTimeFromPercentage(float percentage)
+{ 
+	dTime = drainTime * percentage;
+}

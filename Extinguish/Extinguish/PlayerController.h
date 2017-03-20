@@ -27,10 +27,10 @@ private:
 	float _dt;
 	bool justJumped;
 	bool isSprinting;
-	bool isCharging;
+	//bool isCharging;
 	float canSprint;
 	float originalMaxSpeed;
-	float chargeTimer;
+	//float chargeTimer;
 	bool footstepsPlayed;
 	int footstepsSound;
 	unsigned int teamID;
@@ -49,9 +49,10 @@ private:
 
 	//const members
 	const float sprintMultiplier = 1.75f;
-	const float chargeMultiplier = 2.25f;
+	//const float chargeMultiplier = 2.25f;
 	const float timeTilCharge = 2.0f;
 	const float sprintCost = 0.15f;
+	const float attackCost = 0.50f;
 
 	const unsigned int goalPoints = 100;
 	const unsigned int savePoints = 50;
