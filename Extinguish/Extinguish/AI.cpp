@@ -49,6 +49,7 @@ void AI::OnCollisionEnter(Collider *obj)
 
 			// trggering the animation
 			realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
+			ogTarget = realTarget;
 			hitTarget = true;
 			//realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
 			//realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
@@ -237,23 +238,23 @@ void AI::Update(float _dt)
 
 	if (hitTarget)
 	{
-		AnimatorController* animator = realTarget->GetComponent<AnimatorController>();
-		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
+		AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
+		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex()) != nullptr && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
 		{
-			if (realTarget->GetComponent<AI>())
-				realTarget->GetComponent<AI>()->SetCanMove(true);
+			if (ogTarget->GetComponent<AI>())
+				ogTarget->GetComponent<AI>()->SetCanMove(true);
 
 			else
-				realTarget->GetComponent<Movement>()->SetCanMove(true);
+				ogTarget->GetComponent<Movement>()->SetCanMove(true);
 			
 			hitTarget = false;
-			realTarget = nullptr;
+			ogTarget = nullptr;
 		}
 	}
 
 	if (canMove) Idle();
 
-	//if (!isAttacking) realTarget = nullptr;
+	if (!isAttacking) realTarget = nullptr;
 
 	if (startTimer)
 		timer -= _dt;
@@ -523,7 +524,10 @@ void AI::Attack(GameObject *target)
 			TurnTo(target);
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 			v.y = 0;
-			anim->SetTrigger("Run");
+			
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+				anim->SetTrigger("Run");
+
 			me->GetTransform()->AddVelocity(v * AttackSpeed);
 			isAttacking = false;
 		}
@@ -587,7 +591,10 @@ bool AI::RunTo(GameObject *target)
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 			v.y = 0;
 			TurnTo(target);
-			anim->SetTrigger("Run");
+
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+				anim->SetTrigger("Run");
+
 			me->GetTransform()->AddVelocity(v * RunSpeed);
 		}
 	}
@@ -607,7 +614,10 @@ bool AI::RunTo(GameObject *target, float dist)
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 			v.y = 0;
 			TurnTo(target);
-			anim->SetTrigger("Run");
+
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+				anim->SetTrigger("Run");
+
 			me->GetTransform()->AddVelocity(v * RunSpeed);
 		}
 	}
@@ -625,7 +635,10 @@ bool AI::RunTo(float3 target, float dist)
 		float3 v = ((target - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 		v.y = 0;
 		TurnTo(target);
-		anim->SetTrigger("Run");
+
+		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+			anim->SetTrigger("Run");
+
 		me->GetTransform()->AddVelocity(v * RunSpeed);
 
 		return false;
