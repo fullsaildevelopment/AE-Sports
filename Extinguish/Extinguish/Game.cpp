@@ -1753,7 +1753,6 @@ void Game::UpdateClientObjects()
 						fC->SetState(client.getDT());
 				}
 
-
 				XMFLOAT3 position, rotation;
 				position = client.getLocation(i);
 				rotation = client.getRotation(i);
