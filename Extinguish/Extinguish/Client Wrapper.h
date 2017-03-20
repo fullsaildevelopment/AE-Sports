@@ -6,6 +6,8 @@
 #include "..\ShaderStructures\ShaderStructures.h"
 #include "InputManager.h"
 #include "InputDownEvent.h"
+#include "Game.h"
+#include "ResourceManager.h"
 
 class ClientWrapper
 {
@@ -27,7 +29,9 @@ public:
 	void setIsServer() { isServer = true; }
 	int run() 
 	{
-		return newClient.run();
+		int result = newClient.run();
+		ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
+		return result;
 	}
 	void sendStop()
 	{
@@ -177,4 +181,6 @@ public:
 	{
 		return newClient.getScoreboard(i, score, assists, saves, goals, name);
 	}
+
+	unsigned int getScene() { return newClient.getScene(); }
 };

@@ -334,12 +334,12 @@ void InputManager::SetMousePosition(LPARAM lparam)
 //private helper functions
 void InputManager::SendEvent()
 {
-	//this will send input to game and anything else that handles input
-	InputDownEvent* inputEvent = new InputDownEvent(this, Game::GetClientID(), false);
-	EventDispatcher::GetSingleton()->DispatchTo(inputEvent, "Game");
-	delete inputEvent;
+		//this will send input to game and anything else that handles input
+		InputDownEvent* inputEvent = new InputDownEvent(this, Game::GetClientID(), false);
+		EventDispatcher::GetSingleton()->DispatchTo(inputEvent, "Game");
+		delete inputEvent;
 
-	//cout << "send" << endl;
+		//cout << "send" << endl;
 
-	alreadySent = true;
+		alreadySent = true;
 }

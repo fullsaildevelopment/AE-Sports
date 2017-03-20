@@ -6,6 +6,8 @@
 #include "EventDispatcher.h"
 #include "InputDownEvent.h"
 #include "InputManager.h"
+#include "Game.h"
+#include "ResourceManager.h"
 
 class ServerWrapper
 {
@@ -38,6 +40,7 @@ public:
 		if (shutdown && !noPeer)
 			noPeer = newServer.Shutdown();
 
+		newServer.gamePaused(ResourceManager::GetSingleton()->IsPaused());
 		newServer.sendPackets();
 		int result = newServer.update();
 
@@ -222,5 +225,10 @@ public:
 	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals, char * name)
 	{
 		newServer.updateScoreboard(index, score, assists, saves, goals, name);
+	}
+
+	void sceneChange(unsigned int i)
+	{
+		newServer.setCurScene(i);
 	}
 };

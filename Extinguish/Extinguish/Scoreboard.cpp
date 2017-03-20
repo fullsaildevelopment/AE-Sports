@@ -395,6 +395,7 @@ Scoreboard::~Scoreboard()
 
 void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 {
+	alreadyCreated = true;
 	this->numRedPlayers = numRedPlayers;
 	this->numBluePlayers = numBluePlayers;
 
@@ -409,6 +410,7 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 	//resize scoreboard background
 	Button* backgroundButton = scoreboardBackground->GetComponent<Button>();
 	backgroundButton->setHeight(heightOfBackground);
+	backgroundButton->setPositionMultipliers(0.56f, 0.5f);
 	backgroundButton->MakeRect();
 
 	float yOffset = 0;

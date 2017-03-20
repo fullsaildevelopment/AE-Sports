@@ -64,6 +64,8 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
+		bool paused = false;
+		UINT8 scene = 1;
 		int scoreA = 0;
 		int scoreB = 0;
 		float time;
@@ -182,6 +184,8 @@ public:
 	UINT32 GetSoundID(unsigned int index) { return clientStates[0][index].soundID; }
 	UINT8 getID() { return clientID; }
 	CLIENT_GAME_STATE getMyState();
+	bool getPaused() { return gameState[0][0].paused; }
+	UINT8 getScene() { return gameState[0][0].scene; }
 	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
