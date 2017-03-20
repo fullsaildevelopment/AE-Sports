@@ -60,7 +60,7 @@ void PlayerController::Init()
 void PlayerController::Update(float _dt)
 {
 	this->_dt = _dt;
-	chargeTimer += _dt;
+	//chargeTimer += _dt;
 	//sprintAgainTimer += dt;
 
 	HandleSprintAndCharge();
@@ -110,51 +110,52 @@ void PlayerController::Shutdown()
 
 void PlayerController::HandleEvent(Event* e)
 {
-	//filter throw events to find right one
-	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
-
-	if (inputDownEvent)
+	if (!ResourceManager::GetSingleton()->IsPaused())
 	{
-		//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
+		//filter throw events to find right one
+		InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-		//if (inputDownEvent->IsServer())
+		if (inputDownEvent)
+		{
+			//cout << inputDownEvent->GetInput()->GetMouseX() << " " << inputDownEvent->GetInput()->GetMouseY() << endl;
+
+			//if (inputDownEvent->IsServer())
+			{
+				string name;
+				name = "Mage";
+				name += to_string(inputDownEvent->GetID());
+
+				if (GetGameObject()->GetName() == name)
+				{
+					//if (!Player::gamePadState.IsConnected())
+					{
+						playerID = inputDownEvent->GetID();
+						input = inputDownEvent->GetInput();
+						HandleInput();
+					}
+				}
+			}
+
+			return;
+		}
+
+		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+		if (gamePadEvent)
 		{
 			string name;
 			name = "Mage";
-			name += to_string(inputDownEvent->GetID());
+			name += to_string(gamePadEvent->GetClientID());
 
 			if (GetGameObject()->GetName() == name)
 			{
-				//if (!Player::gamePadState.IsConnected())
-				{
-					playerID = inputDownEvent->GetID();
-					input = inputDownEvent->GetInput();
-					HandleInput();
-				}
+				HandleGamePad(gamePadEvent);
 			}
+
+			return;
 		}
-
-		return;
-	}
-
-	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
-
-	if (gamePadEvent)
-	{
-		string name;
-		name = "Mage";
-		name += to_string(gamePadEvent->GetClientID());
-
-		if (GetGameObject()->GetName() == name)
-		{
-			HandleGamePad(gamePadEvent);
-		}
-
-		return;
 	}
 }
-
-
 
 //misc//
 void PlayerController::OnCollisionEnter(Collider* collider)
@@ -168,7 +169,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 
 			otherPlayer = capsCollider->GetGameObject();
 
-			Attack();
+			//Attack();
 
 			return;
 		}
@@ -421,7 +422,10 @@ void PlayerController::Jump()
 
 void PlayerController::Attack()
 {
-	if (isCharging)
+	//if (isCharging)
+	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
+
+	if (otherPlayer && meterBar->GetPercentage() >= attackCost)
 	{
 		//do animation
 		AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
@@ -438,13 +442,16 @@ void PlayerController::Attack()
 			//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
 			ball->DropBall(otherPlayer);
 		}
+
+		//drain stamina bar
+		meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
 	}
 }
 
 void PlayerController::Sprint()
 {
 	isSprinting = true;
-	chargeTimer = 0.0f;
+	//chargeTimer = 0.0f;
 
 	Physics* physics = GetGameObject()->GetComponent<Physics>();
 	originalMaxSpeed = physics->GetMaxSpeed();
@@ -457,34 +464,36 @@ void PlayerController::Sprint()
 //private helper functions//
 void PlayerController::HandleInput()
 {
+	if (input->GetKeyDown(VK_SPACE))
+	{
+		Jump();
+	}
 
-	if (!ResourceManager::GetSingleton()->IsPaused()) {
-		if (input->GetKeyDown(VK_SPACE))
-		{
-			Jump();
-		}
+	if (input->GetKeyDown('F'))
+	{
+		Attack();
+	}
 
-		//this line will only happen once
-		if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
-		{
-			Sprint();
+	//this line will only happen once
+	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
+	{
+		Sprint();
 
-			//cout << "Sprint" << endl;
-		}
-		else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
-		{
-			isSprinting = false;
-			isCharging = false;
+		//cout << "Sprint" << endl;
+	}
+	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
+	{
+		isSprinting = false;
+		//isCharging = false;
 
-			Physics* physics = GetGameObject()->GetComponent<Physics>();
-			physics->SetMaxSpeed(originalMaxSpeed);
-			//physics->SetHasMaxSpeed(true);
+		Physics* physics = GetGameObject()->GetComponent<Physics>();
+		physics->SetMaxSpeed(originalMaxSpeed);
+		//physics->SetHasMaxSpeed(true);
 
-			//cout << "Stop Sprint" << endl;
+		//cout << "Stop Sprint" << endl;
 
-			//revert back to walk footsteps
-			SetFootstepsSound(0);
-		}
+		//revert back to walk footsteps
+		SetFootstepsSound(0);
 	}
 }
 
@@ -510,7 +519,7 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 	else if (!padState->thumbSticks.leftY && isSprinting)
 	{
 		isSprinting = false;
-		isCharging = false;
+		//isCharging = false;
 
 		Physics* physics = GetGameObject()->GetComponent<Physics>();
 		physics->SetMaxSpeed(originalMaxSpeed);
@@ -531,28 +540,28 @@ void PlayerController::HandleSprintAndCharge()
 
 	if (isSprinting && canSprint)
 	{
-		if (isCharging) //if currently charging, just change speed multiplier
-		{
-			speedMultiplier = chargeMultiplier;
+		//if (isCharging) //if currently charging, just change speed multiplier
+		//{
+		//	speedMultiplier = chargeMultiplier;
 
-			//TODO: do some visual effect
+		//	//TODO: do some visual effect
 
-		}
-		else if (chargeTimer >= timeTilCharge && !isCharging)  //if not charging but you should be charging, charge
-		{
-			speedMultiplier = chargeMultiplier;
-			isCharging = true;
+		//}
+		//else if (chargeTimer >= timeTilCharge && !isCharging)  //if not charging but you should be charging, charge
+		//{
+		//	speedMultiplier = chargeMultiplier;
+		//	isCharging = true;
 
-			cout << "Charge time" << endl;
+		//	cout << "Charge time" << endl;
 
-			//TODO: play charge sound
+		//	//TODO: play charge sound
 
-			//set footsteps to charge
-			SetFootstepsSound(2);
+		//	//set footsteps to charge
+		//	SetFootstepsSound(2);
 
-			//TODO: do some visual effect
-		}
-		else //if not charging then sprint
+		//	//TODO: do some visual effect
+		//}
+		//else //if not charging then sprint
 		{
 			speedMultiplier = sprintMultiplier;
 		}
@@ -562,7 +571,7 @@ void PlayerController::HandleSprintAndCharge()
 			if (meterBar->isEmpty()) // empty, no more sprint
 			{
 				canSprint = false;
-				isCharging = false;
+				//isCharging = false;
 				SetFootstepsSound(0);
 			}
 		}
@@ -571,7 +580,7 @@ void PlayerController::HandleSprintAndCharge()
 			if (Game::server.getEmpty(playerID - 1)) 
 			{
 				canSprint = false;
-				isCharging = false;
+				//isCharging = false;
 				SetFootstepsSound(0);
 			}
 		}
@@ -617,10 +626,10 @@ void PlayerController::PlayFootstepsSound()
 		playID = AK::EVENTS::PLAY_FOOTSTEPS__SPRINT_;
 
 		break;
-	case 2:
-		playID = AK::EVENTS::PLAY_FOOTSTEPS__CHARGE_;
+	//case 2:
+	//	playID = AK::EVENTS::PLAY_FOOTSTEPS__CHARGE_;
 
-		break;
+	//	break;
 	}
 
 	Movement* movement = GetGameObject()->GetComponent<Movement>();
@@ -651,10 +660,10 @@ void PlayerController::StopFootstepsSound()
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
 
 		break;
-	case 2:
-		stopID = AK::EVENTS::STOP_FOOTSTEPS__CHARGE_;
+	//case 2:
+	//	stopID = AK::EVENTS::STOP_FOOTSTEPS__CHARGE_;
 
-		break;
+	//	break;
 	}
 
 	Movement* movement = GetGameObject()->GetComponent<Movement>();
