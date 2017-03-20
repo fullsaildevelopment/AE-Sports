@@ -151,14 +151,49 @@ int Game::Update(float dt)
 {
 	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 	{
-		//for now, I will just load main menu
-		LoadScene("Menu");
+		endTimer += dt;
 
 		//TODO: This stuff below needs to be done to replace the line of code above
 		//bring onto screen text overlay that says which team won
 
+		// if not paused so it doesn't keep trying to change the button
+		if (!ResourceManager::GetSingleton()->IsPaused())
+		{
+			GameObject * winner = scenes[currentScene]->GetUIByName("Winner");
+			Button * winnertext = winner->GetComponent<Button>();
+			if (endTimer < 3.0f && !winnertext->getActive())
+			{
+				if (Team1Score > Team2Score)
+				{
+					winnertext->setText(L"Red Team Wins!");
+				}
+				else if (Team2Score > Team1Score)
+				{
+					winnertext->setText(L"Blue Team Wins!");
+				}
+				else
+				{
+					winnertext->setText(L"Draw!");
+				}
+
+				winnertext->MakeRect();
+				winnertext->setOrigin();
+				winnertext->SetActive(true);
+			}
+
 		//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
 
+		// after the three seconds, untoggle winner text
+		if (endTimer >= 3.0f && winnertext->getActive())
+		{
+			winnertext->SetActive(false);
+			TogglePauseMenu(true, true);
+			ResourceManager::GetSingleton()->SetPaused(true);
+		}
+
+		}
+
+		
 	}
 
 	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
@@ -233,6 +268,11 @@ int Game::Update(float dt)
 					Team1Score = client.getScoreA();
 					Team2Score = client.getScoreB();
 					UpdateScoreUI();
+					currentScene = client.getScene();
+					if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+					{
+						TogglePauseMenu(true, true);
+					}
 				}
 			}
 		}
@@ -336,9 +376,14 @@ void Game::HandleEvent(Event* e)
 		if (currentScene == 2)
 		{
 			InputManager* input = inputDownEvent->GetInput();
-			if (input->GetKeyDown('	') && inputDownEvent->GetID() == clientID)
+			if (input->GetKeyDown('	') && inputDownEvent->GetID() == clientID && !ResourceManager::GetSingleton()->IsPaused())
 			{
-				TogglePauseMenu();
+				TogglePauseMenu(false, true);
+			}
+
+			if (input->GetKeyDown('0') && ResourceManager::GetSingleton()->IsServer())
+			{
+				Time = 5.0f;
 			}
 		}
 
@@ -390,8 +435,15 @@ void Game::HandleEvent(Event* e)
 			{
 				if (loadSceneEvent->GetName() == "Menu" && currentScene == 2)
 				{
-					TogglePauseMenu();
+					TogglePauseMenu(false, true);
 					CreateGameWrapper();
+					ResourceManager::GetSingleton()->SetPaused(false);
+				}
+				else if (loadSceneEvent->GetName() == "Lobby" && currentScene == 2)
+				{
+					TogglePauseMenu(true, true);
+					CreateGameWrapper();
+					ResourceManager::GetSingleton()->SetPaused(false);
 				}
 				LoadScene(loadSceneEvent->GetName());
 
@@ -571,11 +623,11 @@ void Game::CreateGameWrapper()
 	ResetBall();
 	ResetPlayers();
 
-	// also need to remove ai?
 	Team1Score = Team2Score = 0;
 	UpdateScoreUI();
 	Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
 	time->resetTime();
+	Time = 300.0f;
 }
 
 void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
@@ -1427,6 +1479,34 @@ void Game::CreateLobby(Scene * scene)
 
 void Game::CreatePauseMenu(Scene * scene)
 {
+	// winner
+	GameObject * winner = new GameObject();
+	scene->AddUIObject(winner);
+	winner->Init("Winner");
+	Button * wButton = new Button(true, true, L"Red Team Wins!", (unsigned int)strlen("Red Team Wins!"), 500.0f, 500.0f, devResources, 0);
+	wButton->setSceneIndex((unsigned int)scenes.size() - 1);
+	wButton->SetGameObject(winner);
+	wButton->showFPS(false);
+	wButton->setPositionMultipliers(0.5f, 0.5f);
+	winner->AddComponent(wButton);
+	UIRenderer * wRender = new UIRenderer();
+	wRender->Init(true, 80.0f, devResources, wButton, L"Sans-Serif", D2D1::ColorF(0.9f, 0.9f, 0.9f, 1.0f));/*
+	wRender->DecodeBitmap(L"../Assets/UI/resumeButton.png");
+	wRender->DecodeBitmap(L"../Assets/UI/resumeButton2.png");*/
+	wRender->setAlignment(DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	winner->AddComponent(wRender);
+	wRender->MakeRTSize();
+	wButton->MakeRect();
+	wButton->MakeHandler();
+	wButton->setOrigin();
+	wRender->InitMetrics();
+	wButton->SetActive(false);
+
+
+	// for new game button on end game
+	Button * nButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 10);
+
+
 	// server only?
 	GameObject * resumeGame = new GameObject();
 	scene->AddUIObject(resumeGame);
@@ -1472,6 +1552,7 @@ void Game::CreatePauseMenu(Scene * scene)
 
 	// exit, return to menu
 	rButton->setHelper(scene->GetNumUIObjects());
+	nButton->setHelper(scene->GetNumUIObjects());
 	GameObject * exitMenu = new GameObject();
 	scene->AddUIObject(exitMenu);
 	exitMenu->Init("pauseMenu");
@@ -1492,6 +1573,27 @@ void Game::CreatePauseMenu(Scene * scene)
 	mRender->InitMetrics();
 	mButton->SetActive(false);
 
+	// start new game, shown on game end
+	GameObject * newGame = new GameObject();
+	scene->AddUIObject(newGame);
+	newGame->Init("New Game");
+	nButton->setSceneIndex((unsigned int)scenes.size() - 1);
+	nButton->SetGameObject(newGame);
+	nButton->showFPS(false);
+	nButton->setPositionMultipliers(0.1f, 0.30f);
+	newGame->AddComponent(nButton);
+	UIRenderer * nRender = new UIRenderer();
+	nRender->Init(true, 25.0f, devResources, nButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	nRender->DecodeBitmap(L"../Assets/UI/newGameButton.png");
+	nRender->DecodeBitmap(L"../Assets/UI/newGameButton2.png");
+	newGame->AddComponent(nRender);
+	nRender->MakeRTSize();
+	nButton->MakeRect();
+	nButton->MakeHandler();
+	nRender->InitMetrics();
+	nButton->SetActive(false);
+
+	//scoreboard
 	rButton->setHelper(scene->GetNumUIObjects());
 }
 
@@ -1824,16 +1926,17 @@ void Game::LoadScene(std::string name)
 	else if (currentScene == 2)
 	{
 		AssignPlayers();
-		scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
+		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
+			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
 	}
 
 	//resize gamestates
-	/*for (unsigned int i = 0; i < gameStates.size(); ++i)
+	for (unsigned int i = 0; i < gameStates.size(); ++i)
 	{
 		delete gameStates[i];
 	}
 
-	gameStates.clear();*/
+	gameStates.clear();
 	gameStates.resize(scenes[currentScene]->GetNumObjects());
 	for (int i = 0; i < gameStates.size(); ++i)
 	{
@@ -1865,6 +1968,7 @@ int Game::UpdateLobby()
 	//	else {
 			//run client
 			int clientState = client.run();
+			currentScene = client.getScene();
 
 			if (clientState == 5)
 				UpdateLobbyUI(client.getNumClients());
@@ -1928,25 +2032,44 @@ void Game::GetFloor()
 	}
 }
 
-void Game::TogglePauseMenu()
+void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 {
 	bool toggle;
 	if (ResourceManager::GetSingleton()->IsServer()) {
-		GameObject * pauseResume = scenes[currentScene]->GetUIByName("pauseResume");
-		GameObject * pauseExit = scenes[currentScene]->GetUIByName("pauseExit");
-		GameObject * pauseMenu = scenes[currentScene]->GetUIByName("pauseMenu");
-		//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
-		Button * resumeButton = pauseResume->GetComponent<Button>();
-		Button * exitButton = pauseExit->GetComponent<Button>();
-		Button * menuButton = pauseMenu->GetComponent<Button>();
-		//Button * scoreButton = pauseScore->GetComponent<Button>();
-		toggle = !resumeButton->getActive();
-		resumeButton->SetActive(toggle);
-		exitButton->SetActive(toggle);
-		menuButton->SetActive(toggle);
+		if (!endgame) {
+			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
+			GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
+			//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
+			Button * resumeButton = pauseResume->GetComponent<Button>();
+			Button * menuButton = pauseMenu->GetComponent<Button>();
+			//Button * scoreButton = pauseScore->GetComponent<Button>();
+			toggle = !resumeButton->getActive();
+			resumeButton->SetActive(toggle);
+			menuButton->SetActive(toggle);
+			GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
+			Button * exitButton = pauseExit->GetComponent<Button>();
+			toggle = !exitButton->getActive();
+			exitButton->SetActive(toggle);
+		}
 	}
-	GameObject * scoreBoard = scenes[currentScene]->GetUIByName("Scoreboard");
-	Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
-	toggle = !scoreBoard2->isActive();
-	scoreBoard2->Toggle(toggle);
+
+	if (endgame && ResourceManager::GetSingleton()->IsServer())
+	{
+		GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
+		Button * exitButton = pauseExit->GetComponent<Button>();
+		toggle = !exitButton->getActive();
+		exitButton->SetActive(toggle);
+		GameObject * pauseNewGame = scenes[2]->GetUIByName("New Game");
+		Button * nButton = pauseNewGame->GetComponent<Button>();
+		toggle = !nButton->getActive();
+		nButton->SetActive(toggle);
+	}
+
+	if (scoreboard) 
+	{
+		GameObject * scoreBoard = scenes[2]->GetUIByName("Scoreboard");
+		Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
+		toggle = !scoreBoard2->isActive();
+		scoreBoard2->Toggle(toggle);
+	}
 }

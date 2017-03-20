@@ -112,75 +112,78 @@ void MeterBar::Update(float _dt)
 
 void MeterBar::HandleEvent(Event* e)
 {
-	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-	if (inputDownEvent && Game::currentScene == 2)
-	{
-		// check for specific key press (taken from powerup or something)
-		InputManager * input = inputDownEvent->GetInput();
-		if (input->GetKey(16) && input->GetKey('W'))
+	if (!ResourceManager::GetSingleton()->IsPaused()) {
+		InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+		if (inputDownEvent && Game::currentScene == 2)
 		{
-			Drain(inputDownEvent->GetID());
-		}
-		else
-		{
-			Recharge(inputDownEvent->GetID());
-
-			//	isActive = false;
-		}
-
-		return;
-	}
-
-	GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
-
-	if (gamePadEvent && Game::currentScene == 2)
-	{
-		// check for specific key press (taken from powerup or something)
-		GamePad::State* state = gamePadEvent->GetState();
-		GamePad::ButtonStateTracker tracker;
-
-		tracker.Update(*state);
-
-		if ((tracker.leftStick == GamePad::ButtonStateTracker::PRESSED && state->thumbSticks.leftY))
-		{
-			gamePadSprinting = true;
-		}
-		else if (tracker.leftStick == GamePad::ButtonStateTracker::RELEASED || !state->thumbSticks.leftY)
-		{
-			gamePadSprinting = false;
-		}
-
-		if (gamePadSprinting)
-		{
-			Drain(gamePadEvent->GetClientID());
-
-			/*if (isActive == false)
+			// check for specific key press (taken from powerup or something)
+			InputManager * input = inputDownEvent->GetInput();
+			if (input->GetKey(16) && input->GetKey('W'))
 			{
-				dTime = rTime * (drainTime / rechargeTime);
-				isActive = true;
+				Drain(inputDownEvent->GetID());
 			}
-			else if (drain == false)
+			else
 			{
-				drain = true;
-				dTime = rTime * (drainTime / rechargeTime);
-				if (dTime <= 0.0f)
-					empty = true;
-				else
-					empty = false;
-			}*/
-		}
-		else
-		{
-			Recharge(gamePadEvent->GetClientID());
-			/*if (drain && isActive == true)
-			{
-				drain = false;
-				rTime = dTime * (rechargeTime / drainTime);
+				Recharge(inputDownEvent->GetID());
 
-				if (rTime > rechargeTime)
-					rTime = rechargeTime;
-			}*/
+				//	isActive = false;
+			}
+
+			return;
+		}
+
+		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+		if (gamePadEvent && Game::currentScene == 2)
+		{
+			// check for specific key press (taken from powerup or something)
+			GamePad::State* state = gamePadEvent->GetState();
+			GamePad::ButtonStateTracker tracker;
+
+			tracker.Update(*state);
+
+			if ((tracker.leftStick == GamePad::ButtonStateTracker::PRESSED && state->thumbSticks.leftY))
+			{
+				gamePadSprinting = true;
+			}
+			else if (tracker.leftStick == GamePad::ButtonStateTracker::RELEASED || !state->thumbSticks.leftY)
+			{
+				gamePadSprinting = false;
+			}
+
+			if (gamePadSprinting)
+			{
+				Drain(gamePadEvent->GetClientID());
+
+				/*if (isActive == false)
+				{
+					dTime = rTime * (drainTime / rechargeTime);
+					isActive = true;
+				}
+				else if (drain == false)
+				{
+					drain = true;
+					dTime = rTime * (drainTime / rechargeTime);
+					if (dTime <= 0.0f)
+						empty = true;
+					else
+						empty = false;
+				}*/
+			}
+			else
+			{
+				Recharge(gamePadEvent->GetClientID());
+				/*if (drain && isActive == true)
+				{
+					drain = false;
+					rTime = dTime * (rechargeTime / drainTime);
+
+					if (rTime > rechargeTime)
+						rTime = rechargeTime;
+				}*/
+			}
 		}
 	}
 }
