@@ -35,7 +35,7 @@ void EventDispatcher::Dispatch(Event* event)
 void EventDispatcher::DispatchTo(Event* event, std::string handlerName)
 {
 	int index = handlersTable.GetKey(handlerName);
-
+	
 	if (index != -1)
 	{
 		handlers[index]->HandleEvent(event);
@@ -69,9 +69,11 @@ EventDispatcher* EventDispatcher::GetSingleton()
 
 void EventDispatcher::RemoveHandler(std::string handleName)
 {
-	int index = handlersTable.GetKey(handleName);
-	EventHandler * even = handlers[index];
+	//int index = handlersTable.GetKey(handleName);
+	//EventHandler * even = handlers[index];
 
-	handlers.erase(handlers.begin() + index);
-	delete even;
+	//handlers.erase(handlers.begin() + index);
+	//delete even;
+
+	//handlersTable.Remove(handleName);
 }
