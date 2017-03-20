@@ -440,7 +440,7 @@ float3 Transform::GetVelocity()
 
 DirectX::XMFLOAT3 Transform::GetRotationDeg()
 {
-	return{ XMConvertToDegrees(rotation.x), XMConvertToDegrees(rotation.y), XMConvertToDegrees(rotation.z) };
+	return { XMConvertToDegrees(rotation.x), XMConvertToDegrees(rotation.y), XMConvertToDegrees(rotation.z) };
 }
 
 //private helper functions//
