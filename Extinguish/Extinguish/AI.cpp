@@ -230,7 +230,8 @@ void AI::Update(float _dt)
 {
 	if (hitTarget)
 	{
-		if (realTarget->GetComponent<AnimatorController>()->GetState(realTarget->GetComponent<AnimatorController>()->GetCurrentStateIndex())->GetName() != "Stumble")
+		AnimatorController* animator = realTarget->GetComponent<AnimatorController>();
+		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
 		{
 			if (realTarget->GetComponent<AI>())
 				realTarget->GetComponent<AI>()->SetCanMove(true);
