@@ -574,8 +574,8 @@ void Game::CreateScenes(InputManager* input)
 		Scene* menu = new Scene();
 		// ask tom
 		GameObject* camera = new GameObject();
-		menu->AddGameObject(camera);
 		camera->Init("Camera1");
+		menu->AddGameObject(camera);
 		camera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 		Camera* cameraController = new Camera();
 		camera->AddComponent(cameraController);
@@ -597,8 +597,8 @@ void Game::CreateScenes(InputManager* input)
 		Scene* lobby = new Scene();
 		// ask tom
 		GameObject* lcamera = new GameObject();
-		lobby->AddGameObject(lcamera);
 		lcamera->Init("Camera1");
+		lobby->AddGameObject(lcamera);
 		lcamera->InitTransform(identity, { 0, 0, -1.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 		Camera* cameraControllerL = new Camera();
 		lcamera->AddComponent(cameraControllerL);
@@ -1366,8 +1366,8 @@ void Game::CreateLobby(Scene * scene)
 {
 	// background
 	GameObject * bg = new GameObject();
-	scene->AddUIObject(bg);
 	bg->Init("background");
+	scene->AddUIObject(bg);
 	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bgButton->setSceneIndex((unsigned int)scenes.size());
 	bgButton->SetGameObject(bg);
@@ -1383,8 +1383,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// start game, will only show if isServer
 	GameObject * startGame = new GameObject();
-	scene->AddUIObject(startGame);
 	startGame->Init("Start");
+	scene->AddUIObject(startGame);
 	Button * sButton = new Button(true, true, L"", (unsigned int)strlen(""), 300.0f, 60.0f, devResources, 3);
 	sButton->setSceneIndex((unsigned int)scenes.size());
 	sButton->SetGameObject(startGame);
@@ -1403,8 +1403,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// start game, will only show if isServer
 	GameObject * exitGame = new GameObject();
-	scene->AddUIObject(exitGame);
 	exitGame->Init("Exit");
+	scene->AddUIObject(exitGame);
 	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 300.0f, 60.0f, devResources, 6);
 	eButton->setSceneIndex((unsigned int)scenes.size());
 	eButton->SetGameObject(exitGame);
@@ -1423,8 +1423,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// number of players
 	GameObject * numPlayers = new GameObject();
-	scene->AddUIObject(numPlayers);
 	numPlayers->Init("Players");
+	scene->AddUIObject(numPlayers);
 	Button * nButton = new Button(true, false, L"1/4", (unsigned int)strlen("1/4"), 150.0f, 150.0f, devResources, 0);
 	nButton->setSceneIndex((unsigned int)scenes.size());
 	nButton->SetGameObject(numPlayers);
@@ -1442,8 +1442,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// change team to A
 	GameObject * changeTeamA = new GameObject();
-	scene->AddUIObject(changeTeamA);
 	changeTeamA->Init("ChangeA");
+	scene->AddUIObject(changeTeamA);
 	Button * caButton = new Button(true, true, L"", (unsigned int)strlen(""), 90.0f, 90.0f, devResources, 8);
 	caButton->setSceneIndex((unsigned int)scenes.size());
 	caButton->SetGameObject(changeTeamA);
@@ -1463,8 +1463,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// change team to B
 	GameObject * changeTeamB = new GameObject();
-	scene->AddUIObject(changeTeamB);
 	changeTeamB->Init("ChangeB");
+	scene->AddUIObject(changeTeamB);
 	Button * cbButton = new Button(true, true, L"", (unsigned int)strlen(""), 90.0f, 90.0f, devResources, 9);
 	cbButton->setSceneIndex((unsigned int)scenes.size());
 	cbButton->SetGameObject(changeTeamB);
@@ -1484,8 +1484,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// change team logo
 	GameObject * changeTeam = new GameObject();
-	scene->AddUIObject(changeTeam);
 	changeTeam->Init("changeLogo");
+	scene->AddUIObject(changeTeam);
 	Button * ctButton = new Button(true, true, L"", (unsigned int)strlen(""), 246.0f, 200.0f, devResources, 0);
 	ctButton->setSceneIndex((unsigned int)scenes.size());
 	ctButton->SetGameObject(changeTeam);
@@ -1503,8 +1503,8 @@ void Game::CreateLobby(Scene * scene)
 
 	// background 2.0
 	GameObject * bg2 = new GameObject();
-	scene->AddUIObject(bg2);
 	bg2->Init("background2");
+	scene->AddUIObject(bg2);
 	Button * bg2Button = new Button(true, false, L"", 0, 1000.0f, 750.0f, devResources, 0);
 	bg2Button->setSceneIndex((unsigned int)scenes.size());
 	bg2Button->SetGameObject(bg2);
@@ -1523,8 +1523,8 @@ void Game::CreatePauseMenu(Scene * scene)
 {
 	// winner
 	GameObject * winner = new GameObject();
-	scene->AddUIObject(winner);
 	winner->Init("Winner");
+	scene->AddUIObject(winner);
 	Button * wButton = new Button(true, true, L"Red Team Wins!", (unsigned int)strlen("Red Team Wins!"), 500.0f, 500.0f, devResources, 0);
 	wButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	wButton->SetGameObject(winner);
@@ -1551,8 +1551,8 @@ void Game::CreatePauseMenu(Scene * scene)
 
 	// server only?
 	GameObject * resumeGame = new GameObject();
-	scene->AddUIObject(resumeGame);
 	resumeGame->Init("pauseResume");
+	scene->AddUIObject(resumeGame);
 	Button * rButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 7);
 	rButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	rButton->SetGameObject(resumeGame);
@@ -1573,8 +1573,8 @@ void Game::CreatePauseMenu(Scene * scene)
 
 	// exit, closes application
 	GameObject * exitGame = new GameObject();
-	scene->AddUIObject(exitGame);
 	exitGame->Init("pauseExit");
+	scene->AddUIObject(exitGame);
 	Button * eButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 5);
 	eButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	eButton->SetGameObject(exitGame);
@@ -1596,8 +1596,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	rButton->setHelper(scene->GetNumUIObjects());
 	nButton->setHelper(scene->GetNumUIObjects());
 	GameObject * exitMenu = new GameObject();
-	scene->AddUIObject(exitMenu);
 	exitMenu->Init("pauseMenu");
+	scene->AddUIObject(exitMenu);
 	Button * mButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 6);
 	mButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	mButton->SetGameObject(exitMenu);
@@ -1617,8 +1617,8 @@ void Game::CreatePauseMenu(Scene * scene)
 
 	// start new game, shown on game end
 	GameObject * newGame = new GameObject();
-	scene->AddUIObject(newGame);
 	newGame->Init("New Game");
+	scene->AddUIObject(newGame);
 	nButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	nButton->SetGameObject(newGame);
 	nButton->showFPS(false);
@@ -1648,6 +1648,8 @@ void Game::AssignPlayers()
 	PLAYER_TEAM teamID = TEAM_A;
 
 	int ourNameIndex = 0;
+
+	//TODO: disable/enable AI based on who is playing
 
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
