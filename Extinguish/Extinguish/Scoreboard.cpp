@@ -61,8 +61,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 	PCWSTR scoreBarPath[] = { L"../Assets/UI/scorebarRed.png", L"../Assets/UI/scorebarBlue.png" };
 
 	//create scoreboard background
-	scene->AddUIObject(scoreboardBackground);
 	scoreboardBackground->Init("Scoreboard Background");
+	scene->AddUIObject(scoreboardBackground);
 	{
 		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 700.0f, 500.0f, devResources, 0);
 		button->setSceneIndex(sceneID);
@@ -95,8 +95,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		}
 
 		//player bar (image)
-		scene->AddUIObject(playerBars[i]);
 		playerBars[i]->Init(teamNames[teamID] + " Player Bar" + to_string(i % 4));
+		scene->AddUIObject(playerBars[i]);
 		{
 			Button * button = new Button(true, true, L"", 0, 500.0f, 40.0f, devResources, 0);
 			button->setSceneIndex(sceneID);
@@ -118,8 +118,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		}
 
 		//name
-		scene->AddUIObject(playerNames[i]);
 		playerNames[i]->Init(teamNames[teamID] + " Player Name" + to_string(i % 4));
+		scene->AddUIObject(playerNames[i]);
 		{
 			string playerName = players[i]->GetName();
 
@@ -145,8 +145,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		}
 
 		// first score
-		scene->AddUIObject(playerScores[i]);
 		playerScores[i]->Init(teamNames[teamID] + " Player Score" + to_string(i % 4));
+		scene->AddUIObject(playerScores[i]);
 		{
 			Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
@@ -167,8 +167,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		}
 
 		//player's goals
-		scene->AddUIObject(playerGoals[i]);
 		playerGoals[i]->Init(teamNames[teamID] + " Player Goals" + to_string(i % 4));
+		scene->AddUIObject(playerGoals[i]);
 		{
 			Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
@@ -212,8 +212,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 
 		// first saves
 		//playerSaves[i] = new GameObject();
-		scene->AddUIObject(playerSaves[i]);
 		playerSaves[i]->Init(teamNames[teamID] + " Player Saves" + to_string(i % 4));
+		scene->AddUIObject(playerSaves[i]);
 		{
 			// text
 			Button * textbutton = new Button(true, true, L"0", (unsigned int)strlen("0"), 100.0f, 50.0f, devResources, 0);
@@ -242,8 +242,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 	for (int i = 0; i < 2; ++i)
 	{
 		//name label
-		scene->AddUIObject(labels[labelIndex]);
 		labels[labelIndex]->Init("Scoreboard Name" + to_string(i % 4));
+		scene->AddUIObject(labels[labelIndex]);
 		{
 			Button * textbutton = new Button(true, true, (wchar_t*)wideTeamNames[i].c_str(), (unsigned int)wideTeamNames[i].size(), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
@@ -266,8 +266,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		++labelIndex;
 
 		// score label
-		scene->AddUIObject(labels[labelIndex]);
 		labels[labelIndex]->Init("Scoreboard Score" + to_string(i % 4));
+		scene->AddUIObject(labels[labelIndex]);
 		{
 			Button * textbutton = new Button(true, true, L"SCORE", (unsigned int)strlen("SCORE"), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
@@ -290,8 +290,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		++labelIndex;
 
 		//goal label
-		scene->AddUIObject(labels[labelIndex]);
 		labels[labelIndex]->Init("Scoreboard Goal" + to_string(i % 4));
+		scene->AddUIObject(labels[labelIndex]);
 		{
 			Button * textbutton = new Button(true, true, L"GOALS", (unsigned int)strlen("GOALS"), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
@@ -314,8 +314,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		++labelIndex;
 
 		//assists label
-		scene->AddUIObject(labels[labelIndex]);
 		labels[labelIndex]->Init("Scoreboard Assists" + to_string(i % 4));
+		scene->AddUIObject(labels[labelIndex]);
 		{
 			// text
 			Button * textbutton = new Button(true, true, L"ASSISTS", (unsigned int)strlen("ASSISTS"), 100.0f, 50.0f, devResources, 0);
@@ -339,8 +339,8 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		++labelIndex;
 
 		// Saves label
-		scene->AddUIObject(labels[labelIndex]);
 		labels[labelIndex]->Init("Scoreboard Saves" + to_string(i % 4));
+		scene->AddUIObject(labels[labelIndex]);
 		{
 			Button * textbutton = new Button(true, true, L"SAVES", (unsigned int)strlen("SAVES"), 100.0f, 50.0f, devResources, 0);
 			textbutton->setSceneIndex(sceneID);
