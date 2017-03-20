@@ -422,26 +422,29 @@ void PlayerController::Attack()
 	//if (isCharging)
 	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
 
-	if (otherPlayer && meterBar->GetPercentage() >= attackCost)
+	if (otherPlayer)
 	{
-		//do animation
-		AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
-
-		animator->SetTrigger("Stumble");
-
-		cout << "Attack" << endl;
-
-		//make them drop ball
-		BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
-
-		if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+		if (meterBar->GetPercentage() >= attackCost)
 		{
-			//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-			ball->DropBall(otherPlayer);
-		}
+			//do animation
+			AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
-		//drain stamina bar
-		meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
+			animator->SetTrigger("Stumble");
+
+			cout << "Attack" << endl;
+
+			//make them drop ball
+			BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
+
+			if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+			{
+				//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
+				ball->DropBall(otherPlayer);
+			}
+
+			//drain stamina bar
+			meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
+		}
 	}
 }
 
@@ -587,6 +590,9 @@ void PlayerController::HandleSprintAndCharge()
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
+		Physics* physics = GetGameObject()->GetComponent<Physics>();
+		physics->SetMaxSpeed(originalMaxSpeed);
+
 		if (!ResourceManager::GetSingleton()->IsMultiplayer() || playerID == Game::GetClientID())
 		{
 			if ((!meterBar->isDraining() && !meterBar->getActive()) || !meterBar->isEmpty())
