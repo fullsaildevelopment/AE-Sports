@@ -27,7 +27,7 @@ AI::AI(GameObject* obj) : Component(obj)
 
 void AI::OnCollisionEnter(Collider *obj)
 {
-	if (!ResourceManager::GetSingleton()->IsPaused()) 
+	if (!ResourceManager::GetSingleton()->IsPaused())
 	{
 		if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
@@ -36,23 +36,23 @@ void AI::OnCollisionEnter(Collider *obj)
 			{
 				startTimer = true;
 
-			// dropping the ball
-			if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
-				ballClass->DropBall(realTarget);
+				// dropping the ball
+				if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
+					ballClass->DropBall(realTarget);
 
-			// disabling movement
-			if (realTarget->GetComponent<AI>())
-				realTarget->GetComponent<AI>()->SetCanMove(false);
+				// disabling movement
+				if (realTarget->GetComponent<AI>())
+					realTarget->GetComponent<AI>()->SetCanMove(false);
 
-			else
-				realTarget->GetComponent<Movement>()->SetCanMove(false);
+				else
+					realTarget->GetComponent<Movement>()->SetCanMove(false);
 
-			// triggering the animation
-			realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
-			ogTarget = realTarget;
-			hitTarget = true;
-			//realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
-			//realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
+				// triggering the animation
+				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
+				ogTarget = realTarget;
+				hitTarget = true;
+				//realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
+				//realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
 
 				//me->GetTransform()->AddVelocity(float3(0, 2, 0));
 				//me->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3() * (2, 0, 2));
@@ -142,86 +142,86 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 #pragma region Switch
 	switch (fakeTeam)
 	{
-		case 0: // if I'm the only AI
+	case 0: // if I'm the only AI
+	{
+		currState = tank;
+
+		break;
+	}
+
+	case 1: // if there is one other AI
+	{
+		bool bgoalie = false;
+		bool btank = false;
+
+		if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
+			btank = true;
+
+		else if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == goalie)
+			bgoalie = true;
+
+		if (!bgoalie) currState = goalie;
+		else if (!btank) currState = tank;
+
+		break;
+	}
+
+	case 2: // if there are two other AI
+	{
+		bool bgoalie = false;
+		bool bplayboy = false;
+		bool btank = false;
+
+		for (int i = 0; i < AIbuddies.size(); ++i)
 		{
-			currState = tank;
-
-			break;
-		}
-
-		case 1: // if there is one other AI
-		{
-			bool bgoalie = false;
-			bool btank = false;
-
-			if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
-				btank = true;
-
-			else if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == goalie)
+			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
 				bgoalie = true;
 
-			if (!bgoalie) currState = goalie;
-			else if (!btank) currState = tank;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
+				bplayboy = true;
 
-			break;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
+				btank = true;
 		}
 
-		case 2: // if there are two other AI
+		if (!bgoalie) currState = goalie;
+		else if (!bplayboy) currState = playboy;
+		else if (!btank) currState = tank;
+
+		break;
+	}
+
+	case 3: // if there are three other AI
+	{
+		bool bgoalie = false;
+		bool bplayboy = false;
+		bool bguy = false;
+		bool btank = false;
+
+		for (int i = 0; i < AIbuddies.size(); ++i)
 		{
-			bool bgoalie = false;
-			bool bplayboy = false;
-			bool btank = false;
+			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
+				bgoalie = true;
 
-			for (int i = 0; i < AIbuddies.size(); ++i)
-			{
-				if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
-					bgoalie = true;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
+				bplayboy = true;
 
-				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
-					bplayboy = true;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
+				bguy = true;
 
-				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
-					btank = true;
-			}
-
-			if (!bgoalie) currState = goalie;
-			else if (!bplayboy) currState = playboy;
-			else if (!btank) currState = tank;
-
-			break;
+			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
+				btank = true;
 		}
 
-		case 3: // if there are three other AI
-		{
-			bool bgoalie = false;
-			bool bplayboy = false;
-			bool bguy = false;
-			bool btank = false;
+		if (!bgoalie) currState = goalie;
+		else if (!bplayboy) currState = playboy;
+		else if (!bguy) currState = guy;
+		else if (!btank) currState = tank;
 
-			for (int i = 0; i < AIbuddies.size(); ++i)
-			{
-				if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
-					bgoalie = true;
+		break;
+	}
 
-				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
-					bplayboy = true;
-
-				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
-					bguy = true;
-
-				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
-					btank = true;
-			}
-
-			if (!bgoalie) currState = goalie;
-			else if (!bplayboy) currState = playboy;
-			else if (!bguy) currState = guy;
-			else if (!btank) currState = tank;
-
-			break;
-		}
-
-		default: break;
+	default: break;
 	}
 #pragma endregion
 
@@ -525,7 +525,7 @@ void AI::Attack(GameObject *target)
 			TurnTo(target);
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 			v.y = 0;
-			
+
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
@@ -667,7 +667,7 @@ void AI::TurnTo(GameObject *target)
 		float3 u = (me->GetTransform()->GetRightf3() * (-1, 0, -1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()) * (1, 0, 1)).normalize();
 		float degRad = dot_product(u, v);
-		
+
 		me->GetTransform()->RotateY(degRad);
 	}
 }
@@ -688,4 +688,4 @@ bool AI::GetIsAttacking() { return isAttacking; }
 
 bool AI::GetCanMove() { return canMove; }
 
-void AI::SetCanMove(bool toggle) { canMove = toggle; }
+void AI::SetCanMove(bool ans) { canMove = ans; }
