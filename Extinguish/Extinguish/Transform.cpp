@@ -176,10 +176,6 @@ void Transform::FixedUpdate(float _dt)
 	lookCurTime += _dt;
 	moveCurTime += _dt;
 
-	//if (lerp)
-	//	LerpCamera(_dt);
-	//this->input = input;
-
 	if (moveTotalTime != -1)
 	{
 		Move();
@@ -191,15 +187,26 @@ void Transform::FixedUpdate(float _dt)
 	}
 }
 
-void Transform::LookAt(float3 rot, float totalTime)
+void Transform::LookAt(float3 pos, float totalTime)
 {
-	lookRotation = rot;
+	lookRotation = pos;
 	lookTotalTime = totalTime;
 	lookCurTime = 0.0f;
 
 	//store rotation for lerp
+	originalLookRotation = GetRotation();
+}
+
+void Transform::RotateTo(float3 rotation, float totalTime)
+{
+	rotateRotation = rotation;
+	rotateTotalTime = totalTime;
+	rotateCurTime = 0.0f;
+
+	//store rotation for lerp
 	originalRotation = GetRotation();
 }
+
 
 void Transform::MoveTo(float3 pos, float totalTime)
 {
@@ -472,20 +479,25 @@ void Transform::Move()
 
 void Transform::Look()
 {
-	float ratio = lookCurTime / lookTotalTime;
+
+}
+
+void Transform::Rotate()
+{
+	float ratio = rotateCurTime / rotateTotalTime;
 
 	if (ratio <= 1.0f)
 	{
 		float3 newRotation;
 
-		newRotation.x = (lookRotation.x - originalRotation.x) * ratio + originalRotation.x;
-		newRotation.y = (lookRotation.y - originalRotation.y) * ratio + originalRotation.y;
-		newRotation.z = (lookRotation.z - originalRotation.z) * ratio + originalRotation.z;
+		newRotation.x = (rotateRotation.x - originalRotation.x) * ratio + originalRotation.x;
+		newRotation.y = (rotateRotation.y - originalRotation.y) * ratio + originalRotation.y;
+		newRotation.z = (rotateRotation.z - originalRotation.z) * ratio + originalRotation.z;
 
-		SetPosition(newRotation);
+		SetRotation(newRotation);
 	}
 	else
 	{
-		lookTotalTime = -1; //no more moving
+		rotateTotalTime = -1; //no more looking
 	}
 }

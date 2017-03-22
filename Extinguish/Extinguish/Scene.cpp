@@ -451,10 +451,9 @@ void Scene::Update(float _dt)
 			
 			Transform* transform = gameObjects[i]->GetTransform();
 
-			if (gameObjects[i]->GetName() == "GameBall")
+			if (gameObjects[i]->GetName() == "Mage1")
 			{
-				int breakPoint = 0;
-				breakPoint += 69;
+				cout << transform->GetPosition().x << transform->GetPosition().y << transform->GetPosition().z << endl;
 			}
 
 			if (transform)
