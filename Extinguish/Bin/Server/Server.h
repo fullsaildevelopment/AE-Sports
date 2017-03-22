@@ -59,6 +59,7 @@ public:
 	struct GAME_STATE
 	{
 		bool paused = false;
+		bool countdown = false;
 		UINT8 scene = 1;
 		int scoreA = 0;
 		int scoreB = 0;
@@ -220,6 +221,8 @@ public:
 	}
 	void gamePaused(bool tf) { gameState[0][0].paused = tf; }
 	void setCurScene(int scene) { gameState[0][0].scene = scene; }
+
+	void setCountdown(bool down) {gameState[0][0].countdown = down; }
 
 
 	/* game stuff*/

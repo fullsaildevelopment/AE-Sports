@@ -1,6 +1,5 @@
 #pragma once
 
-#define DEBUG_GRAPHICS 0
 
 
 #include "Includes.h"
@@ -39,6 +38,7 @@ private:
 	bool isButton = false;
 	float left;
 	wstring font;
+	float curSize;
 
 	/* Decides which renderer function to call in render */
 	Button * theButton;
