@@ -46,40 +46,43 @@ void DeviceResources::Init(HWND hwnd)
 
 	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 	HRESULT res;
-	res = device.As(&dxgiDevice);
-	
-	// res = device.Get()->QueryInterface(__uuidof(IDXGIDevice), (void**)dxgiDevice.GetAddressOf());
 
-	res = D2D1CreateDevice(dxgiDevice.Get(), NULL, &p2DDevice);
-	res = p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &p2DDeviceContext);
+	if (!DEBUG_GRAPHICS) {
+		res = device.As(&dxgiDevice);
 
+		// res = device.Get()->QueryInterface(__uuidof(IDXGIDevice), (void**)dxgiDevice.GetAddressOf());
+
+		res = D2D1CreateDevice(dxgiDevice.Get(), NULL, &p2DDevice);
+		res = p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &p2DDeviceContext);
+	}
 	//Set up back buffer
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
 
-	// create Direct2D target bitmap
-	Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
+	if (!DEBUG_GRAPHICS) {
+		// create Direct2D target bitmap
+		Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
 
-	// specify the desired bitmap properties
-	// gives E_INVALIDARG, don't use
-	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(
-		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);;
-	/*bp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	bp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
-	bp.dpiX = 96.0f;
-	bp.dpiY = 96.0f;
-	bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
-	bp.colorContext = nullptr;*/
+		// specify the desired bitmap properties
+		// gives E_INVALIDARG, don't use
+		D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+			D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);;
+		/*bp.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		bp.pixelFormat.alphaMode = D2D1_ALPHA_MODE_IGNORE;
+		bp.dpiX = 96.0f;
+		bp.dpiY = 96.0f;
+		bp.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+		bp.colorContext = nullptr;*/
 
-	// Direct2D needs the dxgi version of the back buffer
-	Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
+		// Direct2D needs the dxgi version of the back buffer
+		Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
 
-	res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
+		res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
 
-	res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
+		res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
 
-	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
-
+		p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
+	}
 	//create shadow map buffer
 	//D3D11_TEXTURE2D_DESC smTextDesc;
 	//ZeroMemory(&smTextDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -173,8 +176,10 @@ void DeviceResources::Init(HWND hwnd)
 	HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
 	int temp = sizeof(BoneOffsetConstantBuffer);
 
-	LoadButtonResources(hwnd);
-	ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
+	if (!DEBUG_GRAPHICS) {
+		LoadButtonResources(hwnd);
+		ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
+	}
 
 	device.As(&pDebug);
 
@@ -190,7 +195,12 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	depthStencilBuffer.Get()->Release();
 	swapChainBuffer.Get()->Release();
 	depthStencilView.Get()->Release();
-	pRT.Get()->Release();
+
+	if (!DEBUG_GRAPHICS)
+	{
+		pRT.Get()->Release();
+		p2DDeviceContext->SetTarget(nullptr);
+	}
 
 	deviceContext->Flush();
 
@@ -199,12 +209,16 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 
 	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf());
+
+	if (!DEBUG_GRAPHICS)
+	{
 	Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
-	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);
+	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);
 	Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
 	res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
 	res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
 	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
+	}
 
 	CD3D11_TEXTURE2D_DESC dsDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, lround((float)CLIENT_WIDTH), lround((float)CLIENT_HEIGHT), 1, 1, D3D11_BIND_DEPTH_STENCIL);
 	HRESULT dsvBufferResult = device->CreateTexture2D(&dsDesc, nullptr, depthStencilBuffer.GetAddressOf());
@@ -266,7 +280,9 @@ void DeviceResources::Shutdown()
 void DeviceResources::Present()
 {
 	//swap back buffer with buffer
-	ImGui::Render();
+	if (!DEBUG_GRAPHICS)
+		ImGui::Render();
+
 	HRESULT swapResult = swapChain->Present(1, 0);
 }
 

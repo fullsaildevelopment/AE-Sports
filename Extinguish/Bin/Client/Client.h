@@ -65,6 +65,7 @@ public:
 	struct GAME_STATE
 	{
 		bool paused = false;
+		bool countdown = false;
 		UINT8 scene = 1;
 		int scoreA = 0;
 		int scoreB = 0;
@@ -208,6 +209,7 @@ public:
 	int floorSize() { return (int)floorState[0].size(); }
 	int stateSize() { return (int)clientStates[0].size(); }
 	float getDT() { return gameState[0][0]._dt; }
+	bool getCountdown() { return gameState[0][0].countdown; }
 
 private:
 	bool gameStart = false;
