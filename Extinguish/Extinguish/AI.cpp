@@ -7,9 +7,9 @@
 #include "State.h"
 #include "Movement.h"
 
-#define     RunSpeed 1 //10
-#define  AttackSpeed 20
-#define StumbleSpeed 10
+#define     RunSpeed 0.5f //10
+#define  AttackSpeed 0.5f 
+//#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -252,22 +252,13 @@ void AI::Update(float _dt)
 		}
 
 		if (!canMove) Idle();
-
 		if (!isAttacking) realTarget = nullptr;
-
-		if (startTimer)
-			timer -= _dt;
+		if (startTimer) timer -= _dt;
 
 #pragma region Setting Objects
 
-		if (!crosse)
-			crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
-
-		if (!camera)
-		{
-			camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
-			camera->RotateX(-0.9f); // 345 -0.68f
-		}
+		if (!crosse) crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
+		if (!camera) camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
 
 		if (!eTank)
 		{
@@ -339,7 +330,7 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-
+		
 #pragma region Goalie2
 		else if (currState == playboy)
 		{
@@ -355,7 +346,7 @@ void AI::Update(float _dt)
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 				Score();
 
-			// if the enemy team has the ball, attack their tank
+			 //if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
 				Attack(eTank);
 
@@ -377,7 +368,7 @@ void AI::Update(float _dt)
 		}
 
 #pragma endregion
-
+		
 #pragma region Guy
 		else if (currState == guy)
 		{
@@ -444,7 +435,7 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-
+		
 		if (timer <= 0)
 		{
 			timer = 3.5f;
@@ -676,8 +667,12 @@ void AI::Score()
 {
 	Paranoia();
 
-	if (RunTo(enemyGoal, 30.0f))
+	if (RunTo(enemyGoal, 28.0f))
+	{
+		camera->RotateX(-0.9f);
 		crosse->Throw();
+		camera->RotateX(0.9f);
+	}
 }
 
 AI::State AI::GetCurrState() { return currState; }
