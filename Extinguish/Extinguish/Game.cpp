@@ -123,9 +123,9 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
-	//scenes[currentScene]->PostProcessing.Release();
-	//devResources->ResizeWindow(w, h);
-	//scenes[currentScene]->ResizeWindow(w, h);
+	scenes[currentScene]->PostProcessing.Release();
+	devResources->ResizeWindow(w, h);
+	scenes[currentScene]->ResizeWindow(w, h);
 
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
