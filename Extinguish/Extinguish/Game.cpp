@@ -123,9 +123,9 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
-	//scenes[currentScene]->PostProcessing.Release();
-	//devResources->ResizeWindow(w, h);
-	//scenes[currentScene]->ResizeWindow(w, h);
+	/*scenes[currentScene]->PostProcessing.Release();
+	devResources->ResizeWindow(w, h);
+	scenes[currentScene]->ResizeWindow(w, h);*/
 
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -152,177 +152,179 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 
 int Game::Update(float dt)
 {
-	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
-	{
-		endTimer += dt;
-
-		//TODO: This stuff below needs to be done to replace the line of code above
-		//bring onto screen text overlay that says which team won
-
-		// if not paused so it doesn't keep trying to change the button
-		if (!ResourceManager::GetSingleton()->IsPaused())
+	if (!DEBUG_GRAPHICS) {
+		if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 		{
-			GameObject * winner = scenes[currentScene]->GetUIByName("Winner");
-			Button * winnertext = winner->GetComponent<Button>();
-			if (endTimer < 3.0f && !winnertext->getActive())
+			endTimer += dt;
+
+			//TODO: This stuff below needs to be done to replace the line of code above
+			//bring onto screen text overlay that says which team won
+
+			// if not paused so it doesn't keep trying to change the button
+			if (!ResourceManager::GetSingleton()->IsPaused())
 			{
-				if (Team1Score > Team2Score)
+				GameObject * winner = scenes[currentScene]->GetUIByName("Winner");
+				Button * winnertext = winner->GetComponent<Button>();
+				if (endTimer < 3.0f && !winnertext->getActive())
 				{
-					winnertext->setText(L"Red Team Wins!");
-				}
-				else if (Team2Score > Team1Score)
-				{
-					winnertext->setText(L"Blue Team Wins!");
-				}
-				else
-				{
-					winnertext->setText(L"Draw!");
+					if (Team1Score > Team2Score)
+					{
+						winnertext->setText(L"Red Team Wins!");
+					}
+					else if (Team2Score > Team1Score)
+					{
+						winnertext->setText(L"Blue Team Wins!");
+					}
+					else
+					{
+						winnertext->setText(L"Draw!");
+					}
+
+					winnertext->MakeRect();
+					winnertext->setOrigin();
+					winnertext->SetActive(true);
 				}
 
-				winnertext->MakeRect();
-				winnertext->setOrigin();
-				winnertext->SetActive(true);
+				//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
+
+				// after the three seconds, untoggle winner text
+				if (endTimer >= 3.0f && winnertext->getActive())
+				{
+					winnertext->SetActive(false);
+					TogglePauseMenu(true, true);
+					ResourceManager::GetSingleton()->SetPaused(true);
+				}
+
 			}
 
-			//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
-
-			// after the three seconds, untoggle winner text
-			if (endTimer >= 3.0f && winnertext->getActive())
-			{
-				winnertext->SetActive(false);
-				TogglePauseMenu(true, true);
-				ResourceManager::GetSingleton()->SetPaused(true);
-			}
 
 		}
-
-
-	}
-
-	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
-	{
-		Time -= dt;
-
-		if (Time < 0)
-		{
-			Time = 0.0f;
 		}
-	}
 
-	if (ResourceManager::GetSingleton()->IsMultiplayer())
-	{
-		if (currentScene >= 2) {
-			if (ResourceManager::GetSingleton()->IsServer())
+		if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
+		{
+			Time -= dt;
+
+			if (Time < 0)
 			{
-				server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
-
-				if (server.getObjCount() == 0)
-					server.setObjCount(scenes[currentScene]->GetNumObjects());
-
-				GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
-				Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-				scoreboard->SendScoreboard();
-				server.sendGameState();
+				Time = 0.0f;
 			}
-			//set client id
-			Game::clientID = client.getID();
-
-			// if server, set game states
-			if (ResourceManager::GetSingleton()->IsServer())
-			{
-				UpdateServerStates();
-				//SendFloor();
-			}
-
-			//run server
-			if (ResourceManager::GetSingleton()->IsServer())
-			{
-				int serverState = server.run();
-
-				//to receive the message server sent
-				if (serverState == 4)
+		}
+		if (ResourceManager::GetSingleton()->IsMultiplayer())
+		{
+			if (currentScene >= 2) {
+				if (ResourceManager::GetSingleton()->IsServer())
 				{
-					ReceiveServerMessage();
-				}
-			}
+					server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
 
+					if (server.getObjCount() == 0)
+						server.setObjCount(scenes[currentScene]->GetNumObjects());
 
-			//run client
-			int clientState = client.run();
-
-			if (clientState == 0)
-			{
-				returnResult = 0;
-			}
-
-			// if client gets server's game states, get the state's location from the client
-			// so that it can be included in update
-			if ((clientState == 2 || clientState == 4) && client.getID() > 0)
-			{
-				UpdateClientObjects();
-
-				if (clientState == 4)
-				{
 					GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
 					Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-					scoreboard->ReceiveScoreboard();
+					scoreboard->SendScoreboard();
+					server.sendGameState();
+					server.setCountdown(false);
+				}
+				//set client id
+				Game::clientID = client.getID();
 
-					Time = client.getTime();
-					Team1Score = client.getScoreA();
-					Team2Score = client.getScoreB();
-					UpdateScoreUI();
-					currentScene = client.getScene();
-					if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+				// if server, set game states
+				if (ResourceManager::GetSingleton()->IsServer())
+				{
+					UpdateServerStates();
+					//SendFloor();
+				}
+
+				//run server
+				if (ResourceManager::GetSingleton()->IsServer())
+				{
+					int serverState = server.run();
+
+					//to receive the message server sent
+					if (serverState == 4)
 					{
-						TogglePauseMenu(true, true);
+						ReceiveServerMessage();
+					}
+				}
+
+
+				//run client
+				int clientState = client.run();
+
+				if (clientState == 0)
+				{
+					returnResult = 0;
+				}
+
+				// if client gets server's game states, get the state's location from the client
+				// so that it can be included in update
+				if ((clientState == 2 || clientState == 4) && client.getID() > 0)
+				{
+					UpdateClientObjects();
+
+					if (clientState == 4)
+					{
+						GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+						scoreboard->ReceiveScoreboard();
+
+						Time = client.getTime();
+						Team1Score = client.getScoreA();
+						Team2Score = client.getScoreB();
+						UpdateScoreUI();
+						currentScene = client.getScene();
+						if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+						{
+							TogglePauseMenu(true, true);
+						}
 					}
 				}
 			}
-		}
-		else
-		{
-			int result = UpdateLobby();
-			if (result == 0)
+			else
 			{
-				LoadScene("Menu");
-				ResourceManager::GetSingleton()->SetMultiplayer(false);
-				ResourceManager::GetSingleton()->SetServer(true);
+				int result = UpdateLobby();
+				if (result == 0)
+				{
+					LoadScene("Menu");
+					ResourceManager::GetSingleton()->SetMultiplayer(false);
+					ResourceManager::GetSingleton()->SetServer(true);
+				}
 			}
 		}
-	}
 
-	//cout << team << endl;
+		//cout << team << endl;
 
-	//update current scene
-	scenes[currentScene]->Update(dt);
+		//update current scene
+		scenes[currentScene]->Update(dt);
 
-	//render audio
-	if (clientID == 0)
-	{
-		clientID = 1;
-	}
+		//render audio
+		if (clientID == 0)
+		{
+			clientID = 1;
+		}
 
-	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-	vector<XMFLOAT3> objectsPos, forwards;
-	objectsPos.resize(objects->size());
-	forwards.resize(objects->size());
+		vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+		vector<XMFLOAT3> objectsPos, forwards;
+		objectsPos.resize(objects->size());
+		forwards.resize(objects->size());
 
-	for (int i = 0; i < objects->size(); ++i)
-	{
-		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+		for (int i = 0; i < objects->size(); ++i)
+		{
+			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-	}
+			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+		}
 
-	int index = (clientID - 1) * 3 + 2;
+		int index = (clientID - 1) * 3 + 2;
 
-	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
-	soundEngine->UpdatePositions(objectsPos, forwards);
-	soundEngine->ProcessAudio();
+		soundEngine->UpdateListener(objectsPos[index], forwards[index]);
+		soundEngine->UpdatePositions(objectsPos, forwards);
+		soundEngine->ProcessAudio();
 
-	return returnResult;
+		return returnResult;
 }
 
 void Game::FixedUpdate(float dt)
@@ -419,7 +421,8 @@ void Game::HandleEvent(Event* e)
 		{
 			ResetPlayers();
 			ResetBall();
-			ResetCountdown();
+			server.setCountdown(true);
+		//	server.sendGameState();
 		}
 
 		return;
@@ -1855,6 +1858,11 @@ void Game::UpdateClientObjects()
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
 	unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+
+	if (client.getCountdown())
+	{
+		ResetCountdown();
+	}
 
 	int id = client.getID();
 	//dt = client.getDT();

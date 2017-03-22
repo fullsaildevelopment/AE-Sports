@@ -231,4 +231,9 @@ public:
 	{
 		newServer.setCurScene(i);
 	}
+
+	void setCountdown(bool down)
+	{
+		newServer.setCountdown(down);
+	}
 };
