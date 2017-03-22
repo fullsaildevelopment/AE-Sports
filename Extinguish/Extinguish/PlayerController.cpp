@@ -166,9 +166,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-
 			otherPlayer = capsCollider->GetGameObject();
-
 			//Attack();
 
 			return;
