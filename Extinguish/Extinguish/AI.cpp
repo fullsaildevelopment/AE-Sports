@@ -235,29 +235,28 @@ void AI::Update(float _dt)
 {
 	if (!ResourceManager::GetSingleton()->IsPaused())
 	{
-
-	if (hitTarget)
-	{
-		AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
-		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex()) != nullptr && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
+		if (hitTarget)
 		{
-			if (ogTarget->GetComponent<AI>())
-				ogTarget->GetComponent<AI>()->SetCanMove(true);
+			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex()) != nullptr && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
+			{
+				if (ogTarget->GetComponent<AI>())
+					ogTarget->GetComponent<AI>()->SetCanMove(true);
 
-			else
-				ogTarget->GetComponent<Movement>()->SetCanMove(true);
-			
-			hitTarget = false;
-			ogTarget = nullptr;
+				else
+					ogTarget->GetComponent<Movement>()->SetCanMove(true);
+
+				hitTarget = false;
+				ogTarget = nullptr;
+			}
 		}
-	}
 
-	if (canMove) Idle();
+		if (!canMove) Idle();
 
-	if (!isAttacking) realTarget = nullptr;
+		if (!isAttacking) realTarget = nullptr;
 
-	if (startTimer)
-		timer -= _dt;
+		if (startTimer)
+			timer -= _dt;
 
 #pragma region Setting Objects
 
@@ -287,7 +286,7 @@ void AI::Update(float _dt)
 					mGuy = listOfMates[i];
 			}
 		}
-	}
+
 #pragma endregion
 
 #pragma region Goalie
@@ -445,10 +444,12 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-	if (timer <= 0)
-	{
-		timer = 3.5f;
-		startTimer = false;
+
+		if (timer <= 0)
+		{
+			timer = 3.5f;
+			startTimer = false;
+		}
 	}
 }
 
