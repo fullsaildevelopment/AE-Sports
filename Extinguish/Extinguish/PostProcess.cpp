@@ -307,7 +307,7 @@ void PostProcess::ResizeWindow(uint16_t w, uint16_t h)
 	deviceContext->UpdateSubresource(m_blurParamsHeight.Get(), 0, nullptr, &blurData, sizeof(VS_BLUR_PARAMETERS), 0);
 
 	// Obtain the backbuffer for this window which will be the final 3D rendertarget.
-	devRes->GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), &m_backBuffer);
+	HRESULT res = devRes->GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), &m_backBuffer);
 
 	// Create a view interface on the rendertarget to use on bind.
 	device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, devRes->GetRenderTargetViewComPtr().ReleaseAndGetAddressOf());

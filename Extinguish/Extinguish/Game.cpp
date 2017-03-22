@@ -123,9 +123,9 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h)
 {
 	//set projection matrix
-	//scenes[currentScene]->PostProcessing.Release();
-	//devResources->ResizeWindow(w, h);
-	//scenes[currentScene]->ResizeWindow(w, h);
+	/*scenes[currentScene]->PostProcessing.Release();
+	devResources->ResizeWindow(w, h);
+	scenes[currentScene]->ResizeWindow(w, h);*/
 
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -152,63 +152,64 @@ void Game::WindowResize(uint16_t w, uint16_t h)
 
 int Game::Update(float dt)
 {
-	if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
-	{
-		endTimer += dt;
-
-		//TODO: This stuff below needs to be done to replace the line of code above
-		//bring onto screen text overlay that says which team won
-
-		// if not paused so it doesn't keep trying to change the button
-		if (!ResourceManager::GetSingleton()->IsPaused())
+	if (!DEBUG_GRAPHICS) {
+		if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 		{
-			GameObject * winner = scenes[currentScene]->GetUIByName("Winner");
-			Button * winnertext = winner->GetComponent<Button>();
-			if (endTimer < 3.0f && !winnertext->getActive())
+			endTimer += dt;
+
+			//TODO: This stuff below needs to be done to replace the line of code above
+			//bring onto screen text overlay that says which team won
+
+			// if not paused so it doesn't keep trying to change the button
+			if (!ResourceManager::GetSingleton()->IsPaused())
 			{
-				if (Team1Score > Team2Score)
+				GameObject * winner = scenes[currentScene]->GetUIByName("Winner");
+				Button * winnertext = winner->GetComponent<Button>();
+				if (endTimer < 3.0f && !winnertext->getActive())
 				{
-					winnertext->setText(L"Red Team Wins!");
-				}
-				else if (Team2Score > Team1Score)
-				{
-					winnertext->setText(L"Blue Team Wins!");
-				}
-				else
-				{
-					winnertext->setText(L"Draw!");
+					if (Team1Score > Team2Score)
+					{
+						winnertext->setText(L"Red Team Wins!");
+					}
+					else if (Team2Score > Team1Score)
+					{
+						winnertext->setText(L"Blue Team Wins!");
+					}
+					else
+					{
+						winnertext->setText(L"Draw!");
+					}
+
+					winnertext->MakeRect();
+					winnertext->setOrigin();
+					winnertext->SetActive(true);
 				}
 
-				winnertext->MakeRect();
-				winnertext->setOrigin();
-				winnertext->SetActive(true);
+				//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
+
+				// after the three seconds, untoggle winner text
+				if (endTimer >= 3.0f && winnertext->getActive())
+				{
+					winnertext->SetActive(false);
+					TogglePauseMenu(true, true);
+					ResourceManager::GetSingleton()->SetPaused(true);
+				}
+
 			}
 
-		//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
-
-		// after the three seconds, untoggle winner text
-		if (endTimer >= 3.0f && winnertext->getActive())
-		{
-			winnertext->SetActive(false);
-			TogglePauseMenu(true, true);
-			ResourceManager::GetSingleton()->SetPaused(true);
-		}
 
 		}
 
-		
-	}
-
-	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
-	{
-		Time -= dt;
-
-		if (Time < 0)
+		if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
 		{
-			Time = 0.0f;
+			Time -= dt;
+
+			if (Time < 0)
+			{
+				Time = 0.0f;
+			}
 		}
 	}
-
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
 		if (currentScene >= 2) {
@@ -223,6 +224,7 @@ int Game::Update(float dt)
 				Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
 				scoreboard->SendScoreboard();
 				server.sendGameState();
+				server.setCountdown(false);
 			}
 			//set client id
 			Game::clientID = client.getID();
@@ -419,7 +421,8 @@ void Game::HandleEvent(Event* e)
 		{
 			ResetPlayers();
 			ResetBall();
-			ResetCountdown();
+			server.setCountdown(true);
+		//	server.sendGameState();
 		}
 
 		return;
@@ -1858,6 +1861,11 @@ void Game::UpdateClientObjects()
 	std::vector<GameObject*>* gameObjects = scenes[currentScene]->GetGameObjects();
 
 	unsigned int numobjs = (unsigned int)scenes[currentScene]->GetNumObjects();
+
+	if (client.getCountdown())
+	{
+		ResetCountdown();
+	}
 
 	int id = client.getID();
 	//dt = client.getDT();

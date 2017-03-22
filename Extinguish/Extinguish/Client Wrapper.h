@@ -183,4 +183,5 @@ public:
 	}
 
 	unsigned int getScene() { return newClient.getScene(); }
+	bool getCountdown() { return newClient.getCountdown(); }
 };
