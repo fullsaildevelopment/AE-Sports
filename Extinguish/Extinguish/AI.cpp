@@ -51,11 +51,6 @@ void AI::OnCollisionEnter(Collider *obj)
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
 				hitTarget = true;
-				//realTarget->GetTransform()->AddVelocity(float3(0, 5, 0));
-				//realTarget->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3().negate() * (StumbleSpeed, 0, StumbleSpeed));
-
-				//me->GetTransform()->AddVelocity(float3(0, 2, 0));
-				//me->GetTransform()->AddVelocity(me->GetTransform()->GetForwardf3() * (2, 0, 2));
 			}
 		}
 	}
