@@ -24,6 +24,7 @@ private:
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking
 	bool canMove = false; //added by Tom for countdown portion
+	//bool canMove = false; //added by Tom for countdown portion
 	float timer = 3.5f; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
 
@@ -79,5 +80,5 @@ public:
 	bool GetCanMove();
 
 	// Mutators
-	void SetCanMove(bool toggle);
+	void SetCanMove(bool ans);
 };

@@ -53,7 +53,7 @@ float Game::Time = 300.0f;
 
 Game::~Game()
 {
-	
+
 }
 
 void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
@@ -199,6 +199,7 @@ int Game::Update(float dt)
 
 
 		}
+		}
 
 		if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
 		{
@@ -209,122 +210,121 @@ int Game::Update(float dt)
 				Time = 0.0f;
 			}
 		}
-	}
-	if (ResourceManager::GetSingleton()->IsMultiplayer())
-	{
-		if (currentScene >= 2) {
-			if (ResourceManager::GetSingleton()->IsServer())
-			{
-				server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
-
-				if (server.getObjCount() == 0)
-					server.setObjCount(scenes[currentScene]->GetNumObjects());
-
-				GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
-				Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-				scoreboard->SendScoreboard();
-				server.sendGameState();
-				server.setCountdown(false);
-			}
-			//set client id
-			Game::clientID = client.getID();
-
-			// if server, set game states
-			if (ResourceManager::GetSingleton()->IsServer())
-			{
-				UpdateServerStates();
-				//SendFloor();
-			}
-
-			//run server
-			if (ResourceManager::GetSingleton()->IsServer())
-			{
-				int serverState = server.run();
-
-				//to receive the message server sent
-				if (serverState == 4)
+		if (ResourceManager::GetSingleton()->IsMultiplayer())
+		{
+			if (currentScene >= 2) {
+				if (ResourceManager::GetSingleton()->IsServer())
 				{
-					ReceiveServerMessage();
-				}
-			}
+					server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
 
+					if (server.getObjCount() == 0)
+						server.setObjCount(scenes[currentScene]->GetNumObjects());
 
-			//run client
-			int clientState = client.run();
-
-			if (clientState == 0)
-			{
-				returnResult = 0;
-			}
-
-			// if client gets server's game states, get the state's location from the client
-			// so that it can be included in update
-			if ((clientState == 2 || clientState == 4) && client.getID() > 0)
-			{
-				UpdateClientObjects();
-
-				if (clientState == 4)
-				{
 					GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
 					Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-					scoreboard->ReceiveScoreboard();
+					scoreboard->SendScoreboard();
+					server.sendGameState();
+					server.setCountdown(false);
+				}
+				//set client id
+				Game::clientID = client.getID();
 
-					Time = client.getTime();
-					Team1Score = client.getScoreA();
-					Team2Score = client.getScoreB();
-					UpdateScoreUI();
-					currentScene = client.getScene();
-					if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+				// if server, set game states
+				if (ResourceManager::GetSingleton()->IsServer())
+				{
+					UpdateServerStates();
+					//SendFloor();
+				}
+
+				//run server
+				if (ResourceManager::GetSingleton()->IsServer())
+				{
+					int serverState = server.run();
+
+					//to receive the message server sent
+					if (serverState == 4)
 					{
-						TogglePauseMenu(true, true);
+						ReceiveServerMessage();
+					}
+				}
+
+
+				//run client
+				int clientState = client.run();
+
+				if (clientState == 0)
+				{
+					returnResult = 0;
+				}
+
+				// if client gets server's game states, get the state's location from the client
+				// so that it can be included in update
+				if ((clientState == 2 || clientState == 4) && client.getID() > 0)
+				{
+					UpdateClientObjects();
+
+					if (clientState == 4)
+					{
+						GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+						scoreboard->ReceiveScoreboard();
+
+						Time = client.getTime();
+						Team1Score = client.getScoreA();
+						Team2Score = client.getScoreB();
+						UpdateScoreUI();
+						currentScene = client.getScene();
+						if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+						{
+							TogglePauseMenu(true, true);
+						}
 					}
 				}
 			}
-		}
-		else
-		{
-			int result = UpdateLobby();
-			if (result == 0)
+			else
 			{
-				LoadScene("Menu");
-				ResourceManager::GetSingleton()->SetMultiplayer(false);
-				ResourceManager::GetSingleton()->SetServer(true);
+				int result = UpdateLobby();
+				if (result == 0)
+				{
+					LoadScene("Menu");
+					ResourceManager::GetSingleton()->SetMultiplayer(false);
+					ResourceManager::GetSingleton()->SetServer(true);
+				}
 			}
 		}
-	}
 
-	//cout << team << endl;
+		//cout << team << endl;
 
-	//update current scene
-	scenes[currentScene]->Update(dt);
+		//update current scene
+		scenes[currentScene]->Update(dt);
 
-	//render audio
-	if (clientID == 0)
-	{
-		clientID = 1;
-	}
+		//render audio
+		if (clientID == 0)
+		{
+			clientID = 1;
+		}
 
-	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-	vector<XMFLOAT3> objectsPos, forwards;
-	objectsPos.resize(objects->size());
-	forwards.resize(objects->size());
+		vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+		vector<XMFLOAT3> objectsPos, forwards;
+		objectsPos.resize(objects->size());
+		forwards.resize(objects->size());
 
-	for (int i = 0; i < objects->size(); ++i)
-	{
-		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+		for (int i = 0; i < objects->size(); ++i)
+		{
+			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-	}
+			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+		}
 
-	int index = (clientID - 1) * 3 + 2;
+		int index = (clientID - 1) * 3 + 2;
 
-	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
-	soundEngine->UpdatePositions(objectsPos, forwards);
-	soundEngine->ProcessAudio();
-	
-	return returnResult;
+		soundEngine->UpdateListener(objectsPos[index], forwards[index]);
+		soundEngine->UpdatePositions(objectsPos, forwards);
+		soundEngine->ProcessAudio();
+
+		return returnResult;
 }
 
 void Game::FixedUpdate(float dt)
@@ -412,7 +412,7 @@ void Game::HandleEvent(Event* e)
 		if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
 		{
 			server.setScores(Team1Score, Team2Score);
-		//	server.sendGameState();
+			//	server.sendGameState();
 		}
 		UpdateScoreUI();
 
@@ -881,7 +881,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	objIDs[8] = (UINT8)basic->GetNumObjects();
 	goal->Init("RedGoal");
 	basic->AddGameObject(goal);
-	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z + 0.75f}, { 0,0,0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z + 0.75f }, { 0,0,0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
@@ -947,7 +947,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
-	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor,resourceManager->collisionMeshes[0]);
+	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, resourceManager->collisionMeshes[0]);
 	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
@@ -975,7 +975,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* powerUp = new GameObject();
 	powerUp->Init("PowerUp");
 	basic->AddGameObject(powerUp);
-	powerUp->InitTransform(identity, {5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1}, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
 	Renderer* powerUpRenderer = new Renderer();
 	powerUp->AddComponent(powerUpRenderer);
 	powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
@@ -1096,21 +1096,21 @@ void Game::CreateUI(Scene * basic)
 	//create game over menu
 
 
-	#ifdef DEBUG
-		GameObject * debugUI = new GameObject();
-		debugUI->Init("debugUI");
-		basic->AddUIObject(debugUI);
-		Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
-		theButton->SetGameObject(debugUI);
-		theButton->showFPS(true);
-		theButton->setPositionMultipliers(0.0f, 0.2f);
-		debugUI->AddComponent(theButton);
-		UIRenderer * buttonRender = new UIRenderer();
-		buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
-		debugUI->AddComponent(buttonRender);
-		theButton->MakeRect();
-		theButton->setOrigin();
-	#endif
+#ifdef DEBUG
+	GameObject * debugUI = new GameObject();
+	debugUI->Init("debugUI");
+	basic->AddUIObject(debugUI);
+	Button * theButton = new Button(true, true, L"Titans with Sticks", (unsigned int)strlen("Titans with Sticks"), 350.0f, 100.0f, devResources, 0);
+	theButton->SetGameObject(debugUI);
+	theButton->showFPS(true);
+	theButton->setPositionMultipliers(0.0f, 0.2f);
+	debugUI->AddComponent(theButton);
+	UIRenderer * buttonRender = new UIRenderer();
+	buttonRender->Init(true, 30.0f, devResources, theButton, L"Consolas", D2D1::ColorF::Black);
+	debugUI->AddComponent(buttonRender);
+	theButton->MakeRect();
+	theButton->setOrigin();
+#endif
 }
 
 void Game::CreateMenu(Scene * scene)
@@ -1304,29 +1304,27 @@ void Game::ResetPlayers()
 		}
 
 		//do camera lerp before set position for MoveTo logic
-		if (!player->GetComponent<AI>())
+
+		//reset camera
+		string cameraName = "Camera";
+		cameraName += to_string(i);
+		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
+
+		if (Team1Score > 0 || Team2Score > 0)
 		{
-			//reset camera
-			string cameraName = "Camera";
-			cameraName += to_string(i);
-			GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
+			Camera * cam = camera->GetComponent<Camera>();
+			float3 dest;
+			dest = positions[randIndex];
 
-			if (Team1Score > 0 || Team2Score > 0) 
-			{
-				Camera * cam = camera->GetComponent<Camera>();
-				float3 dest;
-				dest = positions[randIndex];
-				
-				//cam->SetDestination(dest);
-				//cam->StartLerp();
-				//cam->MoveTo(dest, 1.0f);
-			}
-
-			//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+			//cam->SetDestination(dest);
+			//cam->StartLerp();
+			//cam->MoveTo(dest, 1.0f);
 		}
 
-		//player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
-		//player->GetTransform()->LookAt({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
+		//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+
+	    //player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
+	    //player->GetTransform()->LookAt({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
 		player->GetTransform()->SetPosition(positions[randIndex]);
 		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 	}
@@ -1355,16 +1353,15 @@ void Game::ReceiveServerMessage()
 	//filter based on stride
 	switch (stride)
 	{
-		case sizeof(GamePad::State):
-		{
-			GamePadEvent* gamePadEvent = new GamePadEvent();
-			gamePadEvent->Init((GamePad::State*)message + 1, message[0]);
-			HandleEvent(gamePadEvent);
-			delete gamePadEvent;
-			break;
-		}
+	case sizeof(GamePad::State) :
+	{
+		GamePadEvent* gamePadEvent = new GamePadEvent();
+		gamePadEvent->Init((GamePad::State*)message + 1, message[0]);
+		HandleEvent(gamePadEvent);
+		delete gamePadEvent;
+		break;
+	}
 		//case sizeof(bool) :
-
 		//	break;
 	}
 
@@ -1676,7 +1673,7 @@ void Game::AssignPlayers()
 			// get teams of all players
 			// all others become ai
 
-			for (unsigned int i = 0; i < 8; ++i) 
+			for (unsigned int i = 0; i < 8; ++i)
 			{
 				string name;
 				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
@@ -1687,7 +1684,7 @@ void Game::AssignPlayers()
 					teamID = TEAM_B;
 				}
 
-				if (!server.isPlayer(i)) 
+				if (!server.isPlayer(i))
 				{
 					AI *mageAI = new AI(mage1);
 					mage1->AddComponent(mageAI);
@@ -1725,7 +1722,7 @@ void Game::AssignPlayers()
 			clientID = 5;
 
 		// find team player selected
-		for (unsigned int i = 0; i < 8; ++i) 
+		for (unsigned int i = 0; i < 8; ++i)
 		{
 			// set mage 1 to player if red team
 			if (team == TEAM_A && i != 0)
@@ -1740,7 +1737,7 @@ void Game::AssignPlayers()
 				player->SetTeamID(TEAM_A);
 			}
 			// set mage 5 to player if blue team
-			else if (team == TEAM_B && i!= 4)
+			else if (team == TEAM_B && i != 4)
 			{
 				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 				AI *mageAI = new AI(mage1);
@@ -1754,7 +1751,7 @@ void Game::AssignPlayers()
 			else
 			{
 				PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
-				player->ReadInStats("Tom"); 
+				player->ReadInStats("Tom");
 				player->SetTeamID(team);
 			}
 		}
@@ -1872,87 +1869,87 @@ void Game::UpdateClientObjects()
 
 	if (!ResourceManager::GetSingleton()->IsServer())
 	{
-		if (client.stateSize() > 0){
-		//remove children of every object
-		for (unsigned int i = 0; i < numobjs; ++i)
-		{
-			GameObject* gameObject = (*gameObjects)[i];
-			gameObject->GetTransform()->RemoveChildren();
-		}
-
-		for (unsigned int i = 0; i < numobjs; ++i)
-		{
-			//if (i != 0 && i != id)
-			//if (i != id)
+		if (client.stateSize() > 0) {
+			//remove children of every object
+			for (unsigned int i = 0; i < numobjs; ++i)
 			{
 				GameObject* gameObject = (*gameObjects)[i];
+				gameObject->GetTransform()->RemoveChildren();
+			}
 
-				if (gameObject->GetName() == "HexFloor")
+			for (unsigned int i = 0; i < numobjs; ++i)
+			{
+				//if (i != 0 && i != id)
+				//if (i != id)
 				{
-					FloorController * fC = gameObject->GetComponent<FloorController>();
-					//if (fC->GetState() != client.getFloorState(i))
-						fC->SetState(client.getDT());
-				}
+					GameObject* gameObject = (*gameObjects)[i];
 
-				if (gameObject->GetName() == "Countdown")
-				{
-					Countdown* countDown = gameObject->GetComponent<Countdown>();
-					countDown->CreateDeltaTime(client.getDT());
-				}
-
-				XMFLOAT3 position, rotation;
-				position = client.getLocation(i);
-				rotation = client.getRotation(i);
-
-				gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
-				gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
-
-				INT8 parentIndex = client.GetParentIndex(i);
-				if (parentIndex >= 0 && parentIndex <= gameObjects->size())
-				{
-					gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
-				}
-
-				INT8 animIndex = client.GetAnimationIndex(i);
-				INT8 transitionIndex = client.GetTransitionIndex(i);
-
-				if (animIndex >= 0)
-				{
-					AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
-
-					if (animator)
+					if (gameObject->GetName() == "HexFloor")
 					{
-						if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transitioning
+						FloorController * fC = gameObject->GetComponent<FloorController>();
+						//if (fC->GetState() != client.getFloorState(i))
+						fC->SetState(client.getDT());
+					}
+
+					if (gameObject->GetName() == "Countdown")
+					{
+						Countdown* countDown = gameObject->GetComponent<Countdown>();
+						countDown->CreateDeltaTime(client.getDT());
+					}
+
+					XMFLOAT3 position, rotation;
+					position = client.getLocation(i);
+					rotation = client.getRotation(i);
+
+					gameObject->GetTransform()->SetPosition({ position.x, position.y, position.z });
+					gameObject->GetTransform()->SetRotation({ rotation.x, rotation.y, rotation.z });
+
+					INT8 parentIndex = client.GetParentIndex(i);
+					if (parentIndex >= 0 && parentIndex <= gameObjects->size())
+					{
+						gameObject->GetTransform()->SetParent((*gameObjects)[parentIndex]->GetTransform());
+					}
+
+					INT8 animIndex = client.GetAnimationIndex(i);
+					INT8 transitionIndex = client.GetTransitionIndex(i);
+
+					if (animIndex >= 0)
+					{
+						AnimatorController* animator = gameObject->GetComponent<AnimatorController>();
+
+						if (animator)
 						{
-							//cout << to_string(animIndex) << endl;
-
-							if (animIndex == 2)
+							if (animator->GetNextStateIndex() != animIndex) //only transition if it's not already transitioning
 							{
-								//cout << "Client received stumble index" << endl;
-							}
+								//cout << to_string(animIndex) << endl;
 
-							animator->TransitionTo(animIndex, transitionIndex);
+								if (animIndex == 2)
+								{
+									//cout << "Client received stumble index" << endl;
+								}
+
+								animator->TransitionTo(animIndex, transitionIndex);
+							}
 						}
 					}
+
+					bool hasSound = client.HasSound(i);
+
+					if (hasSound)
+					{
+						INT32 soundID = client.GetSoundID(i);
+						soundEngine->PostEvent(soundID, i);
+
+						gameStates[i]->soundID = -1;
+						gameStates[i]->hasSound = false;
+
+						//cout << "play sound" << endl;
+					}
+					Crosse* crosse = gameObject->GetComponent<Crosse>();
+					if (crosse)
+						crosse->SetColor(client.hasBall(i));
 				}
-
-				bool hasSound = client.HasSound(i);
-
-				if (hasSound)
-				{
-					INT32 soundID = client.GetSoundID(i);
-					soundEngine->PostEvent(soundID, i);
-
-					gameStates[i]->soundID = -1;
-					gameStates[i]->hasSound = false;
-
-					//cout << "play sound" << endl;
-				}
-				Crosse* crosse = gameObject->GetComponent<Crosse>();
-				if (crosse)
-					crosse->SetColor(client.hasBall(i));
 			}
-		}
 		}
 	}
 
@@ -2038,20 +2035,20 @@ int Game::UpdateLobby()
 		{
 			int serverState = server.run();
 		}
-	//	else {
-			//run client
-			int clientState = client.run();
-			currentScene = client.getScene();
+		//	else {
+				//run client
+		int clientState = client.run();
+		currentScene = client.getScene();
 
-			if (clientState == 5)
-				UpdateLobbyUI(client.getNumClients());
-			else if (clientState == 6)
-				LoadScene("FirstLevel");
-			else if (clientState == 7)
-			{
-				objID = client.getObjID();
-				clientID = client.getID();
-			}
+		if (clientState == 5)
+			UpdateLobbyUI(client.getNumClients());
+		else if (clientState == 6)
+			LoadScene("FirstLevel");
+		else if (clientState == 7)
+		{
+			objID = client.getObjID();
+			clientID = client.getID();
+		}
 
 		return clientState;
 		//}
@@ -2138,7 +2135,7 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		nButton->SetActive(toggle);
 	}
 
-	if (scoreboard) 
+	if (scoreboard)
 	{
 		GameObject * scoreBoard = scenes[2]->GetUIByName("Scoreboard");
 		Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
