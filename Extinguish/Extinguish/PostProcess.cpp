@@ -299,13 +299,6 @@ void PostProcess::Clear()
 
 void PostProcess::ResizeWindow(uint16_t w, uint16_t h)
 {
-	VS_BLUR_PARAMETERS blurData;
-	blurData.SetBlurEffectParameters(1.f / (w / 2), 0, g_BloomPresets[g_Bloom]);
-	deviceContext->UpdateSubresource(m_blurParamsWidth.Get(), 0, nullptr, &blurData, sizeof(VS_BLUR_PARAMETERS), 0);
-
-	blurData.SetBlurEffectParameters(0, 1.f / (h / 2), g_BloomPresets[g_Bloom]);
-	deviceContext->UpdateSubresource(m_blurParamsHeight.Get(), 0, nullptr, &blurData, sizeof(VS_BLUR_PARAMETERS), 0);
-
 	// Obtain the backbuffer for this window which will be the final 3D rendertarget.
 	devRes->GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), &m_backBuffer);
 
@@ -345,10 +338,10 @@ void PostProcess::Release()
 {
 	m_backBuffer.Get()->Release();
 	m_sceneTex.Get()->Release();
-	m_rt2RT.Get()->Release();
-	m_rt2SRV.Get()->Release();
-	m_sceneRT.Get()->Release();
-	m_sceneSRV.Get()->Release();
-	m_rt1SRV.Get()->Release();
-	m_rt1RT.Get()->Release();
+	m_rt2RT.Reset();
+	//m_rt2SRV.Reset();
+	m_sceneRT.Reset();
+	//m_sceneSRV.Reset();
+	//m_rt1SRV.Reset();
+	m_rt1RT.Reset();
 }
