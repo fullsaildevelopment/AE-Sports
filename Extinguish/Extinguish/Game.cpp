@@ -1322,10 +1322,10 @@ void Game::ResetPlayers()
 			//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
 
-		//player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
-		//player->GetTransform()->LookAt({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
-		player->GetTransform()->SetPosition(positions[randIndex]);
-		player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
+		player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
+		player->GetTransform()->RotateTo({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
+		//player->GetTransform()->SetPosition(positions[randIndex]);
+		//player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 	}
 }
 
