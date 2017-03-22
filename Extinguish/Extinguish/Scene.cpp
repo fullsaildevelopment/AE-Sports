@@ -453,7 +453,7 @@ void Scene::Update(float _dt)
 
 			if (gameObjects[i]->GetName() == "Mage1")
 			{
-				cout << transform->GetPosition().x << transform->GetPosition().y << transform->GetPosition().z << endl;
+				cout << transform->GetRotationDeg().x << " " << transform->GetRotationDeg().y << " " << transform->GetRotationDeg().z << endl;
 			}
 
 			if (transform)

@@ -1308,20 +1308,21 @@ void Game::ResetPlayers()
 			cameraName += to_string(i);
 			GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-			if (Team1Score > 0 || Team2Score > 0) 
-			{
-				Camera * cam = camera->GetComponent<Camera>();
-				float3 dest;
-				dest = positions[randIndex];
-				
-				//cam->SetDestination(dest);
-				//cam->StartLerp();
-				//cam->MoveTo(dest, 1.0f);
-			}
+			//if (Team1Score > 0 || Team2Score > 0) 
+			//{
+			//	Camera * cam = camera->GetComponent<Camera>();
+			//	float3 dest;
+			//	dest = positions[randIndex];
+			//	
+			//	//cam->SetDestination(dest);
+			//	//cam->StartLerp();
+			//	//cam->MoveTo(dest, 1.0f);
+			//}
 
-			//camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
 
+		//player->GetTransform()->LookAt({ -20.0f, 15.0f, 1.8f }, 1.0f);
 		player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
 		player->GetTransform()->RotateTo({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
 		//player->GetTransform()->SetPosition(positions[randIndex]);
