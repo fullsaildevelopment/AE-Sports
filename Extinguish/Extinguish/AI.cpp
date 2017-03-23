@@ -390,7 +390,7 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-		
+
 #pragma region Goalie2
 		else if (currState == playboy)
 		{
@@ -406,7 +406,7 @@ void AI::Update(float _dt)
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 				Score();
 
-			 //if the enemy team has the ball, attack their tank
+			//if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
 				Attack(eTank);
 
@@ -428,7 +428,7 @@ void AI::Update(float _dt)
 		}
 
 #pragma endregion
-		
+
 #pragma region Guy
 		else if (currState == guy)
 		{
@@ -495,14 +495,14 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-		
+
 		if (timer <= 0)
 		{
 			timer = 5.0f;
 			startTimer = false;
 		}
 	}
-
+}
 
 void AI::Idle()
 {
