@@ -312,6 +312,7 @@ void UIRenderer::DecodeBitmap(PCWSTR address)
 	//delete pConvertedSource;
 }
 
+// use with resize
 void UIRenderer::MakeRTSize()
 {
 	D2D1_SIZE_F rtSize = d2DevContext->GetSize();

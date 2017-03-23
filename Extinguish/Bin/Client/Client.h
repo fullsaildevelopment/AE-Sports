@@ -72,7 +72,7 @@ public:
 		float time;
 		float _dt;
 		bool sprintA = false;
-		bool sprintD = false;
+		bool sprintD = true;
 		bool empty = false;
 		bool down = false;
 		UINT8 score = 0;
