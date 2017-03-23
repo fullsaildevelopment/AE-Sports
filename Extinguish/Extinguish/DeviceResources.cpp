@@ -200,6 +200,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	{
 		pRT.Get()->Release();
 		p2DDeviceContext->SetTarget(nullptr);
+		
 	}
 
 	deviceContext->Flush();
@@ -207,17 +208,17 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 	HRESULT res;
 	res = swapChain->ResizeBuffers(2, w, h, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
 
-	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf());
 
 	if (!DEBUG_GRAPHICS)
 	{
-	Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
-	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);
-	Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
-	res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
-	res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
-	p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
+		Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
+		Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
+		D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);
+		Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
+		res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
+		res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
+		p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
 	}
 
 	CD3D11_TEXTURE2D_DESC dsDesc(DXGI_FORMAT_D24_UNORM_S8_UINT, lround((float)CLIENT_WIDTH), lround((float)CLIENT_HEIGHT), 1, 1, D3D11_BIND_DEPTH_STENCIL);
@@ -228,6 +229,8 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h)
 
 	device->CreateRenderTargetView(swapChainBuffer.Get(), nullptr, renderTargetView.GetAddressOf());
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+
+	
 }
 
 void DeviceResources::Clear()

@@ -454,7 +454,8 @@ void Client::receiveGameState()
 			bIn.Read(gameState[0][0].sprintD);
 			bIn.Read(gameState[0][0].down);
 		}
-		else {
+		else 
+		{
 			bool temp, temp2;
 			bIn.Read(temp);
 			bIn.Read(temp2);
