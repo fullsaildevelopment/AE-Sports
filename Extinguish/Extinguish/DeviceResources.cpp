@@ -228,6 +228,8 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 		p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
 		LoadButtonResources(windowHandle);
 	}
+
+	
 }
 
 void DeviceResources::Clear()
