@@ -60,6 +60,12 @@ private:
 	float* gameTime;
 	float endTimer;
 
+	bool justScored;
+	float scorerTimer;
+
+	//const members
+	const float timeTilScorerDisappear = 0.75f;
+
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
 	void ReceiveServerMessage();
