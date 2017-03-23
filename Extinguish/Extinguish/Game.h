@@ -34,6 +34,11 @@ public:
 		TEAM_B = 4
 	};
 
+	enum MessageId
+	{
+		SCORERNAME = 69,
+	};
+
 	static ClientWrapper client;
 	static ServerWrapper server;
 	static unsigned int currentScene;
@@ -69,6 +74,7 @@ private:
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
 	void ReceiveServerMessage();
+	void ReceiveClientMessage();
 	void ResetPlayers();
 	void ResetBall();
 	void ResetCountdown();

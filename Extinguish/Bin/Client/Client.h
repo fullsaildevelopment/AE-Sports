@@ -129,6 +129,9 @@ private:
 	bool disconnect = false;
 	UINT8 clientID;
 //	char clientName[8];
+
+	char* message;
+	uint16_t messageID, stride;
 public:
 
 #pragma pack(push, 1)
@@ -161,6 +164,9 @@ public:
 	void sendPacket();
 	void changeTeam(UINT16 team);
 	void sendEmpty(bool empty);
+
+	//receive functions
+	void ReceiveMessage();
 
 	// setters
 	void setLocation(XMFLOAT3 loc) { myState[0][0].position = loc; }
@@ -210,6 +216,9 @@ public:
 	int stateSize() { return (int)clientStates[0].size(); }
 	float getDT() { return gameState[0][0]._dt; }
 	bool getCountdown() { return gameState[0][0].countdown; }
+	char* getMessage() { return message; }
+	uint16_t GetMessageID() { return messageID; }
+	uint16_t GetStride() { return stride; }
 
 private:
 	bool gameStart = false;
