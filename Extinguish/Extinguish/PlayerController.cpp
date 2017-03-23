@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "PlayerController.h"
 #include "Camera.h"
 #include "EventDispatcher.h"
@@ -18,7 +19,8 @@
 #include "GamePad.h"
 #include "Game.h"
 #include "GamePadEvent.h"
-#include <fstream>
+#include "AI.h"
+#include "Trigger.h"
 
 using namespace std;
 
@@ -72,6 +74,46 @@ void PlayerController::Update(float _dt)
 	if (!movement->IsMoving() && footstepsPlayed)
 	{
 		StopFootstepsSound();
+	}
+
+	//allow ogPlayer to move again if stumble is done
+	if (ogPlayer)
+	{
+		AnimatorController* animator = ogPlayer->GetComponent<AnimatorController>();
+
+		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
+		{
+			State* nextState = animator->GetState(animator->GetNextStateIndex());
+			bool setCanMove = false;
+
+			if (nextState)
+			{
+				if (nextState->GetName() != "Stumble")
+				{
+					setCanMove = true;
+				}
+			}
+			else
+			{
+				setCanMove = true;
+			}
+
+			if (setCanMove)
+			{
+				Movement* movement = ogPlayer->GetComponent<Movement>();
+
+				if (movement)
+				{
+					movement->SetCanMove(true);
+				}
+				else
+				{
+					ogPlayer->GetComponent<AI>()->SetCanMove(true);
+				}
+
+				ogPlayer = nullptr;
+			}
+		}
 	}
 }
 
@@ -445,6 +487,18 @@ void PlayerController::Attack()
 
 			//drain stamina bar
 			meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
+
+			ogPlayer = otherPlayer;
+			Movement* movement = otherPlayer->GetComponent<Movement>();
+
+			if (movement)
+			{
+				movement->SetCanMove(false);
+			}
+			else
+			{
+				otherPlayer->GetComponent<AI>()->SetCanMove(false);
+			}
 		}
 	}
 }
