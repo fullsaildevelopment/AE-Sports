@@ -61,7 +61,6 @@ void AI::OnCollisionEnter(Collider *obj)
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
-				hitTarget = true;
 			}
 		}
 	}
@@ -241,48 +240,47 @@ void AI::Update(float _dt)
 {
 	if (!ResourceManager::GetSingleton()->IsPaused())
 	{
-		//if (hitTarget)
-		//{
-		//	AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
-		//	if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex()) != nullptr && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
-		//	{
-		//		if (ogTarget->GetComponent<AI>())
-		//			ogTarget->GetComponent<AI>()->SetCanMove(true);
+		/*if (hitTarget)
+		{
+			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex()) != nullptr && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
+			{
+				if (ogTarget->GetComponent<AI>())
+					ogTarget->GetComponent<AI>()->SetCanMove(true);
 
-		//		else
-		//			ogTarget->GetComponent<Movement>()->SetCanMove(true);
+				else
+					ogTarget->GetComponent<Movement>()->SetCanMove(true);
 
-		//		hitTarget = false;
-		//		ogTarget = nullptr;
-		//	}
-		//}
+				hitTarget = false;
+				ogTarget = nullptr;
+			}
+		}*/
 
 		if (ogTarget)
 		{
 			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
 
+			// if your current anim isn't stumble AND ???the the trigger isn't stumble???
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
 			{
 				bool setCanMove = false;
 
+				// if you have an anim queued
 				if (animator->GetState(animator->GetNextStateIndex()))
 				{
+					// and it's not stumble
 					if (animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
-					{
 						setCanMove = true;
-					}
 				}
+
 				else
-				{
 					setCanMove = true;
-				}
 
 				if (setCanMove)
 				{
 					Movement* movement = ogTarget->GetComponent<Movement>();
 
 					if (movement)
-					{
 						movement->SetCanMove(true);
 
 						//move the player's camera to match stumble
@@ -295,19 +293,14 @@ void AI::Update(float _dt)
 						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
 					else
-					{
 						ogTarget->GetComponent<AI>()->SetCanMove(true);
-					}
 
 					ogTarget = nullptr;
 				}
 			}
 		}
 
-		if (!canMove) 
-		{
-			Idle();
-		}
+		if (!canMove) Idle();
 		if (!isAttacking) realTarget = nullptr;
 		if (startTimer) timer -= _dt;
 
@@ -733,7 +726,7 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	Paranoia();
+	//Paranoia();
 
 	if (RunTo(enemyGoal, 28.0f))
 	{

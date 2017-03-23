@@ -572,7 +572,7 @@ void Server::sendState()
 	}
 
 
-	peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+	peer->Send(&bOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }
 
 void Server::sendMessage(char * message, uint16_t stride, uint16_t messageID)

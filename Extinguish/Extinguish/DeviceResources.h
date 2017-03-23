@@ -34,6 +34,7 @@ private:
 	//Microsoft::WRL::ComPtr<HWND> drawWindow;
 
 	D2D1_RECT_F layoutRect;
+	HWND windowHandle;
 	
 public:
 	void Init(HWND hwnd);
@@ -41,7 +42,7 @@ public:
 	void Clear();
 	void Shutdown();
 
-	void ResizeWindow(uint16_t w, uint16_t h);
+	void ResizeWindow(uint16_t w, uint16_t h, bool fullScreen);
 
 	void LoadButtonResources(HWND hwnd_);
 	//Getters
@@ -57,11 +58,7 @@ public:
 	//ID3D11DepthStencilView* GetShadowMapDSV() const { return shadowMapDSV.Get(); }
 	ID3D11RenderTargetView* GetRenderTargetView() const { return renderTargetView.Get(); }
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetRenderTargetViewComPtr() { return renderTargetView; }
-	//ID3D11RenderTargetView* GetShadowMapRTV() const { return shadowMapRTV.Get(); }
-	//ID3D11RenderTargetView* const * GetShadowMapRTVAddress() const { return shadowMapRTV.GetAddressOf(); }
 	ID3D11RenderTargetView* const * GetRenderTargetViewAddress() const { return renderTargetView.GetAddressOf(); }
-	//ID3D11ShaderResourceView* GetShadowMapSRV() const { return shadowMapSRV.Get(); }
-	//ID3D11ShaderResourceView* const * GetShadowMapSRVAddress() const { return shadowMapSRV.GetAddressOf(); }
 	ID3D11Buffer* GetMVPConstantBuffer() { return mvpConstantBuffer.Get(); }
 	ID3D11Buffer* GetBoneOffsetConstantBuffer() { return boneOffsetConstantBuffer.Get(); }
 	D3D11_VIEWPORT GetViewport() const { return viewPort; }
