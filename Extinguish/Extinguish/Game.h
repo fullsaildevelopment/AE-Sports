@@ -34,6 +34,11 @@ public:
 		TEAM_B = 4
 	};
 
+	enum MessageId
+	{
+		SCORERNAME = 69,
+	};
+
 	static ClientWrapper client;
 	static ServerWrapper server;
 	static unsigned int currentScene;
@@ -60,9 +65,16 @@ private:
 	float* gameTime;
 	float endTimer;
 
+	bool justScored;
+	float scorerTimer;
+
+	//const members
+	const float timeTilScorerDisappear = 0.75f;
+
 	//private helper functions
 	void CreateScenes(InputManager* inputManager);
 	void ReceiveServerMessage();
+	void ReceiveClientMessage();
 	void ResetPlayers();
 	void ResetBall();
 	void ResetCountdown();

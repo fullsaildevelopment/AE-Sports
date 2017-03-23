@@ -118,6 +118,10 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 	soundEngine->InitSoundEngine(ids, names);
 
 	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_BACKBOARD_BOUNCE_SONG, 1);
+
+
+	justScored = false;
+	scorerTimer = 0.0f;
 }
 
 void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
@@ -293,6 +297,11 @@ int Game::Update(float dt)
 					returnResult = 0;
 				}
 
+				if (clientState == 69)
+				{
+					ReceiveClientMessage();
+				}
+
 				// if client gets server's game states, get the state's location from the client
 				// so that it can be included in update
 				if ((clientState == 2 || clientState == 4) && client.getID() > 0)
@@ -329,7 +338,20 @@ int Game::Update(float dt)
 			}
 		}
 
-		//cout << team << endl;
+		//handle scorer HUD
+		if (justScored)
+		{
+			scorerTimer += dt;
+
+			if (scorerTimer >= 1.0f)
+			{
+				//disable scorer text
+				Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+				scorerButton->SetActive(false);
+
+				justScored = false;
+			}
+		}
 
 		//update current scene
 		scenes[currentScene]->Update(dt);
@@ -452,6 +474,23 @@ void Game::HandleEvent(Event* e)
 		}
 		UpdateScoreUI();
 
+		//display scorer text
+		Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+	
+		wstring name(SEvent->GetPlayerName().size(), L' ');
+		copy(SEvent->GetPlayerName().begin(), SEvent->GetPlayerName().end(), name.begin());
+
+		scorerButton->setText(name + L"\nscored!");
+		scorerButton->MakeRect();
+		scorerButton->setOrigin();
+		scorerButton->SetActive(true);
+
+		//send scorer name to client
+		//server.sendMessage(&SEvent->GetPlayerName()[0], SEvent->GetPlayerName().size(), MessageId::SCORERNAME);
+
+		justScored = true;
+		scorerTimer = 0.0f;
+
 		//Reset Game
 		if (ResourceManager::GetSingleton()->IsServer())
 		{
@@ -532,22 +571,6 @@ void Game::HandleEvent(Event* e)
 
 		return;
 	}
-
-	//CanPlayEvent* playEvent = dynamic_cast<CanPlayEvent*>(e);
-
-	//if (playEvent)
-	//{
-	//	if (ResourceManager::GetSingleton()->IsServer())
-	//	{
-	//		EventDispatcher::GetSingleton()->DispatchExcept(playEvent, "Game"); //this way it doesn't create an infinite loop... and it does this without any booleans and such
-	//	}
-	//	else //client needs to send canPlay bool to sesrver
-	//	{
-	//		client.sendMessage((char*)playEvent->CanPlay(), sizeof(bool) + 1); // plus one for the header (size of message)
-	//	}
-
-	//	return;
-	//}
 }
 
 //getters//
@@ -1413,6 +1436,31 @@ void Game::ReceiveServerMessage()
 
 }
 
+void Game::ReceiveClientMessage()
+{
+	char* message = client.getMessage();
+	uint16_t messageID = client.GetMessageID();
+	uint16_t stride = client.GetStride();
+
+	//filter based on stride
+	switch (messageID)
+	{
+		case MessageId::SCORERNAME:
+		{
+			std::string name;
+			name.resize(stride);
+			memcpy(&name[0], message, stride);
+
+			ScoreEvent* score = new ScoreEvent();
+			score->SetPlayerName(name);
+			score->SetTeam(69);
+			HandleEvent(score);
+			delete score;
+			break;
+		}
+	}
+}
+
 void Game::CreateLobby(Scene * scene)
 {
 	// background
@@ -1601,6 +1649,25 @@ void Game::CreatePauseMenu(Scene * scene)
 	wRender->InitMetrics();
 	wButton->SetActive(false);
 
+	// winner
+	GameObject* scorer = new GameObject();
+	scorer->Init("Scorer");
+	scene->AddUIObject(scorer);
+	Button * sButton = new Button(true, true, L"*blank* Scored!", (unsigned int)strlen("*blank* Scored!"), 500.0f, 500.0f, devResources, 0);
+	sButton->setSceneIndex((unsigned int)scenes.size() - 1);
+	sButton->SetGameObject(scorer);
+	sButton->showFPS(false);
+	sButton->setPositionMultipliers(0.5f, 0.5f);
+	scorer->AddComponent(sButton);
+	UIRenderer * sRenderer = new UIRenderer();
+	sRenderer->Init(true, 80.0f, devResources, sButton, L"Sans-Serif", D2D1::ColorF(0.9f, 0.9f, 0.9f, 1.0f));
+	sRenderer->setAlignment(DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	scorer->AddComponent(sRenderer);
+	sRenderer->MakeRTSize();
+	sButton->MakeRect();
+	sButton->setOrigin();
+	sRenderer->InitMetrics();
+	sButton->SetActive(false);
 
 	// for new game button on end game
 	Button * nButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 10);
