@@ -64,8 +64,8 @@ void PlayerController::Update(float _dt)
 	this->_dt = _dt;
 	//chargeTimer += _dt;
 	//sprintAgainTimer += dt;
-
-	HandleSprintAndCharge();
+	if (!DEBUG_GRAPHICS)
+		HandleSprintAndCharge();
 
 	Movement* movement = GetGameObject()->GetComponent<Movement>();
 
@@ -208,9 +208,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
 		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 		{
-
 			otherPlayer = capsCollider->GetGameObject();
-
 			//Attack();
 
 			return;
@@ -592,6 +590,7 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 //sprinting isn't necessarily charging but charging is sprinting
 void PlayerController::HandleSprintAndCharge()
 {
+
 	float speedMultiplier;
 	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
 

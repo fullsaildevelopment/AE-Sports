@@ -426,8 +426,8 @@ void Scene::Update(float _dt)
 	//Renderer* renderer = gameObjects[gameObjects.size() - 1]->GetComponent<Renderer>();
 	//ID2D1HwndRenderTarget * pRT = renderer->GetPRT();
 
-	
-	ImGui_ImplDX11_NewFrame();
+	if (!DEBUG_GRAPHICS)
+		ImGui_ImplDX11_NewFrame();
 
 	for (int i = 0; i < gameObjects.size(); ++i)
 	{
@@ -571,14 +571,15 @@ void Scene::Update(float _dt)
 	//	Button * scoreButton = scoreUpdate->GetComponent<Button>();
 	//	wstring score = to_wstring(redScore) + L" : " + to_wstring(blueScore);
 	//}
+	if (!DEBUG_GRAPHICS) {
+		for (unsigned int i = 0; i < uiObjects.size(); ++i)
+		{
+			uiObjects[i]->Update(_dt);
+			uiObjects[i]->GetComponent<UIRenderer>()->Render();
+		}
 
-	for (unsigned int i = 0; i < uiObjects.size(); ++i)
-	{
-		uiObjects[i]->Update(_dt);
-		uiObjects[i]->GetComponent<UIRenderer>()->Render();
+		ImGui::EndFrame();
 	}
-
-	ImGui::EndFrame();
 }
 
 void Scene::FixedUpdate(float _dt)
