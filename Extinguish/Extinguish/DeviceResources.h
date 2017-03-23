@@ -42,7 +42,7 @@ public:
 	void Clear();
 	void Shutdown();
 
-	void ResizeWindow(uint16_t w, uint16_t h);
+	void ResizeWindow(uint16_t w, uint16_t h, bool fullScreen);
 
 	void LoadButtonResources(HWND hwnd_);
 	//Getters
