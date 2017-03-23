@@ -8,4 +8,5 @@ class WindowResizeEvent : public Event
 public:
 	uint16_t h;
 	uint16_t w;
+	bool fullScreen;
 };
