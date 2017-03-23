@@ -150,6 +150,8 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		vector<GameObject*> go = *scenes[i]->GetGameObjects();
 		vector<GameObject*> uiGO = *scenes[i]->GetUIObjects();
 		Button* B;
+		MeterBar* M;
+		UIRenderer* UI;
 
 		Renderer* R;
 		int size = (int)go.size();
@@ -166,11 +168,23 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		for (int j = 0; j < UIsize; ++j)
 		{
 			B = uiGO[j]->GetComponent<Button>();
+			M = uiGO[j]->GetComponent<MeterBar>();
+			UI = uiGO[j]->GetComponent<UIRenderer>();
 			if (B)
 			{
 				B->setRT(rect);
 				B->MakeRect();
 				B->setOrigin();
+			}
+			if (M)
+			{
+				M->setRT(rect);
+				//M->MakeRect();
+				M->MakeRects();
+			}
+			if (UI)
+			{
+				UI->ReInit();
 			}
 		}
 	}
