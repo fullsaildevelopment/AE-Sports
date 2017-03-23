@@ -48,6 +48,7 @@ void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, fl
 
 	moveTotalTime = -1;
 	lookTotalTime = -1;
+	rotateTotalTime = -1;
 }
 
 void Transform::Reset()
@@ -175,10 +176,7 @@ void Transform::FixedUpdate(float _dt)
 
 	lookCurTime += _dt;
 	moveCurTime += _dt;
-
-	//if (lerp)
-	//	LerpCamera(_dt);
-	//this->input = input;
+	rotateCurTime += _dt;
 
 	if (moveTotalTime != -1)
 	{
@@ -189,17 +187,39 @@ void Transform::FixedUpdate(float _dt)
 	{
 		Look();
 	}
+
+	if (rotateTotalTime != -1)
+	{
+		Rotate();
+	}
 }
 
-void Transform::LookAt(float3 rot, float totalTime)
+void Transform::LookAt(float3 pos, float totalTime)
 {
-	lookRotation = rot;
+	lookPosition = pos;
 	lookTotalTime = totalTime;
 	lookCurTime = 0.0f;
+
+	//store position for lerp
+	originalLookPosition = GetPosition();
+
+	//store forward
+	originalForward = GetForwardf3();
+
+	//rotation needed
+	originalLookRotation = GetRotation();
+}
+
+void Transform::RotateTo(float3 rotation, float totalTime)
+{
+	rotateRotation = rotation;
+	rotateTotalTime = totalTime;
+	rotateCurTime = 0.0f;
 
 	//store rotation for lerp
 	originalRotation = GetRotation();
 }
+
 
 void Transform::MoveTo(float3 pos, float totalTime)
 {
@@ -478,14 +498,38 @@ void Transform::Look()
 	{
 		float3 newRotation;
 
-		newRotation.x = (lookRotation.x - originalRotation.x) * ratio + originalRotation.x;
-		newRotation.y = (lookRotation.y - originalRotation.y) * ratio + originalRotation.y;
-		newRotation.z = (lookRotation.z - originalRotation.z) * ratio + originalRotation.z;
+		float3 newDirection = lookPosition - originalLookPosition;
+		newDirection.normalize();
 
-		SetPosition(newRotation);
+		float radian = acos(dot_product(newDirection, originalForward));
+		float3 axis;
+		cross_product(axis, newDirection, originalForward);
+		axis.normalize();
+
+		SetRotation({ axis.x * radian * ratio + originalLookRotation.x, -axis.y * radian * ratio + originalLookRotation.y, axis.z * radian * ratio + originalLookRotation.z });
 	}
 	else
 	{
-		lookTotalTime = -1; //no more moving
+		lookTotalTime = -1; //no more looking
+	}
+}
+
+void Transform::Rotate()
+{
+	float ratio = rotateCurTime / rotateTotalTime;
+
+	if (ratio <= 1.0f)
+	{
+		float3 newRotation;
+
+		newRotation.x = (rotateRotation.x - originalRotation.x) * ratio + originalRotation.x;
+		newRotation.y = (rotateRotation.y - originalRotation.y) * ratio + originalRotation.y;
+		newRotation.z = (rotateRotation.z - originalRotation.z) * ratio + originalRotation.z;
+
+		SetRotation(newRotation);
+	}
+	else
+	{
+		rotateTotalTime = -1; //no more looking
 	}
 }
