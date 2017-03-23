@@ -550,6 +550,7 @@ void Server::sendState()
 	bOut.Write((MessageID)ID_INCOMING_STATE);
 	bOut.Write(gameState[0][0].scene);
 	bOut.Write(gameState[0][0].paused);
+	bOut.Write(gameState[0][0].countdown);
 	bOut.Write(gameState[0][0].scoreA);
 	bOut.Write(gameState[0][0].scoreB);
 	bOut.Write(gameState[0][0].time);
