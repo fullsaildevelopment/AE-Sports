@@ -1,8 +1,6 @@
 #pragma once
 #include "Includes.h"
 
-#define GRAPHICS_DEBUG 0
-
 class DeviceResources
 {
 private:
