@@ -54,11 +54,11 @@ void DeviceResources::Init(HWND hwnd)
 
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
 
-	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 	HRESULT res;
 
 	if (!DEBUG_GRAPHICS) 
 	{
+		Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 		res = device.As(&dxgiDevice);
 
 		// res = device.Get()->QueryInterface(__uuidof(IDXGIDevice), (void**)dxgiDevice.GetAddressOf());
@@ -143,14 +143,17 @@ void DeviceResources::Init(HWND hwnd)
 	HRESULT boneOffsetResult = device->CreateBuffer(&boneBufferDesc, NULL, boneOffsetConstantBuffer.GetAddressOf());
 	int temp = sizeof(BoneOffsetConstantBuffer);
 
-	if (!DEBUG_GRAPHICS) {
+	if (!DEBUG_GRAPHICS) 
+	{
 		LoadButtonResources(hwnd);
 		ImGui_ImplDX11_Init(hwnd, device.Get(), deviceContext.Get());
 	}
-
+#ifdef _DEBUG
 	device.As(&pDebug);
 
 	HRESULT dRes = pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+#endif // _DEBUG
+
 }
 
 void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
@@ -170,7 +173,8 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 	{
 		pRT.Get()->Release();
 		p2DDeviceContext->SetTarget(nullptr);
-		//p2DDeviceContext.Get()->Release();s
+		p2DDeviceContext.Get()->Release();
+		p2DDevice.Get()->Release();
 	}
 
 	deviceContext->Flush();
@@ -209,6 +213,10 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 
 	if (!DEBUG_GRAPHICS)
 	{
+		Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
+		res = device.As(&dxgiDevice);
+
+		res = D2D1CreateDevice(dxgiDevice.Get(), NULL, p2DDevice.GetAddressOf());
 		res = p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, p2DDeviceContext.GetAddressOf());
 
 		// create Direct2D target bitmap
@@ -221,9 +229,9 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 		// Direct2D needs the dxgi version of the back buffer
 		Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
 
-		res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
+		res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), (void**)dxgiBuffer.GetAddressOf());
 
-		res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
+		res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, d2dTargetBitmap.GetAddressOf());
 
 		p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
 		LoadButtonResources(windowHandle);
