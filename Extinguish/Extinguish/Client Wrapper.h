@@ -27,7 +27,7 @@ public:
 		return newClient.init(address, port);
 	}
 	void setIsServer() { isServer = true; }
-	int run() 
+	int run()
 	{
 		int result = newClient.run();
 		ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
@@ -53,23 +53,23 @@ public:
 	}
 	void sendInput(InputDownEvent* inputEvent)
 	{
-		
+
 		//Client::InputEventStruct * temp = new Client::InputEventStruct;
-		
+
 		//temp->up = 1;
 		//temp->down = 2;
 		//temp->left = 3;
 		//temp->right = 4;
 		InputManager* input = inputEvent->GetInput();
 
-		newClient.sendInput(input->GetKeyboard(), 
-			input->GetKeyboardDown(), 
-			input->GetKeyboardUp(), 
-			input->GetMouse(), 
-			input->GetMouseDown(), 
-			input->GetMouseUp(), 
-			input->GetMouseX(), 
-			input->GetMouseY(), 
+		newClient.sendInput(input->GetKeyboard(),
+			input->GetKeyboardDown(),
+			input->GetKeyboardUp(),
+			input->GetMouse(),
+			input->GetMouseDown(),
+			input->GetMouseUp(),
+			input->GetMouseX(),
+			input->GetMouseY(),
 			//inputEvent->GetID(), 
 			inputEvent->IsServer());
 		//delete temp;
@@ -118,6 +118,21 @@ public:
 	XMFLOAT3 getLocation(unsigned int index)
 	{
 		return newClient.getLocation(index);
+	}
+
+	char* getMessage()
+	{
+		return newClient.getMessage();
+	}
+
+	uint16_t GetMessageID()
+	{
+		return newClient.GetMessageID();
+	}
+
+	uint16_t GetStride()
+	{
+		return newClient.GetStride();
 	}
 
 	void setLocation(XMFLOAT3 loc)

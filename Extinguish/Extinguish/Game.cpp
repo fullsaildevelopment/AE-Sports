@@ -257,6 +257,11 @@ int Game::Update(float dt)
 					returnResult = 0;
 				}
 
+				if (clientState == 69)
+				{
+					ReceiveClientMessage();
+				}
+
 				// if client gets server's game states, get the state's location from the client
 				// so that it can be included in update
 				if ((clientState == 2 || clientState == 4) && client.getID() > 0)
@@ -439,6 +444,9 @@ void Game::HandleEvent(Event* e)
 		scorerButton->MakeRect();
 		scorerButton->setOrigin();
 		scorerButton->SetActive(true);
+
+		//send scorer name to client
+		//server.sendMessage(&SEvent->GetPlayerName()[0], SEvent->GetPlayerName().size(), MessageId::SCORERNAME);
 
 		justScored = true;
 		scorerTimer = 0.0f;
@@ -1384,6 +1392,31 @@ void Game::ReceiveServerMessage()
 		//	break;
 	}
 
+}
+
+void Game::ReceiveClientMessage()
+{
+	char* message = client.getMessage();
+	uint16_t messageID = client.GetMessageID();
+	uint16_t stride = client.GetStride();
+
+	//filter based on stride
+	switch (messageID)
+	{
+		case MessageId::SCORERNAME:
+		{
+			std::string name;
+			name.resize(stride);
+			memcpy(&name[0], message, stride);
+
+			ScoreEvent* score = new ScoreEvent();
+			score->SetPlayerName(name);
+			score->SetTeam(69);
+			HandleEvent(score);
+			delete score;
+			break;
+		}
+	}
 }
 
 void Game::CreateLobby(Scene * scene)
