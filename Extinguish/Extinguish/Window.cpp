@@ -5,6 +5,8 @@
 
 static uint16_t windowWidth = 0;
 static uint16_t windowHeight = 0;
+static bool resizing = false;
+static bool fullScreen = false;
 
 //function prototype
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -23,6 +25,7 @@ int Window::Update(InputManager* input)
 	MSG msg;
 	bool handledMsg = true;
 
+	WindowResizeEvent wre;
 
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
@@ -30,13 +33,29 @@ int Window::Update(InputManager* input)
 		switch (msg.message)
 		{
 			case (WM_KEYDOWN):
+				if (msg.wParam == VK_F11)
+				{
+					fullScreen = !fullScreen;
+					if (fullScreen)
+					{
+						wre.w = 1920;
+						wre.h = 1080;
+					}
+					else
+					{
+						wre.w = 1000;
+						wre.h = 800;
+					}
+					wre.fullScreen = fullScreen;
+					EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
+				}
+				input->SetKeyboardKey((unsigned int)msg.wParam, true);
+				break;
+			case (WM_SYSKEYDOWN):
 				input->SetKeyboardKey((unsigned int)msg.wParam, true);
 				break;
 			case (WM_KEYUP):
 				input->SetKeyboardKey((unsigned int)msg.wParam, false);
-				break;
-			case (WM_SYSKEYDOWN):
-				input->SetKeyboardKey((unsigned int)msg.wParam, true);
 				break;
 			case (WM_SYSKEYUP):
 				input->SetKeyboardKey((unsigned int)msg.wParam, false);
@@ -138,6 +157,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 
 	//std::cout << "Proc";
 
+	WindowResizeEvent wre;
 	switch (message)
 	{
 	case WM_DESTROY:
@@ -147,12 +167,44 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_SIZE:
 		windowWidth = lParam;
 		windowHeight = lParam >> 16;
+		resizing = true;
+		if (wParam == SIZE_MAXIMIZED)
+		{
+			fullScreen = true;
+			wre.w = max(windowWidth, 100);
+			wre.h = max(windowHeight, 50);
+			wre.fullScreen = fullScreen;
+			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
+			resizing = false;
+		}
+		if (wParam == SIZE_MINIMIZED)
+		{
+			fullScreen = false;
+			wre.w = max(windowWidth, 100);
+			wre.h = max(windowHeight, 50);
+			wre.fullScreen = fullScreen;
+			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
+			resizing = false;
+		}
+		if (wParam == SIZE_RESTORED)
+		{
+			fullScreen = false;
+			wre.w = max(windowWidth, 100);
+			wre.h = max(windowHeight, 50);
+			wre.fullScreen = fullScreen;
+			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
+			resizing = false;
+		}
 		break;
 	case WM_EXITSIZEMOVE: //lParam holds Width and Height as first 16 bits = width and last are height
-		WindowResizeEvent wre;
-		wre.w = windowWidth;
-		wre.h = windowHeight;
-		EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
+		if (resizing)
+		{
+			wre.w = max(windowWidth, 100);
+			wre.h = max(windowHeight, 50);
+			wre.fullScreen = fullScreen;
+			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
+			resizing = false;
+		}
 		break;
 		//default:
 		//	DefWindowProc(hwnd, message, wParam, lParam);

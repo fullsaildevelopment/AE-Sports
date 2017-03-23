@@ -300,7 +300,7 @@ void PostProcess::Clear()
 void PostProcess::ResizeWindow(uint16_t w, uint16_t h)
 {
 	// Obtain the backbuffer for this window which will be the final 3D rendertarget.
-	devRes->GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), &m_backBuffer);
+	HRESULT res = devRes->GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)m_backBuffer.GetAddressOf());
 
 	// Create a view interface on the rendertarget to use on bind.
 	device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, devRes->GetRenderTargetViewComPtr().ReleaseAndGetAddressOf());
@@ -336,8 +336,10 @@ void PostProcess::ResizeWindow(uint16_t w, uint16_t h)
 
 void PostProcess::Release()
 {
-	m_backBuffer.Get()->Release();
-	m_sceneTex.Get()->Release();
+	if(m_backBuffer.GetAddressOf())
+		m_backBuffer.Get()->Release();
+	if(m_sceneTex.GetAddressOf())
+		m_sceneTex.Get()->Release();
 	m_rt2RT.Reset();
 	//m_rt2SRV.Reset();
 	m_sceneRT.Reset();
