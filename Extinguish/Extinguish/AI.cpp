@@ -46,8 +46,18 @@ void AI::OnCollisionEnter(Collider *obj)
 					realTarget->GetComponent<AI>()->SetCanMove(false);
 
 				else
+				{
 					realTarget->GetComponent<Movement>()->SetCanMove(false);
 
+					//move the player's camera to match stumble
+					Transform* otherCamera = realTarget->GetTransform()->GetChild(0);
+					float3 translation = otherCamera->GetForwardf3();
+					translation.x = -translation.x;
+					translation.y = -3.0f;
+					translation.z = -translation.z * 3.0f;
+
+					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				}
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
@@ -274,6 +284,15 @@ void AI::Update(float _dt)
 					if (movement)
 					{
 						movement->SetCanMove(true);
+
+						//move the player's camera to match stumble
+						Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
+						float3 translation = otherCamera->GetForwardf3();
+						translation.x = translation.x;
+						translation.y = 3.0f;
+						translation.z = translation.z * 3.0f;
+
+						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
 					else
 					{

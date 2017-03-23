@@ -105,6 +105,15 @@ void PlayerController::Update(float _dt)
 				if (movement)
 				{
 					movement->SetCanMove(true);
+
+					//move the player's camera to match getting up
+					Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+					float3 translation = otherCamera->GetForwardf3();
+					translation.x = translation.x;
+					translation.y = 1.0f;
+					translation.z = translation.z * 3.0f;
+
+					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 				}
 				else
 				{
@@ -494,6 +503,15 @@ void PlayerController::Attack()
 			if (movement)
 			{
 				movement->SetCanMove(false);
+
+				//move the player's camera to match stumble
+				Transform* otherCamera = otherPlayer->GetTransform()->GetChild(0);
+				float3 translation = otherCamera->GetForwardf3();
+				translation.x = -translation.x;
+				translation.y = -1.0f;
+				translation.z = -translation.z * 3.0f;
+
+				otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 			}
 			else
 			{
