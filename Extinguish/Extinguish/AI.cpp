@@ -33,6 +33,7 @@ void AI::OnCollisionEnter(Collider *obj)
 		if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
 			CapsuleCollider *col = (CapsuleCollider*)obj;
+
 			if (obj->GetGameObject() == realTarget)
 			{
 				startTimer = true;
@@ -55,9 +56,9 @@ void AI::OnCollisionEnter(Collider *obj)
 					translation.x = -translation.x;
 					translation.y = -3.0f;
 					translation.z = -translation.z * 3.0f;
-
 					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 				}
+
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
@@ -729,7 +730,7 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	//Paranoia();
+	Paranoia();
 
 	if (RunTo(enemyGoal, 28.0f))
 	{
