@@ -123,9 +123,15 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 {
 	//set projection matrix
-	scenes[currentScene]->PostProcessing.Release();
+	for (int i = 0; i < scenes.size(); ++i)
+	{
+		scenes[i]->PostProcessing.Release();
+	}
 	devResources->ResizeWindow(w, h, fullScreen);
-	scenes[currentScene]->ResizeWindow(w, h);
+	for (int i = 0; i < scenes.size(); ++i)
+	{
+		scenes[i]->ResizeWindow(w, h);
+	}
 
 	float aspectRatio = (float)w / (float)h;
 	float fovAngleY = 70.0f * XM_PI / 180.0f;
@@ -139,14 +145,34 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 	XMMATRIX perspective = XMMatrixPerspectiveFovLH(fovAngleY, aspectRatio, 0.01f, 500.0f);
 	XMStoreFloat4x4(&projection, XMMatrixTranspose(perspective));
 
-	vector<GameObject*> go = *scenes[currentScene]->GetGameObjects();
-	Renderer* R;
-	int size = (int)go.size();
-	for (int i = 0; i < size; ++i)
+	for (int i = 0; i < scenes.size(); ++i)
 	{
-		R = go[i]->GetComponent<Renderer>();
-		if (R)
-			R->SetProjection(projection);
+		vector<GameObject*> go = *scenes[i]->GetGameObjects();
+		vector<GameObject*> uiGO = *scenes[i]->GetUIObjects();
+		Button* B;
+
+		Renderer* R;
+		int size = (int)go.size();
+		int UIsize = (int)uiGO.size();
+		for (int j = 0; j < size; ++j)
+		{
+			R = go[j]->GetComponent<Renderer>();
+			if (R)
+				R->SetProjection(projection);
+		}
+		D2D1_SIZE_F rect;
+		rect.height = h;
+		rect.width = w;
+		for (int j = 0; j < UIsize; ++j)
+		{
+			B = uiGO[j]->GetComponent<Button>();
+			if (B)
+			{
+				B->setRT(rect);
+				B->MakeRect();
+				B->setOrigin();
+			}
+		}
 	}
 }
 

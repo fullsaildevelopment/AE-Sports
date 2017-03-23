@@ -25,30 +25,12 @@ int Window::Update(InputManager* input)
 	MSG msg;
 	bool handledMsg = true;
 
-	WindowResizeEvent wre;
-
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
 		ImGui_ImplDX11_WndProcHandler(Window::GetHWND(), msg.message);// , wParam, lParam);
 		switch (msg.message)
 		{
 			case (WM_KEYDOWN):
-				if (msg.wParam == VK_F11)
-				{
-					fullScreen = !fullScreen;
-					if (fullScreen)
-					{
-						wre.w = 1920;
-						wre.h = 1080;
-					}
-					else
-					{
-						wre.w = 1000;
-						wre.h = 800;
-					}
-					wre.fullScreen = fullScreen;
-					EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
-				}
 				input->SetKeyboardKey((unsigned int)msg.wParam, true);
 				break;
 			case (WM_SYSKEYDOWN):
@@ -168,37 +150,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		windowWidth = lParam;
 		windowHeight = lParam >> 16;
 		resizing = true;
-		if (wParam == SIZE_MAXIMIZED)
+		if (wParam == SIZE_MAXIMIZED && !fullScreen)
 		{
 			fullScreen = true;
 			wre.w = max(windowWidth, 100);
-			wre.h = max(windowHeight, 50);
-			wre.fullScreen = fullScreen;
-			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
-			resizing = false;
-		}
-		if (wParam == SIZE_MINIMIZED)
-		{
-			fullScreen = false;
-			wre.w = max(windowWidth, 100);
-			wre.h = max(windowHeight, 50);
-			wre.fullScreen = fullScreen;
-			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
-			resizing = false;
-		}
-		if (wParam == SIZE_RESTORED)
-		{
-			fullScreen = false;
-			wre.w = max(windowWidth, 100);
-			wre.h = max(windowHeight, 50);
+			wre.h = max(windowHeight + 63, 50);
 			wre.fullScreen = fullScreen;
 			EventDispatcher::GetSingleton()->DispatchTo(&wre, "Game");
 			resizing = false;
 		}
 		break;
-	case WM_EXITSIZEMOVE: //lParam holds Width and Height as first 16 bits = width and last are height
+	case WM_EXITSIZEMOVE:
 		if (resizing)
 		{
+			fullScreen = false;
 			wre.w = max(windowWidth, 100);
 			wre.h = max(windowHeight, 50);
 			wre.fullScreen = fullScreen;

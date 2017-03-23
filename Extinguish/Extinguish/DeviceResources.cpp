@@ -17,7 +17,6 @@ void DeviceResources::Init(HWND hwnd)
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	swapChainDesc.Flags = DXGI_MWA_NO_ALT_ENTER;
 
 	//create swapchain and device
 	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -44,31 +43,29 @@ void DeviceResources::Init(HWND hwnd)
 
 	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), &m_featureLevel, deviceContext.GetAddressOf());
 
-	IDXGIFactory1 *pFactory = NULL;
+	/*IDXGIFactory1 *pFactory = NULL;
 
 	swapChain->GetParent(__uuidof (IDXGIFactory1), (void **)&pFactory);
 	if (pFactory)
 	{
 		pFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER);
 		pFactory->Release();
-	}
+	}*/
 
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
 
 	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 	HRESULT res;
 
-	if (!DEBUG_GRAPHICS) {
+	if (!DEBUG_GRAPHICS) 
+	{
 		res = device.As(&dxgiDevice);
 
 		// res = device.Get()->QueryInterface(__uuidof(IDXGIDevice), (void**)dxgiDevice.GetAddressOf());
 
 		res = D2D1CreateDevice(dxgiDevice.Get(), NULL, &p2DDevice);
 		res = p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &p2DDeviceContext);
-	}
-	//Set up back buffer
 
-	if (!DEBUG_GRAPHICS) {
 		// create Direct2D target bitmap
 		Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
 
@@ -173,7 +170,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 	{
 		pRT.Get()->Release();
 		p2DDeviceContext->SetTarget(nullptr);
-		p2DDeviceContext.Get()->Release();
+		//p2DDeviceContext.Get()->Release();s
 	}
 
 	deviceContext->Flush();
@@ -209,16 +206,27 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
 
 
-	Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
 
 	if (!DEBUG_GRAPHICS)
 	{
+		res = p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, p2DDeviceContext.GetAddressOf());
+
+		// create Direct2D target bitmap
 		Microsoft::WRL::ComPtr<ID2D1Bitmap1> d2dTargetBitmap;
+
+		// specify the desired bitmap properties
+		// gives E_INVALIDARG, don't use
 		D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), 96.0f, 96.0f);
+
+		// Direct2D needs the dxgi version of the back buffer
 		Microsoft::WRL::ComPtr<IDXGISurface> dxgiBuffer;
+
 		res = swapChain.Get()->GetBuffer(0, __uuidof(IDXGISurface), &dxgiBuffer);
+
 		res = p2DDeviceContext->CreateBitmapFromDxgiSurface(dxgiBuffer.Get(), bp, &d2dTargetBitmap);
+
 		p2DDeviceContext->SetTarget(d2dTargetBitmap.Get());
+		LoadButtonResources(windowHandle);
 	}
 }
 
@@ -290,17 +298,14 @@ void DeviceResources::LoadButtonResources(HWND hwnd_)
 
 
 	HRESULT result;
-	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-		__uuidof(ID2D1Factory2),
-		&options,
-		&pD2DFactory);
+	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory2), &options, (void**)pD2DFactory.GetAddressOf());
 
 
 	if (SUCCEEDED(result))
 	{
 		result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 			__uuidof(IDWriteFactory),
-			&pDWriteFactory);
+			(IUnknown**)pDWriteFactory.GetAddressOf());
 	}
 
 	// device dependent
