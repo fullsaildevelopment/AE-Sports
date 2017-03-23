@@ -156,9 +156,6 @@ int Game::Update(float dt)
 	{
 		endTimer += dt;
 
-		//TODO: This stuff below needs to be done to replace the line of code above
-		//bring onto screen text overlay that says which team won
-
 		// if not paused so it doesn't keep trying to change the button
 		if (!ResourceManager::GetSingleton()->IsPaused())
 		{
@@ -183,8 +180,6 @@ int Game::Update(float dt)
 				winnertext->setOrigin();
 				winnertext->SetActive(true);
 			}
-
-		//after three seconds, go to a menu that shows everyone's score and gives player option to rematch or go back to menu
 
 		// after the three seconds, untoggle winner text
 		if (endTimer >= 3.0f && winnertext->getActive())
