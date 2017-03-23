@@ -223,6 +223,10 @@ int Client::run()
 			receiveFloor();
 			break;
 		}
+		case ID_INCOMING_MESSAGE:
+		{	ReceiveMessage();
+		result = 69;
+		break; }
 		}
 	}
 
@@ -328,6 +332,25 @@ void Client::readMessage()
 	}
 	else
 		printf("%s\n", rs.C_String());
+}
+
+void Client::ReceiveMessage()
+{
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	bIn.Read(messageID);
+	bIn.Read(stride);
+
+	delete message;
+	message = nullptr;
+
+	message = new char[stride];
+
+	for (int i = 0; i < stride; ++i)
+	{
+		bIn.Read(message[i]);
+	}
 }
 
 void Client::GetID()

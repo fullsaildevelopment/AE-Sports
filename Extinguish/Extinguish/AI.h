@@ -19,7 +19,6 @@ private:
 		tank, // protects teammate with ball
 	};
 
-	bool hitTarget = false; // if you hit the target after attack
 	bool at1 = false; // if goalie2 is at it's first checkpoint
 	bool isAttacking = false; // bool to determine if AI is attacking
 	bool startTimer = false; // bool for starting the timer for attacking

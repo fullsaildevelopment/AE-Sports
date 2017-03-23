@@ -575,6 +575,22 @@ void Server::sendState()
 	peer->Send(&bOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 }
 
+void Server::sendMessage(char * message, uint16_t stride, uint16_t messageID)
+{
+	BitStream bsOut;
+
+	bsOut.Write((RakNet::MessageID)ID_INCOMING_MESSAGE);
+	bsOut.Write(messageID);
+	bsOut.Write(stride);
+
+	for (uint16_t i = 0; i < stride; ++i)
+	{
+		bsOut.Write(message[i]);
+	}
+
+	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+}
+
 void Server::StartGame()
 {
 	gameState[0][0].paused = false;

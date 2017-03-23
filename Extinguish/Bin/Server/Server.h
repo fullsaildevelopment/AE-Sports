@@ -171,6 +171,7 @@ public:
 	int update();
 	void stop();
 	bool Shutdown();
+	void sendMessage(char * message, uint16_t stride, uint16_t messageID);
 
 	/* getters */
 	unsigned int getPlayerCount() { return numPlayers; }

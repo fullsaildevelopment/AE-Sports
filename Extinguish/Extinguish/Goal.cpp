@@ -56,6 +56,7 @@ void Goal::Score(int team)
 
 	ScoreEvent* se = new ScoreEvent();
 	se->SetTeam(team);
+	se->SetPlayerName(ballController->GetThrower()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<PlayerController>()->GetName());
 	EventDispatcher::GetSingleton()->DispatchTo(se, "Game");
 	delete se;
 	//Transform* bt = GetGameObject()->FindGameObject("GameBall")->GetTransform();

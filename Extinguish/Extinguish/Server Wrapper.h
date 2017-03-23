@@ -134,6 +134,11 @@ public:
 		newServer.sendPackets();
 	}
 
+	void sendMessage(char * message, uint16_t stride, uint16_t messageID)
+	{
+		newServer.sendMessage(message, stride, messageID);
+	}
+
 	std::vector<GameState*> getStates()
 	{
 		return states;
