@@ -14,6 +14,7 @@ private:
 	//temp cache
 	InputManager* input;
 	GameObject* otherPlayer; //is set when colliding with other player
+	GameObject* ogPlayer; //is set after attacking a player
 	GameObject* floor;
 
 	//cache
