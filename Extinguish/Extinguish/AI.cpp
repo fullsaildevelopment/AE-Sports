@@ -281,6 +281,7 @@ void AI::Update(float _dt)
 					Movement* movement = ogTarget->GetComponent<Movement>();
 
 					if (movement)
+					{
 						movement->SetCanMove(true);
 
 						//move the player's camera to match stumble
@@ -293,7 +294,9 @@ void AI::Update(float _dt)
 						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
 					else
+					{
 						ogTarget->GetComponent<AI>()->SetCanMove(true);
+					}
 
 					ogTarget = nullptr;
 				}
