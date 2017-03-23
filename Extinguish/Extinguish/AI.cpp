@@ -51,7 +51,6 @@ void AI::OnCollisionEnter(Collider *obj)
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
-				hitTarget = true;
 			}
 		}
 	}
