@@ -967,13 +967,13 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	GameObject* testPlayer = new GameObject();
-	testPlayer->Init("TestPlayer");
-	basic->AddGameObject(testPlayer);
-	testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* testPlayerRenderer = new Renderer();
-	testPlayer->AddComponent(testPlayerRenderer);
-	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
+	//GameObject* testPlayer = new GameObject();
+	//testPlayer->Init("TestPlayer");
+	//basic->AddGameObject(testPlayer);
+	//testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* testPlayerRenderer = new Renderer();
+	//testPlayer->AddComponent(testPlayerRenderer);
+	//testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
 	//for (int j = 0; j < 11; ++j)
 	//{
@@ -1015,32 +1015,32 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexFloor->AddComponent(fcon);
 	fcon->SetState(1 / 6.0f);
 
-	GameObject* Hex = new GameObject();
-	Hex->Init("Team2");
-	basic->AddGameObject(Hex);
-	Hex->InitTransform(identity, { -15, 0, -20.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
-	Renderer* ballrenderer3 = new Renderer();
-	Hex->AddComponent(ballrenderer3);
-	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
-	Movement* ballMover3 = new Movement();
-	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10, resourceManager->collisionMeshes[0]);
-	Hex->AddComponent(HexPillar);
+	//GameObject* Hex = new GameObject();
+	//Hex->Init("Team2");
+	//basic->AddGameObject(Hex);
+	//Hex->InitTransform(identity, { -15, 0, -20.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	//Renderer* ballrenderer3 = new Renderer();
+	//Hex->AddComponent(ballrenderer3);
+	//ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
+	//Movement* ballMover3 = new Movement();
+	//HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10, resourceManager->collisionMeshes[0]);
+	//Hex->AddComponent(HexPillar);
 
-	GameObject* axis = new GameObject();
-	axis->Init("axis");
-	basic->AddGameObject(axis);
-	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, -10, 10 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
-	Renderer* axisRenderer = new Renderer();
-	axis->AddComponent(axisRenderer);
-	axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
+	//GameObject* axis = new GameObject();
+	//axis->Init("axis");
+	//basic->AddGameObject(axis);
+	//axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, -10, 10 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	//Renderer* axisRenderer = new Renderer();
+	//axis->AddComponent(axisRenderer);
+	//axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
 
-	GameObject* powerUp = new GameObject();
-	powerUp->Init("PowerUp");
-	basic->AddGameObject(powerUp);
-	powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
-	Renderer* powerUpRenderer = new Renderer();
-	powerUp->AddComponent(powerUpRenderer);
-	powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
+	//GameObject* powerUp = new GameObject();
+	//powerUp->Init("PowerUp");
+	//basic->AddGameObject(powerUp);
+	//powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	//Renderer* powerUpRenderer = new Renderer();
+	//powerUp->AddComponent(powerUpRenderer);
+	//powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

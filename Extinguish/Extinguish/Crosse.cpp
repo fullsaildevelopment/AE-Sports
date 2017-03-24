@@ -133,7 +133,10 @@ void Crosse::Catch()
 	//dimensions of goal: 13 x 8
 
 	//check the position to see if it was close to going to the goal
-	float3 ballPos = ballTransform->GetPosition();
+	float3 ballPos = ballTransform->GetWorldPosition();
+
+	cout << ballPos.x << " " << ballPos.y << " " << ballPos.z << "\t" << goalPos.x << " " << goalPos.y << " " << goalPos.z << endl;
+
 	if ((ballPos.x <= goalPos.x + 8.0f || ballPos.x >= goalPos.x - 8.0f) && (ballPos.y >= goalPos.y - 4.0f) && (ballPos.z >= goalPos.z - 8.0f))
 	{
 		//check the direction to make sure that it's not moving away from the goal
