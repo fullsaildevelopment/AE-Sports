@@ -13,6 +13,7 @@
 #include "Game.h"
 #include "GamePadEvent.h"
 #include "GamePad.h"
+#include "Movement.h"
 
 using namespace std;
 
@@ -35,6 +36,7 @@ void Crosse::Init()
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 	ballC = ballTransform->GetGameObject()->GetComponent<BallController>();
 	player = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	movement = player->GetComponent<Movement>();
 
 	//register crosse event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
@@ -51,7 +53,7 @@ void Crosse::OnTriggerEnter(Collider* collider)
 {
 	if (collider->GetGameObject()->GetName() == "GameBall")
 	{
-		if (!ballC->GetIsHeld()/* && catchAgainTimer >= timeUntilCatchAgain*/)
+		if (!ballC->GetIsHeld() && movement->CanMove()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
 			Catch();
 		}
@@ -77,7 +79,7 @@ void Crosse::SetColor(bool b)
 	}
 }
 
-//misc
+//misc//
 void Crosse::Throw()
 {
 	const float throwSpeed = 18.0f;
@@ -279,65 +281,65 @@ void Crosse::HandleGamePad(GamePadEvent* e)
 		padTracker.Update(*padState);
 
 		//rotate the crosse
-		if (padState->IsLeftTriggerPressed())
-		{
-			if (padState->thumbSticks.rightX || padState->thumbSticks.rightY)
-			{
-				//move the crosse
+		//if (padState->IsLeftTriggerPressed())
+		//{
+		//	if (padState->thumbSticks.rightX || padState->thumbSticks.rightY)
+		//	{
+		//		//move the crosse
 
-				float radians = 0;
-				float yRadians = 0;
-				bool doubleY = false;
-				const int xWiggleRoom = 20; // to prevent it from rotating when cursor is in middle of screen
-				float ratio = padState->thumbSticks.rightX;
-				float yRatio = padState->thumbSticks.rightY;
-				float xPos = CLIENT_WIDTH / 2 * ratio;
-				float yPos = CLIENT_HEIGHT / 2 * yRatio;
+		//		float radians = 0;
+		//		float yRadians = 0;
+		//		bool doubleY = false;
+		//		const int xWiggleRoom = 20; // to prevent it from rotating when cursor is in middle of screen
+		//		float ratio = padState->thumbSticks.rightX;
+		//		float yRatio = padState->thumbSticks.rightY;
+		//		float xPos = CLIENT_WIDTH / 2 * ratio;
+		//		float yPos = CLIENT_HEIGHT / 2 * yRatio;
 
-				//cout << ratio << " " << yRatio << endl;
+		//		//cout << ratio << " " << yRatio << endl;
 
-				if (xPos > 0 && yPos > 0) //top-right quadrant
-				{
-					//yRatio = -yRatio;
-				}
-				else if (xPos > 0 && yPos < 0) //bottom-right quadrant
-				{
-					//yRatio = -yRatio;
-					doubleY = true;
-					//ratio = -ratio;
-					yRatio = -yRatio;
-				}
-				else if (xPos < 0 && yPos < 0) //bottom-left quadrant
-				{
-					//yRatio = -yRatio;
-					doubleY = true;
-					//yRatio = -yRatio;
-					//ratio = -ratio;
-				}
-				else if (xPos < 0 && yPos > 0) //top-left quadrant
-				{
+		//		if (xPos > 0 && yPos > 0) //top-right quadrant
+		//		{
+		//			//yRatio = -yRatio;
+		//		}
+		//		else if (xPos > 0 && yPos < 0) //bottom-right quadrant
+		//		{
+		//			//yRatio = -yRatio;
+		//			doubleY = true;
+		//			//ratio = -ratio;
+		//			yRatio = -yRatio;
+		//		}
+		//		else if (xPos < 0 && yPos < 0) //bottom-left quadrant
+		//		{
+		//			//yRatio = -yRatio;
+		//			doubleY = true;
+		//			//yRatio = -yRatio;
+		//			//ratio = -ratio;
+		//		}
+		//		else if (xPos < 0 && yPos > 0) //top-left quadrant
+		//		{
 
-				}
+		//		}
 
-				//this way if the pos is inside the wiggle area, the radians will be zero and no rotation will happen
-				if (xPos > 0 || xPos < 0)
-				{
-					radians = -90.0f / 180.0f * XM_PI;
-					yRadians = -45.0f / 180.0f * XM_PI;
-				}
+		//		//this way if the pos is inside the wiggle area, the radians will be zero and no rotation will happen
+		//		if (xPos > 0 || xPos < 0)
+		//		{
+		//			radians = -90.0f / 180.0f * XM_PI;
+		//			yRadians = -45.0f / 180.0f * XM_PI;
+		//		}
 
-				if (doubleY)
-				{
-					yPos *= 2.2f; //added because crosse would only go halfway down y in bottom quadrants
-				}
+		//		if (doubleY)
+		//		{
+		//			yPos *= 2.2f; //added because crosse would only go halfway down y in bottom quadrants
+		//		}
 
-				cout << xPos << " " << yPos << " " << (ratio * -90.0f) << " " << (yRatio * -45.0f) << " " << (ratio * -90.0f) + (yRatio * -45.0f) << endl;
+		//		cout << xPos << " " << yPos << " " << (ratio * -90.0f) << " " << (yRatio * -45.0f) << " " << (ratio * -90.0f) + (yRatio * -45.0f) << endl;
 
-				transform->SetPosition({ xPos * 0.001f * 1.8f, yPos * 0.001f + minY, transform->GetPosition().z }); // * 1.8 because * 2 is too much. And it was only travelling half
-				transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (yRatio * yRadians) });
-				//transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * degrees) + (yRatio * 45.0f) });
-			}
-		}
+		//		transform->SetPosition({ xPos * 0.001f * 1.8f, yPos * 0.001f + minY, transform->GetPosition().z }); // * 1.8 because * 2 is too much. And it was only travelling half
+		//		transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (yRatio * yRadians) });
+		//		//transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * degrees) + (yRatio * 45.0f) });
+		//	}
+		//}
 
 		if (padTracker.rightTrigger == GamePad::ButtonStateTracker::PRESSED)
 		{

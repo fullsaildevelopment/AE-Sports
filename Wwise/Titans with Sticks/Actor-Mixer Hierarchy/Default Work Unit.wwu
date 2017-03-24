@@ -262,6 +262,50 @@
 						<ActiveSource Name="Backboard Bounce Song" ID="{BD68083B-F4C8-483D-BA81-2B5390F83D80}" Platform="Linked"/>
 					</ActiveSourceList>
 				</Sound>
+				<Sound Name="Background" ID="{394302FE-8775-4213-BC86-0307248F8716}" ShortID="858730937" Type="SoundFX">
+					<PropertyList>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="Background" ID="{B50653DD-51D2-4340-96C1-C7B124D50BFE}" ShortID="448010096">
+							<Language>SFX</Language>
+							<AudioFile>Background.wav</AudioFile>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="Background" ID="{B50653DD-51D2-4340-96C1-C7B124D50BFE}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
+				<Sound Name="MainMenu" ID="{F3517925-2FBF-4876-B0BD-E6F12DA4C2A4}" ShortID="419073445" Type="SoundFX">
+					<PropertyList>
+						<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+					</PropertyList>
+					<ReferenceList>
+						<Reference Name="Conversion">
+							<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+						</Reference>
+						<Reference Name="OutputBus">
+							<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+						</Reference>
+					</ReferenceList>
+					<ChildrenList>
+						<AudioFileSource Name="MainMenu" ID="{827CFE8A-5716-458F-8F9B-4683F137E75F}" ShortID="503386512">
+							<Language>SFX</Language>
+							<AudioFile>MainMenu.wav</AudioFile>
+						</AudioFileSource>
+					</ChildrenList>
+					<ActiveSourceList>
+						<ActiveSource Name="MainMenu" ID="{827CFE8A-5716-458F-8F9B-4683F137E75F}" Platform="Linked"/>
+					</ActiveSourceList>
+				</Sound>
 			</ChildrenList>
 		</WorkUnit>
 	</AudioObjects>

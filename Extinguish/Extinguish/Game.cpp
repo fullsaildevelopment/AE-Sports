@@ -117,7 +117,7 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 
 	soundEngine->InitSoundEngine(ids, names);
 
-	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_BACKBOARD_BOUNCE_SONG, 1);
+	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_MAINMENU, 1);
 
 
 	justScored = false;
@@ -1650,7 +1650,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	wRender->InitMetrics();
 	wButton->SetActive(false);
 
-	// winner
+	// scorer
 	GameObject* scorer = new GameObject();
 	scorer->Init("Scorer");
 	scene->AddUIObject(scorer);
@@ -1658,7 +1658,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	sButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	sButton->SetGameObject(scorer);
 	sButton->showFPS(false);
-	sButton->setPositionMultipliers(0.5f, 0.5f);
+	sButton->setPositionMultipliers(0.5f, 0.25f);
 	scorer->AddComponent(sButton);
 	UIRenderer * sRenderer = new UIRenderer();
 	sRenderer->Init(true, 80.0f, devResources, sButton, L"Sans-Serif", D2D1::ColorF(0.9f, 0.9f, 0.9f, 1.0f));

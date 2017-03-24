@@ -168,6 +168,50 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Background" ID="{4E2F8214-6B58-4C34-8BBD-288657BD39DF}">
+					<ChildrenList>
+						<Action Name="Play" ID="{5DD634E6-2D05-4DF9-A6E0-E48F5AE63B97}" ShortID="844633686" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{37F9BF42-D56B-49B6-8844-E7618EB62F40}" Global="false">
+									<ObjectRef Name="Background" ID="{394302FE-8775-4213-BC86-0307248F8716}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_MainMenu" ID="{80D8584A-A930-4432-BC04-19791453A7B6}">
+					<ChildrenList>
+						<Action Name="Play" ID="{992F58C1-C58A-45A4-8E30-6893AC7C27C5}" ShortID="261290568" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{F6BBD383-1501-4126-B23B-D1553764C29F}" Global="false">
+									<ObjectRef Name="MainMenu" ID="{F3517925-2FBF-4876-B0BD-E6F12DA4C2A4}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_Background" ID="{164CFB72-631C-488C-A72B-27D6B1D86B35}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{8F59F9B5-5321-4035-866C-9DCC8B2914CD}" ShortID="705372550" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{7278822E-D00A-48C9-81F8-3D9DE7D860AE}" Global="false">
+									<ObjectRef Name="Background" ID="{394302FE-8775-4213-BC86-0307248F8716}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_MainMenu" ID="{C1D19DBF-5FE6-4C53-B788-2D6E0686137C}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{6DA1E995-54FA-4784-8486-3ACE3A3437F3}" ShortID="1004129787" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{18FEF474-2458-463A-8823-AA58F1E649CB}" Global="false">
+									<ObjectRef Name="MainMenu" ID="{F3517925-2FBF-4876-B0BD-E6F12DA4C2A4}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
