@@ -24,6 +24,9 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	vertexShader = ResourceManager::GetSingleton()->GetVertexShader(vsName);
 	computeShader = ResourceManager::GetSingleton()->GetComputeShader(csName);
 	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
+	teamcolorSRV = nullptr;
+	NormalSRV = nullptr;
+	SpecularSRV = nullptr;
 
 	if (mesh == "Mage")
 	{
@@ -32,6 +35,12 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	if (mesh == "Crosse")
 	{
 		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Crosse");
+	}
+	if (mesh == "Titan")
+	{
+		NormalSRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_Titan");
+		SpecularSRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_Titan");
+		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("EM_Titan");
 	}
 
 	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
@@ -102,7 +111,9 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 	numIns = numInstences;
 	instancedBuffer = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, instanced);
 	instancedBuffer2 = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, color);
-	
+	teamcolorSRV = nullptr;
+	NormalSRV = nullptr;
+	SpecularSRV = nullptr;
 
 
 	SetProjection(projection);
@@ -203,8 +214,14 @@ void Renderer::Update(float _dt)
 
 	//set shader resource view
 	devContext->PSSetShaderResources(0, 1, &diffuseSRV);
-	if(teamcolorSRV)
+	if (NormalSRV)
+	{
+		devContext->PSSetShaderResources(1, 1, &NormalSRV);
+	}
+	if (teamcolorSRV)
+	{
 		devContext->PSSetShaderResources(3, 1, &teamcolorSRV);
+	}
 	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 	if (isTransparent)
