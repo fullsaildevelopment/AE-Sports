@@ -25,6 +25,8 @@ Client::Client()
 	{
 		gameState[0][i].name = nullptr;
 	}
+
+	scoreName = new string;
 }
 
 Client::~Client()
@@ -74,6 +76,7 @@ int Client::init(char* _address, UINT16 port)
 
 int Client::run()
 {
+	states = packets = scored = false;
 	int result = 1;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
@@ -173,8 +176,7 @@ int Client::run()
 		case ID_INCOMING_PACKET:
 		{
 			receivePackets();
-			if (result != 4 || result != 5)
-				result = 2;
+			packets = true;
 			break;
 		}
 		case ID_SERVER_CLOSURE:
@@ -185,7 +187,7 @@ int Client::run()
 		case ID_INCOMING_STATE:
 		{
 			receiveGameState();
-			result = 4;
+			states = true;
 			break;
 		}
 		case ID_NEW_CLIENT:
@@ -227,6 +229,27 @@ int Client::run()
 		{	ReceiveMessage();
 		result = 69;
 		break; }
+		case ID_SOMEONE_SCORED:
+		{
+
+			BitStream bIn(packet->data, packet->length, false);
+			bIn.IgnoreBytes(sizeof(MessageID));
+			UINT8 temp;
+			bIn.Read(temp);
+			string name = "";
+
+			for (unsigned int i = 0; i < temp; ++i)
+			{
+				char t;
+				bIn.Read(t);
+				name += t;
+			}
+
+			scoreName[0] = name;
+			scored = true;
+			break;
+		}
+		
 		}
 	}
 
