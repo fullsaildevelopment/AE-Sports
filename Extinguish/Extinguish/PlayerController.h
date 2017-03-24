@@ -7,6 +7,7 @@ class GameObject;
 class Camera;
 class Transform;
 class GamePadEvent;
+class Movement;
 
 class PlayerController : public Component
 {
@@ -21,7 +22,8 @@ private:
 	Transform* transform;
 	Camera* camera;
 	Transform* cameraTransform;
-	
+	Movement* movement;
+
 	//reg members
 	std::string name;
 	unsigned int playerID = 0;

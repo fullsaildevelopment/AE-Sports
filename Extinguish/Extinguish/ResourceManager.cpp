@@ -621,6 +621,22 @@ void ResourceManager::LoadAndCreateShaders()
 						inputLayouts.push_back(staticInput);
 						inputLayoutsTable.Insert(curFileName);
 					}
+					else if (inputLayoutsTable.GetKey("TempStatic") == -1 && curFileName == "TempStatic")
+					{
+						Microsoft::WRL::ComPtr<ID3D11InputLayout> staticInput;
+
+						D3D11_INPUT_ELEMENT_DESC staticInputElementDescs[] =
+						{
+							{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+						};
+
+						HRESULT inputResult = device->CreateInputLayout(staticInputElementDescs, ARRAYSIZE(staticInputElementDescs), &shaderData[0], shaderData.size(), staticInput.GetAddressOf());
+
+						inputLayouts.push_back(staticInput);
+						inputLayoutsTable.Insert(curFileName);
+					}
 					else if (inputLayoutsTable.GetKey("InstancedStatic") == -1 && curFileName == "InstancedStatic")
 					{
 						Microsoft::WRL::ComPtr<ID3D11InputLayout> InststaticInput;
@@ -807,6 +823,7 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\HighDetalBall\\HighDetalBall.fbx", "HighDetalBall");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\WallGoal\\WallGoal.fbx", "WallGoal");
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Titan\\Titan.fbx", "Titan");
 
 #endif
 }

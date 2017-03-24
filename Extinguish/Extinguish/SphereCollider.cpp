@@ -167,9 +167,25 @@ void SphereCollider::FixedUpdate(float _dt)
 			{
 				if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
 				{
-
-					ob->OnTriggerEnter(this);
-					tg->OnTriggerEnter(sphere);
+					if (!CollidingWith[i])
+					{
+						ob->OnTriggerEnter(this);
+						tg->OnTriggerEnter(sphere);
+					}
+					else if (CollidingWith[i])
+					{
+						ob->OnTriggerStay(this);
+						tg->OnTriggerStay(sphere);
+					}
+					continue;
+				}
+				else
+				{
+					if (CollidingWith[i])
+					{
+						ob->OnTriggerExit(this);
+						tg->OnTriggerExit(sphere);
+					}
 				}
 			}
 

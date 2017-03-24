@@ -175,8 +175,6 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 	{
 		pRT.Get()->Release();
 		p2DDeviceContext->SetTarget(nullptr);
-	//	p2DDeviceContext.Get()->Release();
-	//	p2DDevice.Get()->Release();
 	}
 
 	deviceContext->Flush();
