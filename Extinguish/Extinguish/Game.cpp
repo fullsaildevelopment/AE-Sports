@@ -179,6 +179,7 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 				B->setRT(rect);
 				B->MakeRect();
 				B->setOrigin();
+				B->AdjustSize();
 			}
 			if (M)
 			{
