@@ -199,4 +199,10 @@ public:
 
 	unsigned int getScene() { return newClient.getScene(); }
 	bool getCountdown() { return newClient.getCountdown(); }
+
+	const char * getScorer() { return newClient.getScoreName(); }
+
+	bool hasPackets() { return newClient.hasPackets(); }
+	bool hasState() { return newClient.hasState(); }
+	bool hasScored() { return newClient.hasScored(); }
 };
