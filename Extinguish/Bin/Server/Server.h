@@ -100,7 +100,8 @@ private:
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
-		ID_INCOMING_FLOOR
+		ID_INCOMING_FLOOR,
+		ID_SOMEONE_SCORED
 	};
 
 #pragma pack(push, 1)
@@ -243,6 +244,9 @@ public:
 		newInput[2] = false;
 		newInput[3] = false;
 	}
+
+	void SendScored(char * name, UINT8 length);
+
 private:
 	int lastState = 0;
 	int packRec = 0;

@@ -106,7 +106,9 @@ private:
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
-		ID_INCOMING_FLOOR
+		ID_INCOMING_FLOOR,
+		ID_SOMEONE_SCORED
+
 	};
 
 	static RakPeerInterface * peer;
@@ -132,6 +134,12 @@ private:
 
 	char* message;
 	uint16_t messageID, stride;
+
+	string * scoreName;
+
+	// all the results
+	bool states, scored, packets;
+
 public:
 
 #pragma pack(push, 1)
@@ -219,6 +227,11 @@ public:
 	char* getMessage() { return message; }
 	uint16_t GetMessageID() { return messageID; }
 	uint16_t GetStride() { return stride; }
+	const char * getScoreName() { return scoreName[0].c_str(); }
+
+	bool hasScored() { return scored; }
+	bool hasPackets() { return packets; }
+	bool hasState() { return states; }
 
 private:
 	bool gameStart = false;
