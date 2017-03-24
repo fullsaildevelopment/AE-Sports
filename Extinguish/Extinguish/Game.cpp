@@ -154,6 +154,8 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		vector<GameObject*> go = *scenes[i]->GetGameObjects();
 		vector<GameObject*> uiGO = *scenes[i]->GetUIObjects();
 		Button* B;
+		MeterBar* M;
+		UIRenderer* UI;
 
 		Renderer* R;
 		int size = (int)go.size();
@@ -170,11 +172,24 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		for (int j = 0; j < UIsize; ++j)
 		{
 			B = uiGO[j]->GetComponent<Button>();
+			M = uiGO[j]->GetComponent<MeterBar>();
+			UI = uiGO[j]->GetComponent<UIRenderer>();
 			if (B)
 			{
 				B->setRT(rect);
 				B->MakeRect();
 				B->setOrigin();
+				B->AdjustSize();
+			}
+			if (M)
+			{
+				M->setRT(rect);
+				//M->MakeRect();
+				M->MakeRects();
+			}
+			if (UI)
+			{
+				UI->ReInit();
 			}
 		}
 	}
@@ -2093,7 +2108,7 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
-
+		ShowCursor(false);
 		AssignPlayers();
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
@@ -2219,6 +2234,7 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			Button * exitButton = pauseExit->GetComponent<Button>();
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
+			ShowCursor(toggle);
 		}
 	}
 
@@ -2232,6 +2248,7 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		Button * nButton = pauseNewGame->GetComponent<Button>();
 		toggle = !nButton->getActive();
 		nButton->SetActive(toggle);
+		ShowCursor(toggle);
 	}
 
 	if (scoreboard)
