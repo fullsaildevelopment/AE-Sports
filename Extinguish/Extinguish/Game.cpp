@@ -184,7 +184,6 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 			if (M)
 			{
 				M->setRT(rect);
-				//M->MakeRect();
 				M->MakeRects();
 			}
 			if (UI)
@@ -303,13 +302,15 @@ int Game::Update(float dt)
 					ReceiveClientMessage();
 				}
 
+
+
 				// if client gets server's game states, get the state's location from the client
 				// so that it can be included in update
-				if ((clientState == 2 || clientState == 4) && client.getID() > 0)
+				if ((client.hasPackets() || client.hasState() || client.hasScored()) && client.getID() > 0)
 				{
 					UpdateClientObjects();
 
-					if (clientState == 4)
+					if (client.hasState())
 					{
 						GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
 						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
@@ -324,6 +325,22 @@ int Game::Update(float dt)
 						{
 							TogglePauseMenu(true, true);
 						}
+					}
+
+					if (client.hasScored())
+					{
+						Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+
+						string sname = client.getScorer();
+
+						wstring name(sname.size(), L' ');
+						copy(sname.begin(), sname.end(), name.begin());
+						scorerButton->setText(name + L"\nscored!");
+						scorerButton->MakeRect();
+						scorerButton->setOrigin();
+						scorerButton->SetActive(true);
+
+						justScored = true;
 					}
 				}
 			}
@@ -471,25 +488,29 @@ void Game::HandleEvent(Event* e)
 		if (ResourceManager::GetSingleton()->IsMultiplayer() && ResourceManager::GetSingleton()->IsServer())
 		{
 			server.setScores(Team1Score, Team2Score);
+			server.SendScorer(SEvent->GetPlayerName(), (UINT8)SEvent->GetPlayerName().length());
 			//	server.sendGameState();
 		}
 		UpdateScoreUI();
 
 		//display scorer text
-		Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
-	
-		wstring name(SEvent->GetPlayerName().size(), L' ');
-		copy(SEvent->GetPlayerName().begin(), SEvent->GetPlayerName().end(), name.begin());
+		if (!ResourceManager::GetSingleton()->IsMultiplayer())
+		{
+			Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
 
-		scorerButton->setText(name + L"\nscored!");
-		scorerButton->MakeRect();
-		scorerButton->setOrigin();
-		scorerButton->SetActive(true);
+			wstring name(SEvent->GetPlayerName().size(), L' ');
+			copy(SEvent->GetPlayerName().begin(), SEvent->GetPlayerName().end(), name.begin());
 
-		//send scorer name to client
-		//server.sendMessage(&SEvent->GetPlayerName()[0], SEvent->GetPlayerName().size(), MessageId::SCORERNAME);
+			scorerButton->setText(name + L"\nscored!");
+			scorerButton->MakeRect();
+			scorerButton->setOrigin();
+			scorerButton->SetActive(true);
 
-		justScored = true;
+			//send scorer name to client
+			//server.sendMessage(&SEvent->GetPlayerName()[0], SEvent->GetPlayerName().size(), MessageId::SCORERNAME);
+
+			justScored = true;
+		}
 		scorerTimer = 0.0f;
 
 		//Reset Game
@@ -690,7 +711,7 @@ void Game::CreateScenes(InputManager* input)
 
 void Game::CreateGameWrapper()
 {
-	for (unsigned int i = scenes.size() - 1; i <= 0; --i)
+	for (unsigned int i = (unsigned int)scenes.size() - 1; i <= 0; --i)
 	{
 		unsigned int obj = scenes[i]->GetNumObjects();
 
@@ -974,6 +995,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//Renderer* testPlayerRenderer = new Renderer();
 	//testPlayer->AddComponent(testPlayerRenderer);
 	//testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
+
+	GameObject* titanPlayer = new GameObject();
+	titanPlayer->Init("TitanPlayer");
+	basic->AddGameObject(titanPlayer);
+	titanPlayer->InitTransform(identity, { 0, 0, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* titanPlayerRenderer = new Renderer();
+	titanPlayer->AddComponent(titanPlayerRenderer);
+	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources);
 
 	//for (int j = 0; j < 11; ++j)
 	//{
@@ -2223,10 +2252,8 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		if (!endgame) {
 			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
 			GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
-			//GameObject * pauseScore = scenes[currentScene]->GetUIByName("pauseScore");
 			Button * resumeButton = pauseResume->GetComponent<Button>();
 			Button * menuButton = pauseMenu->GetComponent<Button>();
-			//Button * scoreButton = pauseScore->GetComponent<Button>();
 			toggle = !resumeButton->getActive();
 			resumeButton->SetActive(toggle);
 			menuButton->SetActive(toggle);
@@ -2249,6 +2276,19 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		toggle = !nButton->getActive();
 		nButton->SetActive(toggle);
 		ShowCursor(toggle);
+
+
+		if (toggle) {
+			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
+			Button * resumeButton = pauseResume->GetComponent<Button>();
+			if (resumeButton->getActive())
+			{
+				GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
+				Button * menuButton = pauseMenu->GetComponent<Button>();
+				resumeButton->SetActive(!toggle);
+				menuButton->SetActive(!toggle);
+			}
+		}
 	}
 
 	if (scoreboard)
