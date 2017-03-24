@@ -184,7 +184,6 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 			if (M)
 			{
 				M->setRT(rect);
-				//M->MakeRect();
 				M->MakeRects();
 			}
 			if (UI)
@@ -974,6 +973,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* testPlayerRenderer = new Renderer();
 	testPlayer->AddComponent(testPlayerRenderer);
 	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
+
+	GameObject* titanPlayer = new GameObject();
+	titanPlayer->Init("TitanPlayer");
+	basic->AddGameObject(titanPlayer);
+	titanPlayer->InitTransform(identity, { 0, 0, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* titanPlayerRenderer = new Renderer();
+	titanPlayer->AddComponent(titanPlayerRenderer);
+	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources);
 
 	//for (int j = 0; j < 11; ++j)
 	//{
