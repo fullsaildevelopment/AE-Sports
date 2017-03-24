@@ -3,6 +3,8 @@ Event	ID	Name			Wwise Object Path	Notes
 	95074702	Play_FinalBeep			\Default Work Unit\Play_FinalBeep	
 	538781006	Play_RunningPantShort			\Default Work Unit\Play_RunningPantShort	
 	734068952	Play_Footsteps__Sprint_			\Default Work Unit\Play_Footsteps__Sprint_	
+	890527358	Stop_MainMenu			\Default Work Unit\Stop_MainMenu	
+	1244803444	Stop_Background			\Default Work Unit\Stop_Background	
 	1437361150	Play_Footsteps__Walk____			\Default Work Unit\Play_Footsteps__Walk____	
 	1896658016	Stop_RunningPantShort			\Default Work Unit\Stop_RunningPantShort	
 	1977644338	Play_Throw			\Default Work Unit\Play_Throw	
@@ -11,14 +13,18 @@ Event	ID	Name			Wwise Object Path	Notes
 	2224425572	Stop_Footsteps__Walk____			\Default Work Unit\Stop_Footsteps__Walk____	
 	2346218314	Stop_Footsteps__Sprint_			\Default Work Unit\Stop_Footsteps__Sprint_	
 	3057195544	Play_Backboard_Bounce_Song			\Default Work Unit\Play_Backboard_Bounce_Song	
+	3196207338	Play_Background			\Default Work Unit\Play_Background	
 	3513145267	Play_Catch			\Default Work Unit\Play_Catch	
 	3698997709	Play_Boing			\Default Work Unit\Play_Boing	
+	3738780720	Play_MainMenu			\Default Work Unit\Play_MainMenu	
 	3977125916	Play_Footsteps__Charge_			\Default Work Unit\Play_Footsteps__Charge_	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	7247516	Beep	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Beep_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Beep		63552
 	42589970	Footsteps (Sprint)	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Footsteps (Sprint)_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Footsteps (Sprint)		3803884
 	313137093	Backboard Bounce Song	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Backboard Bounce Song_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Backboard Bounce Song		25069632
+	448010096	Background	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Background_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Background		10421316
+	503386512	MainMenu	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\MainMenu_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\MainMenu		12701024
 	508058094	Throw	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Throw_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Throw		103828
 	523059377	RunningPantShort	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\RunningPantShort_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\RunningPantShort		598452
 	527908285	Catch	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Catch_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Catch		116476

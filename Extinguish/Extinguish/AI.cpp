@@ -8,8 +8,8 @@
 #include "Movement.h"
 #include "Trigger.h"
 
-#define     RunSpeed 0.5f //10
-#define  AttackSpeed 0.5f 
+#define     RunSpeed 0.475f //10
+#define  AttackSpeed 0.475f 
 //#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -276,7 +276,7 @@ void AI::Update(float _dt)
 						setCanMove = true;
 				}
 
-				else
+				else //no animation queued at all
 					setCanMove = true;
 
 				if (setCanMove)

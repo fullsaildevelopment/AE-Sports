@@ -17,6 +17,7 @@
 			<Path>TitansWithSticks.bnk</Path>
 			<IncludedEvents>
 				<Event Id="3057195544" Name="Play_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Play_Backboard_Bounce_Song"/>
+				<Event Id="3196207338" Name="Play_Background" ObjectPath="\Events\Default Work Unit\Play_Background"/>
 				<Event Id="2063165418" Name="Play_Beep" ObjectPath="\Events\Default Work Unit\Play_Beep"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
@@ -24,12 +25,15 @@
 				<Event Id="3977125916" Name="Play_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Charge_"/>
 				<Event Id="734068952" Name="Play_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Sprint_"/>
 				<Event Id="1437361150" Name="Play_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Walk____"/>
+				<Event Id="3738780720" Name="Play_MainMenu" ObjectPath="\Events\Default Work Unit\Play_MainMenu"/>
 				<Event Id="538781006" Name="Play_RunningPantShort" ObjectPath="\Events\Default Work Unit\Play_RunningPantShort"/>
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
 				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
+				<Event Id="1244803444" Name="Stop_Background" ObjectPath="\Events\Default Work Unit\Stop_Background"/>
 				<Event Id="2096695406" Name="Stop_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Charge_"/>
 				<Event Id="2346218314" Name="Stop_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Sprint_"/>
 				<Event Id="2224425572" Name="Stop_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Walk____"/>
+				<Event Id="890527358" Name="Stop_MainMenu" ObjectPath="\Events\Default Work Unit\Stop_MainMenu"/>
 				<Event Id="1896658016" Name="Stop_RunningPantShort" ObjectPath="\Events\Default Work Unit\Stop_RunningPantShort"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
@@ -44,6 +48,14 @@
 				<File Id="313137093" Language="SFX">
 					<ShortName>Audio\Backboard Bounce Song.wav</ShortName>
 					<Path>SFX\Audio\Backboard Bounce Song_9E69E797.wem</Path>
+				</File>
+				<File Id="448010096" Language="SFX">
+					<ShortName>Background.wav</ShortName>
+					<Path>SFX\Background_4B8CC0C5.wem</Path>
+				</File>
+				<File Id="503386512" Language="SFX">
+					<ShortName>MainMenu.wav</ShortName>
+					<Path>SFX\MainMenu_4B8CC0C5.wem</Path>
 				</File>
 				<File Id="508058094" Language="SFX">
 					<ShortName>Audio\Throw.wav</ShortName>

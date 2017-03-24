@@ -127,16 +127,12 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	//return float4(bumpNormal, 1);
 	float4 tcm = teamcolorMap.Sample(filter, input.uv.xy);
-	float4 toOthers = input.worldPosition - cameraposW;
-	float doting = dot(normalize(toOthers.xyz), input.normal);
-	float tbl = length(toOthers);
-	if (tcm.r >= 0.96f && tcm.g >= 0.96f && tcm.b >= 0.96f)
-	{
-		finalColor.r = TeamColorB.r;
-		finalColor.g = TeamColorB.g;
-		finalColor.b = TeamColorB.b;
-		finalColor.a = 1;
-	}
+	
+	finalColor.r += TeamColorB.r * tcm.r;
+	finalColor.g += TeamColorB.g * tcm.r;
+	finalColor.b += TeamColorB.b * tcm.r;
+	finalColor.a += TeamColorB.a * tcm.r;
+	
 
-	return finalColor;
+	return saturate(finalColor);
 }

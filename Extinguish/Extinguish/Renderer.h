@@ -39,6 +39,8 @@ private:
 	ID3D11PixelShader* pixelShader;
 	ID3D11ComputeShader* computeShader;
 	ID3D11ShaderResourceView* diffuseSRV;
+	ID3D11ShaderResourceView* NormalSRV;
+	ID3D11ShaderResourceView* SpecularSRV;
 	ID3D11ShaderResourceView* teamcolorSRV;
 	ModelViewProjectionConstantBuffer mvpData;
 	
