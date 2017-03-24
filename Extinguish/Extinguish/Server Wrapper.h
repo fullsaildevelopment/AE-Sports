@@ -241,4 +241,9 @@ public:
 	{
 		newServer.setCountdown(down);
 	}
+
+	void SendScorer(string name, UINT8 length)
+	{
+		newServer.SendScored((char*)name.c_str(), length);
+	}
 };
