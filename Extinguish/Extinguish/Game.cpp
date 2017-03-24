@@ -2108,7 +2108,7 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
-
+		ShowCursor(false);
 		AssignPlayers();
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
@@ -2234,6 +2234,7 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			Button * exitButton = pauseExit->GetComponent<Button>();
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
+			ShowCursor(toggle);
 		}
 	}
 
@@ -2247,6 +2248,7 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		Button * nButton = pauseNewGame->GetComponent<Button>();
 		toggle = !nButton->getActive();
 		nButton->SetActive(toggle);
+		ShowCursor(toggle);
 	}
 
 	if (scoreboard)
