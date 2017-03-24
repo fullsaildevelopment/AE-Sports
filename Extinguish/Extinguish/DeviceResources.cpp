@@ -158,7 +158,9 @@ void DeviceResources::Init(HWND hwnd)
 
 void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 {
-	ImGui_ImplDX11_InvalidateDeviceObjects();
+	if (!DEBUG_GRAPHICS) {
+		ImGui_ImplDX11_InvalidateDeviceObjects();
+	}
 	ID3D11RenderTargetView* nullViews[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
 
@@ -173,8 +175,8 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 	{
 		pRT.Get()->Release();
 		p2DDeviceContext->SetTarget(nullptr);
-		p2DDeviceContext.Get()->Release();
-		p2DDevice.Get()->Release();
+	//	p2DDeviceContext.Get()->Release();
+	//	p2DDevice.Get()->Release();
 	}
 
 	deviceContext->Flush();
@@ -213,10 +215,6 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 
 	if (!DEBUG_GRAPHICS)
 	{
-		Microsoft::WRL::ComPtr<IDXGIDevice> dxgiDevice;
-		res = device.As(&dxgiDevice);
-
-		res = D2D1CreateDevice(dxgiDevice.Get(), NULL, p2DDevice.GetAddressOf());
 		res = p2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, p2DDeviceContext.GetAddressOf());
 
 		// create Direct2D target bitmap
@@ -308,14 +306,19 @@ void DeviceResources::LoadButtonResources(HWND hwnd_)
 
 
 	HRESULT result;
-	result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory2), &options, (void**)pD2DFactory.GetAddressOf());
-
+	if (!pD2DFactory)
+		result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory2), &options, (void**)pD2DFactory.GetAddressOf());
+	else
+		result = S_OK;
 
 	if (SUCCEEDED(result))
 	{
-		result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-			__uuidof(IDWriteFactory),
-			(IUnknown**)pDWriteFactory.GetAddressOf());
+		if (!pDWriteFactory)
+		{
+			result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+				__uuidof(IDWriteFactory),
+				(IUnknown**)pDWriteFactory.GetAddressOf());
+		}
 	}
 
 	// device dependent

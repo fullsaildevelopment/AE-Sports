@@ -33,6 +33,7 @@ void AI::OnCollisionEnter(Collider *obj)
 		if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
 			CapsuleCollider *col = (CapsuleCollider*)obj;
+
 			if (obj->GetGameObject() == realTarget)
 			{
 				startTimer = true;
@@ -55,9 +56,9 @@ void AI::OnCollisionEnter(Collider *obj)
 					translation.x = -translation.x;
 					translation.y = -3.0f;
 					translation.z = -translation.z * 3.0f;
-
 					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 				}
+
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
@@ -73,7 +74,6 @@ void AI::HandleEvent(Event* e)
 	if (playEvent)
 	{
 		canMove = playEvent->CanPlay();
-
 		return;
 	}
 }
@@ -87,6 +87,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 	// grabbing all of the game objects
 	std::vector<GameObject*> tmp = *me->GetGameObjects();
 
+#pragma region Objects
 	// for each game object
 	for (int i = 0; i < tmp.size(); ++i)
 	{
@@ -143,6 +144,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 			}
 		}
 	}
+#pragma endregion
 
 #pragma region Switch
 	switch (fakeTeam)
@@ -256,6 +258,7 @@ void AI::Update(float _dt)
 			}
 		}*/
 
+#pragma region Setting Objects
 		if (ogTarget)
 		{
 			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
@@ -280,6 +283,7 @@ void AI::Update(float _dt)
 				{
 					Movement* movement = ogTarget->GetComponent<Movement>();
 
+					// if you're a player
 					if (movement)
 					{
 						movement->SetCanMove(true);
@@ -290,13 +294,11 @@ void AI::Update(float _dt)
 						translation.x = translation.x;
 						translation.y = 3.0f;
 						translation.z = translation.z * 3.0f;
-
 						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
+
 					else
-					{
 						ogTarget->GetComponent<AI>()->SetCanMove(true);
-					}
 
 					ogTarget = nullptr;
 				}
@@ -306,9 +308,6 @@ void AI::Update(float _dt)
 		if (!canMove) Idle();
 		if (!isAttacking) realTarget = nullptr;
 		if (startTimer) timer -= _dt;
-
-#pragma region Setting Objects
-
 		if (!crosse) crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
 		if (!camera) camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
 
@@ -390,7 +389,7 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-		
+
 #pragma region Goalie2
 		else if (currState == playboy)
 		{
@@ -406,7 +405,7 @@ void AI::Update(float _dt)
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 				Score();
 
-			 //if the enemy team has the ball, attack their tank
+			//if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
 				Attack(eTank);
 
@@ -428,7 +427,7 @@ void AI::Update(float _dt)
 		}
 
 #pragma endregion
-		
+
 #pragma region Guy
 		else if (currState == guy)
 		{
@@ -495,7 +494,7 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-		
+
 		if (timer <= 0)
 		{
 			timer = 5.0f;
@@ -729,7 +728,7 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	//Paranoia();
+	Paranoia();
 
 	if (RunTo(enemyGoal, 28.0f))
 	{

@@ -51,6 +51,7 @@ public:
 	~UIRenderer();
 	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor);
 	void Init(bool isButton, DeviceResources* deviceResources, MeterBar * meter);
+	void ReInit();
 	void Update(float _dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
@@ -59,5 +60,7 @@ public:
 	void setAlignment(DWRITE_TEXT_ALIGNMENT text, DWRITE_PARAGRAPH_ALIGNMENT paragraph) { alignmentText = text; alignmentParagrah = paragraph; }
 	void SetFontSize(float fontSize);
 	void SetColor(D2D1::ColorF fontColor);
+	wstring GetFont() { return font; }
+	bool getIsButton() { return isButton; }
+	float getFontSize() { return curSize; }
 };
-

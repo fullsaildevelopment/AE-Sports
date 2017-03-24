@@ -61,6 +61,15 @@ UIRenderer::~UIRenderer()
 		delete theButton;
 }
 
+void UIRenderer::ReInit()
+{
+	pDWriteFactory = devResources->GetWriteFactory();
+	pD2DFactory = devResources->GetID2D1Factory();
+	layoutRect = devResources->GetRect();
+	pRT = devResources->GetRenderTarget();
+	d2DevContext = devResources->Get2DContext();
+}
+
 void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor)
 {
 	pDWriteFactory = deviceResources->GetWriteFactory();
@@ -72,7 +81,9 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 	isButton = _isButton;
 	theButton = button;
 	d2DevContext = deviceResources->Get2DContext();
+
 	this->font = font;
+	curSize = fontSize;
 
 	if (font != L"") {
 		HRESULT result;
@@ -101,6 +112,9 @@ void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceRes
 				D2D1::ColorF(fontColor),
 				pBrush.GetAddressOf()
 			);
+
+			if (result != S_OK)
+				float temp = 0.0f;
 		}
 	}
 }
@@ -192,7 +206,7 @@ void UIRenderer::Render()
 						d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
 				}
 
-				if (theButton->getText() != L"") {
+				if (theButton->getText() != L"" && theButton->getText() != L"Titans with Sticks") {
 
 					DWRITE_TEXT_RANGE textRange = { 0, theButton->getLength() };
 					hr = pTextLayout->SetTypography(theButton->getTypography(), textRange);
