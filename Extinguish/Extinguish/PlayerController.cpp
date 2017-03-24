@@ -43,6 +43,7 @@ void PlayerController::Init()
 {
 	//cache
 	transform = GetGameObject()->GetTransform();
+	movement = GetGameObject()->GetComponent<Movement>();
 
 	//register as event handler
 	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName() + "Controller");
@@ -66,8 +67,6 @@ void PlayerController::Update(float _dt)
 	//sprintAgainTimer += dt;
 	if (!DEBUG_GRAPHICS)
 		HandleSprintAndCharge();
-
-	Movement* movement = GetGameObject()->GetComponent<Movement>();
 
 	PlayFootstepsSound();
 
@@ -100,11 +99,11 @@ void PlayerController::Update(float _dt)
 
 			if (setCanMove)
 			{
-				Movement* movement = ogPlayer->GetComponent<Movement>();
+				Movement* otherMovement = ogPlayer->GetComponent<Movement>();
 
-				if (movement)
+				if (otherMovement)
 				{
-					movement->SetCanMove(true);
+					otherMovement->SetCanMove(true);
 
 					//move the player's camera to match getting up
 					Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
@@ -498,11 +497,11 @@ void PlayerController::Attack()
 			meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
 
 			ogPlayer = otherPlayer;
-			Movement* movement = otherPlayer->GetComponent<Movement>();
+			Movement* otherMovement = otherPlayer->GetComponent<Movement>();
 
-			if (movement)
+			if (otherMovement)
 			{
-				movement->SetCanMove(false);
+				otherMovement->SetCanMove(false);
 
 				//move the player's camera to match stumble
 				Transform* otherCamera = otherPlayer->GetTransform()->GetChild(0);
@@ -537,7 +536,7 @@ void PlayerController::Sprint()
 //private helper functions//
 void PlayerController::HandleInput()
 {
-	if (input->GetKeyDown(VK_SPACE))
+	if (input->GetKeyDown(VK_SPACE) && movement->CanMove())
 	{
 		Jump();
 	}
@@ -548,7 +547,7 @@ void PlayerController::HandleInput()
 	}
 
 	//this line will only happen once
-	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint) //16 == Left Shift
+	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{
 		Sprint();
 
@@ -709,8 +708,6 @@ void PlayerController::PlayFootstepsSound()
 	//	break;
 	}
 
-	Movement* movement = GetGameObject()->GetComponent<Movement>();
-
 	if (movement->IsMoving() && !footstepsPlayed)
 	{
 		SoundEvent* soundEvent = new SoundEvent();
@@ -742,8 +739,6 @@ void PlayerController::StopFootstepsSound()
 
 	//	break;
 	}
-
-	Movement* movement = GetGameObject()->GetComponent<Movement>();
 
 	SoundEvent* soundEvent = new SoundEvent();
 	soundEvent->Init(stopID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));

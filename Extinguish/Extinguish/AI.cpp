@@ -276,7 +276,7 @@ void AI::Update(float _dt)
 						setCanMove = true;
 				}
 
-				else
+				else //no animation queued at all
 					setCanMove = true;
 
 				if (setCanMove)

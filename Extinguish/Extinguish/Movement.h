@@ -33,6 +33,7 @@ public:
 
 	//getters
 	bool IsMoving();
+	bool CanMove();
 
 	//setters//
 	void SetKeys(char forward, char back, char left, char right, char up, char down);
