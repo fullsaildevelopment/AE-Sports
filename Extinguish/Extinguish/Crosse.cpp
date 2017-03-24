@@ -117,45 +117,55 @@ void Crosse::Throw()
 
 void Crosse::Catch()
 {
-	//increase player's stats
-	PlayerController* playerController = player->GetComponent<PlayerController>();
-	float3 goalPos;
-
-	if (playerController->GetTeamID() == Game::PLAYER_TEAM::TEAM_A) //red player
+	if (!ballC->GetHolder()) //there's a bug where on trigger enter calls catch a few times, so this prevents that
 	{
-		goalPos = GetGameObject()->FindGameObject("RedGoal")->GetTransform()->GetPosition();
-	}
-	else //blue player
-	{
-		goalPos = GetGameObject()->FindGameObject("BlueGoal")->GetTransform()->GetPosition();
-	}
+		//increase player's stats
+		PlayerController* playerController = player->GetComponent<PlayerController>();
+		float3 goalPos;
 
-	//dimensions of goal: 13 x 8
-
-	//check the position to see if it was close to going to the goal
-	float3 ballPos = ballTransform->GetWorldPosition();
-
-	cout << ballPos.x << " " << ballPos.y << " " << ballPos.z << "\t" << goalPos.x << " " << goalPos.y << " " << goalPos.z << endl;
-
-	if ((ballPos.x <= goalPos.x + 8.0f || ballPos.x >= goalPos.x - 8.0f) && (ballPos.y >= goalPos.y - 4.0f) && (ballPos.z >= goalPos.z - 8.0f))
-	{
-		//check the direction to make sure that it's not moving away from the goal
-		if (dot_product(ballTransform->GetVelocity().normalize(), float3(0, 0, -1)) <= 0)
+		if (playerController->GetTeamID() == Game::PLAYER_TEAM::TEAM_A) //red player
 		{
-			player->GetComponent<PlayerController>()->AddSave();
+			goalPos = GetGameObject()->FindGameObject("RedGoal")->GetTransform()->GetPosition();
 		}
+		else //blue player
+		{
+			goalPos = GetGameObject()->FindGameObject("BlueGoal")->GetTransform()->GetPosition();
+		}
+
+		//dimensions of goal: 13 x 8
+
+		//check the position to see if it was close to going to the goal
+		float3 ballPos = ballTransform->GetWorldPosition();
+
+		int direction = -1;
+
+		if (playerController->GetTeamID() == Game::PLAYER_TEAM::TEAM_B) //blue player
+		{
+			direction = 1;
+		}
+
+		cout << ballPos.x << " " << ballPos.y << " " << ballPos.z << "\t" << goalPos.x << " " << goalPos.y << " " << goalPos.z << endl;
+
+		if ((ballPos.x <= goalPos.x + 8.0f || ballPos.x >= goalPos.x - 8.0f) && (ballPos.y >= goalPos.y - 4.0f) && ((ballPos.z >= goalPos.z - 8.0f && direction == 1) || (ballPos.z <= goalPos.z + 8.0f && direction == -1)))
+		{
+			//check the direction to make sure that it's not moving away from the goal
+			if (dot_product(ballTransform->GetVelocity().normalize(), float3(0, 0, -1 * direction)) <= 0)
+			{
+				player->GetComponent<PlayerController>()->AddSave();
+			}
+		}
+
+		playerController->AddCatch();
+
+		ballC->SetHolder(GetGameObject());
+		SetColor(true);
+
+		//play sound
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::PLAY_CATCH, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
 	}
-
-	playerController->AddCatch();
-
-	ballC->SetHolder(GetGameObject());
-	SetColor(true);
-
-	//play sound
-	SoundEvent* soundEvent = new SoundEvent();
-	soundEvent->Init(AK::EVENTS::PLAY_CATCH, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
-	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
-	delete soundEvent;
 }
 
 void Crosse::HandleEvent(Event* e)
