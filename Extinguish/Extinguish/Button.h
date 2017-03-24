@@ -42,7 +42,7 @@ private:
 	float height, width, fontSize;
 	float originX, originY;
 	float widthMult, heightMult;
-	D2D1_SIZE_F rtSize;
+	D2D1_SIZE_F rtSize, oldSize;
 	D2D1_RECT_F rect;
 	BUTTON_TYPE buttonType;
 	GameObject * object;
@@ -135,7 +135,7 @@ public:
 	void setTexture(char * _textureAddress) {}
 	void setOrigin() { originX = rect.left; originY = rect.top; }
 	void setPositionMultipliers(float w, float h) { widthMult = w; heightMult = h; }
-	void setRT(D2D1_SIZE_F _rtSize) { rtSize = _rtSize; }
+	void setRT(D2D1_SIZE_F _rtSize) { oldSize = rtSize; rtSize = _rtSize; }
 	void setButtonType();
 	void setSceneIndex(unsigned int i) { sceneIndex = i; }
 	void SetActive(bool active) { isActive = active; }
@@ -169,5 +169,15 @@ public:
 	}
 
 	void MakeHandler();
+
+	void AdjustSize()
+	{
+		float tWidth, tHeight;
+		tWidth = width * (rtSize.width / oldSize.width);
+		tHeight = height * (rtSize.height / oldSize.height);
+
+		width = tWidth;
+		height = tHeight;
+	}
 
 };
