@@ -373,9 +373,9 @@ void AI::Update(float _dt)
 					camera->RotateX(0.9f);
 				}*/
 
-				camera->RotateX(-0.9f);
+				camera->RotateX(-0.4f);
 				crosse->Throw();
-				camera->RotateX(0.9f);
+				camera->RotateX(0.4f);
 			}
 
 			// if the ball is too far from the goal
@@ -389,7 +389,7 @@ void AI::Update(float _dt)
 			}
 		}
 #pragma endregion
-
+		
 #pragma region Goalie2
 		else if (currState == playboy)
 		{
@@ -625,7 +625,9 @@ void AI::Paranoia()
 
 			// pass the ball
 			TurnTo(target);
+			camera->RotateX(-0.4f);
 			crosse->Throw();
+			camera->RotateX(0.4f);
 		}
 	}
 }
