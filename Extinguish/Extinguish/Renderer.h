@@ -41,7 +41,7 @@ private:
 	ID3D11ShaderResourceView* diffuseSRV;
 	ID3D11ShaderResourceView* NormalSRV;
 	ID3D11ShaderResourceView* SpecularSRV;
-	ID3D11ShaderResourceView* teamcolorSRV;
+	ID3D11ShaderResourceView* emissiveSRV;
 	ModelViewProjectionConstantBuffer mvpData;
 	
 	unsigned int vertexStride;
@@ -58,6 +58,7 @@ public:
 	~Renderer();
 
 	void Init(std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha = false);
+	void Init(std::string mesh, std::string textureName, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha = false);
 	void Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha = false);
 	void Update(float _dt) override;
 	void Render();

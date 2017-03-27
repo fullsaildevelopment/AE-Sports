@@ -38,6 +38,9 @@ private:
 	int footstepsSound;
 	unsigned int teamID;
 
+	//powerup members
+	float jumpMultiplier;
+
 	//stat members for the player's whole history
 	unsigned int totalGoals;
 	unsigned int totalAssists;
@@ -104,6 +107,7 @@ public:
 	unsigned int GetSaves();
 	unsigned int GetAssists();
 	unsigned int GetTeamID();
+	float GetJumpMultiplier();
 
 	//setters//
 	void SetName(std::string name);
@@ -115,4 +119,5 @@ public:
 	void SetGoals(unsigned int amount);
 	void SetSaves(unsigned int amount);
 	void SetAssists(unsigned int amount);
+	void SetJumpMultiplier(float multiplier);
 };

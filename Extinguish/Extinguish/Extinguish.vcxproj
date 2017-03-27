@@ -163,6 +163,7 @@
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PostProcess.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="SuperJump.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="Parameter.cpp" />
@@ -243,6 +245,7 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="SuperJump.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="Parameter.h" />
