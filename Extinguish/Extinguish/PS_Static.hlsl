@@ -26,9 +26,6 @@ struct PointLight
 cbuffer PointLightCB : register(b1)
 {
 	PointLight pLights[NUMOFPOINTLIGHTS];
-	//float4 pointLightPosition[NUMOFPOINTLIGHTS];
-	//float4 pointLightColor[NUMOFPOINTLIGHTS];
-	//float4 lightRadius[NUMOFPOINTLIGHTS]; //treat as float
 };
 
 //cbuffer SpotLightCB : register(b2)
