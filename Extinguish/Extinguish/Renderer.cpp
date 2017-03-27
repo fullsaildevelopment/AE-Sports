@@ -218,6 +218,10 @@ void Renderer::Update(float _dt)
 	{
 		devContext->PSSetShaderResources(1, 1, &NormalSRV);
 	}
+	if (SpecularSRV)
+	{
+		devContext->PSSetShaderResources(2, 1, &SpecularSRV);
+	}
 	if (teamcolorSRV)
 	{
 		devContext->PSSetShaderResources(3, 1, &teamcolorSRV);

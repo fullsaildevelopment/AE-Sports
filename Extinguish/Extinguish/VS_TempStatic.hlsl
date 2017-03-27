@@ -12,6 +12,8 @@ struct VertexShaderInput
 	float3 pos : POSITION;
 	float3 normal : NORMAL;
 	float3 uv : TEXCOORD;
+	float3 binormal : BINORMAL;
+	float4 tangent : TANGENT;
 };
 
 // Per-pixel color data passed through the pixel shader.
@@ -42,12 +44,14 @@ PS_BasicInput main(VertexShaderInput input)
 	// Pass the color through without modification.
 	output.uv = input.uv;
 
-	output.tangent = float3(0, 0, 0);
-	output.binormal = float3(0, 0, 0);
-
-	//pass normal
 	norm = mul(norm, model);
 	output.normal = (float3)norm;
+
+	output.tangent = mul(float4(input.tangent.xyz, 0), model).xyz;
+	output.tangent = normalize(output.tangent);
+
+	output.binormal = cross(output.normal, output.tangent) * input.tangent.w;
+	output.binormal = normalize(output.binormal);
 
 	return output;
 }
