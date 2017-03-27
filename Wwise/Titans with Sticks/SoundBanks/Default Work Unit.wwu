@@ -16,6 +16,7 @@
 						<ObjectRef Name="Stop_Background" ID="{164CFB72-631C-488C-A72B-27D6B1D86B35}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Throw" ID="{F8F957C4-4828-48A0-ABAA-942206EBA786}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_RunningPantShort" ID="{AB7D6FDE-1CF4-48C5-84B3-78883F81014A}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Score" ID="{AC95F684-FCDD-49B2-9D5D-40E0F48DF542}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Footsteps__Charge_" ID="{4FF87D44-5FC1-4AEE-9C84-EE76A60FC4F8}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Boing" ID="{2387FEB5-5381-4B02-8073-7EAEAD4FC73B}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Background" ID="{4E2F8214-6B58-4C34-8BBD-288657BD39DF}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
