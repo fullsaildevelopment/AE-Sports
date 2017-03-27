@@ -5,10 +5,22 @@
 #include "PlayerController.h"
 #include "Renderer.h"
 
+//structors//
+PowerUp::PowerUp()
+{
+	timer = 0.0f;
+	isActivated = false;
+}
+
 //basic//
 void PowerUp::Update(float _dt)
 {
-	if (IsDone())
+	if (isActivated)
+	{
+		timer += _dt;
+	}
+
+	if (IsDone() && isActivated)
 	{
 		Deactivate();
 	}
@@ -26,20 +38,24 @@ void PowerUp::HandleEvent(Event* e)
 
 void PowerUp::OnTriggerEnter(Collider* collider)
 {
-	if (collider->GetColliderType() == Collider::ColliderType::CTCapsule)
+	if (!isActivated)
 	{
-		CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
-
-		if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
+		if (collider->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
-			player = capsCollider->GetGameObject()->GetComponent<PlayerController>();
+			CapsuleCollider* capsCollider = (CapsuleCollider*)collider;
 
-			Activate();
+			if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
+			{
+				player = capsCollider->GetGameObject()->GetComponent<PlayerController>();
 
-			//stop rendering
-			capsCollider->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+				isActivated = true;
+				Activate();
 
-			return;
+				//stop rendering
+				GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+
+				return;
+			}
 		}
 	}
 }
@@ -54,6 +70,8 @@ void PowerUp::Deactivate()
 {
 	//maybe call this in derived
 	//and in here, destroy the component and/or object completely so it stops updating and what not
+
+	isActivated = false;
 }
 
 //getters//
