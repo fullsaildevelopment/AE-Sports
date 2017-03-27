@@ -27,6 +27,7 @@
 				<Event Id="1437361150" Name="Play_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Walk____"/>
 				<Event Id="3738780720" Name="Play_MainMenu" ObjectPath="\Events\Default Work Unit\Play_MainMenu"/>
 				<Event Id="538781006" Name="Play_RunningPantShort" ObjectPath="\Events\Default Work Unit\Play_RunningPantShort"/>
+				<Event Id="3240049516" Name="Play_Score" ObjectPath="\Events\Default Work Unit\Play_Score"/>
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
 				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
 				<Event Id="1244803444" Name="Stop_Background" ObjectPath="\Events\Default Work Unit\Stop_Background"/>
@@ -68,6 +69,10 @@
 				<File Id="527908285" Language="SFX">
 					<ShortName>Audio\Catch.wav</ShortName>
 					<Path>SFX\Audio\Catch_9E69E797.wem</Path>
+				</File>
+				<File Id="694589771" Language="SFX">
+					<ShortName>Score.wav</ShortName>
+					<Path>SFX\Score_9E69E797.wem</Path>
 				</File>
 				<File Id="743215297" Language="SFX">
 					<ShortName>Footsteps (Charge).wav</ShortName>
