@@ -124,10 +124,15 @@ void Movement::HandleEvent(Event* e)
 	}
 }
 
-//getters
+//getters//
 bool Movement::IsMoving()
 {
 	return isMoving;
+}
+
+bool Movement::CanMove()
+{
+	return canMove;
 }
 
 //setters//

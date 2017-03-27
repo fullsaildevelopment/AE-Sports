@@ -22,9 +22,14 @@ void StartGame()
 	delete event;
 
 	SoundEvent* soundEvent = new SoundEvent();
-	soundEvent->Init(AK::EVENTS::STOP_BACKBOARD_BOUNCE_SONG, 1);
+	soundEvent->Init(AK::EVENTS::STOP_MAINMENU, 1);
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+
+	soundEvent->Init(AK::EVENTS::PLAY_BACKGROUND, 1);
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 	delete soundEvent;
+
+
 }
 
 void StartLobby()
