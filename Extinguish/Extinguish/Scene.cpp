@@ -524,6 +524,7 @@ void Scene::Update(float _dt)
 					}
 				}
 			}
+
 			else
 			{
 				float3 tp = transform->GetPosition();
