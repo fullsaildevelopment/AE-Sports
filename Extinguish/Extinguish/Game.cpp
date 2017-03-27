@@ -117,7 +117,7 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 
 	soundEngine->InitSoundEngine(ids, names);
 
-	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_BACKBOARD_BOUNCE_SONG, 1);
+	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_MAINMENU, 1);
 
 
 	justScored = false;
@@ -492,6 +492,12 @@ void Game::HandleEvent(Event* e)
 			//	server.sendGameState();
 		}
 		UpdateScoreUI();
+
+		//play score sound
+		SoundEvent* sound = new SoundEvent();
+		sound->Init(AK::EVENTS::PLAY_SCORE, 1);
+		HandleEvent(sound);
+		delete sound;
 
 		//display scorer text
 		if (!ResourceManager::GetSingleton()->IsMultiplayer())
@@ -988,13 +994,13 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	GameObject* testPlayer = new GameObject();
-	testPlayer->Init("TestPlayer");
-	basic->AddGameObject(testPlayer);
-	testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* testPlayerRenderer = new Renderer();
-	testPlayer->AddComponent(testPlayerRenderer);
-	testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
+	//GameObject* testPlayer = new GameObject();
+	//testPlayer->Init("TestPlayer");
+	//basic->AddGameObject(testPlayer);
+	//testPlayer->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* testPlayerRenderer = new Renderer();
+	//testPlayer->AddComponent(testPlayerRenderer);
+	//testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
 	GameObject* titanPlayer = new GameObject();
 	titanPlayer->Init("TitanPlayer");
@@ -1044,32 +1050,32 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexFloor->AddComponent(HexFLoorCol);
 	fcon->SetState(1 / 6.0f);
 
-	GameObject* Hex = new GameObject();
-	Hex->Init("Team2");
-	basic->AddGameObject(Hex);
-	Hex->InitTransform(identity, { -15, 0, -20.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
-	Renderer* ballrenderer3 = new Renderer();
-	Hex->AddComponent(ballrenderer3);
-	ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
-	Movement* ballMover3 = new Movement();
-	HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10, resourceManager->collisionMeshes[0]);
-	Hex->AddComponent(HexPillar);
+	//GameObject* Hex = new GameObject();
+	//Hex->Init("Team2");
+	//basic->AddGameObject(Hex);
+	//Hex->InitTransform(identity, { -15, 0, -20.5f }, { 0,0,0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	//Renderer* ballrenderer3 = new Renderer();
+	//Hex->AddComponent(ballrenderer3);
+	//ballrenderer3->Init("Hexagon", "Static", "Static", "", "", projection, devResources);
+	//Movement* ballMover3 = new Movement();
+	//HexagonCollider* HexPillar = new HexagonCollider(Hex, 2, 10, resourceManager->collisionMeshes[0]);
+	//Hex->AddComponent(HexPillar);
 
-	GameObject* axis = new GameObject();
-	axis->Init("axis");
-	basic->AddGameObject(axis);
-	axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, -10, 10 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
-	Renderer* axisRenderer = new Renderer();
-	axis->AddComponent(axisRenderer);
-	axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
+	//GameObject* axis = new GameObject();
+	//axis->Init("axis");
+	//basic->AddGameObject(axis);
+	//axis->InitTransform(identity, { -15, 20, -20.5f }, { -DirectX::XM_PI * 0.5f, 0, 0 }, { 10, -10, 10 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	//Renderer* axisRenderer = new Renderer();
+	//axis->AddComponent(axisRenderer);
+	//axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
 
-	GameObject* powerUp = new GameObject();
-	powerUp->Init("PowerUp");
-	basic->AddGameObject(powerUp);
-	powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
-	Renderer* powerUpRenderer = new Renderer();
-	powerUp->AddComponent(powerUpRenderer);
-	powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
+	//GameObject* powerUp = new GameObject();
+	//powerUp->Init("PowerUp");
+	//basic->AddGameObject(powerUp);
+	//powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	//Renderer* powerUpRenderer = new Renderer();
+	//powerUp->AddComponent(powerUpRenderer);
+	//powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1679,7 +1685,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	wRender->InitMetrics();
 	wButton->SetActive(false);
 
-	// winner
+	// scorer
 	GameObject* scorer = new GameObject();
 	scorer->Init("Scorer");
 	scene->AddUIObject(scorer);
@@ -1687,7 +1693,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	sButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	sButton->SetGameObject(scorer);
 	sButton->showFPS(false);
-	sButton->setPositionMultipliers(0.5f, 0.5f);
+	sButton->setPositionMultipliers(0.5f, 0.25f);
 	scorer->AddComponent(sButton);
 	UIRenderer * sRenderer = new UIRenderer();
 	sRenderer->Init(true, 80.0f, devResources, sButton, L"Sans-Serif", D2D1::ColorF(0.9f, 0.9f, 0.9f, 1.0f));

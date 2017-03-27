@@ -8,6 +8,7 @@
 class GameObject;
 class BallController;
 class GamePadEvent;
+class Movement;
 
 class Crosse : public Component
 {
@@ -17,6 +18,7 @@ private:
 	InputManager* input;
 	BallController* ballC;
 	GameObject* player;
+	Movement* movement;
 
 	int prevMouseX, prevMouseY;
 	const float maxRotZ = 70.0f;
@@ -27,6 +29,7 @@ private:
 	float minX, minY;
 	float _dt;
 	bool catchMode;
+
 	//float catchAgainTimer;
 	//const float timeUntilCatchAgain = 0.0f;
 

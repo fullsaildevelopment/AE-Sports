@@ -14,6 +14,7 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID PLAY_BACKBOARD_BOUNCE_SONG = 3057195544U;
+        static const AkUniqueID PLAY_BACKGROUND = 3196207338U;
         static const AkUniqueID PLAY_BEEP = 2063165418U;
         static const AkUniqueID PLAY_BOING = 3698997709U;
         static const AkUniqueID PLAY_CATCH = 3513145267U;
@@ -21,12 +22,16 @@ namespace AK
         static const AkUniqueID PLAY_FOOTSTEPS__CHARGE_ = 3977125916U;
         static const AkUniqueID PLAY_FOOTSTEPS__SPRINT_ = 734068952U;
         static const AkUniqueID PLAY_FOOTSTEPS__WALK____ = 1437361150U;
+        static const AkUniqueID PLAY_MAINMENU = 3738780720U;
         static const AkUniqueID PLAY_RUNNINGPANTSHORT = 538781006U;
+        static const AkUniqueID PLAY_SCORE = 3240049516U;
         static const AkUniqueID PLAY_THROW = 1977644338U;
         static const AkUniqueID STOP_BACKBOARD_BOUNCE_SONG = 6317442U;
+        static const AkUniqueID STOP_BACKGROUND = 1244803444U;
         static const AkUniqueID STOP_FOOTSTEPS__CHARGE_ = 2096695406U;
         static const AkUniqueID STOP_FOOTSTEPS__SPRINT_ = 2346218314U;
         static const AkUniqueID STOP_FOOTSTEPS__WALK____ = 2224425572U;
+        static const AkUniqueID STOP_MAINMENU = 890527358U;
         static const AkUniqueID STOP_RUNNINGPANTSHORT = 1896658016U;
     } // namespace EVENTS
 
