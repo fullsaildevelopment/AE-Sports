@@ -49,4 +49,7 @@ public:
 	int getCol() { return col; }
 	int getRow() { return row; }
 	float getTime() { return timeing; }
+	void setColor(int pos, float3 color);
+	void setColor(int pos, unsigned int color);
+	unsigned int* getColors() { return colors; };
 };

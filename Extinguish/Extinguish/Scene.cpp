@@ -249,20 +249,20 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.75f, 0.75f, 0.94f, 1.0f }, { 0.6f, 0.6f, 0.6f, 0.6f });
+	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.30f, 0.20f, 0.30f, 1.0f }, { 0.15f, 0.15f, 0.15f, 0.15f });
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -7, -30, -50.5f, 0 }, { 1, 0, 0, 1.0f }, 150.0f);
+	pointLight0.Create({ -7, -10, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 500.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -7, -30, 5.5f, 0 }, { 0, 0.0f, 1, 1.0f }, 150.0f);
+	pointLight1.Create({ -7, -10, 5.5f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 500.0f);
 
 	PointLight pointLight2;
-	pointLight2.Create({ 1.0f, 1.5f, -2.0f, 0 }, { 1, 0.0f, 1.0f, 1.0f }, 0.0f);
+	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 350.0f);
 
 	PointLight pointLight3;
-	pointLight3.Create({ 5.0f, 0.5f, 2.0f, 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, 0.0f);
+	pointLight3.Create({ -7, 10, 20.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 350.0f);
 
 	pointLights.push_back(pointLight0);
 	pointLights.push_back(pointLight1);
@@ -469,56 +469,59 @@ void Scene::Update(float _dt)
 			{
 				float3 inBetween = gameObjects[i]->GetTransform()->GetWorldPosition() - camPosition;
 				float dist = dot_product(inBetween, inBetween);
-				if (renderer->GetTransparent())
+				if (renderer->isEnabled())
 				{
-					RenderItem r;
-					r.dist = dist;
-					r.rend = renderer;
-					if (transparentObjects.size() == 0)
+					if (renderer->GetTransparent())
 					{
-						transparentObjects.addHead(r);
-					}
-					else
-					{
-						for (transparentIter.begin(); true; ++transparentIter)
+						RenderItem r;
+						r.dist = dist;
+						r.rend = renderer;
+						if (transparentObjects.size() == 0)
 						{
-							if (transparentIter.end())
+							transparentObjects.addHead(r);
+						}
+						else
+						{
+							for (transparentIter.begin(); true; ++transparentIter)
 							{
-								transparentObjects.insert(transparentIter, r);
-								break;
-							}
-							if (r.dist > transparentIter.current().dist)
-							{
-								transparentObjects.insert(transparentIter, r);
-								break;
+								if (transparentIter.end())
+								{
+									transparentObjects.insert(transparentIter, r);
+									break;
+								}
+								if (r.dist > transparentIter.current().dist)
+								{
+									transparentObjects.insert(transparentIter, r);
+									break;
+								}
 							}
 						}
-					}
 
-					
-				}
-				else
-				{
-					RenderItem r;
-					r.dist = dist;
-					r.rend = renderer;
-					if (opaqueObjects.size() == 0)
-					{
-						opaqueObjects.addHead(r);
+
 					}
 					else
 					{
-						for (opaqueIter.begin(); true; ++opaqueIter)
+						RenderItem r;
+						r.dist = dist;
+						r.rend = renderer;
+						if (opaqueObjects.size() == 0)
 						{
-							if (opaqueIter.end())
+							opaqueObjects.addHead(r);
+						}
+						else
+						{
+							for (opaqueIter.begin(); true; ++opaqueIter)
 							{
-								opaqueObjects.insert(opaqueIter, r);
-								break;
-							}
-							if (r.dist < opaqueIter.current().dist)
-							{
-								opaqueObjects.insert(opaqueIter, r);
-								break;
+								if (opaqueIter.end())
+								{
+									opaqueObjects.insert(opaqueIter, r);
+									break;
+								}
+								if (r.dist < opaqueIter.current().dist)
+								{
+									opaqueObjects.insert(opaqueIter, r);
+									break;
+								}
 							}
 						}
 					}
@@ -546,6 +549,7 @@ void Scene::Update(float _dt)
 			}
 		}
 	}
+	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
 	///////////////Clear BackBuffer//////////////
 	PostProcessing.Clear();
 	//////////////////////////RenderOpaqueObjects/////////////////////////
