@@ -4,7 +4,7 @@
 
 SuperJump::SuperJump() : PowerUp()
 {
-	SetDuration(2.0f);
+	SetDuration(4.0f);
 }
 
 void SuperJump::Activate()
