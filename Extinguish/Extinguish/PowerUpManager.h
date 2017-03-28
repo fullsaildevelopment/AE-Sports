@@ -16,5 +16,6 @@ private:
 public:
 	//basic
 	void Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources);
+	void Update(float _dt) override;
 
 };
