@@ -159,11 +159,13 @@
     <ClCompile Include="FloorController.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
+    <ClCompile Include="Magnet.cpp" />
     <ClCompile Include="MeterBar.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="PowerUp.cpp" />
+    <ClCompile Include="PowerUpManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -184,6 +186,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="Scoreboard.cpp" />
+    <ClCompile Include="Shield.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="State.cpp" />
@@ -211,6 +214,7 @@
     <ClInclude Include="FloorController.h" />
     <ClInclude Include="Goal.h" />
     <ClInclude Include="HexagonCollider.h" />
+    <ClInclude Include="Magnet.h" />
     <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="MeterBar.h" />
@@ -219,6 +223,7 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="PowerUp.h" />
+    <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="AI.h" />
@@ -242,6 +247,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scoreboard.h" />
     <ClInclude Include="Server Wrapper.h" />
+    <ClInclude Include="Shield.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="State.h" />

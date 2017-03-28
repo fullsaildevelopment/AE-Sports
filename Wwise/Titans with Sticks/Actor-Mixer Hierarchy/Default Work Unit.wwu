@@ -234,6 +234,25 @@
 								<ActiveSource Name="FinalBeep" ID="{CE065CAC-9AED-42E1-B5D9-1380BCDB4A4B}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
+						<Sound Name="Score" ID="{318F6D7C-3998-4558-B3D4-C883DDE4B3E6}" ShortID="979918274" Type="SoundFX">
+							<ReferenceList>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="Score" ID="{1F967FC0-18B0-4D3A-9A64-835E4F8CD869}" ShortID="694589771">
+									<Language>SFX</Language>
+									<AudioFile>Score.wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="Score" ID="{1F967FC0-18B0-4D3A-9A64-835E4F8CD869}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
 					</ChildrenList>
 				</Folder>
 				<Sound Name="Backboard Bounce Song" ID="{E62757B0-5ACA-44F4-8368-30A91CE80B75}" ShortID="173608183" Type="SoundFX">
