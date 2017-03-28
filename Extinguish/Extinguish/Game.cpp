@@ -493,6 +493,12 @@ void Game::HandleEvent(Event* e)
 		}
 		UpdateScoreUI();
 
+		//play score sound
+		SoundEvent* sound = new SoundEvent();
+		sound->Init(AK::EVENTS::PLAY_SCORE, 1);
+		HandleEvent(sound);
+		delete sound;
+
 		//display scorer text
 		if (!ResourceManager::GetSingleton()->IsMultiplayer())
 		{
