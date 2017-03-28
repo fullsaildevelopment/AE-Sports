@@ -2159,6 +2159,9 @@ void Game::LoadScene(std::string name)
 		currentScene = index;
 	}
 
+	if (currentScene == 0)
+		ShowCursor(true);
+
 	if (currentScene == 1)
 	{
 		if (ResourceManager::GetSingleton()->IsMultiplayer())
@@ -2172,6 +2175,7 @@ void Game::LoadScene(std::string name)
 		{
 			EnableButton("Players", false);
 		}
+		ShowCursor(true);
 	}
 	else if (currentScene == 2)
 	{
