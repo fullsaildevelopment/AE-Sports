@@ -195,6 +195,12 @@
     <ClCompile Include="Application.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="PowerUp.cpp">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="SuperJump.cpp">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XTime.h">
@@ -353,9 +359,6 @@
     <ClInclude Include="PlayerController.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="PowerUp.h">
-      <Filter>Components\Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="BallController.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
@@ -367,6 +370,12 @@
     </ClInclude>
     <ClInclude Include="Countdown.h">
       <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUp.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="SuperJump.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -419,6 +428,9 @@
     </Filter>
     <Filter Include="Components\Animator Controller">
       <UniqueIdentifier>{679e5e80-1564-41f7-9fed-ceb0b6ac1f2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Scripts\PowerUps">
+      <UniqueIdentifier>{ef45a6bc-0f94-40fd-aa4a-d6e432ccf050}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

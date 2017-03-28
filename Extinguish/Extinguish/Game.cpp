@@ -32,6 +32,7 @@
 #include "Scoreboard.h"
 #include "Countdown.h"
 #include "CanPlayEvent.h"
+#include "SuperJump.h"
 
 using namespace DirectX;
 using namespace std;
@@ -992,6 +993,19 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
 
+	//create powerups
+	GameObject* superJump = new GameObject();
+	superJump->Init("Super Jump");
+	basic->AddGameObject(superJump);
+	superJump->InitTransform(identity, { 5, 1, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* superJumpRenderer = new Renderer();
+	superJump->AddComponent(superJumpRenderer);
+	superJumpRenderer->Init("Super Jump", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+	SuperJump* superJumpC = new SuperJump();
+	superJump->AddComponent(superJumpC);
+	BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
+	superJump->AddBoxCollider(superJumpCollider);
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//GameObject* testPlayer = new GameObject();
@@ -1044,10 +1058,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
-	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, resourceManager->collisionMeshes[0]);
-	HexFloor->AddComponent(HexFLoorCol);
 	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
 	HexFloor->AddComponent(fcon);
+	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, fcon, resourceManager->collisionMeshes[0]);
+	HexFloor->AddComponent(HexFLoorCol);
 	fcon->SetState(1 / 6.0f);
 
 	//GameObject* Hex = new GameObject();
@@ -1072,7 +1086,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//GameObject* powerUp = new GameObject();
 	//powerUp->Init("PowerUp");
 	//basic->AddGameObject(powerUp);
-	//powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr); //I negate the y on the scale so that in game it faces the right away
+	//powerUp->InitTransform(identity, { 5, 5, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	//Renderer* powerUpRenderer = new Renderer();
 	//powerUp->AddComponent(powerUpRenderer);
 	//powerUpRenderer->Init("PowerUp", "Static", "Static", "", "", projection, devResources);

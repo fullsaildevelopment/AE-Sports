@@ -77,12 +77,42 @@ namespace FBXLoader
 		}
 	};
 
+	struct MeshVert
+	{
+		Vertex b;
+		unsigned int p;
+		bool operator==(const MeshVert& rhs) const
+		{
+			if (b.mNormal.x != rhs.b.mNormal.x) return false;
+			if (b.mNormal.y != rhs.b.mNormal.y) return false;
+			if (b.mNormal.z != rhs.b.mNormal.z) return false;
+			if (b.mUV.x != rhs.b.mUV.x) return false;
+			if (b.mUV.y != rhs.b.mUV.y) return false;
+			if (b.mPosition.x != rhs.b.mPosition.x) return false;
+			if (b.mPosition.y != rhs.b.mPosition.y) return false;
+			if (b.mPosition.z != rhs.b.mPosition.z) return false;
+
+			return true;
+		}
+	};
+
 	//hash function for verts
 	unsigned int VertHash(const NVert& v)
 	{
 		float x = v.b.position.x;
 		float y = v.b.position.y;
 		float z = v.b.position.z;
+
+		x = x * (y * 0.5379f + 35.2149f) * NUMBUCKETS * 321.6548f * z * z * (y + x);
+
+		return (unsigned int)x % NUMBUCKETS;
+	}
+
+	unsigned int MeshVertHash(const MeshVert& v)
+	{
+		float x = v.b.mPosition.x;
+		float y = v.b.mPosition.y;
+		float z = v.b.mPosition.z;
 
 		x = x * (y * 0.5379f + 35.2149f) * NUMBUCKETS * 321.6548f * z * z * (y + x);
 
@@ -763,8 +793,15 @@ namespace FBXLoader
 		int vertexCounter = 0;
 		int ctrlPointIndex = 0;
 
+		int numPolys = currMesh->GetPolygonCount();
+		NUMBUCKETS = numPolys;
+		HTable<MeshVert> MTable(NUMBUCKETS, MeshVertHash);
+
+		MeshVert MVert;
+		MeshVert* MVertPtr;
+
 		// currMesh->GetPolygonCount() == Triangle Count
-		for (int i = 0; i < currMesh->GetPolygonCount(); ++i)
+		for (int i = 0; i < numPolys; ++i)
 		{
 			for (int j = 0; j < 3; ++j)
 			{
@@ -789,18 +826,21 @@ namespace FBXLoader
 					x = x * 2;
 				}
 				// Copy the blending info from each control point
-				std::vector<VertexBlendingInfo> vertInfos;
-				for (unsigned int i = 0; i < currCtrlPoint->mBlendingInfo.size(); ++i)
+				if (mHasAnimation)
 				{
-					VertexBlendingInfo currBlendingInfo;
-					currBlendingInfo.mBlendingIndex = currCtrlPoint->mBlendingInfo[i].mBlendingIndex;
-					currBlendingInfo.mBlendingWeight = currCtrlPoint->mBlendingInfo[i].mBlendingWeight;
-					vertInfos.push_back(currBlendingInfo);
+					std::vector<VertexBlendingInfo> vertInfos;
+					for (unsigned int i = 0; i < currCtrlPoint->mBlendingInfo.size(); ++i)
+					{
+						VertexBlendingInfo currBlendingInfo;
+						currBlendingInfo.mBlendingIndex = currCtrlPoint->mBlendingInfo[i].mBlendingIndex;
+						currBlendingInfo.mBlendingWeight = currCtrlPoint->mBlendingInfo[i].mBlendingWeight;
+						vertInfos.push_back(currBlendingInfo);
+					}
+
+
+					std::sort(vertInfos.begin(), vertInfos.end());
+					StoreBlendingInfo(temp, vertInfos);
 				}
-
-				std::sort(vertInfos.begin(), vertInfos.end());
-				StoreBlendingInfo(temp, vertInfos);
-
 				if (temp.mNormal.z < 0.0f)
 				{
 					int z = 0;
@@ -808,7 +848,19 @@ namespace FBXLoader
 					z++;
 				}
 
-				mVerts.push_back(temp);
+				MVert.b = temp;
+				MVertPtr = MTable.findReturn(MVert);
+				if (!MVertPtr)
+				{
+					mVerts.push_back(temp);
+					MVert.p = (int)mVerts.size() - 1;
+					MTable.insert(MVert);
+					mIndices.push_back(MVert.p);
+				}
+				else
+				{
+					mIndices.push_back(MVertPtr->p);
+				}
 				++vertexCounter;
 			}
 		}
@@ -1364,9 +1416,9 @@ namespace FBXLoader
 
 			ProcessGeometry(mFBXScene->GetRootNode());
 
-			mIndices.clear();
-			mIndices.resize(mVerts.size());
-			ElimanateDuplicates(mVerts, mIndices);
+			//mIndices.clear();
+			//mIndices.resize(mVerts.size());
+			//ElimanateDuplicates(mVerts, mIndices);
 
 			//swap indices for correct texture
 			for (unsigned int i = 0; i < mIndices.size(); i += 3)
