@@ -242,21 +242,6 @@ void AI::Update(float _dt)
 {
 	if (!ResourceManager::GetSingleton()->IsPaused())
 	{
-		/*if (hitTarget)
-		{
-			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
-			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && animator->GetState(animator->GetNextStateIndex()) != nullptr && animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
-			{
-				if (ogTarget->GetComponent<AI>())
-					ogTarget->GetComponent<AI>()->SetCanMove(true);
-
-				else
-					ogTarget->GetComponent<Movement>()->SetCanMove(true);
-
-				hitTarget = false;
-				ogTarget = nullptr;
-			}
-		}*/
 
 #pragma region Setting Objects
 		if (ogTarget)
