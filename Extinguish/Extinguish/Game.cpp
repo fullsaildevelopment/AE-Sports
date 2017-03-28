@@ -998,7 +998,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	powerUpManager->Init("PowerUp Manager");
 	basic->AddGameObject(powerUpManager);
 	PowerUpManager* powerUpManagerC = new PowerUpManager();
-	powerUpManagerC->Init(basic);
+	powerUpManagerC->Init(basic, projection, devResources);
 
 
 

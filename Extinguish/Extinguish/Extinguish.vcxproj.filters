@@ -201,6 +201,15 @@
     <ClCompile Include="SuperJump.cpp">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClCompile>
+    <ClCompile Include="PowerUpManager.cpp">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="Magnet.cpp">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="Shield.cpp">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XTime.h">
@@ -375,6 +384,15 @@
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
     <ClInclude Include="SuperJump.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUpManager.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="Magnet.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Shield.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
   </ItemGroup>

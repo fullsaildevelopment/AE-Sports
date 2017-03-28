@@ -6,12 +6,14 @@
 #include "BoxCollider.h"
 #include "Magnet.h"
 #include "Shield.h"
+#include "vec3.h"
 
 void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources)
 {
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
+	//create power up objects
 	GameObject* superJump = new GameObject();
 	superJump->Init("Super Jump");
 	scene->AddGameObject(superJump);
@@ -53,4 +55,19 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	shield->AddBoxCollider(shieldCollider);
 
 	powerUps.push_back(shieldC);
+
+	//disable them
+	for (int i = 0; i < powerUps.size(); ++i)
+	{
+		powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+		powerUps[i]->SetEnabled(false);
+	}
+}
+
+void PowerUpManager::Update(float _dt)
+{
+	//every certain amount of time, spawn 1 to all of the powerups in certain positions
+	//for time, do I base off of game time or round time?
+
+	//const float3 spawnPositions[3] = { {
 }
