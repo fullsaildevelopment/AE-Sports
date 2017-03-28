@@ -15,7 +15,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-//	depthDisabledStencilState.ReleaseAndGetAddressOf();
+	//	depthDisabledStencilState.ReleaseAndGetAddressOf();
 	delete gameObjectsTable;
 }
 
@@ -51,7 +51,7 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 	deviceResources = devResources;
 	device = devResources->GetDevice();
 	devContext = devResources->GetDeviceContext();
-	
+
 	//compile shaders
 	//Microsoft::WRL::ComPtr<ID3D10Blob> basicVSBuffer;
 	//Microsoft::WRL::ComPtr<ID3D10Blob> depthPrePassVSBuffer;
@@ -249,20 +249,20 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ 0.577f, 0.577f, -0.577f, 0 }, { 0.30f, 0.20f, 0.30f, 1.0f }, { 0.15f, 0.15f, 0.15f, 0.15f });
+	dirLight.Create({ /*0.577f, 0.577f, -0.577f*/0,0,0, 0 }, { 0.20f, 0.30f, 0.20f, 1.0f }, { 0.099f, 0.099f, 0.099f, 0.099f });
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -7, -10, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 500.0f);
+	pointLight0.Create({ -7, -18, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -7, -10, 5.5f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 500.0f);
+	pointLight1.Create({ -7, -18, 5.5f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 145.0f);
 
 	PointLight pointLight2;
-	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 350.0f);
+	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
 
 	PointLight pointLight3;
-	pointLight3.Create({ -7, 10, 20.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 350.0f);
+	pointLight3.Create({ -7, 10, 20.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
 
 	pointLights.push_back(pointLight0);
 	pointLights.push_back(pointLight1);
@@ -396,7 +396,7 @@ void Scene::CreateModels()
 //void Scene::Update(InputManager input, float dt)
 void Scene::Update(float _dt)
 {
-	
+
 	//ID3D11DepthStencilState * state = deviceResources->GetStencilState();
 	devContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 	transparentObjects.clear();
@@ -422,7 +422,7 @@ void Scene::Update(float _dt)
 	XMFLOAT4X4 cameraCam;
 	XMStoreFloat4x4(&cameraCam, XMMatrixTranspose(XMLoadFloat4x4(&camObject->GetComponent<Camera>()->GetView())));;
 
-	
+
 	//Renderer* renderer = gameObjects[gameObjects.size() - 1]->GetComponent<Renderer>();
 	//ID2D1HwndRenderTarget * pRT = renderer->GetPRT();
 
@@ -448,7 +448,7 @@ void Scene::Update(float _dt)
 			}
 
 			renderer->SetView(cameraCam);
-			
+
 			Transform* transform = gameObjects[i]->GetTransform();
 
 			if (gameObjects[i]->GetName() == "Mage1")
@@ -462,15 +462,15 @@ void Scene::Update(float _dt)
 				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
 				renderer->SetModel(world);
 			}
-			
+
 
 			//don't render yourself
 			if (i != (id - 1) * 3 + 2)
 			{
-				float3 inBetween = gameObjects[i]->GetTransform()->GetWorldPosition() - camPosition;
-				float dist = dot_product(inBetween, inBetween);
 				if (renderer->isEnabled())
 				{
+					float3 inBetween = gameObjects[i]->GetTransform()->GetWorldPosition() - camPosition;
+					float dist = dot_product(inBetween, inBetween);
 					if (renderer->GetTransparent())
 					{
 						RenderItem r;
@@ -531,7 +531,7 @@ void Scene::Update(float _dt)
 			else
 			{
 				float3 tp = transform->GetPosition();
-				XMFLOAT4 cps = {tp.x,tp.y + 1.85f,tp.z + 1 ,1 };
+				XMFLOAT4 cps = { tp.x,tp.y + 1.85f,tp.z + 1 ,1 };
 
 				devContext->UpdateSubresource(BallConstantBuffer.Get(), NULL, NULL, &cps, NULL, NULL);
 				devContext->PSSetConstantBuffers(2, 1, BallConstantBuffer.GetAddressOf());
@@ -543,7 +543,7 @@ void Scene::Update(float _dt)
 			AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
 			//don't animate yourself or animate server which has already been animated
-			if (animator && i != (id - 1) * 3 + 2 && id != 1) 
+			if (animator && i != (id - 1) * 3 + 2 && id != 1)
 			{
 				animator->Update(_dt);
 			}
@@ -620,125 +620,125 @@ void Scene::HandleInput()
 
 void Scene::UpdateCamera(float _dt, const float moveSpeed, const float rotateSpeed)
 {
-//	if (input->GetKey('W'))
-//	{
-//		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpeed * dt);
-//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-//		XMStoreFloat4x4(&camera, newCamera);
-//	}
-//
-//	if (input->GetKey('S'))
-//	{
-//		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpeed * dt);
-//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-//		XMStoreFloat4x4(&camera, newCamera);
-//	}
-//
-//	if (input->GetKey('A'))
-//	{
-//		XMMATRIX translation = XMMatrixTranslation(-moveSpeed * dt, 0.0f, 0.0f);
-//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-//		XMStoreFloat4x4(&camera, newCamera);
-//	}
-//
-//	if (input->GetKey('D'))
-//	{
-//		XMMATRIX translation = XMMatrixTranslation(moveSpeed * dt, 0.0f, 0.0f);
-//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-//		XMStoreFloat4x4(&camera, newCamera);
-//	}
-//
-//	if (input->GetKey('Q')) //up
-//	{
-//		XMMATRIX translation = XMMatrixTranslation(0.0f, moveSpeed * dt, 0.0f);
-//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-//		XMStoreFloat4x4(&camera, newCamera);
-//	}
-//
-//	if (input->GetKey('E')) //down
-//	{
-//		XMMATRIX translation = XMMatrixTranslation(0.0f, -moveSpeed * dt, 0.0f);
-//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
-//		XMStoreFloat4x4(&camera, newCamera);
-//	}
-//
-//#if _DEBUG
-//	if (input->GetMouseX() && input->GetMouseY())
-//	{
-//		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
-//		{
-//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-//
-//			//store old cam position
-//			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
-//
-//			camera._41 = 0;
-//			camera._42 = 0;
-//			camera._43 = 0;
-//
-//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-//
-//			//apply rotations to camera
-//			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-//			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-//
-//			//store new camera
-//			XMStoreFloat4x4(&camera, tempCamera);
-//
-//			//change position to where it was earlier
-//			camera._41 = camPosition.x;
-//			camera._42 = camPosition.y;
-//			camera._43 = camPosition.z;
-//		}
-//
-//		prevMouseX = input->GetMouseX();
-//		prevMouseY = input->GetMouseY();
-//	}
-//#else
-//	if (input->GetMouseX() && input->GetMouseY())
-//	{
-//		if (prevMouseX && prevMouseY)
-//		{
-//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
-//
-//			//store old cam position
-//			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
-//
-//			camera._41 = 0;
-//			camera._42 = 0;
-//			camera._43 = 0;
-//
-//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
-//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
-//
-//			//apply rotations to camera
-//			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
-//			tempCamera = XMMatrixMultiply(rotX, tempCamera);
-//			tempCamera = XMMatrixMultiply(tempCamera, rotY);
-//
-//			//store new camera
-//			XMStoreFloat4x4(&camera, tempCamera);
-//
-//			//change position to where it was earlier
-//			camera._41 = camPosition.x;
-//			camera._42 = camPosition.y;
-//			camera._43 = camPosition.z;
-//		}
-//
-//		prevMouseX = input->GetMouseX();
-//		prevMouseY = input->GetMouseY();
-//	}
-//#endif
+	//	if (input->GetKey('W'))
+	//	{
+	//		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, moveSpeed * dt);
+	//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+	//		XMStoreFloat4x4(&camera, newCamera);
+	//	}
+	//
+	//	if (input->GetKey('S'))
+	//	{
+	//		XMMATRIX translation = XMMatrixTranslation(0.0f, 0.0f, -moveSpeed * dt);
+	//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+	//		XMStoreFloat4x4(&camera, newCamera);
+	//	}
+	//
+	//	if (input->GetKey('A'))
+	//	{
+	//		XMMATRIX translation = XMMatrixTranslation(-moveSpeed * dt, 0.0f, 0.0f);
+	//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+	//		XMStoreFloat4x4(&camera, newCamera);
+	//	}
+	//
+	//	if (input->GetKey('D'))
+	//	{
+	//		XMMATRIX translation = XMMatrixTranslation(moveSpeed * dt, 0.0f, 0.0f);
+	//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+	//		XMStoreFloat4x4(&camera, newCamera);
+	//	}
+	//
+	//	if (input->GetKey('Q')) //up
+	//	{
+	//		XMMATRIX translation = XMMatrixTranslation(0.0f, moveSpeed * dt, 0.0f);
+	//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+	//		XMStoreFloat4x4(&camera, newCamera);
+	//	}
+	//
+	//	if (input->GetKey('E')) //down
+	//	{
+	//		XMMATRIX translation = XMMatrixTranslation(0.0f, -moveSpeed * dt, 0.0f);
+	//		XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//		XMMATRIX newCamera = XMMatrixMultiply(translation, tempCamera);
+	//		XMStoreFloat4x4(&camera, newCamera);
+	//	}
+	//
+	//#if _DEBUG
+	//	if (input->GetMouseX() && input->GetMouseY())
+	//	{
+	//		if (input->GetMouseButton(1) && prevMouseX && prevMouseY)
+	//		{
+	//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+	//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+	//
+	//			//store old cam position
+	//			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+	//
+	//			camera._41 = 0;
+	//			camera._42 = 0;
+	//			camera._43 = 0;
+	//
+	//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
+	//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
+	//
+	//			//apply rotations to camera
+	//			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//			tempCamera = XMMatrixMultiply(rotX, tempCamera);
+	//			tempCamera = XMMatrixMultiply(tempCamera, rotY);
+	//
+	//			//store new camera
+	//			XMStoreFloat4x4(&camera, tempCamera);
+	//
+	//			//change position to where it was earlier
+	//			camera._41 = camPosition.x;
+	//			camera._42 = camPosition.y;
+	//			camera._43 = camPosition.z;
+	//		}
+	//
+	//		prevMouseX = input->GetMouseX();
+	//		prevMouseY = input->GetMouseY();
+	//	}
+	//#else
+	//	if (input->GetMouseX() && input->GetMouseY())
+	//	{
+	//		if (prevMouseX && prevMouseY)
+	//		{
+	//			float dx = (float)input->GetMouseX() - (float)prevMouseX;
+	//			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+	//
+	//			//store old cam position
+	//			XMFLOAT3 camPosition = XMFLOAT3(camera._41, camera._42, camera._43);
+	//
+	//			camera._41 = 0;
+	//			camera._42 = 0;
+	//			camera._43 = 0;
+	//
+	//			XMMATRIX rotX = XMMatrixRotationX(dy * rotateSpeed * dt);
+	//			XMMATRIX rotY = XMMatrixRotationY(dx * rotateSpeed * dt);
+	//
+	//			//apply rotations to camera
+	//			XMMATRIX tempCamera = XMLoadFloat4x4(&camera);
+	//			tempCamera = XMMatrixMultiply(rotX, tempCamera);
+	//			tempCamera = XMMatrixMultiply(tempCamera, rotY);
+	//
+	//			//store new camera
+	//			XMStoreFloat4x4(&camera, tempCamera);
+	//
+	//			//change position to where it was earlier
+	//			camera._41 = camPosition.x;
+	//			camera._42 = camPosition.y;
+	//			camera._43 = camPosition.z;
+	//		}
+	//
+	//		prevMouseX = input->GetMouseX();
+	//		prevMouseY = input->GetMouseY();
+	//	}
+	//#endif
 }
 
 void Scene::Render()

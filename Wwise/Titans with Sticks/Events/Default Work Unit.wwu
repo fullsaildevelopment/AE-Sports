@@ -212,6 +212,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Score" ID="{AC95F684-FCDD-49B2-9D5D-40E0F48DF542}">
+					<ChildrenList>
+						<Action Name="Play" ID="{DD7FD660-6487-43E8-A397-13980C97E63F}" ShortID="1051881401" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{D2C05966-8163-40D8-9174-7A6330279B7D}" Global="false">
+									<ObjectRef Name="Score" ID="{318F6D7C-3998-4558-B3D4-C883DDE4B3E6}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
