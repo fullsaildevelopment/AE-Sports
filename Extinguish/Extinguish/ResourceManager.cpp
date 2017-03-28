@@ -819,13 +819,16 @@ void ResourceManager::DoFBXExporting()
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Goal\\Goal.fbx", "Goal");
 
-	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
+	//powerups
+	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Super Jump\\Super Jump.fbx", "Super Jump");
 
 	//test models
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\HighDetalBall\\HighDetalBall.fbx", "HighDetalBall");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\WallGoal\\WallGoal.fbx", "WallGoal");
-	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\Titan\\Titan.fbx", "Titan");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Titan\\Titan.fbx", "Titan");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
+
 
 #endif
 }
