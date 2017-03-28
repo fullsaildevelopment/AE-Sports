@@ -1,8 +1,10 @@
 #include "PostProcess.h"
-#include "InputManager.h"
 
+#ifdef _DEBUG
+#include "InputManager.h"
 static bool buttonDown = false;
 static int buttonTimer = 0;
+#endif
 
 namespace BLOOM
 {
@@ -75,8 +77,7 @@ namespace BLOOM
 	private:
 		float ComputeGaussian(float n, float theta)
 		{
-			return (float)((1.0 / sqrtf(2 * XM_PI * theta))
-				* expf(-(n * n) / (2 * theta * theta)));
+			return (float)((1.0 / sqrtf(2 * XM_PI * theta)) * expf(-(n * n) / (2 * theta * theta)));
 		}
 	};
 
@@ -99,7 +100,7 @@ namespace BLOOM
 	static const VS_BLOOM_PARAMETERS g_BloomPresets[] =
 	{
 		//Thresh  Blur Bloom  Base  BloomSat BaseSat
-		{ 0.25f,  4,   1.25f, 1,    1,       1 }, // Default
+		{ 0.30f,  4,   1.35f, 1,    1,       1 }, // Default
 		{ 0,      3,   1,     1,    1,       1 }, // Soft
 		{ 0.5f,   8,   2,     1,    0,       1 }, // Desaturated
 		{ 0.25f,  4,   2,     1,    2,       0 }, // Saturated
@@ -147,10 +148,10 @@ void PostProcess::CreateDevice(DeviceResources* devR)
 void PostProcess::CreateResources()
 {
 	VS_BLUR_PARAMETERS blurData;
-	blurData.SetBlurEffectParameters(1.f / (1000 / 2), 0, g_BloomPresets[g_Bloom]);
+	blurData.SetBlurEffectParameters(1.f / (CLIENT_WIDTH / 2), 0, g_BloomPresets[g_Bloom]);
 	deviceContext->UpdateSubresource(m_blurParamsWidth.Get(), 0, nullptr, &blurData, sizeof(VS_BLUR_PARAMETERS), 0);
 
-	blurData.SetBlurEffectParameters(0, 1.f / (800 / 2), g_BloomPresets[g_Bloom]);
+	blurData.SetBlurEffectParameters(0, 1.f / (CLIENT_HEIGHT / 2), g_BloomPresets[g_Bloom]);
 	deviceContext->UpdateSubresource(m_blurParamsHeight.Get(), 0, nullptr, &blurData, sizeof(VS_BLUR_PARAMETERS), 0);
 
 	// Obtain the backbuffer for this window which will be the final 3D rendertarget.
@@ -160,13 +161,13 @@ void PostProcess::CreateResources()
 	device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, devRes->GetRenderTargetViewComPtr().ReleaseAndGetAddressOf());
 
 	// Full-size render target for scene
-	CD3D11_TEXTURE2D_DESC sceneDesc(DXGI_FORMAT_R8G8B8A8_UNORM, 1000, 800, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
+	CD3D11_TEXTURE2D_DESC sceneDesc(DXGI_FORMAT_R8G8B8A8_UNORM, CLIENT_WIDTH, CLIENT_HEIGHT, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
 	device->CreateTexture2D(&sceneDesc, nullptr, m_sceneTex.GetAddressOf());
 	device->CreateRenderTargetView(m_sceneTex.Get(), nullptr, m_sceneRT.ReleaseAndGetAddressOf());
 	device->CreateShaderResourceView(m_sceneTex.Get(), nullptr, m_sceneSRV.ReleaseAndGetAddressOf());
 
 	// Half-size blurring render targets
-	CD3D11_TEXTURE2D_DESC rtDesc(DXGI_FORMAT_R8G8B8A8_UNORM, 1000 / 2, 800 / 2, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
+	CD3D11_TEXTURE2D_DESC rtDesc(DXGI_FORMAT_R8G8B8A8_UNORM, CLIENT_WIDTH / 2, CLIENT_HEIGHT / 2, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> rtTexture1;
 	device->CreateTexture2D(&rtDesc, nullptr, rtTexture1.GetAddressOf());
 	device->CreateRenderTargetView(rtTexture1.Get(), nullptr, m_rt1RT.ReleaseAndGetAddressOf());
@@ -179,13 +180,13 @@ void PostProcess::CreateResources()
 
 	m_bloomRect.left = 0;
 	m_bloomRect.top = 0;
-	m_bloomRect.right = 1000 / 2;
-	m_bloomRect.bottom = 800 / 2;
+	m_bloomRect.right = CLIENT_WIDTH / 2;
+	m_bloomRect.bottom = CLIENT_HEIGHT / 2;
 
 	m_fullscreenRect.left = 0;
 	m_fullscreenRect.top = 0;
-	m_fullscreenRect.right = 1000;
-	m_fullscreenRect.bottom = 800;
+	m_fullscreenRect.right = CLIENT_WIDTH;
+	m_fullscreenRect.bottom = CLIENT_HEIGHT;
 
 }
 
@@ -341,9 +342,6 @@ void PostProcess::Release()
 	if(m_sceneTex.GetAddressOf())
 		m_sceneTex.Get()->Release();
 	m_rt2RT.Reset();
-	//m_rt2SRV.Reset();
 	m_sceneRT.Reset();
-	//m_sceneSRV.Reset();
-	//m_rt1SRV.Reset();
 	m_rt1RT.Reset();
 }
