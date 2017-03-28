@@ -45,7 +45,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	GameObject* shield = new GameObject();
 	shield->Init("Shield");
 	scene->AddGameObject(shield);
-	shield->InitTransform(identity, { 5, 1, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	shield->InitTransform(identity, { -50, 1, 1.8f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* shieldRenderer = new Renderer();
 	shield->AddComponent(shieldRenderer);
 	shieldRenderer->Init("Shield", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
@@ -57,17 +57,29 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	powerUps.push_back(shieldC);
 
 	//disable them
-	for (int i = 0; i < powerUps.size(); ++i)
-	{
-		powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-		powerUps[i]->SetEnabled(false);
-	}
+	//for (int i = 0; i < powerUps.size(); ++i)
+	//{
+	//	powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+	//	powerUps[i]->SetEnabled(false);
+	//}
+
+	//initialize
+	roundTimer = 0.0f;
 }
 
 void PowerUpManager::Update(float _dt)
 {
+	roundTimer += _dt;
+
 	//every certain amount of time, spawn 1 to all of the powerups in certain positions
 	//for time, do I base off of game time or round time?
 
-	//const float3 spawnPositions[3] = { {
+	//const float3 spawnPositions[2] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f} };
+
+	//if (roundTimer >= timeTilSpawn)
+	//{
+	//	//spawn items
+	//	int randIndex = rand() % powerUps.size();
+
+	//}
 }
