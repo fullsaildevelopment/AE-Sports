@@ -1019,6 +1019,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
 	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	titanPlayerRenderer->SetTeamColor(float4(1, 1, 1, 1));
 
 	//for (int j = 0; j < 11; ++j)
 	//{
@@ -2159,6 +2160,9 @@ void Game::LoadScene(std::string name)
 		currentScene = index;
 	}
 
+	if (currentScene == 0)
+		ShowCursor(true);
+
 	if (currentScene == 1)
 	{
 		if (ResourceManager::GetSingleton()->IsMultiplayer())
@@ -2172,6 +2176,7 @@ void Game::LoadScene(std::string name)
 		{
 			EnableButton("Players", false);
 		}
+		ShowCursor(true);
 	}
 	else if (currentScene == 2)
 	{
