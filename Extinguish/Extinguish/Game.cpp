@@ -806,7 +806,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
-		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
 
 		if (i <= 4)
 			mageRenderer1->SetTeamColor({ 1,0,0,0 });
@@ -1018,7 +1018,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	titanPlayer->InitTransform(identity, { 0, 0, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
-	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources);
+	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 
 	//for (int j = 0; j < 11; ++j)
 	//{
@@ -1273,6 +1273,7 @@ void Game::CreateMenu(Scene * scene)
 	sButton->setGameObject(soloPlayer);
 	sButton->MakeHandler();
 	sRender->InitMetrics();
+	sButton->setSelected();
 
 	// host button
 	GameObject * multiPlayer = new GameObject();
@@ -1293,6 +1294,8 @@ void Game::CreateMenu(Scene * scene)
 	mButton->setGameObject(multiPlayer);
 	mButton->MakeHandler();
 	mRender->InitMetrics();
+	sButton->setBelow(mButton);
+	mButton->setAbove(sButton);
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
@@ -1313,6 +1316,9 @@ void Game::CreateMenu(Scene * scene)
 	mButton2->setGameObject(multiPlayer2);
 	mButton2->MakeHandler();
 	mRender2->InitMetrics();
+	mButton->setRight(mButton2);
+	mButton2->setLeft(mButton);
+	sButton->setRight(mButton2);
 
 	// credits
 	GameObject * credits = new GameObject();
@@ -1333,6 +1339,7 @@ void Game::CreateMenu(Scene * scene)
 	cButton->setGameObject(credits);
 	cButton->MakeHandler();
 	cRender->InitMetrics();
+	mButton->setBelow(cButton);
 
 	// exit
 	GameObject * exit = new GameObject();
@@ -1353,6 +1360,12 @@ void Game::CreateMenu(Scene * scene)
 	eButton->setGameObject(exit);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
+	mButton2->setBelow(eButton);
+	cButton->setRight(eButton);
+	eButton->setLeft(cButton);
+	eButton->setAbove(mButton2);
+	eButton->setBelow(sButton);
+	cButton->setBelow(sButton);
 
 
 	// background 2.0
@@ -1389,6 +1402,7 @@ void Game::ResetPlayers()
 		playerName += to_string(i);
 
 		GameObject* player = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(playerName);
+		player->GetComponent<AnimatorController>()->SetTrigger("Idle");
 
 		//reset positions
 		int teamOffset = 0;
@@ -1546,6 +1560,7 @@ void Game::CreateLobby(Scene * scene)
 	sButton->setGameObject(startGame);
 	sButton->MakeHandler();
 	sRender->InitMetrics();
+	sButton->isSelected();
 
 	// start game, will only show if isServer
 	GameObject * exitGame = new GameObject();
@@ -1567,6 +1582,8 @@ void Game::CreateLobby(Scene * scene)
 	eButton->setGameObject(exitGame);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
+	sButton->setBelow(eButton);
+	eButton->setAbove(sButton);
 
 	// number of players
 	GameObject * numPlayers = new GameObject();
@@ -1609,6 +1626,8 @@ void Game::CreateLobby(Scene * scene)
 	caButton->MakeHandler();
 	eaRender->InitMetrics();
 	caButton->setHelper(scene->GetNumUIObjects());
+	sButton->setAbove(caButton);
+	caButton->setBelow(sButton);
 
 	// change team to B
 	GameObject * changeTeamB = new GameObject();
@@ -1631,6 +1650,9 @@ void Game::CreateLobby(Scene * scene)
 	cbButton->MakeHandler();
 	ebRender->InitMetrics();
 	cbButton->setHelper(scene->GetNumUIObjects() - 2);
+	cbButton->setLeft(caButton);
+	caButton->setRight(cbButton);
+	cbButton->setBelow(sButton);
 
 	// change team logo
 	GameObject * changeTeam = new GameObject();
