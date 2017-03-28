@@ -8,6 +8,7 @@
 class GameObject;
 class CapsuleCollider;
 class SphereCollider;
+class FloorController;
 
 class HexagonCollider : public Collider
 {
@@ -28,10 +29,12 @@ private:
 	bool CheckCapsule(GameObject* tg, GameObject* ob, int _min, int _max, CapsuleCollider* cap, Capsule c, float3 pastPos, int f, float dt, float& St);
 	bool CheckFloor2Sphere(SphereCollider* sphere, int f, float dt);
 	bool CheckSphere(GameObject* tg, GameObject* ob, int _min, int _max, SphereCollider* sphere, Sphere s, float3 pastPos, int f, float dt, float& St);
+	FloorController* floorController;
+	unsigned int* originalColor;
 
 public:
 	HexagonCollider(GameObject* o, float v, float height, ED2Mesh* colmesh = nullptr);
-	HexagonCollider(int row, int col, float3* posistions, float height, float v, GameObject* o, ED2Mesh* colmesh = nullptr);
+	HexagonCollider(int row, int col, float3* posistions, float height, float v, GameObject* o, FloorController* FC, ED2Mesh* colmesh = nullptr);
 	Hexagon* GetWorldHex();
 	Hexagon* GetWorldHex(int i);
 	void FixedUpdate(float dt) override;

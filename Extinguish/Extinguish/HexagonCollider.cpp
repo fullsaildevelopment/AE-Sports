@@ -4,6 +4,7 @@
 #include "BoxCollider.h"
 #include "Physics.h"
 #include "GameObject.h"
+#include "FloorController.h"
 
 HexagonCollider::HexagonCollider(GameObject* o, float d, float _height, ED2Mesh* colMesh) : Collider(o, false, CTHex)
 {
@@ -19,7 +20,7 @@ HexagonCollider::HexagonCollider(GameObject* o, float d, float _height, ED2Mesh*
 	col = 0;
 }
 
-HexagonCollider::HexagonCollider(int _row, int _col, float3* positions, float _height, float d, GameObject* o, ED2Mesh* colMesh) : Collider(o, false, CTHex)
+HexagonCollider::HexagonCollider(int _row, int _col, float3* positions, float _height, float d, GameObject* o, FloorController* FC, ED2Mesh* colMesh) : Collider(o, false, CTHex)
 {
 	mesh = colMesh;
 	poses = positions;
@@ -29,6 +30,14 @@ HexagonCollider::HexagonCollider(int _row, int _col, float3* positions, float _h
 	hex.h = sqrtf(3)*hex.s;
 	row = _row;
 	col = _col;
+	floorController = FC;
+	/*unsigned int* colors = floorController->getColors();
+	originalColor = new unsigned int[row * col];
+	int size = row * col;
+	for (int i = 0; i < size; ++i)
+	{
+		originalColor[i] = colors[i];
+	}*/
 }
 
 Hexagon* HexagonCollider::GetWorldHex()

@@ -58,6 +58,7 @@ void PlayerController::Init()
 
 	//other initialization
 	canSprint = true;
+	jumpMultiplier = 1.0f;
 }
 
 void PlayerController::Update(float _dt)
@@ -74,6 +75,8 @@ void PlayerController::Update(float _dt)
 	{
 		StopFootstepsSound();
 	}
+
+	cout << jumpMultiplier << endl;
 
 	//allow ogPlayer to move again if stumble is done
 	if (ogPlayer)
@@ -453,7 +456,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 4.0f, 0 });
+		transform->AddVelocity({ 0, 4.0f * jumpMultiplier, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation
@@ -650,7 +653,7 @@ void PlayerController::HandleSprintAndCharge()
 		}
 		else
 		{
-			if (Game::server.getEmpty(playerID - 1)) 
+			if (Game::server.getEmpty(playerID - 1))
 			{
 				canSprint = false;
 				//isCharging = false;
@@ -702,10 +705,10 @@ void PlayerController::PlayFootstepsSound()
 		playID = AK::EVENTS::PLAY_FOOTSTEPS__SPRINT_;
 
 		break;
-	//case 2:
-	//	playID = AK::EVENTS::PLAY_FOOTSTEPS__CHARGE_;
+		//case 2:
+		//	playID = AK::EVENTS::PLAY_FOOTSTEPS__CHARGE_;
 
-	//	break;
+		//	break;
 	}
 
 	if (movement->IsMoving() && !footstepsPlayed)
@@ -734,10 +737,10 @@ void PlayerController::StopFootstepsSound()
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
 
 		break;
-	//case 2:
-	//	stopID = AK::EVENTS::STOP_FOOTSTEPS__CHARGE_;
+		//case 2:
+		//	stopID = AK::EVENTS::STOP_FOOTSTEPS__CHARGE_;
 
-	//	break;
+		//	break;
 	}
 
 	SoundEvent* soundEvent = new SoundEvent();
@@ -817,6 +820,11 @@ unsigned int PlayerController::GetTeamID()
 	return teamID;
 }
 
+float PlayerController::GetJumpMultiplier()
+{
+	return jumpMultiplier;
+}
+
 //setters//
 void PlayerController::SetName(std::string name)
 {
@@ -838,13 +846,32 @@ void PlayerController::SetTotalAssists(unsigned int ttlAssists)
 	totalAssists = ttlAssists;
 }
 
+void PlayerController::SetScore(unsigned int amount)
+{
+	score = amount;
+}
 
-void PlayerController::SetScore(unsigned int amount) { score = amount; }
-void PlayerController::SetGoals(unsigned int amount) { goals = amount; }
-void PlayerController::SetSaves(unsigned int amount) { saves = amount; }
-void PlayerController::SetAssists(unsigned int amount) { assists = amount; }
+void PlayerController::SetGoals(unsigned int amount)
+{
+	goals = amount;
+}
+
+void PlayerController::SetSaves(unsigned int amount)
+{
+	saves = amount;
+}
+
+void PlayerController::SetAssists(unsigned int amount)
+{
+	assists = amount;
+}
 
 void PlayerController::SetTeamID(unsigned int id)
 {
 	teamID = id;
+}
+
+void PlayerController::SetJumpMultiplier(float multiplier)
+{
+	jumpMultiplier = multiplier;
 }
