@@ -301,6 +301,19 @@ void FloorController::SetState(float fullTime)
 	ControlMovement(fullTime);
 }
 
+void FloorController::setColor(int pos, float3 color)
+{
+	unsigned int r = (unsigned int)min(color.x * 255,255);
+	unsigned int g = (unsigned int)min(color.y * 255,255);
+	unsigned int b = (unsigned int)min(color.z * 255, 255);
+	colors[pos] = (r << 24) | (g << 16) | b;
+}
+
+void FloorController::setColor(int pos, unsigned int color)
+{
+	colors[pos] = color;
+}
+
 FloorController::~FloorController()
 {
 	delete[] floor;

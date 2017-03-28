@@ -47,92 +47,79 @@ cbuffer TeamColorCB : register(b3)
 texture2D baseTexture : register(t0);
 texture2D normalMap : register(t1);
 texture2D specularMap : register(t2);
-texture2D teamcolorMap : register(t3);
+texture2D emissiveMap : register(t3);
 
 SamplerState filter : register(s0);
 
 float4 main(PS_BasicInput input) : SV_TARGET
 {
-	float4 finalColor;
-	float3 diffuseColor, dirColor, pointColor, spotColor;
-
-	//Calculate the Tangent-Space matrix. This may need tweaking
-	//float3x3 TBNMatrix = float3x3(input.tangent.x, input.binormal.x, input.normal.x,
-	//	input.tangent.y, input.binormal.y, input.normal.y,
-	//	input.tangent.z, input.binormal.z, input.normal.z);
-		
-		
 	float3x3 TBNMatrix = float3x3(input.tangent, input.binormal, input.normal);
+
+	float4 specMap = specularMap.Sample(filter, input.uv.xy);
+	float3 bumpMap = normalMap.Sample(filter, input.uv.xy).xyz;
+	bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+	float black = 0.5f;
+
+	//create new normals based on normals
+	float3 Normal = normalize(mul(bumpMap.xyz, TBNMatrix));
 
 	float3 ViewVector = normalize(cameraposW.xyz - input.worldPosition.xyz);
 
 	//initialize point and spot colors
-	pointColor = float3(0, 0, 0);
-	spotColor = float3(0, 0, 0);
-
-	//get texture color with uvs help
-	diffuseColor = baseTexture.Sample(filter, input.uv.xy).xyz;
-	float3 specMap = specularMap.Sample(filter, input.uv.xy).xyz;
-
-	//create new normals based on normals
-
-	float3 bumpMap = normalMap.Sample(filter, input.uv.xy).xyz;
-	bumpMap = (bumpMap * 2.0f) - 1.0f;
-
-
-
-	float3 bumpNormal = normalize(mul(bumpMap.xyz, TBNMatrix));
-	bumpNormal = bumpNormal * 0.5f + 0.5f;
+	float4 directionalColor = float4(0, 0, 0, 0);
+	float4 directionalSpecColor = float4(0, 0, 0, 0);
+	float4 pointColor = float4(0, 0, 0, 0);
+	float4 pointSpecColor = float4(0, 0, 0, 0);
+	//float3 spotColor = float3(0, 0, 0);
 
 	//calculate dircolor
-	float lightRatio;
-	float3 black = { 0.2f, 0.2f, 0.2f };
-	float3 dir_dir = normalize(dirLightNorm).xyz;
+	float4 ambientColor = ambientLight;
+	float3 dirDirection = dirLightNorm.xyz;
 
+	float dirDiffuseFactor = dot(Normal, dirDirection);
 
-	lightRatio = saturate(dot(dir_dir, bumpNormal));
-	dirColor = (lightRatio + ambientLight.xyz) * dirLightColor.xyz * black;
+	if (dirDiffuseFactor > 0)
+	{
+		directionalColor = float4(dirLightColor.xyz, 1.0f) * dirDiffuseFactor;
 
-	//Specular directional
-	float3 dirRefelection = normalize(reflect(dir_dir, bumpNormal));
-	float dirRdotV = max(0, dot(dirRefelection, ViewVector));
-	float specDirScale = pow(dirRdotV, 32);
-	float3 dirSpecColor = saturate( specMap *  specDirScale * dirColor);
-
-	float4 pointDir;
+		float3 lightRef = normalize(reflect(-dirLightNorm.xyz, Normal));
+		float specFactor = dot(ViewVector, lightRef);
+		if (specFactor > 0)
+		{
+			specFactor = pow(specFactor, 128);
+			directionalSpecColor = float4(dirLightColor.xyz * specMap * specFactor, 1.0f);
+		}
+	}
 
 	for (int i = 0; i < NUMOFPOINTLIGHTS; ++i) 
 	{
-		float pointRatio;
-		float pointAttenuation;
+		float3 lightDir = normalize(pLights[i].pointLightPosition - input.worldPosition);
+		float lightFactor = saturate(dot(lightDir, Normal));
+		pointColor += lightFactor * pLights[i].pointLightColor;
 
-		pointDir = pLights[i].pointLightPosition - input.worldPosition;
-		//pointDir.xyz = mul(pointDir.xyz, TBNMatrix);
-		pointAttenuation = 1 - saturate(length(pointDir.xyz) / pLights[i].lightRadius.x);
-		pointRatio = saturate(dot(normalize(pointDir.xyz), bumpNormal));
-
-		pointColor += pLights[i].pointLightColor.xyz * saturate(pointRatio * pointAttenuation) * black;
+		float3 lightRef = normalize(reflect(lightDir, Normal));
+		float specFactor = dot(ViewVector, lightRef);
+		if (specFactor > 0)
+		{
+			specFactor = pow(specFactor, 32);
+			pointSpecColor = pLights[i].pointLightColor * specMap * specFactor * lightFactor;
+		}
 	}
-
-	//Specular point
-	float3 pointRefelection = normalize(reflect(-pointDir.xyz, bumpNormal));
-	float pointRdotV = max(0, dot(pointRefelection, ViewVector));
-	float specPointScale = pow(pointRdotV, 32);
-	float3 pointSpecColor = saturate( specMap * specPointScale * pointColor);
-
-
-	//calculate final color
-	finalColor = float4(saturate((dirColor + pointColor + spotColor) * diffuseColor), 1.0f);
-	finalColor.xyz = saturate(finalColor.xyz + pointSpecColor + dirSpecColor);
-
-	//return float4(bumpNormal, 1);
-	float4 tcm = teamcolorMap.Sample(filter, input.uv.xy);
 	
-	finalColor.r += TeamColorB.r * tcm.r;
-	finalColor.g += TeamColorB.g * tcm.r;
-	finalColor.b += TeamColorB.b * tcm.r;
-	finalColor.a += TeamColorB.a * tcm.r;
-	
+	float4 emisMap = emissiveMap.Sample(filter, input.uv.xy);
+	float4 emissiveColor = float4(0, 0, 0, 0);
+	if (emisMap.r > 0)
+	{
+		emissiveColor.r += TeamColorB.r * emisMap.r;
+		emissiveColor.g += TeamColorB.g * emisMap.r;
+		emissiveColor.b += TeamColorB.b * emisMap.r;
+		emissiveColor.a += TeamColorB.a * emisMap.r;
+	}
+	float4 diffuseColor = baseTexture.Sample(filter, input.uv.xy);
 
+	float4 finalColor = diffuseColor * ((ambientColor + directionalColor + directionalSpecColor + pointColor + pointSpecColor) * black);
+	finalColor += emissiveColor;
+	finalColor.a = diffuseColor + emisMap.a;
 	return saturate(finalColor);
 }
