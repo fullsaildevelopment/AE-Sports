@@ -24,23 +24,23 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	vertexShader = ResourceManager::GetSingleton()->GetVertexShader(vsName);
 	computeShader = ResourceManager::GetSingleton()->GetComputeShader(csName);
 	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
-	teamcolorSRV = nullptr;
+	emissiveSRV = nullptr;
 	NormalSRV = nullptr;
 	SpecularSRV = nullptr;
 
 	if (mesh == "Mage")
 	{
-		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Mage");
+		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Mage");
 	}
 	if (mesh == "Crosse")
 	{
-		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Crosse");
+		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Crosse");
 	}
 	if (mesh == "Titan")
 	{
 		NormalSRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_Titan");
 		SpecularSRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_Titan");
-		teamcolorSRV = ResourceManager::GetSingleton()->GetShaderResourceView("EM_Titan");
+		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("EM_Titan");
 	}
 
 	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
@@ -57,6 +57,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
 		blender->Init(curAnimName, "");
 	}
+
 	if (alpha)
 	{
 		isTransparent = alpha;
@@ -73,6 +74,7 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 		BlendStateDesc.AlphaToCoverageEnable = FALSE;
 		deviceResources->GetDevice()->CreateBlendState(&BlendStateDesc, m_blendstate.GetAddressOf());
 	}
+
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
 
@@ -93,6 +95,18 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	deviceResources->GetDevice()->CreateSamplerState(&samplerDesc, m_samplerstate.GetAddressOf());
 }
 
+//this is to specify the texture name if you need a specific file that isn't the object name
+void Renderer::Init(std::string mesh, std::string textureName, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha)
+{
+	Init(mesh, psName, vsName, csName, curAnimName, projection, deviceResources, alpha);
+
+	//overwrite the srvs with texturename's srvs
+	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(textureName);
+	emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("EM_" + textureName);
+	NormalSRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_" + textureName);
+	SpecularSRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_" + textureName);
+}
+
 void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, std::string mesh, std::string psName, std::string vsName, std::string csName, std::string curAnimName, XMFLOAT4X4 projection, DeviceResources* deviceResources, bool alpha)
 {
 	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
@@ -106,12 +120,13 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 	numVerts = ResourceManager::GetSingleton()->GetNumVertices(mesh);
 	numIndices = ResourceManager::GetSingleton()->GetNumIndices(mesh);
 	devResources = deviceResources;
+
 	m_instanced = instanced;
 	m_instancedcolor = color;
 	numIns = numInstences;
 	instancedBuffer = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, instanced);
 	instancedBuffer2 = ResourceManager::GetSingleton()->CreateInstancedBuffer(numInstences, color);
-	teamcolorSRV = nullptr;
+	emissiveSRV = nullptr;
 	NormalSRV = nullptr;
 	SpecularSRV = nullptr;
 
@@ -124,6 +139,7 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
 		blender->Init(curAnimName, "");
 	}
+
 	if (alpha)
 	{
 		isTransparent = alpha;
@@ -140,6 +156,7 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 		BlendStateDesc.AlphaToCoverageEnable = FALSE;
 		deviceResources->GetDevice()->CreateBlendState(&BlendStateDesc, m_blendstate.GetAddressOf());
 	}
+
 	D3D11_SAMPLER_DESC samplerDesc;
 	ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
 
@@ -203,9 +220,9 @@ void Renderer::Update(float _dt)
 	if (teamcolorBuffer)
 	{
 		devContext->UpdateSubresource(teamcolorBuffer, NULL, NULL, &TeamColor, NULL, NULL);
-
-		devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
 	}
+
+	devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
 
 	//set vertex buffer
 	UINT offset = 0;
@@ -214,17 +231,13 @@ void Renderer::Update(float _dt)
 
 	//set shader resource view
 	devContext->PSSetShaderResources(0, 1, &diffuseSRV);
-	if (NormalSRV)
+	//if (NormalSRV)
 	{
 		devContext->PSSetShaderResources(1, 1, &NormalSRV);
 	}
-	if (SpecularSRV)
+	//if (emissiveSRV)
 	{
-		devContext->PSSetShaderResources(2, 1, &SpecularSRV);
-	}
-	if (teamcolorSRV)
-	{
-		devContext->PSSetShaderResources(3, 1, &teamcolorSRV);
+		devContext->PSSetShaderResources(3, 1, &emissiveSRV);
 	}
 	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
