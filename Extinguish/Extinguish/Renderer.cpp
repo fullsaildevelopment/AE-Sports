@@ -32,15 +32,15 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	{
 		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Mage");
 	}
-	if (mesh == "Crosse")
+	else if (mesh == "Crosse")
 	{
 		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("TC_Crosse");
 	}
-	if (mesh == "Titan")
+	else
 	{
-		NormalSRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_Titan");
-		SpecularSRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_Titan");
-		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("EM_Titan");
+		NormalSRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_" + mesh);
+		SpecularSRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_" + mesh);
+		emissiveSRV = ResourceManager::GetSingleton()->GetShaderResourceView("EM_" + mesh);
 	}
 
 	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
@@ -231,15 +231,9 @@ void Renderer::Update(float _dt)
 
 	//set shader resource view
 	devContext->PSSetShaderResources(0, 1, &diffuseSRV);
-	//if (NormalSRV)
-	{
-		devContext->PSSetShaderResources(1, 1, &NormalSRV);
-	}
-	//if (emissiveSRV)
-	{
-		devContext->PSSetShaderResources(3, 1, &emissiveSRV);
-	}
-	//devContext->PSSetShaderResources(2, 1, specSRV.GetAddressOf());
+	devContext->PSSetShaderResources(1, 1, &NormalSRV);
+	devContext->PSSetShaderResources(2, 1, &SpecularSRV);
+	devContext->PSSetShaderResources(3, 1, &emissiveSRV);
 	//devContext->PSSetShaderResources(3, 1, devResources->GetShadowMapSRVAddress());
 	if (isTransparent)
 	{

@@ -26,7 +26,6 @@ struct PointLight
 
 cbuffer PointLightCB : register(b1)
 {
-
 	PointLight pLights[NUMOFPOINTLIGHTS];
 	//float4 pointLightPosition[NUMOFPOINTLIGHTS];
 	//float4 pointLightColor[NUMOFPOINTLIGHTS];
@@ -53,16 +52,20 @@ SamplerState filter : register(s0);
 
 float4 main(PS_BasicInput input) : SV_TARGET
 {
-	float3x3 TBNMatrix = float3x3(input.tangent, input.binormal, input.normal);
 
 	float4 specMap = specularMap.Sample(filter, input.uv.xy);
 	float3 bumpMap = normalMap.Sample(filter, input.uv.xy).xyz;
-	bumpMap = (bumpMap * 2.0f) - 1.0f;
+	float3 Normal = input.normal;
+	if (bumpMap.x != 0.0f)
+	{
+		bumpMap = (bumpMap * 2.0f) - 1.0f;
+		float3x3 TBNMatrix = float3x3(input.tangent, input.binormal, input.normal);
+		Normal = normalize(mul(bumpMap.xyz, TBNMatrix));
+	}
 
 	float black = 0.5f;
 
 	//create new normals based on normals
-	float3 Normal = normalize(mul(bumpMap.xyz, TBNMatrix));
 
 	float3 ViewVector = normalize(cameraposW.xyz - input.worldPosition.xyz);
 
@@ -121,6 +124,6 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	float4 finalColor = diffuseColor * ((ambientColor + directionalColor + directionalSpecColor + pointColor + pointSpecColor) * black);
 	finalColor += emissiveColor;
-	finalColor.a = diffuseColor + emisMap.a;
+	finalColor.a = diffuseColor.a + emissiveColor.a;
 	return saturate(finalColor);
 }
