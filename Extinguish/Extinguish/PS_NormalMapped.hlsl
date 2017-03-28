@@ -103,7 +103,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 		if (specFactor > 0)
 		{
 			specFactor = pow(specFactor, 32);
-			pointSpecColor = pLights[i].pointLightColor * specMap * specFactor * lightFactor;
+			pointSpecColor += pLights[i].pointLightColor * specMap * specFactor * lightFactor;
 		}
 	}
 	
@@ -111,6 +111,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	float4 emissiveColor = float4(0, 0, 0, 0);
 	if (emisMap.r > 0)
 	{
+		emisMap += 0.135f;
 		emissiveColor.r += TeamColorB.r * emisMap.r;
 		emissiveColor.g += TeamColorB.g * emisMap.r;
 		emissiveColor.b += TeamColorB.b * emisMap.r;
