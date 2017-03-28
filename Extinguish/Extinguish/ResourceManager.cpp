@@ -820,7 +820,9 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Goal\\Goal.fbx", "Goal");
 
 	//powerups
-	FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Super Jump\\Super Jump.fbx", "Super Jump");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Super Jump\\Super Jump.fbx", "Super Jump");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Magnet\\Magnet.fbx", "Magnet");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Shield\\Shield.fbx", "Shield");
 
 	//test models
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");

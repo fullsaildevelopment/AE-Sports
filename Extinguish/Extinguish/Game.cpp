@@ -32,7 +32,7 @@
 #include "Scoreboard.h"
 #include "Countdown.h"
 #include "CanPlayEvent.h"
-#include "SuperJump.h"
+#include "PowerUpManager.h"
 
 using namespace DirectX;
 using namespace std;
@@ -993,18 +993,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
 
-	//create powerups
-	GameObject* superJump = new GameObject();
-	superJump->Init("Super Jump");
-	basic->AddGameObject(superJump);
-	superJump->InitTransform(identity, { 5, 1, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* superJumpRenderer = new Renderer();
-	superJump->AddComponent(superJumpRenderer);
-	superJumpRenderer->Init("Super Jump", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	SuperJump* superJumpC = new SuperJump();
-	superJump->AddComponent(superJumpC);
-	BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-	superJump->AddBoxCollider(superJumpCollider);
+	//create powerup manager, which creates powerups
+	GameObject* powerUpManager = new GameObject();
+	powerUpManager->Init("PowerUp Manager");
+	basic->AddGameObject(powerUpManager);
+	PowerUpManager* powerUpManagerC = new PowerUpManager();
+	powerUpManagerC->Init(basic, projection, devResources);
+
+
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2164,6 +2160,9 @@ void Game::LoadScene(std::string name)
 		currentScene = index;
 	}
 
+	if (currentScene == 0)
+		ShowCursor(true);
+
 	if (currentScene == 1)
 	{
 		if (ResourceManager::GetSingleton()->IsMultiplayer())
@@ -2177,6 +2176,7 @@ void Game::LoadScene(std::string name)
 		{
 			EnableButton("Players", false);
 		}
+		ShowCursor(true);
 	}
 	else if (currentScene == 2)
 	{
