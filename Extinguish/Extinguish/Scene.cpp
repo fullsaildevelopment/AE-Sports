@@ -40,6 +40,24 @@ void Scene::Init(DeviceResources * devResources, InputManager* inputRef)
 	//create models in scene
 	CreateModels();
 
+	D3D11_RASTERIZER_DESC rastDesc = {};
+	rastDesc.FillMode = D3D11_FILL_SOLID;
+	rastDesc.CullMode = D3D11_CULL_BACK;
+	rastDesc.FrontCounterClockwise = false;
+	rastDesc.DepthBias = 0;
+	rastDesc.SlopeScaledDepthBias = 0.0f;
+	rastDesc.DepthBiasClamp = 0.0f;
+	rastDesc.DepthClipEnable = true;
+	rastDesc.ScissorEnable = false;
+	rastDesc.MultisampleEnable = false;
+	rastDesc.AntialiasedLineEnable = false;
+
+	devResources->GetDevice()->CreateRasterizerState(&rastDesc, RasterizerStateBackCull.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_FRONT;
+
+	devResources->GetDevice()->CreateRasterizerState(&rastDesc, RasterizerStateFrontCull.GetAddressOf());
+
 	//temporary
 	curFrame = 0;
 
@@ -562,6 +580,9 @@ void Scene::Update(float _dt)
 	for (transparentIter.begin(); !transparentIter.end(); ++transparentIter)
 	{
 		transparentIter.current().rend->Update(_dt);
+		devContext->RSSetState(RasterizerStateFrontCull.Get());
+		transparentIter.current().rend->Render();
+		devContext->RSSetState(RasterizerStateBackCull.Get());
 		transparentIter.current().rend->Render();
 	}
 	////////////////////////////DO POST PROCESSING////////////////////////
