@@ -149,7 +149,7 @@ void Crosse::Catch()
 		if ((ballPos.x <= goalPos.x + 8.0f || ballPos.x >= goalPos.x - 8.0f) && (ballPos.y >= goalPos.y - 4.0f) && ((ballPos.z >= goalPos.z - 8.0f && direction == 1) || (ballPos.z <= goalPos.z + 8.0f && direction == -1)))
 		{
 			//check the direction to make sure that it's not moving away from the goal
-			if (dot_product(ballTransform->GetVelocity().normalize(), float3(0, 0, -1 * direction)) <= 0)
+			if (dot_product(ballTransform->GetVelocity().normalize(), float3(0, 0, -1.0f * (float)direction)) <= 0)
 			{
 				player->GetComponent<PlayerController>()->AddSave();
 			}

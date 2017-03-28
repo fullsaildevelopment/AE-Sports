@@ -298,6 +298,8 @@ void Server::sendMessage(char * message, GameMessages ID, bool broadcast)
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message);
+
+
 	if (!broadcast)
 		peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, broadcast);
 	else if (broadcast && ID != ID_SERVER_CLOSURE)
