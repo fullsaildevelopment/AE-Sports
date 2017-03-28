@@ -7,6 +7,7 @@
 #include "SoundEvent.h"
 #include "SoundEngine.h"
 #include "Scoreboard.h"
+#include "GamePadEvent.h"
 
 void StartGame()
 {
@@ -241,54 +242,54 @@ void Button::HandleEvent(Event* e)
 			{
 				if (input->GetMouseDown()[0] && clickCooldown <= 0.0f)
 				{
-					if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
-					{
-						clickCooldown = 1.0f;
-					}
-					if (eventFunction)
-					{
-						eventFunction();
-						if (buttonType == CHANGE_TEAM_A)
-						{
-							GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
-							Button * theirbutton = otherteam->GetComponent<Button>();
-							theirbutton->setStayHovered(false);
-							stayOnClick = true;
-						}
-						else if (buttonType == CHANGE_TEAM_B)
-						{
-							GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
-							Button * theirbutton = otherteam->GetComponent<Button>();
-							theirbutton->setStayHovered(false);
-							stayOnClick = true;
-						}
-					}
-					else if (buttonType == RESUME_GAME)
-					{
-						isActive = false;
-
-						for (unsigned int i = 0; i < helperIndex.size() - 1; ++i) {
-							GameObject * exitObj = GetGameObject()->GetUIGameObjects(helperIndex[i]);
-							Button * exitButton = exitObj->GetComponent<Button>();
-							exitButton->SetActive(false);
-						}
-
-						GameObject * scoreB = GetGameObject()->GetUIGameObjects(helperIndex[helperIndex.size() - 1]);
-						Scoreboard * scoreBoard = scoreB->GetComponent<Scoreboard>();
-						scoreBoard->Toggle(false);
-					}
-
-					
-
+					DoEvent();
 				}
 				else
 				{
 					hovered = true;
+					selected = true;
 				}
 			}
 			else
 			{
 				hovered = false;
+				selected = false;
+			}
+		}
+		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
+
+		if (gamePadEvent && Game::currentScene == sceneIndex && selected)
+		{
+			GamePad::State* state = gamePadEvent->GetState();
+			GamePad::ButtonStateTracker tracker;
+
+			tracker.Update(*state);
+
+			if (up && tracker.dpadUp)
+			{
+				up->setSelected();
+				selected = false;
+			}
+
+			else if (down && tracker.dpadDown)
+			{
+				down->setSelected();
+				selected = false;
+			}
+			else if (left && tracker.dpadLeft)
+			{
+				left->setSelected();
+				selected = false;
+			}
+			else if (right && tracker.dpadRight)
+			{
+				right->setSelected();
+				selected = false;
+			}
+
+			if (selected && tracker.a)
+			{
+				DoEvent();
 			}
 		}
 	}
@@ -343,4 +344,45 @@ void Button::setButtonType()
 		break;
 	}
 	}
+}
+
+void Button::DoEvent()
+{
+	if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
+	{
+		clickCooldown = 1.0f;
+	}
+	if (eventFunction)
+	{
+		eventFunction();
+		if (buttonType == CHANGE_TEAM_A)
+		{
+			GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
+			Button * theirbutton = otherteam->GetComponent<Button>();
+			theirbutton->setStayHovered(false);
+			stayOnClick = true;
+		}
+		else if (buttonType == CHANGE_TEAM_B)
+		{
+			GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
+			Button * theirbutton = otherteam->GetComponent<Button>();
+			theirbutton->setStayHovered(false);
+			stayOnClick = true;
+		}
+	}
+	else if (buttonType == RESUME_GAME)
+	{
+		isActive = false;
+
+		for (unsigned int i = 0; i < helperIndex.size() - 1; ++i) {
+			GameObject * exitObj = GetGameObject()->GetUIGameObjects(helperIndex[i]);
+			Button * exitButton = exitObj->GetComponent<Button>();
+			exitButton->SetActive(false);
+		}
+
+		GameObject * scoreB = GetGameObject()->GetUIGameObjects(helperIndex[helperIndex.size() - 1]);
+		Scoreboard * scoreBoard = scoreB->GetComponent<Scoreboard>();
+		scoreBoard->Toggle(false);
+	}
+
 }

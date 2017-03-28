@@ -60,12 +60,18 @@ private:
 	bool isTimer = false;
 	bool showFps = false;
 	bool hovered = false;
+	bool selected = false;
 	bool stayOnClick = false;
 	unsigned int sceneIndex;
 	std::vector<int> helperIndex;
 
+	// for gamepad
+	Button * up, * down, * left, * right;
+
 	// some function pointer for event
 	void (*eventFunction)(void);
+
+	void DoEvent();
 
 public:
 	//~Button() {}
@@ -124,6 +130,7 @@ public:
 	float getOriginY() { return originY; }
 
 	bool isHovered() { return hovered; }
+	bool isSelected() { return selected; }
 	bool getActive() { return isActive; }
 
 	/* SETTERS */
@@ -144,6 +151,11 @@ public:
 	void setStayHovered(bool b) { stayOnClick = b; }
 	void setGameObject(GameObject* obj) { object = obj; }
 	void resetTime() { time = 10.0f; }
+	void setBelow(Button * below) { down = below; }
+	void setAbove(Button * above) { up = above; }
+	void setLeft(Button * left) { this->left = left; }
+	void setRight(Button * right) { this->right = right; }
+	void setSelected() { selected = true; } // only use if the first button
 
 	/* HELPERS*/
 

@@ -303,9 +303,9 @@ void FloorController::SetState(float fullTime)
 
 void FloorController::setColor(int pos, float3 color)
 {
-	unsigned int r = min(color.x * 255,255);
-	unsigned int g = min(color.y * 255,255);
-	unsigned int b = min(color.z * 255, 255);
+	unsigned int r = (unsigned int)min(color.x * 255,255);
+	unsigned int g = (unsigned int)min(color.y * 255,255);
+	unsigned int b = (unsigned int)min(color.z * 255, 255);
 	colors[pos] = (r << 24) | (g << 16) | b;
 }
 
