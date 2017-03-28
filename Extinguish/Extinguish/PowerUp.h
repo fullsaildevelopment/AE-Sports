@@ -26,9 +26,13 @@ private:
 	//float cooldown; // how long until you can use the powerup again
 	float duration; // how long the powerup lasts for
 	float timer;
+	bool isActivated;
 
 	PlayerController* player;
 public:
+	//structors
+	PowerUp();
+
 	//basic
 	void Update(float _dt) override;
 	void Shutdown() override;
