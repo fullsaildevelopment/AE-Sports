@@ -806,7 +806,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
-		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources);
+		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
 
 		if (i <= 4)
 			mageRenderer1->SetTeamColor({ 1,0,0,0 });
@@ -1022,7 +1022,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	titanPlayer->InitTransform(identity, { 0, 0, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
-	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources);
+	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 
 	//for (int j = 0; j < 11; ++j)
 	//{
