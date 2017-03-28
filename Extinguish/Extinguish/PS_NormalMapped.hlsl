@@ -53,8 +53,10 @@ SamplerState filter : register(s0);
 float4 main(PS_BasicInput input) : SV_TARGET
 {
 
-	float4 specMap = specularMap.Sample(filter, input.uv.xy);
+	float4 diffuseColor = baseTexture.Sample(filter, input.uv.xy);
 	float4 bumpMap = normalMap.Sample(filter, input.uv.xy);
+	float4 specMap = specularMap.Sample(filter, input.uv.xy);
+	float4 emisMap = emissiveMap.Sample(filter, input.uv.xy);
 	float3 Normal = input.normal;
 	if (bumpMap.a != 0.0f)
 	{
@@ -82,7 +84,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	float dirDiffuseFactor = dot(Normal, dirDirection);
 
-	if (dirDiffuseFactor > 0)
+	if (dirDiffuseFactor > 0.0f || diffuseColor.a < 1.0f)
 	{
 		directionalColor = float4(dirLightColor.xyz, 1.0f) * dirDiffuseFactor;
 
@@ -99,28 +101,29 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	{
 		float3 lightDir = normalize(pLights[i].pointLightPosition.xyz - input.worldPosition.xyz);
 		float lightFactor = saturate(dot(lightDir, Normal));
-		pointColor += lightFactor * pLights[i].pointLightColor;
+		if (lightFactor > 0)
+		{
+			pointColor += lightFactor * pLights[i].pointLightColor;
+		}
 
 		float3 lightRef = normalize(reflect(lightDir, Normal));
 		float specFactor = dot(ViewVector, lightRef);
 		if (specFactor > 0)
 		{
-			specFactor = pow(specFactor, 32);
+			specFactor = pow(specFactor, 24);
 			pointSpecColor += pLights[i].pointLightColor * specMap * specFactor * lightFactor;
 		}
 	}
 	
-	float4 emisMap = emissiveMap.Sample(filter, input.uv.xy);
 	float4 emissiveColor = float4(0, 0, 0, 0);
 	if (emisMap.r > 0)
 	{
-		emisMap += 0.135f;
-		emissiveColor.r += TeamColorB.r * emisMap.r;
-		emissiveColor.g += TeamColorB.g * emisMap.r;
-		emissiveColor.b += TeamColorB.b * emisMap.r;
-		emissiveColor.a += TeamColorB.a * emisMap.r;
+		if (emisMap.r > 0.26f)
+		{
+			emisMap.r += 0.185f;
+		}
+		emissiveColor.rgba += TeamColorB.rgba * emisMap.r;
 	}
-	float4 diffuseColor = baseTexture.Sample(filter, input.uv.xy);
 
 	float4 finalColor = diffuseColor * ((ambientColor + directionalColor + directionalSpecColor + pointColor + pointSpecColor) * black);
 	finalColor += emissiveColor;
