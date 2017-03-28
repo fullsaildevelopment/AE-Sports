@@ -1023,6 +1023,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
 	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	titanPlayerRenderer->SetTeamColor(float4(1, 1, 1, 1));
 
 	//for (int j = 0; j < 11; ++j)
 	//{

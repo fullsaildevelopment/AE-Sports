@@ -54,9 +54,9 @@ float4 main(PS_BasicInput input) : SV_TARGET
 {
 
 	float4 specMap = specularMap.Sample(filter, input.uv.xy);
-	float3 bumpMap = normalMap.Sample(filter, input.uv.xy).xyz;
+	float4 bumpMap = normalMap.Sample(filter, input.uv.xy);
 	float3 Normal = input.normal;
-	if (bumpMap.x != 0.0f)
+	if (bumpMap.a != 0.0f)
 	{
 		bumpMap = (bumpMap * 2.0f) - 1.0f;
 		float3x3 TBNMatrix = float3x3(input.tangent, input.binormal, input.normal);
@@ -91,13 +91,13 @@ float4 main(PS_BasicInput input) : SV_TARGET
 		if (specFactor > 0)
 		{
 			specFactor = pow(specFactor, 128);
-			directionalSpecColor = float4(dirLightColor.xyz * specMap * specFactor, 1.0f);
+			directionalSpecColor = float4(dirLightColor.xyz * specMap.xyz * specFactor, 1.0f);
 		}
 	}
 
 	for (int i = 0; i < NUMOFPOINTLIGHTS; ++i) 
 	{
-		float3 lightDir = normalize(pLights[i].pointLightPosition - input.worldPosition);
+		float3 lightDir = normalize(pLights[i].pointLightPosition.xyz - input.worldPosition.xyz);
 		float lightFactor = saturate(dot(lightDir, Normal));
 		pointColor += lightFactor * pLights[i].pointLightColor;
 
