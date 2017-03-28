@@ -1406,6 +1406,7 @@ void Game::ResetPlayers()
 		playerName += to_string(i);
 
 		GameObject* player = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(playerName);
+		player->GetComponent<AnimatorController>()->SetTrigger("Idle");
 
 		//reset positions
 		int teamOffset = 0;
