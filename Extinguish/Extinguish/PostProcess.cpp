@@ -100,7 +100,7 @@ namespace BLOOM
 	static const VS_BLOOM_PARAMETERS g_BloomPresets[] =
 	{
 		//Thresh  Blur Bloom  Base  BloomSat BaseSat
-		{ 0.30f,  4,   1.35f, 1,    1,       1 }, // Default
+		{ 0.30f,  4,   1.45f, 1,    1,       1 }, // Default
 		{ 0,      3,   1,     1,    1,       1 }, // Soft
 		{ 0.5f,   8,   2,     1,    0,       1 }, // Desaturated
 		{ 0.25f,  4,   2,     1,    2,       0 }, // Saturated
