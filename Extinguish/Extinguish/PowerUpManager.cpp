@@ -21,6 +21,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	Renderer* superJumpRenderer = new Renderer();
 	superJump->AddComponent(superJumpRenderer);
 	superJumpRenderer->Init("Super Jump", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+	superJumpRenderer->SetTeamColor(float4(1, 1, 0, 1));
 	SuperJump* superJumpC = new SuperJump();
 	superJump->AddComponent(superJumpC);
 	BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
@@ -35,6 +36,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	Renderer* magnetRenderer = new Renderer();
 	magnet->AddComponent(magnetRenderer);
 	magnetRenderer->Init("Magnet", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+	magnetRenderer->SetTeamColor(float4(1, 1, 0, 1));
 	Magnet* magnetC = new Magnet();
 	magnet->AddComponent(magnetC);
 	BoxCollider* magnetCollider = new BoxCollider(magnet, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
@@ -49,6 +51,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	Renderer* shieldRenderer = new Renderer();
 	shield->AddComponent(shieldRenderer);
 	shieldRenderer->Init("Shield", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+	shieldRenderer->SetTeamColor(float4(1, 1, 0, 1));
 	SuperJump* shieldC = new SuperJump();
 	shield->AddComponent(shieldC);
 	BoxCollider* shieldCollider = new BoxCollider(shield, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
