@@ -8,8 +8,8 @@
 #include "Movement.h"
 #include "Trigger.h"
 
-#define     RunSpeed 0.475f //10
-#define  AttackSpeed 0.475f 
+#define     RunSpeed 0.7f //0.475f //10
+#define  AttackSpeed 0.7f //0.475f 
 //#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +322,7 @@ void AI::Update(float _dt)
 			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
 			// if the ball gets close
-			if (dist.magnitude() < 28)
+			if (dist.magnitude() < 34)
 			{
 				// if no one is holding it or the enemies have it
 				if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
@@ -364,7 +364,7 @@ void AI::Update(float _dt)
 			}
 
 			// if the ball is too far from the goal
-			else if (dist.magnitude() > 28)
+			else if (dist.magnitude() > 34)
 			{
 				if (RunTo(myGoal, 15.0f))
 				{
