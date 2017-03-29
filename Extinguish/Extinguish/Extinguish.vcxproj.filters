@@ -1,56 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="BloomCombine.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="BloomExtract.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="CS_ForwardPlus.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="GaussianBlur.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="PS_Ball.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_Crosse.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_DepthPreShadow.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_InstStatic.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_NormalMapped.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_PowerUp.hlsl">
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_Shadow.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_Static.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\PixelShaders</Filter>
     </FxCompile>
     <FxCompile Include="VS_Bind.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="VS_DepthPreShadow.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="VS_InstancedStatic.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="VS_Shadow.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="VS_Static.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="VS_TempStatic.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\VertexShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomCombine.hlsl">
+      <Filter>Shaders\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomExtract.hlsl">
+      <Filter>Shaders\Bloom</Filter>
+    </FxCompile>
+    <FxCompile Include="GaussianBlur.hlsl">
+      <Filter>Shaders\Bloom</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -416,7 +419,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Bloom.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Bloom</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +452,15 @@
     </Filter>
     <Filter Include="Components\Scripts\PowerUps">
       <UniqueIdentifier>{ef45a6bc-0f94-40fd-aa4a-d6e432ccf050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\PixelShaders">
+      <UniqueIdentifier>{acbdc84b-0f39-4452-81ce-68561d9fc49e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\VertexShaders">
+      <UniqueIdentifier>{1edcc838-45f3-4cc8-8cd1-87eb60b1654a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Bloom">
+      <UniqueIdentifier>{413e01d3-bf27-4e25-ae8b-6753a73ebbd5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
