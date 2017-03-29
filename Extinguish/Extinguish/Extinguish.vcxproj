@@ -155,6 +155,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Countdown.cpp" />
+    <ClCompile Include="Credits.cpp" />
     <ClCompile Include="Crosse.cpp" />
     <ClCompile Include="FloorController.cpp" />
     <ClCompile Include="Goal.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="BallController.h" />
     <ClInclude Include="Client Wrapper.h" />
     <ClInclude Include="Countdown.h" />
+    <ClInclude Include="Credits.h" />
     <ClInclude Include="Crosse.h" />
     <ClInclude Include="EDMesh.h" />
     <ClInclude Include="FloorController.h" />
