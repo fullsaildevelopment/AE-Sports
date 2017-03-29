@@ -8,8 +8,8 @@
 #include "Movement.h"
 #include "Trigger.h"
 
-#define     RunSpeed 0.475f //10
-#define  AttackSpeed 0.475f 
+#define     RunSpeed 0.7f //0.475f //10
+#define  AttackSpeed 0.7f //0.475f 
 //#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +322,7 @@ void AI::Update(float _dt)
 			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
 			// if the ball gets close
-			if (dist.magnitude() < 28)
+			if (dist.magnitude() < 34)
 			{
 				// if no one is holding it or the enemies have it
 				if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
@@ -364,7 +364,7 @@ void AI::Update(float _dt)
 			}
 
 			// if the ball is too far from the goal
-			else if (dist.magnitude() > 28)
+			else if (dist.magnitude() > 34)
 			{
 				if (RunTo(myGoal, 15.0f))
 				{
@@ -495,8 +495,6 @@ void AI::Idle()
 
 void AI::GetBall()
 {
-	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
 	// if someone has the ball
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 	{
@@ -509,7 +507,7 @@ void AI::GetBall()
 	}
 
 	// if im right next to the ball
-	else if (RunTo(ball) && dist.magnitude() < 1)
+	else if (RunTo(ball, 1.0f))
 	{
 		// running into the ball should pick it up
 	}
@@ -558,7 +556,7 @@ void AI::Attack(GameObject *target)
 			isAttacking = true;
 
 			TurnTo(target);
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
 			v.y = 0;
 
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
@@ -626,7 +624,7 @@ bool AI::RunTo(GameObject *target)
 			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 5)
 				return true;
 
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
 			v.y = 0;
 			TurnTo(target);
 
@@ -649,7 +647,7 @@ bool AI::RunTo(GameObject *target, float dist)
 			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
 				return true;
 
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
 			v.y = 0;
 			TurnTo(target);
 
@@ -670,7 +668,7 @@ bool AI::RunTo(float3 target, float dist)
 		if ((target - me->GetTransform()->GetPosition()).magnitude() < dist)
 			return true;
 
-		float3 v = ((target - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+		float3 v = ((target - me->GetTransform()->GetPosition())).normalize();
 		v.y = 0;
 		TurnTo(target);
 
@@ -678,19 +676,18 @@ bool AI::RunTo(float3 target, float dist)
 			anim->SetTrigger("Run");
 
 		me->GetTransform()->AddVelocity(v * RunSpeed);
-
-		return false;
 	}
+
 	return false;
 }
 
 void AI::TurnTo(float3 target)
 {
 	//u - forward vector
-	float3 u = (me->GetTransform()->GetRightf3() * (-1/*, 0, -1*/)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3 u = (me->GetTransform()->GetRightf3() * (-1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//v - vector between me and destination
-	float3 v = ((target - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+	float3 v = ((target - me->GetTransform()->GetPosition())).normalize();
 	u.y = 0;
 	v.y = 0;
 
@@ -703,8 +700,8 @@ void AI::TurnTo(GameObject *target)
 {
 	if (target)
 	{
-		float3 u = (me->GetTransform()->GetRightf3() * (-1/*, 0, -1*/)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
-		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+		float3 u = (me->GetTransform()->GetRightf3() * (-1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition())).normalize();
 		u.y = 0;
 		v.y = 0;
 
