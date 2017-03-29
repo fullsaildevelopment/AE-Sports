@@ -20,8 +20,8 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	superJump->InitTransform(identity, { 5, 1, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* superJumpRenderer = new Renderer();
 	superJump->AddComponent(superJumpRenderer);
-	superJumpRenderer->Init("Super Jump", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	superJumpRenderer->SetTeamColor(float4(1, 1, 0, 1));
+	superJumpRenderer->Init("Super Jump", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
+	superJumpRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 	SuperJump* superJumpC = new SuperJump();
 	superJump->AddComponent(superJumpC);
 	BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
@@ -35,8 +35,8 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	magnet->InitTransform(identity, { 5, 1, 3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* magnetRenderer = new Renderer();
 	magnet->AddComponent(magnetRenderer);
-	magnetRenderer->Init("Magnet", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	magnetRenderer->SetTeamColor(float4(1, 1, 0, 1));
+	magnetRenderer->Init("Magnet", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
+	magnetRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 	Magnet* magnetC = new Magnet();
 	magnet->AddComponent(magnetC);
 	BoxCollider* magnetCollider = new BoxCollider(magnet, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
@@ -50,8 +50,8 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	shield->InitTransform(identity, { -50, 1, 1.8f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* shieldRenderer = new Renderer();
 	shield->AddComponent(shieldRenderer);
-	shieldRenderer->Init("Shield", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	shieldRenderer->SetTeamColor(float4(1, 1, 0, 1));
+	shieldRenderer->Init("Shield", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
+	shieldRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 	SuperJump* shieldC = new SuperJump();
 	shield->AddComponent(shieldC);
 	BoxCollider* shieldCollider = new BoxCollider(shield, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });

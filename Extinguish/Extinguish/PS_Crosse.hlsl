@@ -51,7 +51,7 @@ SamplerState filter : register(s0);
 
 float4 main(PS_BasicInput input) : SV_TARGET
 {
-	float4 finalColor = {0,0,0,0.5f};
+	float4 finalColor = {0,0,0,1};
 	float4 tcm = teamcolorMap.Sample(filter, input.uv.xy);
 	float4 netc = baseTexture.Sample(filter, input.uv.xy);
 

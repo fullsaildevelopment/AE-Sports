@@ -809,9 +809,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
 
 		if (i <= 4)
-			mageRenderer1->SetTeamColor({ 1,0,0,0 });
+			mageRenderer1->SetEmissiveColor({ 1,0,0,0 });
 		else
-			mageRenderer1->SetTeamColor({ 0,0,1,0 });
+			mageRenderer1->SetEmissiveColor({ 0,0,1,0 });
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
@@ -912,11 +912,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
-		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources, true);
+		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources, false);
 		if (i <= 4)
-			crosseRenderer->SetTeamColor({ 1,0,0,0 });
+			crosseRenderer->SetEmissiveColor({ 1,0,0,0 });
 		else
-			crosseRenderer->SetTeamColor({ 0,0,1,0 });
+			crosseRenderer->SetEmissiveColor({ 0,0,1,0 });
 		Crosse* crosseController = new Crosse();
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
@@ -1019,7 +1019,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
 	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
-	titanPlayerRenderer->SetTeamColor(float4(1, 1, 1, 1));
+	titanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
 
 	//for (int j = 0; j < 11; ++j)
 	//{
