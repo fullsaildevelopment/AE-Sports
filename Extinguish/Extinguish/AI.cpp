@@ -495,7 +495,7 @@ void AI::Idle()
 
 void AI::GetBall()
 {
-	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
+	//float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
 
 	// if someone has the ball
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
@@ -509,7 +509,7 @@ void AI::GetBall()
 	}
 
 	// if im right next to the ball
-	else if (RunTo(ball) && dist.magnitude() < 1)
+	else if (RunTo(ball, 1.0f)/* && dist.magnitude() < 1*/)
 	{
 		// running into the ball should pick it up
 	}
