@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "PlayerController.h"
 #include "Renderer.h"
+#include "PowerUpEvent.h"
+#include "EventDispatcher.h"
 
 //structors//
 PowerUp::PowerUp()
@@ -54,6 +56,11 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 				//stop rendering
 				GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
 
+				//tell powerup manager it was picked up
+				PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, managerIndex);
+				EventDispatcher::GetSingleton()->DispatchTo(powerEvent, "PowerUpManager");
+				delete powerEvent;
+
 				return;
 			}
 		}
@@ -75,11 +82,6 @@ void PowerUp::Deactivate()
 }
 
 //getters//
-//float PowerUp::GetCooldown()
-//{
-//	return cooldown;
-//}
-
 float PowerUp::GetDuration()
 {
 	return duration;
@@ -102,13 +104,18 @@ PlayerController* PowerUp::GetPlayer()
 	return player;
 }
 
-//setters//
-//void PowerUp::SetCooldown(float down)
-//{
-//	cooldown = down;
-//}
+int PowerUp::GetManagerIndex()
+{
+	return managerIndex;
+}
 
+//setters//
 void PowerUp::SetDuration(float dur)
 {
 	duration = dur;
+}
+
+void PowerUp::SetManagerIndex(int index)
+{
+	managerIndex = index;
 }

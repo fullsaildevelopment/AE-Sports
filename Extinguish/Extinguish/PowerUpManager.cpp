@@ -1,3 +1,4 @@
+#include <iostream>
 #include "PowerUpManager.h"
 #include "Scene.h"
 #include "GameObject.h"
@@ -7,9 +8,16 @@
 #include "Magnet.h"
 #include "Shield.h"
 #include "vec3.h"
+#include "ScoreEvent.h"
+#include "PowerUpEvent.h"
+#include "EventDispatcher.h"
 
 void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources)
 {
+	//register as eventhandler
+	EventDispatcher::GetSingleton()->RegisterHandler(this, GetGameObject()->GetName());
+
+
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
@@ -56,30 +64,160 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 
 	powerUps.push_back(shieldC);
 
-	//disable them
-	//for (int i = 0; i < powerUps.size(); ++i)
-	//{
-	//	powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-	//	powerUps[i]->SetEnabled(false);
-	//}
+	for (int i = 0; i < powerUps.size(); ++i)
+	{
+		//disable them
+		powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+		powerUps[i]->SetEnabled(false);
+
+		//add name to hashstring
+		powerUpsTable.Insert(powerUps[i]->GetGameObject()->GetName());
+	}
 
 	//initialize
 	roundTimer = 0.0f;
+
+	//powerUpInfo[0].name = "Super Jump";
+	//powerUpInfo[1].name = "Magnet";
+	//powerUpInfo[2].name = "Shield";
+
+	for (int i = 0; i < NUM_OF_POS; ++i)
+	{
+		posUsed[i] = false;
+		//powerUpInfo[i].isSpawned = false;
+		//powerUpInfo[i].spawnPosIndex = -1;
+		//powerUpInfo[i].triedToSpawn = false;
+	}
+
+	for (int i = 0; i < NUM_OF_UPS; ++i)
+	{
+		isSpawned[i] = false;
+	}
 }
 
 void PowerUpManager::Update(float _dt)
 {
 	roundTimer += _dt;
 
-	//every certain amount of time, spawn 1 to all of the powerups in certain positions
-	//for time, do I base off of game time or round time?
+	//maybe add two positions: right in front of goals
+	const float3 spawnPositions[] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f}, //middle positions
+									  {-20.0f, 1.0f, 30.0f}, {-20.0f, 1.0f, -30.0f} }; //goal positions
+	bool triedSpawn[4] = {}; //used to say whether a powerup has tried to been spawned or not so far
+	//int posIndex = 0;
+	bool triedPos[4] = {};
 
-	//const float3 spawnPositions[2] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f} };
+	if (roundTimer >= TIME_TIL_SPAWN)
+	{
+		int posCount = 0;
 
-	//if (roundTimer >= timeTilSpawn)
-	//{
-	//	//spawn items
-	//	int randIndex = rand() % powerUps.size();
+		for (int i = 0; i < NUM_OF_POS; ++i)
+		{
+			if (posUsed[i])
+			{
+				++posCount;
+			}
+		}
 
-	//}
+		if (posCount < NUM_OF_POS)
+		{
+			//spawn items
+			//for (int i = 0; i < NUM_OF_POS - posCount; ++i)
+			for (int i = 0; i < NUM_OF_UPS; ++i)
+			{
+				//figure which powerup
+				int randPowIndex;
+
+				//do
+				//{
+				//	randIndex = rand() % powerUps.size();
+				//} while (triedSpawn[randIndex]);
+
+				randPowIndex = rand() % NUM_OF_UPS;
+
+				//triedSpawn[randIndex] = true;
+
+				//get correct posIndex
+				//while (posUsed[posIndex])
+				//{
+				//	++posIndex % NUM_OF_POS;
+				//}
+
+				int randPosIndex = 0;
+
+				do
+				{
+					randPosIndex = rand() % NUM_OF_POS;
+				} while (triedPos[randPosIndex]);
+
+				if (!isSpawned[randPowIndex])
+				//if (!posUsed[randPowIndex])
+				{
+					//set position
+					powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
+
+					//enable
+					powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+					powerUps[randPowIndex]->SetEnabled(true);
+
+					//don't let it be spawned again til consumed
+					isSpawned[randPowIndex] = true;
+
+					//prevent pos from being used again
+					posUsed[randPosIndex] = true;
+					posUsedNames[randPosIndex] = powerUps[randPowIndex]->GetGameObject()->GetName();
+					powerUps[randPowIndex]->SetManagerIndex(randPosIndex);
+					//++posIndex;
+
+					cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
+				}
+			}
+		}
+
+		//reset timer so it's every *blank* seconds even if no spawn happened
+		roundTimer = 0.0f;
+	}
+
+	//TODO: play a sound to indicate spawning
+
+}
+
+//misc//
+void PowerUpManager::HandleEvent(Event* e)
+{
+	ScoreEvent* scoreEvent = dynamic_cast<ScoreEvent*>(e);
+
+	if (scoreEvent)
+	{
+		roundTimer = 0.0f;
+
+		//disable them
+		for (int i = 0; i < powerUps.size(); ++i)
+		{
+			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+			powerUps[i]->SetEnabled(false);
+		}
+
+		return;
+	}
+
+	PowerUpEvent* powerEvent = dynamic_cast<PowerUpEvent*>(e);
+
+	if (powerEvent)
+	{
+		//isSpawned[powerEvent->GetManagerIndex()] = false;
+		posUsed[powerEvent->GetManagerIndex()] = false;
+
+		//for (int i = 0; i < NUM_OF_POS; ++i)
+		//{
+		//	if (posUsedNames[i] == powerEvent->GetName())
+		//	{
+		//		cout << powerEvent->GetName() << " picked up" << endl;
+
+		//		posUsed[i] = false;
+		//		posUsedNames[i] = "";
+		//	}
+		//}
+
+		return;
+	}
 }

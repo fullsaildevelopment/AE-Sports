@@ -76,7 +76,7 @@ void PlayerController::Update(float _dt)
 		StopFootstepsSound();
 	}
 
-	cout << jumpMultiplier << endl;
+	//cout << jumpMultiplier << endl;
 
 	//allow ogPlayer to move again if stumble is done
 	if (ogPlayer)
