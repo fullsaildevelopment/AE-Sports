@@ -6,6 +6,9 @@
 #include "Renderer.h"
 #include "PowerUpEvent.h"
 #include "EventDispatcher.h"
+#include "SoundEvent.h"
+#include "SoundEngine.h"
+#include "BoxCollider.h"
 
 //structors//
 PowerUp::PowerUp()
@@ -50,16 +53,26 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 			{
 				player = capsCollider->GetGameObject()->GetComponent<PlayerController>();
 
-				isActivated = true;
-				Activate();
+				if (player)
+				{
+					isActivated = true;
+					Activate();
 
-				//stop rendering
-				GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+					//stop rendering
+					GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+					//GetGameObject()->GetComponent<BoxCollider>()->SetEnabled(false);
 
-				//tell powerup manager it was picked up
-				PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, managerIndex);
-				EventDispatcher::GetSingleton()->DispatchTo(powerEvent, "PowerUpManager");
-				delete powerEvent;
+					//tell powerup manager it was picked up
+					PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, spawnIndex, posIndex);
+					EventDispatcher::GetSingleton()->DispatchTo(powerEvent, "PowerUpManager");
+					delete powerEvent;
+
+					//play sound
+					SoundEvent* soundEvent = new SoundEvent();
+					soundEvent->Init(AK::EVENTS::PLAY_FASTERLIGHTNING, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+					EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+					delete soundEvent;
+				}
 
 				return;
 			}
@@ -75,9 +88,6 @@ void PowerUp::Activate()
 
 void PowerUp::Deactivate()
 {
-	//maybe call this in derived
-	//and in here, destroy the component and/or object completely so it stops updating and what not
-
 	isActivated = false;
 }
 
@@ -104,9 +114,14 @@ PlayerController* PowerUp::GetPlayer()
 	return player;
 }
 
-int PowerUp::GetManagerIndex()
+int PowerUp::GetSpawnIndex()
 {
-	return managerIndex;
+	return spawnIndex;
+}
+
+int PowerUp::GetPosIndex()
+{
+	return posIndex;
 }
 
 //setters//
@@ -115,7 +130,12 @@ void PowerUp::SetDuration(float dur)
 	duration = dur;
 }
 
-void PowerUp::SetManagerIndex(int index)
+void PowerUp::SetSpawnIndex(int index)
 {
-	managerIndex = index;
+	spawnIndex = index;
+}
+
+void PowerUp::SetPosIndex(int index)
+{
+	posIndex = index;
 }

@@ -1,11 +1,12 @@
 #include "PowerUpEvent.h"
 
 //structors//
-PowerUpEvent::PowerUpEvent(std::string name, bool active, int index)
+PowerUpEvent::PowerUpEvent(std::string name, bool active, int spawnInd, int posInd)
 {
 	SetIsActive(active);
 	SetName(name);
-	SetManagerIndex(index);
+	SetSpawnIndex(spawnInd);
+	SetPosIndex(posInd);
 }
 
 //basic//
@@ -25,9 +26,14 @@ bool PowerUpEvent::IsActive()
 	return isActive;
 }
 
-int PowerUpEvent::GetManagerIndex()
+int PowerUpEvent::GetSpawnIndex()
 {
-	return managerIndex;
+	return spawnIndex;
+}
+
+int PowerUpEvent::GetPosIndex()
+{
+	return posIndex;
 }
 
 //setters//
@@ -41,7 +47,12 @@ void PowerUpEvent::SetIsActive(bool active)
 	isActive = active;
 }
 
-void PowerUpEvent::SetManagerIndex(int index)
+void PowerUpEvent::SetSpawnIndex(int index)
 {
-	managerIndex;
+	spawnIndex = index;
+}
+
+void PowerUpEvent::SetPosIndex(int index)
+{
+	posIndex = index;
 }
