@@ -23,10 +23,10 @@ private:
 	// tho if it's a base class, then... i dunno. :D
 	//Tom: I like the idea of this being a base class
 
-	//float cooldown; // how long until you can use the powerup again
 	float duration; // how long the powerup lasts for
 	float timer;
 	bool isActivated;
+	int managerIndex; //the manager needs this to help spawn
 
 	PlayerController* player;
 public:
@@ -44,12 +44,12 @@ public:
 	virtual void Deactivate();
 
 	//getters
-	//float GetCooldown();
 	float GetDuration();
 	bool IsDone();
 	PlayerController* GetPlayer();
+	int GetManagerIndex();
 
 	//setters
-	//void SetCooldown(float down);
 	void SetDuration(float dur);
+	void SetManagerIndex(int index);
 };

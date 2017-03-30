@@ -57,6 +57,9 @@
     <ClInclude Include="CanPlayEvent.h">
       <Filter>Events</Filter>
     </ClInclude>
+    <ClInclude Include="PowerUpEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">
@@ -78,6 +81,9 @@
       <Filter>Events</Filter>
     </ClCompile>
     <ClCompile Include="CanPlayEvent.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerUpEvent.cpp">
       <Filter>Events</Filter>
     </ClCompile>
   </ItemGroup>

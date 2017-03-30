@@ -1475,9 +1475,9 @@ namespace FBXLoader
 
 			ProcessGeometry(mFBXScene->GetRootNode());
 
-			mIndices.clear();
-			mIndices.resize(mVerts.size());
-			ElimanateDuplicates(mVerts, mIndices);
+			//mIndices.clear();
+			//mIndices.resize(mVerts.size());
+			//ElimanateDuplicates(mVerts, mIndices);
 
 			//swap indices for correct texture
 			for (unsigned int i = 0; i < mIndices.size(); i += 3)
