@@ -12,6 +12,8 @@
 #include "PowerUpEvent.h"
 #include "EventDispatcher.h"
 
+using namespace std;
+
 void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources)
 {
 	//register as eventhandler
@@ -22,50 +24,57 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
 	//create power up objects
-	GameObject* superJump = new GameObject();
-	superJump->Init("Super Jump");
-	scene->AddGameObject(superJump);
-	superJump->InitTransform(identity, { 5, 1, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* superJumpRenderer = new Renderer();
-	superJump->AddComponent(superJumpRenderer);
-	superJumpRenderer->Init("Super Jump", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	superJumpRenderer->SetTeamColor(float4(1, 1, 0, 1));
-	SuperJump* superJumpC = new SuperJump();
-	superJump->AddComponent(superJumpC);
-	BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-	superJump->AddBoxCollider(superJumpCollider);
+	for (int i = 0; i < 2; ++i)
+	{
+		string name = "Super Jump";
 
-	powerUps.push_back(superJumpC);
+		GameObject* superJump = new GameObject();
+		superJump->Init(name + to_string(i));
+		scene->AddGameObject(superJump);
+		superJump->InitTransform(identity, { 5, 1, 5 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		Renderer* superJumpRenderer = new Renderer();
+		superJump->AddComponent(superJumpRenderer);
+		superJumpRenderer->Init("Super Jump", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+		superJumpRenderer->SetTeamColor(float4(1, 1, 0, 1));
+		SuperJump* superJumpC = new SuperJump();
+		superJump->AddComponent(superJumpC);
+		BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
+		superJump->AddBoxCollider(superJumpCollider);
 
-	GameObject* magnet = new GameObject();
-	magnet->Init("Magnet");
-	scene->AddGameObject(magnet);
-	magnet->InitTransform(identity, { 5, 1, 3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* magnetRenderer = new Renderer();
-	magnet->AddComponent(magnetRenderer);
-	magnetRenderer->Init("Magnet", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	magnetRenderer->SetTeamColor(float4(1, 1, 0, 1));
-	Magnet* magnetC = new Magnet();
-	magnet->AddComponent(magnetC);
-	BoxCollider* magnetCollider = new BoxCollider(magnet, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-	magnet->AddBoxCollider(magnetCollider);
+		powerUps.push_back(superJumpC);
 
-	powerUps.push_back(magnetC);
+		name = "Magnet";
+		GameObject* magnet = new GameObject();
+		magnet->Init(name + to_string(i));
+		scene->AddGameObject(magnet);
+		magnet->InitTransform(identity, { 5, 1, 3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		Renderer* magnetRenderer = new Renderer();
+		magnet->AddComponent(magnetRenderer);
+		magnetRenderer->Init("Magnet", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+		magnetRenderer->SetTeamColor(float4(1, 1, 0, 1));
+		Magnet* magnetC = new Magnet();
+		magnet->AddComponent(magnetC);
+		BoxCollider* magnetCollider = new BoxCollider(magnet, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
+		magnet->AddBoxCollider(magnetCollider);
 
-	GameObject* shield = new GameObject();
-	shield->Init("Shield");
-	scene->AddGameObject(shield);
-	shield->InitTransform(identity, { -50, 1, 1.8f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* shieldRenderer = new Renderer();
-	shield->AddComponent(shieldRenderer);
-	shieldRenderer->Init("Shield", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	shieldRenderer->SetTeamColor(float4(1, 1, 0, 1));
-	SuperJump* shieldC = new SuperJump();
-	shield->AddComponent(shieldC);
-	BoxCollider* shieldCollider = new BoxCollider(shield, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-	shield->AddBoxCollider(shieldCollider);
+		powerUps.push_back(magnetC);
 
-	powerUps.push_back(shieldC);
+		name = "Shield";
+		GameObject* shield = new GameObject();
+		shield->Init(name + to_string(i));
+		scene->AddGameObject(shield);
+		shield->InitTransform(identity, { -50, 1, 1.8f }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+		Renderer* shieldRenderer = new Renderer();
+		shield->AddComponent(shieldRenderer);
+		shieldRenderer->Init("Shield", "PowerUp", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+		shieldRenderer->SetTeamColor(float4(1, 1, 0, 1));
+		SuperJump* shieldC = new SuperJump();
+		shield->AddComponent(shieldC);
+		BoxCollider* shieldCollider = new BoxCollider(shield, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
+		shield->AddBoxCollider(shieldCollider);
+
+		powerUps.push_back(shieldC);
+	}
 
 	for (int i = 0; i < powerUps.size(); ++i)
 	{
@@ -105,7 +114,7 @@ void PowerUpManager::Update(float _dt)
 	//maybe add two positions: right in front of goals
 	const float3 spawnPositions[] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f}, //middle positions
 									  {-20.0f, 1.0f, 30.0f}, {-20.0f, 1.0f, -30.0f} }; //goal positions
-	bool triedSpawn[4] = {}; //used to say whether a powerup has tried to been spawned or not so far
+	bool triedSpawn[6] = {}; //used to say whether a powerup has tried to been spawned or not so far
 	//int posIndex = 0;
 	bool triedPos[4] = {};
 
@@ -125,7 +134,7 @@ void PowerUpManager::Update(float _dt)
 		{
 			//spawn items
 			//for (int i = 0; i < NUM_OF_POS - posCount; ++i)
-			for (int i = 0; i < NUM_OF_UPS; ++i)
+			for (int i = 0; i < NUM_OF_POS; ++i)
 			{
 				//figure which powerup
 				int randPowIndex;
