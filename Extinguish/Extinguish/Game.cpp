@@ -608,7 +608,8 @@ void Game::HandleEvent(Event* e)
 
 	if (floorPulseEvent)
 	{
-		
+		server.setPulse(floorPulseEvent->floorIndex);
+		floorController->PulseFloor(floorPulseEvent->floorIndex);
 	}
 }
 
@@ -2121,6 +2122,7 @@ void Game::UpdateClientObjects()
 						FloorController * fC = gameObject->GetComponent<FloorController>();
 						//if (fC->GetState() != client.getFloorState(i))
 						fC->SetState(client.getDT());
+						fC->PulseFloor(client.GetPulse());
 					}
 
 					if (gameObject->GetName() == "Countdown")
