@@ -187,7 +187,7 @@ void Credits::SetNames()
 	// MUSIC
 	labels.push_back(L"MUSIC");
 	// Alice Kim
-	names.push_back(L"Alice Kim");
+	names.push_back(L"'Alice' Hyeon Jo Kim");
 }
 
 void Credits::NextSet()

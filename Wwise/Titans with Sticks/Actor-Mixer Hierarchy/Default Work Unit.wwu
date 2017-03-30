@@ -253,6 +253,31 @@
 								<ActiveSource Name="Score" ID="{1F967FC0-18B0-4D3A-9A64-835E4F8CD869}" Platform="Linked"/>
 							</ActiveSourceList>
 						</Sound>
+						<Sound Name="FasterLightning" ID="{2672AC73-0DF9-4664-ACD0-55C8DB7472C9}" ShortID="988210331" Type="SoundFX">
+							<PropertyList>
+								<Property Name="PositioningType" Type="int16" Value="1"/>
+							</PropertyList>
+							<ReferenceList>
+								<Reference Name="Attenuation">
+									<ObjectRef Name="Default" ID="{9845508C-9C94-479B-9423-3BA06C2F0A07}" WorkUnitID="{E1713BE0-4A93-4230-99F0-058B687DBB71}"/>
+								</Reference>
+								<Reference Name="Conversion">
+									<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{3D2ED154-DD2F-4D7E-B0F6-462D874CDA2B}"/>
+								</Reference>
+								<Reference Name="OutputBus">
+									<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{C3E7A143-FF5B-4126-A756-5E76EBBD4B48}"/>
+								</Reference>
+							</ReferenceList>
+							<ChildrenList>
+								<AudioFileSource Name="FasterLightning" ID="{8F764266-A33A-4545-A808-87E034FFDEC6}" ShortID="902688899">
+									<Language>SFX</Language>
+									<AudioFile>FasterLightning.wav</AudioFile>
+								</AudioFileSource>
+							</ChildrenList>
+							<ActiveSourceList>
+								<ActiveSource Name="FasterLightning" ID="{8F764266-A33A-4545-A808-87E034FFDEC6}" Platform="Linked"/>
+							</ActiveSourceList>
+						</Sound>
 					</ChildrenList>
 				</Folder>
 				<Sound Name="Backboard Bounce Song" ID="{E62757B0-5ACA-44F4-8368-30A91CE80B75}" ShortID="173608183" Type="SoundFX">

@@ -9,11 +9,12 @@ class PowerUpEvent : public Event
 private:
 	bool isActive;
 	std::string name;
-	int managerIndex;
+	int spawnIndex;
+	int posIndex;
 
 public:
 	//structors
-	PowerUpEvent(std::string name, bool active, int index);
+	PowerUpEvent(std::string name, bool active, int spawnInd, int posInd);
 
 	//basic
 	void Init() override;
@@ -21,10 +22,12 @@ public:
 	//getters
 	std::string GetName();
 	bool IsActive();
-	int GetManagerIndex();
+	int GetSpawnIndex();
+	int GetPosIndex();
 
 	//setters
 	void SetName(std::string name);
 	void SetIsActive(bool active);
-	void SetManagerIndex(int index);
+	void SetSpawnIndex(int index);
+	void SetPosIndex(int index);
 };
