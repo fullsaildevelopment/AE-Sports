@@ -1081,7 +1081,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* meterbox6 = new GameObject();
 	meterbox6->Init("MeterBox6");
 	basic->AddGameObject(meterbox6);
-	meterbox6->InitTransform(identity, { 0, -1, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	/*Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);*/
