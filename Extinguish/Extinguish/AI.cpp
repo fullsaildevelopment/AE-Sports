@@ -267,16 +267,12 @@ void AI::Update(float _dt)
 
 				if (setCanMove)
 				{
-					AI* otherAI = ogTarget->GetComponent<AI>();
+					if (ogTarget->GetComponent<AI>())
+						ogTarget->GetComponent<AI>()->SetCanMove(true);
 
-					if (otherAI)
-					{
-						otherAI->SetCanMove(true);
-					}
 					else
 					{
 						Movement* otherMovement = ogTarget->GetComponent<Movement>();
-
 						otherMovement->SetCanMove(true);
 
 						//move the player's camera to match getting up
