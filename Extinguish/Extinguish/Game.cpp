@@ -35,6 +35,7 @@
 #include "PowerUpManager.h"
 #include "Credits.h"
 #include "MeterBar.h"
+#include "PulseFloorEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -602,6 +603,13 @@ void Game::HandleEvent(Event* e)
 
 		return;
 	}
+
+	PulseFloorEvent* floorPulseEvent = dynamic_cast<PulseFloorEvent*>(e);
+
+	if (floorPulseEvent)
+	{
+		
+	}
 }
 
 //getters//
@@ -1098,11 +1106,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
-	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
-	HexFloor->AddComponent(fcon);
-	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, fcon, resourceManager->collisionMeshes[0]);
+	floorController = new FloorController(floor, row, col, 10, colors);
+	HexFloor->AddComponent(floorController);
+	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, floorController, resourceManager->collisionMeshes[0]);
 	HexFloor->AddComponent(HexFLoorCol);
-	fcon->SetState(1 / 6.0f);
+	floorController->SetState(1 / 6.0f);
 
 	//GameObject* Hex = new GameObject();
 	//Hex->Init("Team2");
