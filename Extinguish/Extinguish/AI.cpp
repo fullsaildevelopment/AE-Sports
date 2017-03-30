@@ -392,7 +392,7 @@ void AI::Update(float _dt)
 
 			//if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
-				Attack(eTank);
+				if (eTank) Attack(eTank);
 
 			else
 			{
@@ -712,14 +712,14 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	Paranoia();
-
 	if (RunTo(enemyGoal, 28.0f))
 	{
 		camera->RotateX(-0.9f);
 		crosse->Throw();
 		camera->RotateX(0.9f);
 	}
+
+	Paranoia();
 }
 
 AI::State AI::GetCurrState() { return currState; }
