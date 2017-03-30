@@ -57,7 +57,7 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 				GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
 
 				//tell powerup manager it was picked up
-				PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, managerIndex);
+				PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, spawnIndex, posIndex);
 				EventDispatcher::GetSingleton()->DispatchTo(powerEvent, "PowerUpManager");
 				delete powerEvent;
 
@@ -104,9 +104,14 @@ PlayerController* PowerUp::GetPlayer()
 	return player;
 }
 
-int PowerUp::GetManagerIndex()
+int PowerUp::GetSpawnIndex()
 {
-	return managerIndex;
+	return spawnIndex;
+}
+
+int PowerUp::GetPosIndex()
+{
+	return posIndex;
 }
 
 //setters//
@@ -115,7 +120,12 @@ void PowerUp::SetDuration(float dur)
 	duration = dur;
 }
 
-void PowerUp::SetManagerIndex(int index)
+void PowerUp::SetSpawnIndex(int index)
 {
-	managerIndex = index;
+	spawnIndex = index;
+}
+
+void PowerUp::SetPosIndex(int index)
+{
+	posIndex = index;
 }
