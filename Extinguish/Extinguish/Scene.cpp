@@ -275,7 +275,7 @@ void Scene::CreateLights()
 	pointLight0.Create({ -7, -18, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -7, -18, 5.5f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 145.0f);
+	pointLight1.Create({ -7, -18, -20.0f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 145.0f);
 
 	PointLight pointLight2;
 	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
