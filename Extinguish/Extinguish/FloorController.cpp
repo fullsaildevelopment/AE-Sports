@@ -18,6 +18,22 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	ControlColors(0);
 	direction = 1;
 	timeing = 0;
+	pulses.resize(4);
+
+	for (int i = 0; i < 4; ++i)
+	{
+		pulses[i].pulseing = false;
+		pulses[i].pulseLevel = 0;
+		pulses[i].pulseTimer = 0;
+		pulses[i].pos = -1;
+	}
+
+	originalColor = new unsigned int[row * col];
+	int size = row * col;
+	for (int i = 0; i < size; ++i)
+	{
+		originalColor[i] = colors[i];
+	}
 }
 
 void FloorController::WavePattern(float _dt)
@@ -283,6 +299,7 @@ void FloorController::Update(float _dt)
 {
 	timeing += _dt;
 	ControlMovement(timeing);
+	PulseFloor(-1);
 	if (score)
 	{
 		if (scorer != 2)
@@ -312,6 +329,157 @@ void FloorController::setColor(int pos, float3 color)
 void FloorController::setColor(int pos, unsigned int color)
 {
 	colors[pos] = color;
+}
+
+void FloorController::FindEmptyPulseState(int _pos)
+{
+	bool foundEmpty = false;
+	int highestLevel = 0;
+	int highestPos = -1;
+	for (int i = 0; i < pulses.size(); ++i)
+	{
+		if (pulses[i].pulseing == false)
+		{
+			pulses[i].pulseing = true;
+			pulses[i].pulseTimer = timeing;
+			pulses[i].pos = _pos;
+			pulses[i].pulseLevel = 1;
+			foundEmpty = true;
+			setColor(_pos, 0x00FF0000);
+			break;
+		}
+		else if (highestLevel < pulses[i].pulseLevel)
+		{
+			highestLevel = pulses[i].pulseLevel;
+			highestPos = i;
+		}
+	}
+	if (!foundEmpty)
+	{
+		pulses[highestPos].pulseing = true;
+		pulses[highestPos].pulseTimer = timeing;
+		pulses[highestPos].pos = _pos;
+		pulses[highestPos].pulseLevel = 1;
+		setColor(_pos, 0x00FF0000);
+	}
+}
+
+void FloorController::NextLevel(int _pos, int _level)
+{
+	int Row = (int)(_pos / col);
+	int Column = _pos % col;
+
+	switch (_level)
+	{
+	case 0:
+	{
+		bool evenRow = (Row % 2 == 0);
+		bool evenColumn = (Column % 2 == 0);
+		{
+			ColumnRow rM = { Column + 1, Row };
+			ColumnRow rB = { (evenRow) ? Column : Column + 1, Row - 1 };
+			ColumnRow lB = { (evenRow) ? Column - 1 : Column, Row - 1 };
+			ColumnRow lM = { Column - 1, Row };
+			ColumnRow lT = { (evenRow) ? Column - 1 : Column, Row + 1 };
+			ColumnRow rT = { (evenRow) ? Column : Column + 1, Row + 1 };
+			vector<ColumnRow> positions;
+			positions.push_back(rM);
+			positions.push_back(rB);
+			positions.push_back(lB);
+			positions.push_back(lM);
+			positions.push_back(lT);
+			positions.push_back(rT);
+			for (int i = 0; i < 6; ++i)
+			{
+				if (positions[i].Column < 0 || positions[i].Column >= col)
+				{
+					continue;
+				}
+				if (positions[i].Row < 0 || positions[i].Row >= row)
+				{
+					continue;
+				}
+				setColor((positions[i].Row * col + positions[i].Column), originalColor[positions[i].Row * col + positions[i].Column]);
+			}
+		}
+	}
+	break;
+	case 2:
+	{
+		setColor(_pos, originalColor[_pos]);
+		bool evenRow = (Row % 2 == 0);
+		bool evenColumn = (Column % 2 == 0);
+		ColumnRow rM = { Column + 1, Row };
+		ColumnRow rB = { (evenRow) ? Column : Column + 1, Row - 1 };
+		ColumnRow lB = { (evenRow) ? Column - 1: Column, Row - 1 };
+		ColumnRow lM = { Column - 1, Row };
+		ColumnRow lT = { (evenRow) ? Column - 1 : Column, Row + 1 };
+		ColumnRow rT = { (evenRow) ? Column : Column + 1, Row + 1 };
+		vector<ColumnRow> positions;
+		positions.push_back(rM);
+		positions.push_back(rB);
+		positions.push_back(lB);
+		positions.push_back(lM);
+		positions.push_back(lT);
+		positions.push_back(rT);
+		for (int i = 0; i < 6; ++i)
+		{
+			if (positions[i].Column < 0 || positions[i].Column >= col)
+			{
+				continue;
+			}
+			if (positions[i].Row < 0 || positions[i].Row >= row)
+			{
+				continue;
+			}
+			setColor((positions[i].Row * col + positions[i].Column), 0x00ff0000);
+		}
+	}
+		break;
+	default:
+		break;
+	}
+
+}
+
+void FloorController::DoPulses()
+{
+	for (int i = 0; i < pulses.size(); ++i)
+	{
+		if (pulses[i].pulseing == false)
+			continue;
+		//Get time since last change
+		float betweenTime = timeing - pulses[i].pulseTimer;
+		//If the time since last change is great then chage level up to 3
+		if (betweenTime >= 0.13f)
+		{
+			if (pulses[i].pulseLevel == 2)
+			{
+				pulses[i].pulseing = false;
+				pulses[i].pulseLevel = 0;
+				pulses[i].pulseTimer = 0;
+				NextLevel(pulses[i].pos, pulses[i].pulseLevel);
+				pulses[i].pos = -1;
+			}
+			else
+			{
+				++pulses[i].pulseLevel;
+				NextLevel(pulses[i].pos, pulses[i].pulseLevel);
+				pulses[i].pulseTimer = timeing;
+			}
+		}
+	}
+}
+
+void FloorController::PulseFloor(int _pos)
+{
+	//If there is a new pulse find a spot for it
+	if (_pos >= 0)
+	{
+		FindEmptyPulseState(_pos);
+	}
+	//Do the pulses.. change states and timeing if need be
+	DoPulses();
 }
 
 FloorController::~FloorController()

@@ -39,7 +39,7 @@ public:
 	void Init();
 	void FixedUpdate(float _dt) override;
 
-	void HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce = false, float3 bounceNormal = float3(0,0,0), bool stillApplyGravity = false, bool stopMovement = false);
+	void HandlePhysics(Transform* tt, float3 nV, float3& nP, bool _bounce = false, float3 bounceNormal = float3(0,0,0), bool stillApplyGravity = false, bool stopMovement = false);
 
 	//getters//
 	bool IsKinematic();
