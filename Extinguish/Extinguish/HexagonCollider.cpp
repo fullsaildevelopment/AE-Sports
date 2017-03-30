@@ -732,6 +732,9 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 			tg->OnCollisionExit(sphere);
 			objects[f]->OnCollisionExit(this);
 		}
+		PulseFloorEvent pfe;
+		pfe.floorIndex = -1;
+		EventDispatcher::GetSingleton()->DispatchTo(&pfe, "Game");
 	}
 	return collided;
 }
