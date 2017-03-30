@@ -60,6 +60,9 @@
     <ClInclude Include="PowerUpEvent.h">
       <Filter>Events</Filter>
     </ClInclude>
+    <ClInclude Include="PulseFloorEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InputDownEvent.cpp">
