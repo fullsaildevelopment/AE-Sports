@@ -8,7 +8,8 @@
 #include "EventDispatcher.h"
 #include "SoundEvent.h"
 #include "SoundEngine.h"
-#include "BoxCollider.h"
+#include "SphereCollider.h"
+//#include "BoxCollider.h"
 
 //structors//
 PowerUp::PowerUp()
@@ -60,7 +61,7 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 
 					//stop rendering
 					GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-					//GetGameObject()->GetComponent<BoxCollider>()->SetEnabled(false);
+					GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 
 					//tell powerup manager it was picked up
 					PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, spawnIndex, posIndex);
