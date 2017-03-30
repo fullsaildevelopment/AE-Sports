@@ -61,6 +61,7 @@ public:
 		bool paused = false;
 		bool countdown = false;
 		UINT8 scene = 1;
+		int floorPulse = -1;
 		int scoreA = 0;
 		int scoreB = 0;
 		float time = 300.0f;
@@ -225,6 +226,7 @@ public:
 	void setCurScene(int scene) { gameState[0][0].scene = scene; }
 
 	void setCountdown(bool down) {gameState[0][0].countdown = down; }
+	void setPulse(int pulse) { gameState[0][0].floorPulse = pulse; }
 
 
 	/* game stuff*/

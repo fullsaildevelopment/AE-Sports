@@ -488,6 +488,7 @@ void Client::receiveGameState()
 	bIn.Read(gameState[0][0].scene);
 	bIn.Read(gameState[0][0].paused);
 	bIn.Read(gameState[0][0].countdown);
+	bIn.Read(gameState[0][0].floorPulse);
 	bIn.Read(gameState[0][0].scoreA);
 	bIn.Read(gameState[0][0].scoreB);
 	bIn.Read(gameState[0][0].time);
