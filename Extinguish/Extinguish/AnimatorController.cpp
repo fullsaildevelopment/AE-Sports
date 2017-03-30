@@ -51,6 +51,12 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 
 void AnimatorController::FixedUpdate(float _dt)
 {
+	if (GetGameObject()->GetName() == "TitanPlayer")
+	{
+		int breakPoint = 69;
+		breakPoint++;
+	}
+
 	//check states' transitions
 	states[curStateIndex]->Update(_dt);
 

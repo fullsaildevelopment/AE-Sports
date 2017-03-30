@@ -63,4 +63,6 @@ public:
 	wstring GetFont() { return font; }
 	bool getIsButton() { return isButton; }
 	float getFontSize() { return curSize; }
+
+	void RemoveBitmap();
 };
