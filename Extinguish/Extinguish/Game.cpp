@@ -1021,12 +1021,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	goal2->AddComponent(g2);
 
 	//create powerup manager, which creates powerups
-	GameObject* powerUpManager = new GameObject();
-	powerUpManager->Init("PowerUpManager");
-	basic->AddGameObject(powerUpManager);
-	PowerUpManager* powerUpManagerC = new PowerUpManager();
-	powerUpManager->AddComponent(powerUpManagerC);
-	powerUpManagerC->Init(basic, projection, devResources);
+	//GameObject* powerUpManager = new GameObject();
+	//powerUpManager->Init("PowerUpManager");
+	//basic->AddGameObject(powerUpManager);
+	//PowerUpManager* powerUpManagerC = new PowerUpManager();
+	//powerUpManager->AddComponent(powerUpManagerC);
+	//powerUpManagerC->Init(basic, projection, devResources);
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

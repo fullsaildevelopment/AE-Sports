@@ -32,12 +32,12 @@ private:
 	//basic members
 	float roundTimer;
 	bool posUsed[4];
-	bool isSpawned[3];
+	bool isSpawned[6];
 	std::string posUsedNames[4];
 
 	//const members
 	const float TIME_TIL_SPAWN = 5.0f;
-	const int NUM_OF_UPS = 3;
+	const int NUM_OF_UPS = 6;
 	const int NUM_OF_POS = 4;
 
 public:
