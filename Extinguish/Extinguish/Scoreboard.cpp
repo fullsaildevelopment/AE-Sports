@@ -1,5 +1,6 @@
 #include <string>
 #include "Scoreboard.h"
+#include "Game.h"
 #include "GameObject.h"
 #include "Button.h"
 #include "Scene.h"
