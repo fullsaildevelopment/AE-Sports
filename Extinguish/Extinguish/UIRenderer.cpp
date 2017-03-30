@@ -360,3 +360,13 @@ void UIRenderer::SetColor(D2D1::ColorF fontColor)
 		pBrush.GetAddressOf()
 	);
 }
+
+void UIRenderer::RemoveBitmap()
+{
+	if (pBitmap)
+	{
+		//delete pBitmap.Get();
+		pBitmap.Reset();
+		pBitmap = nullptr;
+	}
+}
