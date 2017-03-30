@@ -246,4 +246,9 @@ public:
 	{
 		newServer.SendScored((char*)name.c_str(), length);
 	}
+	
+	void setPulse(int pulse)
+	{
+		newServer.setPulse(pulse);
+	}
 };

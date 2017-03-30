@@ -67,6 +67,7 @@ public:
 		bool paused = false;
 		bool countdown = false;
 		UINT8 scene = 1;
+		int floorPulse = -1;
 		int scoreA = 0;
 		int scoreB = 0;
 		float time;
@@ -228,6 +229,7 @@ public:
 	uint16_t GetMessageID() { return messageID; }
 	uint16_t GetStride() { return stride; }
 	const char * getScoreName() { return scoreName[0].c_str(); }
+	int getPulse() { return gameState[0][0].floorPulse; }
 
 	bool hasScored() { return scored; }
 	bool hasPackets() { return packets; }
