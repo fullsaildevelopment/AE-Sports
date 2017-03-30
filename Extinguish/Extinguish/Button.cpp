@@ -384,5 +384,12 @@ void Button::DoEvent()
 		Scoreboard * scoreBoard = scoreB->GetComponent<Scoreboard>();
 		scoreBoard->Toggle(false);
 	}
-
+	else if (buttonType == CREDITS)
+	{
+		ResourceManager::GetSingleton()->SetPaused(false);
+		LoadSceneEvent* event = new LoadSceneEvent();
+		event->Init("Credits");
+		EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
+		delete event;
+	}
 }
