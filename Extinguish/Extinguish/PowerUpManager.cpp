@@ -134,15 +134,18 @@ void PowerUpManager::Update(float _dt)
 		{
 			//spawn items
 			//for (int i = 0; i < NUM_OF_POS - posCount; ++i)
-			for (int i = 0; i < NUM_OF_POS; ++i)
+			for (int i = 0; i < NUM_OF_POS - posCount; ++i)
 			{
 				//figure which powerup
 				int randPowIndex;
 
-				//do
-				//{
-				//	randIndex = rand() % powerUps.size();
-				//} while (triedSpawn[randIndex]);
+				do
+				{
+					do
+					{
+						randPowIndex = rand() % NUM_OF_UPS;
+					} while (triedSpawn[randPowIndex]);
+				} while (isSpawned[randPowIndex]);
 
 				randPowIndex = rand() % NUM_OF_UPS;
 
@@ -158,10 +161,13 @@ void PowerUpManager::Update(float _dt)
 
 				do
 				{
-					randPosIndex = rand() % NUM_OF_POS;
-				} while (triedPos[randPosIndex]);
+					do
+					{
+						randPosIndex = rand() % NUM_OF_POS;
+					} while (triedPos[randPosIndex]);
+				} while (posUsed[randPosIndex]);
 
-				if (!isSpawned[randPowIndex])
+				//if (!isSpawned[randPowIndex])
 				//if (!posUsed[randPowIndex])
 				{
 					//set position
@@ -176,8 +182,9 @@ void PowerUpManager::Update(float _dt)
 
 					//prevent pos from being used again
 					posUsed[randPosIndex] = true;
-					posUsedNames[randPosIndex] = powerUps[randPowIndex]->GetGameObject()->GetName();
-					powerUps[randPowIndex]->SetManagerIndex(randPosIndex);
+					//posUsedNames[randPosIndex] = powerUps[randPowIndex]->GetGameObject()->GetName();
+					powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
+					powerUps[randPowIndex]->SetPosIndex(randPosIndex);
 					//++posIndex;
 
 					cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
@@ -216,8 +223,8 @@ void PowerUpManager::HandleEvent(Event* e)
 
 	if (powerEvent)
 	{
-		//isSpawned[powerEvent->GetManagerIndex()] = false;
-		posUsed[powerEvent->GetManagerIndex()] = false;
+		isSpawned[powerEvent->GetSpawnIndex()] = false;
+		posUsed[powerEvent->GetPosIndex()] = false;
 
 		//for (int i = 0; i < NUM_OF_POS; ++i)
 		//{

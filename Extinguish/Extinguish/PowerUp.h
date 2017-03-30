@@ -26,7 +26,7 @@ private:
 	float duration; // how long the powerup lasts for
 	float timer;
 	bool isActivated;
-	int managerIndex; //the manager needs this to help spawn
+	int spawnIndex, posIndex; //the manager needs this to help spawn
 
 	PlayerController* player;
 public:
@@ -47,9 +47,11 @@ public:
 	float GetDuration();
 	bool IsDone();
 	PlayerController* GetPlayer();
-	int GetManagerIndex();
+	int GetSpawnIndex();
+	int GetPosIndex();
 
 	//setters
 	void SetDuration(float dur);
-	void SetManagerIndex(int index);
+	void SetSpawnIndex(int index);
+	void SetPosIndex(int index);
 };
