@@ -62,6 +62,7 @@ void AI::OnCollisionEnter(Collider *obj)
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
+				realTarget = nullptr;
 			}
 		}
 	}
@@ -266,24 +267,23 @@ void AI::Update(float _dt)
 
 				if (setCanMove)
 				{
-					Movement* movement = ogTarget->GetComponent<Movement>();
+					if (ogTarget->GetComponent<AI>())
+						ogTarget->GetComponent<AI>()->SetCanMove(true);
 
-					// if you're a player
-					if (movement)
+					else
 					{
-						movement->SetCanMove(true);
+						Movement* otherMovement = ogTarget->GetComponent<Movement>();
+						otherMovement->SetCanMove(true);
 
-						//move the player's camera to match stumble
+						//move the player's camera to match getting up
 						Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
 						float3 translation = otherCamera->GetForwardf3();
 						translation.x = translation.x;
 						translation.y = 3.0f;
 						translation.z = translation.z * 3.0f;
+
 						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
-
-					else
-						ogTarget->GetComponent<AI>()->SetCanMove(true);
 
 					ogTarget = nullptr;
 				}
@@ -392,7 +392,7 @@ void AI::Update(float _dt)
 
 			//if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
-				Attack(eTank);
+				if (eTank) Attack(eTank);
 
 			else
 			{
@@ -712,14 +712,14 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	Paranoia();
-
 	if (RunTo(enemyGoal, 28.0f))
 	{
 		camera->RotateX(-0.9f);
 		crosse->Throw();
 		camera->RotateX(0.9f);
 	}
+
+	Paranoia();
 }
 
 AI::State AI::GetCurrState() { return currState; }
