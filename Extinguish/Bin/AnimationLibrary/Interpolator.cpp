@@ -134,21 +134,20 @@ void Interpolator::Interpolate(KeyFrame* previous, KeyFrame* next, float ratio)
 	for (int i = 0; i < previous->GetBones().size(); ++i)
 	{
 		XMFLOAT4X4 newWorld;
-		Bone newBone;
-
-		XMVECTOR quarternion = XMQuaternionSlerp(XMQuaternionRotationMatrix(XMLoadFloat4x4(&previous->GetBone(i)->GetWorld())), XMQuaternionRotationMatrix(XMLoadFloat4x4(&next->GetBone(i)->GetWorld())), ratio);
-
 		XMFLOAT4X4 prevBone = previous->GetBone(i)->GetWorld();
+		XMFLOAT4X4 nextBone = next->GetBone(i)->GetWorld();
+
+		XMVECTOR quarternion = XMQuaternionSlerp(XMQuaternionRotationMatrix(XMLoadFloat4x4(&prevBone)), XMQuaternionRotationMatrix(XMLoadFloat4x4(&nextBone)), ratio);
+
 		XMVECTOR prevTranslation = XMVectorSet(prevBone._41, prevBone._42, prevBone._43, prevBone._44);
 
-		XMFLOAT4X4 nextBone = next->GetBone(i)->GetWorld();
 		XMVECTOR nextTranslation = XMVectorSet(nextBone._41, nextBone._42, nextBone._43, nextBone._44);
 
 		XMVECTOR newTranslation = XMVectorLerp(prevTranslation, nextTranslation, ratio);
 
 		XMMATRIX resultMatrix = XMMatrixAffineTransformation({ 1, 1, 1, 1 }, { 0, 0, 0, 0 }, quarternion, newTranslation);
 
-		newBone = *previous->GetBone(i);
+		Bone newBone = *previous->GetBone(i);
 		XMStoreFloat4x4(&newWorld, resultMatrix);
 		newBone.SetWorld(newWorld);
 
