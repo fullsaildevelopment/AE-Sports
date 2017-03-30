@@ -102,10 +102,16 @@ void PlayerController::Update(float _dt)
 
 			if (setCanMove)
 			{
-				Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+				AI* otherAI = ogPlayer->GetComponent<AI>();
 
-				if (otherMovement)
+				if (otherAI)
 				{
+					otherAI->SetCanMove(true);
+				}
+				else
+				{
+					Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+
 					otherMovement->SetCanMove(true);
 
 					//move the player's camera to match getting up
@@ -116,10 +122,6 @@ void PlayerController::Update(float _dt)
 					translation.z = translation.z * 3.0f;
 
 					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-				}
-				else
-				{
-					ogPlayer->GetComponent<AI>()->SetCanMove(true);
 				}
 
 				ogPlayer = nullptr;
@@ -500,24 +502,27 @@ void PlayerController::Attack()
 			meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
 
 			ogPlayer = otherPlayer;
-			Movement* otherMovement = otherPlayer->GetComponent<Movement>();
 
-			if (otherMovement)
+			AI* otherAI = ogPlayer->GetComponent<AI>();
+
+			if (otherAI)
 			{
+				otherAI->SetCanMove(false);
+			}
+			else
+			{
+				Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+
 				otherMovement->SetCanMove(false);
 
-				//move the player's camera to match stumble
-				Transform* otherCamera = otherPlayer->GetTransform()->GetChild(0);
+				//move the player's camera to match getting up
+				Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
 				float3 translation = otherCamera->GetForwardf3();
 				translation.x = -translation.x;
 				translation.y = -1.0f;
 				translation.z = -translation.z * 3.0f;
 
 				otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-			}
-			else
-			{
-				otherPlayer->GetComponent<AI>()->SetCanMove(false);
 			}
 		}
 	}
