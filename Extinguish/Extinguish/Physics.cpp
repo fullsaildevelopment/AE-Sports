@@ -26,7 +26,7 @@ void Physics::FixedUpdate(float _dt)
 		//apply friction if touching
 		if(colliding && !stillapplygravity && applyFriction)
 		{
-			nV += transform->GetVelocity() * -1 * friction * _dt;
+			nV += transform->GetVelocity() * -1 * friction * _dt * float3(1,0,1);
 		}
 		if (nV.x <= 0.0001f && nV.x >= -0.0001f)
 		{
@@ -54,7 +54,7 @@ void Physics::FixedUpdate(float _dt)
 	}
 }
 
-void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, float3 collisionNormal, bool _stillApplyGravity, bool stopMovement)
+void Physics::HandlePhysics(Transform* tt, float3 nV, float3& nP, bool _bounce, float3 collisionNormal, bool _stillApplyGravity, bool stopMovement)
 {
 	if (_bounce)
 	{
@@ -72,6 +72,7 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3 nP, bool _bounce, f
 	tt->SetPosition(nP);
 	stillapplygravity = _stillApplyGravity;
 	colliding = true;
+	nP += nV * 0.02f;
 }
 
 //getters//
