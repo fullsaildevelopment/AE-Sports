@@ -52,16 +52,20 @@ void FloorController::WavePattern(float _dt)
 
 void FloorController::BigHexPattern(float _dt)
 {
-	ratios += _dt * transSpeed;
+	float TIME = timeing * transSpeed;
+
+	direction = (int)(TIME) % 2;
+	direction = (direction < 1) ? -1 : 1;
+	float change = fmodf(TIME, 1.0f);
+	ratios = (direction == 1) ? change : 1 - change;
 	for (int i = 0; i < row; ++i)
 	{
 		for (int j = 0; j < col; ++j)
 		{
-			if (i % 12 < 4 && j % 12 < 4)
+			if (i % 12 > 4 && j % 12 > 4)
 				MovePillar(i * col + j, ratios);
 		}
 	}
-	if (ratios >= 1.0f) currPattern = 3;
 }
 
 void FloorController::StripPattern(float _dt)
@@ -84,7 +88,7 @@ void FloorController::InitialPattern(float _dt)
 
 	direction = (int)(TIME) % 2;
 	direction = (direction < 1) ? -1 : 1;
-	float change = fmodf(TIME,1.0f);
+	float change = fmodf(TIME, 1.0f);
 	ratios = (direction == 1) ? change : 1 - change;
 
 	//decide which way to make the side pillars move up
@@ -163,6 +167,7 @@ void FloorController::ControlMovement(float fullTime)
 	float dt = timeing - timer;
 
 	InitialPattern(dt);
+
 
 	timer = fullTime;
 	//if (timeing < 10 && currPattern != 1)
@@ -320,8 +325,8 @@ void FloorController::SetState(float fullTime)
 
 void FloorController::setColor(int pos, float3 color)
 {
-	unsigned int r = (unsigned int)min(color.x * 255,255);
-	unsigned int g = (unsigned int)min(color.y * 255,255);
+	unsigned int r = (unsigned int)min(color.x * 255, 255);
+	unsigned int g = (unsigned int)min(color.y * 255, 255);
 	unsigned int b = (unsigned int)min(color.z * 255, 255);
 	colors[pos] = (r << 24) | (g << 16) | b;
 }
@@ -411,7 +416,7 @@ void FloorController::NextLevel(int _pos, int _level)
 		bool evenColumn = (Column % 2 == 0);
 		ColumnRow rM = { Column + 1, Row };
 		ColumnRow rB = { (evenRow) ? Column : Column + 1, Row - 1 };
-		ColumnRow lB = { (evenRow) ? Column - 1: Column, Row - 1 };
+		ColumnRow lB = { (evenRow) ? Column - 1 : Column, Row - 1 };
 		ColumnRow lM = { Column - 1, Row };
 		ColumnRow lT = { (evenRow) ? Column - 1 : Column, Row + 1 };
 		ColumnRow rT = { (evenRow) ? Column : Column + 1, Row + 1 };
@@ -435,7 +440,7 @@ void FloorController::NextLevel(int _pos, int _level)
 			setColor((positions[i].Row * col + positions[i].Column), 0x00ff0000);
 		}
 	}
-		break;
+	break;
 	default:
 		break;
 	}
