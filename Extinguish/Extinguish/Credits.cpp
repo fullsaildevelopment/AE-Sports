@@ -25,6 +25,7 @@ void Credits::Init(DeviceResources * devResources)
 	// format still being tweeked
 	for (unsigned int i = 0; i < 5; ++i) {
 		GameObject * text = new GameObject();
+		text->Init("TheCredits");
 		Button * theButton = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 100.0f, devResources, 0);
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
@@ -84,6 +85,7 @@ void Credits::Update(float _dt)
 	// timer
 	if (fadeIn)
 	{
+		textRenderers[0]->setFadeOut(false);
 		fadeInOut += _dt;
 		if (fadeInOut >= 1.0f)
 		{
@@ -106,6 +108,7 @@ void Credits::Update(float _dt)
 	}
 	else
 	{
+		textRenderers[0]->setFadeOut(true);
 		fadeInOut -= _dt;
 		if (fadeInOut <= 0.0f)
 		{

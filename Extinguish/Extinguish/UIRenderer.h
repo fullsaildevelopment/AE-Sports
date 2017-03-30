@@ -39,6 +39,8 @@ private:
 	float left;
 	wstring font;
 	float curSize;
+	float opacity = 0.0f;
+	bool fadeOut = false;
 
 	/* Decides which renderer function to call in render */
 	Button * theButton;
@@ -63,6 +65,7 @@ public:
 	wstring GetFont() { return font; }
 	bool getIsButton() { return isButton; }
 	float getFontSize() { return curSize; }
+	void setFadeOut(bool tf) { fadeOut = tf; }
 
 	void RemoveBitmap();
 };
