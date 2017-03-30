@@ -34,6 +34,8 @@
 #include "CanPlayEvent.h"
 #include "PowerUpManager.h"
 #include "Credits.h"
+#include "MeterBar.h"
+#include "PulseFloorEvent.h"
 
 using namespace DirectX;
 using namespace std;
@@ -601,6 +603,14 @@ void Game::HandleEvent(Event* e)
 
 		return;
 	}
+
+	PulseFloorEvent* floorPulseEvent = dynamic_cast<PulseFloorEvent*>(e);
+
+	if (floorPulseEvent)
+	{
+		server.setPulse(floorPulseEvent->floorIndex);
+		floorController->PulseFloor(floorPulseEvent->floorIndex);
+	}
 }
 
 //getters//
@@ -836,9 +846,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
 
 		if (i <= 4)
-			mageRenderer1->SetTeamColor({ 1,0,0,0 });
+			mageRenderer1->SetEmissiveColor({ 1,0,0,0 });
 		else
-			mageRenderer1->SetTeamColor({ 0,0,1,0 });
+			mageRenderer1->SetEmissiveColor({ 0,0,1,0 });
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
@@ -939,11 +949,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
-		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources, true);
+		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources, false);
 		if (i <= 4)
-			crosseRenderer->SetTeamColor({ 1,0,0,0 });
+			crosseRenderer->SetEmissiveColor({ 1,0,0,0 });
 		else
-			crosseRenderer->SetTeamColor({ 0,0,1,0 });
+			crosseRenderer->SetEmissiveColor({ 0,0,1,0 });
 		Crosse* crosseController = new Crosse();
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
@@ -1046,7 +1056,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
 	titanPlayerRenderer->Init("Titan", "NormalMapped", "Bind", "", "", projection, devResources, false);
-	titanPlayerRenderer->SetTeamColor(float4(1, 1, 1, 1));
+	titanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
 	AnimatorController* titanAnimator = new AnimatorController();
 	titanPlayer->AddComponent(titanAnimator);
 	titanAnimator->Init("Titan", 0, "Test");
@@ -1071,12 +1081,21 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* meterbox6 = new GameObject();
 	meterbox6->Init("MeterBox6");
 	basic->AddGameObject(meterbox6);
-	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer6 = new Renderer();
+	meterbox6->InitTransform(identity, { 0, -0.43f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	/*Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
-	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);*/
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
+
+	/*GameObject* NewGoal = new GameObject();
+	NewGoal->Init("NewGoal");
+	basic->AddGameObject(NewGoal);
+	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* NewGoalRenderer = new Renderer();
+	NewGoal->AddComponent(NewGoalRenderer);
+	NewGoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
@@ -1088,11 +1107,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	Renderer* HexFloorRenderer = new Renderer();
 	HexFloor->AddComponent(HexFloorRenderer);
 	HexFloorRenderer->Init(row * col, floor, colors, "Hexagon", "InstStatic", "InstancedStatic", "", "", projection, devResources);
-	FloorController* fcon = new FloorController(floor, row, col, 10, colors);
-	HexFloor->AddComponent(fcon);
-	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, fcon, resourceManager->collisionMeshes[0]);
+	floorController = new FloorController(floor, row, col, 10, colors);
+	HexFloor->AddComponent(floorController);
+	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, floorController, resourceManager->collisionMeshes[0]);
 	HexFloor->AddComponent(HexFLoorCol);
-	fcon->SetState(1 / 6.0f);
+	floorController->SetState(1 / 6.0f);
 
 	//GameObject* Hex = new GameObject();
 	//Hex->Init("Team2");
@@ -1205,6 +1224,8 @@ void Game::CreateUI(Scene * basic)
 	sprintBar->AddComponent(sprintMeter);
 	sprintMeter->MakeHandler();
 	UIRenderer * sprintRender = new UIRenderer();
+	sprintMeter->setRenderer(sprintRender);
+	sprintRender->setOpacity(0.0f);
 	sprintRender->Init(false, devResources, sprintMeter);
 	sprintRender->DecodeBitmap(L"../Assets/UI/meterBar.png");
 	sprintRender->DecodeBitmap(L"../Assets/UI/meterBorder.png");
@@ -2101,6 +2122,7 @@ void Game::UpdateClientObjects()
 						FloorController * fC = gameObject->GetComponent<FloorController>();
 						//if (fC->GetState() != client.getFloorState(i))
 						fC->SetState(client.getDT());
+						fC->PulseFloor(client.GetPulse());
 					}
 
 					if (gameObject->GetName() == "Countdown")

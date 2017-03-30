@@ -112,7 +112,7 @@ void BallController::Update(float _dt)
 
 void BallController::FixedUpdate(float _dt)
 {
-	if (transform->GetWorld()._42 < 0.2f)
+	if (transform->GetWorld()._42 < -0.01f)
 	{
 		transform->AddVelocity(float3(0, 10, 0));
 	}
