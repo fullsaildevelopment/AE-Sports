@@ -62,6 +62,7 @@ void AI::OnCollisionEnter(Collider *obj)
 				// triggering the animation
 				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 				ogTarget = realTarget;
+				realTarget = nullptr;
 			}
 		}
 	}
@@ -266,24 +267,23 @@ void AI::Update(float _dt)
 
 				if (setCanMove)
 				{
-					Movement* movement = ogTarget->GetComponent<Movement>();
+					if (ogTarget->GetComponent<AI>())
+						ogTarget->GetComponent<AI>()->SetCanMove(true);
 
-					// if you're a player
-					if (movement)
+					else
 					{
-						movement->SetCanMove(true);
+						Movement* otherMovement = ogTarget->GetComponent<Movement>();
+						otherMovement->SetCanMove(true);
 
-						//move the player's camera to match stumble
+						//move the player's camera to match getting up
 						Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
 						float3 translation = otherCamera->GetForwardf3();
 						translation.x = translation.x;
 						translation.y = 3.0f;
 						translation.z = translation.z * 3.0f;
+
 						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
-
-					else
-						ogTarget->GetComponent<AI>()->SetCanMove(true);
 
 					ogTarget = nullptr;
 				}
@@ -392,7 +392,7 @@ void AI::Update(float _dt)
 
 			//if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
-				Attack(eTank);
+				if (eTank) Attack(eTank);
 
 			else
 			{
@@ -495,8 +495,6 @@ void AI::Idle()
 
 void AI::GetBall()
 {
-	float3 dist = ball->GetTransform()->GetPosition() - me->GetTransform()->GetPosition();
-
 	// if someone has the ball
 	if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 	{
@@ -509,7 +507,7 @@ void AI::GetBall()
 	}
 
 	// if im right next to the ball
-	else if (RunTo(ball) && dist.magnitude() < 1)
+	else if (RunTo(ball, 1.0f))
 	{
 		// running into the ball should pick it up
 	}
@@ -558,7 +556,7 @@ void AI::Attack(GameObject *target)
 			isAttacking = true;
 
 			TurnTo(target);
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
 			v.y = 0;
 
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
@@ -626,7 +624,7 @@ bool AI::RunTo(GameObject *target)
 			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 5)
 				return true;
 
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
 			v.y = 0;
 			TurnTo(target);
 
@@ -649,7 +647,7 @@ bool AI::RunTo(GameObject *target, float dist)
 			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
 				return true;
 
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
 			v.y = 0;
 			TurnTo(target);
 
@@ -670,7 +668,7 @@ bool AI::RunTo(float3 target, float dist)
 		if ((target - me->GetTransform()->GetPosition()).magnitude() < dist)
 			return true;
 
-		float3 v = ((target - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+		float3 v = ((target - me->GetTransform()->GetPosition())).normalize();
 		v.y = 0;
 		TurnTo(target);
 
@@ -678,19 +676,18 @@ bool AI::RunTo(float3 target, float dist)
 			anim->SetTrigger("Run");
 
 		me->GetTransform()->AddVelocity(v * RunSpeed);
-
-		return false;
 	}
+
 	return false;
 }
 
 void AI::TurnTo(float3 target)
 {
 	//u - forward vector
-	float3 u = (me->GetTransform()->GetRightf3() * (-1/*, 0, -1*/)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3 u = (me->GetTransform()->GetRightf3() * (-1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//v - vector between me and destination
-	float3 v = ((target - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+	float3 v = ((target - me->GetTransform()->GetPosition())).normalize();
 	u.y = 0;
 	v.y = 0;
 
@@ -703,8 +700,8 @@ void AI::TurnTo(GameObject *target)
 {
 	if (target)
 	{
-		float3 u = (me->GetTransform()->GetRightf3() * (-1/*, 0, -1*/)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
-		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition())/* * (1, 0, 1)*/).normalize();
+		float3 u = (me->GetTransform()->GetRightf3() * (-1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition())).normalize();
 		u.y = 0;
 		v.y = 0;
 
@@ -715,14 +712,14 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	Paranoia();
-
 	if (RunTo(enemyGoal, 28.0f))
 	{
 		camera->RotateX(-0.9f);
 		crosse->Throw();
 		camera->RotateX(0.9f);
 	}
+
+	Paranoia();
 }
 
 AI::State AI::GetCurrState() { return currState; }

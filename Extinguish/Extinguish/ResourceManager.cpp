@@ -829,6 +829,8 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\HighDetalBall\\HighDetalBall.fbx", "HighDetalBall");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\WallGoal\\WallGoal.fbx", "WallGoal");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Titan\\Titan.fbx", "Titan");
+	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Titan\\TestAnim.fbx", "Titan", "Titan_Test");
+
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
 
 

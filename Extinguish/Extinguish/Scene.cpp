@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "UIRenderer.h"
+#include "Credits.h"
 #include "HashString.h"
 #include "AnimatorController.h"
 
@@ -600,8 +601,16 @@ void Scene::Update(float _dt)
 	if (!DEBUG_GRAPHICS) {
 		for (unsigned int i = 0; i < uiObjects.size(); ++i)
 		{
-			uiObjects[i]->Update(_dt);
-			uiObjects[i]->GetComponent<UIRenderer>()->Render();
+			if (uiObjects[i]->GetName() != "Credits")
+			{
+				uiObjects[i]->Update(_dt);
+				uiObjects[i]->GetComponent<UIRenderer>()->Render();
+			}
+			else
+			{
+				uiObjects[i]->Update(_dt);
+				uiObjects[i]->GetComponent<Credits>()->Render();
+			}
 		}
 
 		ImGui::EndFrame();
