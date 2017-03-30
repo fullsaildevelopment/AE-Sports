@@ -150,6 +150,7 @@
     <ClInclude Include="HashStringCopy.h" />
     <ClInclude Include="InputDownEvent.h" />
     <ClInclude Include="LoadSceneEvent.h" />
+    <ClInclude Include="PowerUpEvent.h" />
     <ClInclude Include="ScoreEvent.h" />
     <ClInclude Include="SoundEvent.h" />
     <ClInclude Include="WindowResizeEvent.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="HashStringCopy.cpp" />
     <ClCompile Include="InputDownEvent.cpp" />
     <ClCompile Include="LoadSceneEvent.cpp" />
+    <ClCompile Include="PowerUpEvent.cpp" />
     <ClCompile Include="SoundEvent.cpp" />
   </ItemGroup>
   <ItemGroup>

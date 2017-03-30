@@ -89,6 +89,7 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 		DirectX::XMFLOAT4X4 boneWorldFloat;
 		DirectX::XMMATRIX inverseBindPose;
 
+		DirectX::XMFLOAT4X4 tempBoneWorld = (*bones)[i].GetWorld();
 		boneWorld = DirectX::XMLoadFloat4x4(&(*bones)[i].GetWorld());
 
 		inverseBindPose = DirectX::XMLoadFloat4x4(&animationSet->GetSkeleton()->GetInverseBindPose(i));
