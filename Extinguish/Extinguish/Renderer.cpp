@@ -219,7 +219,7 @@ void Renderer::Update(float _dt)
 
 	if (teamcolorBuffer)
 	{
-		devContext->UpdateSubresource(teamcolorBuffer, NULL, NULL, &TeamColor, NULL, NULL);
+		devContext->UpdateSubresource(teamcolorBuffer, NULL, NULL, &EmissiveColor, NULL, NULL);
 	}
 
 	devContext->PSSetConstantBuffers(3, 1, &teamcolorBuffer);
@@ -322,22 +322,22 @@ Blender* Renderer::GetBlender()
 }
 
 //setters//
-void Renderer::SetTeamColor(float4 c) 
+void Renderer::SetEmissiveColor(float4 c) 
 { 
-	TeamColor = c;
-	teamcolorBuffer = ResourceManager::GetSingleton()->CreateConstantBuffer(&TeamColor);
+	EmissiveColor = c;
+	teamcolorBuffer = ResourceManager::GetSingleton()->CreateConstantBuffer(&EmissiveColor);
 }
 
 void Renderer::SetCatch(float c)
 {
-	TeamColor.w = c;
-	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer,&TeamColor);
+	EmissiveColor.w = c;
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer,&EmissiveColor);
 }
 
 void Renderer::SetCatch(float4 c)
 {
-	TeamColor = c;
-	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer, &TeamColor);
+	EmissiveColor = c;
+	ResourceManager::GetSingleton()->UpdateConstantBuffer(teamcolorBuffer, &EmissiveColor);
 }
 
 

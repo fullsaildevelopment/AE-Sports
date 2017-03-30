@@ -4,7 +4,9 @@
 #include "BoxCollider.h"
 #include "Physics.h"
 #include "GameObject.h"
-#include "FloorController.h"
+//#include "FloorController.h"
+#include "EventDispatcher.h"
+#include "PulseFloorEvent.h"
 
 HexagonCollider::HexagonCollider(GameObject* o, float d, float _height, ED2Mesh* colMesh) : Collider(o, false, CTHex)
 {
@@ -54,8 +56,8 @@ Hexagon* HexagonCollider::GetWorldHex(int i)
 	return &hex;
 }
 
-	AABB checksphereaabb;
-	AABB sphcheckaabb;
+AABB checksphereaabb;
+AABB sphcheckaabb;
 bool HexagonCollider::CheckSphereAABB(int _min, int _max, Sphere s)
 {
 	checksphereaabb.max = poses[_max] + float3(1, 20, 1);
@@ -110,7 +112,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//TopTopTop
 			if (CheckCapsuleAABB((int)floor(row * 0.821f) * col, row * col - 1, c))
 			{
-				if (CheckCapsule(tg,ob, (int)floor(row*0.821f), row, cap, c, pastPos, f,dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row*0.821f), row, cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.821f); i < row; ++i)
@@ -156,7 +158,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//TopTopBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.741f) * col, (int)ceil(row * 0.839f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg,ob, (int)floor(row * 0.741f), (int)ceil(row * 0.839f), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row * 0.741f), (int)ceil(row * 0.839f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.741f); i < (int)ceil(row * 0.83f); ++i)
@@ -205,7 +207,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//TopBottomTop
 			if (CheckCapsuleAABB((int)floor(row * 0.621f) * col, (int)ceil(row * 0.759f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg,ob, (int)floor(row * 0.621f), (int)ceil(row * 0.759f), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row * 0.621f), (int)ceil(row * 0.759f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.621f); i < (int)ceil(row * 0.759f); ++i)
@@ -250,7 +252,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//TopBottomBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.49f) * col, (int)ceil(row * 0.639f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, ob,(int)floor(row * 0.49f), (int)ceil(row * 0.639f), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row * 0.49f), (int)ceil(row * 0.639f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.49f); i < (int)ceil(row * 0.639f); ++i)
@@ -303,7 +305,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//BottomTopTop
 			if (CheckCapsuleAABB((int)floor(row * 0.371f) * col, (int)ceil(row * 0.51f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, ob,(int)floor(row * 0.371f), (int)ceil(row * 0.51f), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row * 0.371f), (int)ceil(row * 0.51f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.371f); i < (int)ceil(row * 0.51f); ++i)
@@ -348,7 +350,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//BottomTopBottom
 			if (CheckCapsuleAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.389f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, ob,(int)floor(row * 0.241f), (int)ceil(row * 0.389f), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row * 0.241f), (int)ceil(row * 0.389f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.389f); ++i)
@@ -397,7 +399,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//BottomBottomTop
 			if (CheckCapsuleAABB((int)floor(row * 0.121f) * col, (int)ceil(row * 0.259f) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, ob,(int)floor(row * 0.121f), (int)ceil(row * 0.259f), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, (int)floor(row * 0.121f), (int)ceil(row * 0.259f), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 				/*AABB test;
 				for (int i = (int)floor(row * 0.121f); i < (int)ceil(row * 0.259f); ++i)
@@ -504,7 +506,8 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, GameObject* ob, int _min, int
 {
 	AABB test;
 	bool collided = false;
-	float smallT = St;
+	float smallT = 1.001f;
+	pastPos = pastPos + cap->GetCapsule().m_Segment.m_Start;
 	for (int i = _min; i < _max; ++i)
 	{
 		test.min = poses[i * col] - float3(2, 2, 2);
@@ -513,8 +516,8 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, GameObject* ob, int _min, int
 		{
 			for (int j = 0; j < col; ++j)
 			{
-				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos + cap->GetCapsule().m_Segment.m_Start, smallT, mesh);
-				if (!n.isEquil(zeroF) && smallT < St)
+				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos, smallT, mesh);
+				if (!n.isEquil(zeroF))
 				{
 					collisionNormal = n;
 					cap->collisionNormal = n;
@@ -531,7 +534,7 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, GameObject* ob, int _min, int
 							ob->OnCollisionEnter(this);
 							CollidingWith[f] = true;
 						}
-						if (CollidingWith[f])
+						else if (CollidingWith[f])
 						{
 							tg->OnCollisionStay(cap);
 							ob->OnCollisionStay(this);
@@ -641,7 +644,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 		//BottomTop
 		if (CheckSphereAABB((int)floor(row * 0.241f) * col, (int)ceil(row * 0.59f) * col + col - 1, s))
 		{
-			if (CheckSphere(tg, ob,(int)floor(row * 0.241f), (int)ceil(row * 0.59f), sphere, s, pastPos, f, dt, smallestT))
+			if (CheckSphere(tg, ob, (int)floor(row * 0.241f), (int)ceil(row * 0.59f), sphere, s, pastPos, f, dt, smallestT))
 				collided = true;
 			/*AABB test;
 			for (int i = (int)floor(row * 0.241f); i < (int)ceil(row * 0.59f); ++i)
@@ -729,6 +732,9 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 			tg->OnCollisionExit(sphere);
 			objects[f]->OnCollisionExit(this);
 		}
+		PulseFloorEvent pfe;
+		pfe.floorIndex = -1;
+		EventDispatcher::GetSingleton()->DispatchTo(&pfe, "Game");
 	}
 	return collided;
 }
@@ -754,14 +760,18 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 					Physics* op = ob->GetComponent<Physics>();
 					if (op)
 					{
+						St = smallT;
 						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
 						if (!CollidingWith[f])
 						{
 							tg->OnCollisionEnter(sphere);
 							ob->OnCollisionEnter(this);
 							CollidingWith[f] = true;
+							PulseFloorEvent pfe;
+							pfe.floorIndex = i * col + j;
+							EventDispatcher::GetSingleton()->DispatchTo(&pfe, "Game");
 						}
-						if (CollidingWith[f])
+						else if (CollidingWith[f])
 						{
 							tg->OnCollisionStay(sphere);
 							ob->OnCollisionStay(this);

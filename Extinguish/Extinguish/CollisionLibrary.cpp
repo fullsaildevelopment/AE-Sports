@@ -1558,27 +1558,27 @@ void BuildPlanes(const Hexagon& hex, float r)
 	planes[0].p.z += 0;
 				  
 	planes[1].p.x += hex.h * 0.5f + tpln.x * r;
-	planes[1].p.y += 0 + tpln.y * r;
+	planes[1].p.y += -0.013f + tpln.y * r;
 	planes[1].p.z += hex.s * 0.5f + tpln.z * r;
 				  
 	planes[2].p.x += hex.h * 0.5f + rpln.x * r;
-	planes[2].p.y += rpln.y * r;
+	planes[2].p.y += -0.013f + rpln.y * r;
 	planes[2].p.z += hex.s * 0.5f + rpln.z * r;
 				  
 	planes[3].p.x += hex.h * 0.5f + tplnnz.x * r;
-	planes[3].p.y += tplnnz.y * r;
+	planes[3].p.y += -0.013f + tplnnz.y * r;
 	planes[3].p.z += -hex.s * 0.5f + tplnnz.z * r;
 				  
 	planes[4].p.x += -hex.h * 0.5f + tplnnznx.x * r;
-	planes[4].p.y += tplnnznx.y * r;
+	planes[4].p.y += -0.013f + tplnnznx.y * r;
 	planes[4].p.z += -hex.s * 0.5f + tplnnznx.z * r;
 				  
 	planes[5].p.x += -hex.h * 0.5f + rplnnx.x * r;
-	planes[5].p.y += rplnnx.y * r;
+	planes[5].p.y += -0.013f + rplnnx.y * r;
 	planes[5].p.z += hex.s * 0.5f + rplnnx.z * r;
 				  
 	planes[6].p.x += -hex.h * 0.5f + tplnnx.x * r;
-	planes[6].p.y += tplnnx.y * r;
+	planes[6].p.y += -0.013f + tplnnx.y * r;
 	planes[6].p.z += hex.s * 0.5f + tplnnx.z * r;
 }
 
@@ -1748,20 +1748,30 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 
 	if (allInside)
 	{
+		float3 distFromTop = endPoint - planes[0].p;
 		if (Sdirection.y <= 0)
 		{
-			if (planes[0].p.y > endPoint.y)
+			if (planes[0].p.y > endPoint.y && distFromTop.y >= -0.2f)
 			{
-				s.m_Center.y = planes[0].p.y + 0.0015f;
+				s.m_Center.y = planes[0].p.y + 0.00018f;
 				Stime = 1;
+				pastPos = s.m_Center;
 				return planes[0].n;
 			}
-			if (planes[0].p.y < endPoint.y && (endPoint.y - planes[0].p.y) < 0.055f && Sdirection.y == 0)
+			if (planes[0].p.y < endPoint.y && distFromTop.y < 0.057f && Sdirection.y == 0)
 			{
-				s.m_Center.y = planes[0].p.y +  0.0015f;
+				s.m_Center.y = planes[0].p.y +  0.00018f;
 				Stime = 1;
+				pastPos = s.m_Center;
 				return planes[0].n;
 			}
+		}
+		if (distFromTop.y <= -0.199f)
+		{
+			float3 revPos = startPoint - endPoint;
+			endPoint = startPoint + revPos * 1.05f;
+			s.m_Center = endPoint;
+			return revPos.normalize();
 		}
 	}
 
@@ -1801,17 +1811,16 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	{
 		if (dot_product(Sdirection, planes[at].n) < 0)
 		{
-			s.m_Center = pastPos + Sdirection * (times[at] - 0.001263f);
+			s.m_Center = pastPos + Sdirection * (times[at] - 0.001254f);
 			if (at != 0)
 			{
 				float goTop = (planes[0].p.y - s.m_Center.y);
 				if (goTop >= -0.1f && goTop < 0)
 				{
-					s.m_Center.y += 0.01f;
+					s.m_Center.y += 0.00001f;
 				}
 			}
 			Stime = times[at];
-
 			return planes[at].n;
 		}
 	}

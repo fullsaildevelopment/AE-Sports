@@ -205,4 +205,6 @@ public:
 	bool hasPackets() { return newClient.hasPackets(); }
 	bool hasState() { return newClient.hasState(); }
 	bool hasScored() { return newClient.hasScored(); }
+
+	int GetPulse() { return newClient.getPulse(); }
 };

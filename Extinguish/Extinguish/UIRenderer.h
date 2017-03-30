@@ -6,11 +6,9 @@
 #include "DeviceResources.h"
 #include "ResourceManager.h"
 #include "Component.h"
-#include "Button.h"
-#include "MeterBar.h"
-
 class GameObject;
 class Button;
+class MeterBar;
 class UIRenderer : public Component
 {
 private:
@@ -39,6 +37,7 @@ private:
 	float left;
 	wstring font;
 	float curSize;
+	float opacity = 1.0f;
 
 	/* Decides which renderer function to call in render */
 	Button * theButton;
@@ -63,6 +62,8 @@ public:
 	wstring GetFont() { return font; }
 	bool getIsButton() { return isButton; }
 	float getFontSize() { return curSize; }
+	void setOpacity(float op) { opacity = op; if (opacity > 1.0f) opacity = 1.0f; if (opacity < 0.0f) opacity = 0.0f; }
+	float getOpacity() { return opacity; }
 
 	void RemoveBitmap();
 };

@@ -43,7 +43,6 @@ private:
 	Crosse *crosse; // gives me access to the crosse script
 	AnimatorController* anim; // gives access to animations
 
-
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
 	std::vector<GameObject*> listOfMates; // list of AI's teammates
 	std::vector<GameObject*> AIbuddies; // list of AI on my team

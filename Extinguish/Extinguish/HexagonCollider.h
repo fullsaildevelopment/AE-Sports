@@ -30,7 +30,6 @@ private:
 	bool CheckFloor2Sphere(SphereCollider* sphere, int f, float dt);
 	bool CheckSphere(GameObject* tg, GameObject* ob, int _min, int _max, SphereCollider* sphere, Sphere s, float3 pastPos, int f, float dt, float& St);
 	FloorController* floorController;
-	unsigned int* originalColor;
 
 public:
 	HexagonCollider(GameObject* o, float v, float height, ED2Mesh* colmesh = nullptr);
