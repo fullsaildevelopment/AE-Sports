@@ -200,10 +200,29 @@ void UIRenderer::Render()
 
 				if (pBitmap)
 				{
-					if ((!theButton->isHovered() && !theButton->stayHovered()) || !theButton->isSelected() || !pBitmapHovered)
+
+					if (theButton->GetGameObject()->GetName() == "TheCredits" && pBitmap)
+					{
+						if (!fadeOut)
+						{
+							opacity += 0.033f;
+							if (opacity >= 1.0f)
+								opacity = 1.0f;
+						}
+						else
+						{
+							opacity -= 0.033f;
+							if (opacity <= 0.0f)
+								opacity = 0.0f;
+						}
+
+						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(), opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
+					}
+					else if ((!theButton->isHovered() && !theButton->stayHovered()) || !theButton->isSelected() || !pBitmapHovered)
 						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
 					else
 						d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
+
 				}
 
 				if (theButton->getText() != L"" && theButton->getText() != L"Titans with Sticks") {
