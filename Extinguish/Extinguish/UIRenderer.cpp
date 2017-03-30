@@ -1,5 +1,8 @@
 #include "UIRenderer.h"
 #include "GameObject.h"
+#include "Button.h"
+#include "MeterBar.h"
+
 
 
 
@@ -200,28 +203,12 @@ void UIRenderer::Render()
 
 				if (pBitmap)
 				{
-
-					if (theButton->GetGameObject()->GetName() == "TheCredits" && pBitmap)
-					{
-						if (!fadeOut)
-						{
-							opacity += 0.033f;
-							if (opacity >= 1.0f)
-								opacity = 1.0f;
-						}
-						else
-						{
-							opacity -= 0.033f;
-							if (opacity <= 0.0f)
-								opacity = 0.0f;
-						}
-
-						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(), opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
-					}
-					else if ((!theButton->isHovered() && !theButton->stayHovered()) || !theButton->isSelected() || !pBitmapHovered)
-						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect());
+					
+					if ((!theButton->isHovered() && !theButton->stayHovered()) || !theButton->isSelected() || !pBitmapHovered)
+						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(), opacity,
+							D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
 					else
-						d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect());
+						d2DevContext->DrawBitmap(pBitmapHovered.Get(), theButton->getRect(), opacity, D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
 
 				}
 
@@ -251,8 +238,10 @@ void UIRenderer::Render()
 		{
 			if (theBar->getActive())
 			{
-				d2DevContext->DrawBitmap(pBitmap.Get(), theBar->getRect2());
-				d2DevContext->DrawBitmap(pBitmapHovered.Get(), theBar->getRect());
+				d2DevContext->DrawBitmap(pBitmap.Get(), theBar->getRect2(), opacity,
+					D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
+				d2DevContext->DrawBitmap(pBitmapHovered.Get(), theBar->getRect(), opacity,
+					D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
 			}
 		}
 

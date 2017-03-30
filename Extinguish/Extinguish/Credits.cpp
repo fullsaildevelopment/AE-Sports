@@ -40,6 +40,7 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->MakeRect();
 		tRender->InitMetrics();
 		theButton->setOrigin();
+		tRender->setOpacity(0.0f);
 
 		theObjs.push_back(text);
 		theText.push_back(theButton);
@@ -85,7 +86,8 @@ void Credits::Update(float _dt)
 	// timer
 	if (fadeIn)
 	{
-		textRenderers[0]->setFadeOut(false);
+		if (nextName == 5)
+			textRenderers[0]->setOpacity(textRenderers[0]->getOpacity() + _dt);
 		fadeInOut += _dt;
 		if (fadeInOut >= 1.0f)
 		{
@@ -108,7 +110,8 @@ void Credits::Update(float _dt)
 	}
 	else
 	{
-		textRenderers[0]->setFadeOut(true);
+		if (nextName == 5)
+			textRenderers[0]->setOpacity(textRenderers[0]->getOpacity() - _dt);
 		fadeInOut -= _dt;
 		if (fadeInOut <= 0.0f)
 		{

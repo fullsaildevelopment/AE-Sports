@@ -1,6 +1,7 @@
 #include "MeterBar.h"
 #include "GamePadEvent.h"
 #include "GamePad.h"
+#include "UIRenderer.h"
 
 
 
@@ -64,6 +65,11 @@ void MeterBar::Update(float _dt)
 
 	if (isActive)
 	{
+		if (renderer->getOpacity() < 1.0f && drain)
+		{
+			renderer->setOpacity(renderer->getOpacity() + _dt);
+		}
+
 		if (drain)
 		{
 			dTime -= _dt;
@@ -83,18 +89,34 @@ void MeterBar::Update(float _dt)
 
 			if (rTime >= rechargeTime)
 			{
-				drain = true;
-				isActive = false;
+				if (renderer->getOpacity() > 0.0f)
+				{
+					renderer->setOpacity(renderer->getOpacity() - _dt);
+				}
+				else
+				{
+					isActive = false;
+					drain = true;
+				}
+
 				rTime = rechargeTime;
 			}
 			else
 				rect2 = ShrinkRect(rTime, rechargeTime);
 		}
 		else
-			isActive = false;
+		{
+			if (renderer->getOpacity() > 0.0f)
+			{
+				renderer->setOpacity(renderer->getOpacity() - _dt);
+			}
+			else
+				isActive = false;
+		}
 	}
 	else if (canRecharge)
 	{
+
 		if (rTime < rechargeTime)
 		{
 			rTime += _dt;
