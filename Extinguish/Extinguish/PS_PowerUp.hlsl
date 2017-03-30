@@ -34,6 +34,6 @@ float4 main(PS_BasicInput input) : SV_TARGET
 
 	float4 finalColor = diffuseColor;
 	finalColor += emissiveColor;
-	finalColor.a = diffuseColor.a + emissiveColor.a;
+	finalColor.a = 1;
 	return saturate(finalColor);
 }
