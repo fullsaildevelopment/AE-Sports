@@ -68,6 +68,7 @@ private:
 	bool justScored;
 	float scorerTimer;
 
+	FloorController* floorController;
 	//const members
 	const float timeTilScorerDisappear = 0.75f;
 
