@@ -34,6 +34,7 @@
 #include "CanPlayEvent.h"
 #include "PowerUpManager.h"
 #include "Credits.h"
+#include "MeterBar.h"
 
 using namespace DirectX;
 using namespace std;
@@ -1205,6 +1206,8 @@ void Game::CreateUI(Scene * basic)
 	sprintBar->AddComponent(sprintMeter);
 	sprintMeter->MakeHandler();
 	UIRenderer * sprintRender = new UIRenderer();
+	sprintMeter->setRenderer(sprintRender);
+	sprintRender->setOpacity(0.0f);
 	sprintRender->Init(false, devResources, sprintMeter);
 	sprintRender->DecodeBitmap(L"../Assets/UI/meterBar.png");
 	sprintRender->DecodeBitmap(L"../Assets/UI/meterBorder.png");

@@ -9,6 +9,8 @@
 #include "InputManager.h"
 #include "Game.h"
 
+class UIRenderer;
+
 class MeterBar : public Component
 {
 private:
@@ -19,6 +21,8 @@ private:
 	float height, width;
 	float widthMult, heightMult;
 	bool isActive;
+
+	UIRenderer * renderer;
 
 	/* for cooldowns */
 	float rechargeTime, rTime; // rTime is the countdown time, rechargeTime doesn't change
@@ -66,6 +70,7 @@ public:
 	void setDrainTime(float time) { drainTime = time; dTime = time; }
 	void setCanRecharge(bool recharge) { canRecharge = recharge; }
 	void SetDTimeFromPercentage(float percentage);
+	void setRenderer(UIRenderer * rend) { renderer = rend; }
 
 	/* helpers */
 	D2D1_RECT_F MakeRect() {
