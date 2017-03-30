@@ -1021,12 +1021,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	goal2->AddComponent(g2);
 
 	//create powerup manager, which creates powerups
-	GameObject* powerUpManager = new GameObject();
-	powerUpManager->Init("PowerUp Manager");
-	basic->AddGameObject(powerUpManager);
-	PowerUpManager* powerUpManagerC = new PowerUpManager();
-	powerUpManagerC->Init(basic, projection, devResources);
-
+	//GameObject* powerUpManager = new GameObject();
+	//powerUpManager->Init("PowerUpManager");
+	//basic->AddGameObject(powerUpManager);
+	//PowerUpManager* powerUpManagerC = new PowerUpManager();
+	//powerUpManager->AddComponent(powerUpManagerC);
+	//powerUpManagerC->Init(basic, projection, devResources);
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1042,11 +1042,17 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* titanPlayer = new GameObject();
 	titanPlayer->Init("TitanPlayer");
 	basic->AddGameObject(titanPlayer);
-	titanPlayer->InitTransform(identity, { 0, 0, -3 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	titanPlayer->InitTransform(identity, { 0, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
 	Renderer* titanPlayerRenderer = new Renderer();
 	titanPlayer->AddComponent(titanPlayerRenderer);
-	titanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	titanPlayerRenderer->Init("Titan", "NormalMapped", "Bind", "", "", projection, devResources, false);
 	titanPlayerRenderer->SetTeamColor(float4(1, 1, 1, 1));
+	AnimatorController* titanAnimator = new AnimatorController();
+	titanPlayer->AddComponent(titanAnimator);
+	titanAnimator->Init("Titan", 0, "Test");
+	State* testState = new State();
+	titanAnimator->AddState(testState);
+	testState->Init(titanAnimator, titanAnimator->GetBlender()->GetAnimationSet()->GetAnimation("Test"), true, 1.0f, "Test");
 
 	//for (int j = 0; j < 11; ++j)
 	//{
@@ -1479,11 +1485,8 @@ void Game::ResetPlayers()
 			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 		}
 
-		//player->GetTransform()->LookAt({ -20.0f, 15.0f, 1.8f }, 1.0f);
 		player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
 		player->GetTransform()->RotateTo({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
-		//player->GetTransform()->SetPosition(positions[randIndex]);
-		//player->GetTransform()->SetRotation({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f });
 	}
 }
 
