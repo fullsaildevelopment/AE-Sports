@@ -4,13 +4,14 @@
 #include "GameObject.h"
 #include "PowerUp.h"
 #include "SuperJump.h"
-#include "BoxCollider.h"
+//#include "BoxCollider.h"
 #include "Magnet.h"
 #include "Shield.h"
 #include "vec3.h"
 #include "ScoreEvent.h"
 #include "PowerUpEvent.h"
 #include "EventDispatcher.h"
+#include "SphereCollider.h"
 
 using namespace std;
 
@@ -40,8 +41,8 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		superJumpRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 		SuperJump* superJumpC = new SuperJump();
 		superJump->AddComponent(superJumpC);
-		BoxCollider* superJumpCollider = new BoxCollider(superJump, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-		superJump->AddBoxCollider(superJumpCollider);
+		SphereCollider* superJumpCollider = new SphereCollider(1.3f, superJump, true);
+		superJump->AddSphereCollider(superJumpCollider);
 
 		powerUps.push_back(superJumpC);
 
@@ -56,8 +57,8 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		magnetRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 		Magnet* magnetC = new Magnet();
 		magnet->AddComponent(magnetC);
-		BoxCollider* magnetCollider = new BoxCollider(magnet, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-		magnet->AddBoxCollider(magnetCollider);
+		SphereCollider* magnetCollider = new SphereCollider(1.3f, magnet, true);
+		magnet->AddSphereCollider(magnetCollider);
 
 		powerUps.push_back(magnetC);
 
@@ -72,8 +73,8 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		shieldRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 		SuperJump* shieldC = new SuperJump();
 		shield->AddComponent(shieldC);
-		BoxCollider* shieldCollider = new BoxCollider(shield, true, { 0.5f, 0.5f, 0.1f }, { -0.5f, -0.5f, -0.1f });
-		shield->AddBoxCollider(shieldCollider);
+		SphereCollider* shieldCollider = new SphereCollider(1.3f, shield, true);
+		shield->AddSphereCollider(shieldCollider);
 
 		powerUps.push_back(shieldC);
 	}
@@ -83,6 +84,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		//disable them
 		powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
 		powerUps[i]->SetEnabled(false);
+		powerUps[i]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 	}
 
 	//initialize
@@ -151,6 +153,7 @@ void PowerUpManager::Update(float _dt)
 				//enable
 				powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
 				powerUps[randPowIndex]->SetEnabled(true);
+				powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 
 				//don't let it be spawned again til consumed
 				isSpawned[randPowIndex] = true;
@@ -191,6 +194,7 @@ void PowerUpManager::HandleEvent(Event* e)
 		{
 			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
 			powerUps[i]->SetEnabled(false);
+			powerUps[i]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 		}
 
 		return;
