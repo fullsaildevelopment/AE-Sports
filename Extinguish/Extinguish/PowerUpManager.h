@@ -30,7 +30,7 @@ private:
 	HashString powerUpsTable;
 
 	//basic members
-	float roundTimer;
+	float roundTimer[4];
 	bool posUsed[4];
 	bool isSpawned[6];
 	std::string posUsedNames[4];
