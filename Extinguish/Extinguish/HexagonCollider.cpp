@@ -4,7 +4,9 @@
 #include "BoxCollider.h"
 #include "Physics.h"
 #include "GameObject.h"
-#include "FloorController.h"
+//#include "FloorController.h"
+#include "EventDispatcher.h"
+#include "PulseFloorEvent.h"
 
 HexagonCollider::HexagonCollider(GameObject* o, float d, float _height, ED2Mesh* colMesh) : Collider(o, false, CTHex)
 {
@@ -762,7 +764,9 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 							tg->OnCollisionEnter(sphere);
 							ob->OnCollisionEnter(this);
 							CollidingWith[f] = true;
-							floorController->PulseFloor(i * col + j);
+							PulseFloorEvent pfe;
+							pfe.floorIndex = i * col + j;
+							EventDispatcher::GetSingleton()->DispatchTo(&pfe, "Game");
 						}
 						else if (CollidingWith[f])
 						{
