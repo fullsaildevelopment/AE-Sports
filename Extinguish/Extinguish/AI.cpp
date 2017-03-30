@@ -311,6 +311,9 @@ void AI::Update(float _dt)
 
 				else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
 					mGuy = listOfMates[i];
+
+				else if (!mGuy && !listOfMates[i]->GetComponent<AI>())
+					mGuy = listOfMates[i];
 			}
 		}
 
@@ -321,46 +324,20 @@ void AI::Update(float _dt)
 		{
 			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
+			// if i have the ball
+			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
+			{
+				camera->RotateX(-0.4f);
+				crosse->Throw();
+				camera->RotateX(0.4f);
+			}
+
 			// if the ball gets close
 			if (dist.magnitude() < 34)
 			{
 				// if no one is holding it or the enemies have it
 				if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
 					GetBall();
-			}
-
-			// if i have the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
-			{
-				/*GameObject *myGuy = nullptr;
-
-				for (int i = 0; i < listOfMates.size(); ++i)
-				{
-					float mdist = 789; // distance to me
-					float3 tmp2 = listOfMates[i]->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
-
-					if (fakeTeam == 3 && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
-						myGuy = listOfMates[i];
-
-					// if they're closer to me
-					else if (tmp2.magnitude() < mdist)
-					{
-						// switch to them
-						mdist = tmp2.magnitude();
-						myGuy = listOfMates[i];
-					}
-				}
-
-				if (myGuy && RunTo(myGuy, 10.0f))
-				{
-					camera->RotateX(-0.9f);
-					crosse->Throw();
-					camera->RotateX(0.9f);
-				}*/
-
-				camera->RotateX(-0.4f);
-				crosse->Throw();
-				camera->RotateX(0.4f);
 			}
 
 			// if the ball is too far from the goal
@@ -387,17 +364,21 @@ void AI::Update(float _dt)
 				pos2.z *= -1;
 			}
 
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
-				Score();
-
-			//if the enemy team has the ball, attack their tank
-			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
+			// if someone has the ball
+			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 			{
-				if (eTank)
-					Attack(eTank);
+				// if it's me
+				if (ballClass->GetHolder() == me)
+					Score();
+
+				// if it's enemy
+				else if (ballClass->GetHolder()->GetTag() != me->GetTag())
+				{
+					if (eTank) Attack(eTank);
+				}
 			}
 
-			else if (!ballClass->GetIsHeld())
+			else
 			{
 				// if the ball gets close
 				if (!ballClass->GetIsHeld() && (ball->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).magnitude() < 15)
@@ -420,18 +401,19 @@ void AI::Update(float _dt)
 			// if i have the ball or one of my teammates have the ball
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 			{
+				// if it's me
 				if (ballClass->GetHolder() == me)
 					Score();
 
+				// if it's my teammate
 				else if (ballClass->GetHolder()->GetTag() == me->GetTag())
 					DefendTeammate();
 
-				else
-					Attack(ballClass->GetHolder());
+				// if it's enemy
+				else Attack(ballClass->GetHolder());
 			}
 
-			else
-				GetBall();
+			else GetBall();
 		}
 #pragma endregion
 
@@ -441,42 +423,28 @@ void AI::Update(float _dt)
 			// if someone has the ball
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 			{
-				// if they're on my team
-				if (ballClass->GetHolder()->GetTag() == me->GetTag())
-				{
-					// if it's me
-					if (ballClass->GetHolder() == me)
-						Score();
+				// if it's me
+				if (ballClass->GetHolder() == me)
+					Score();
 
-					// if it's my friend
-					else
-						DefendTeammate();
-				}
+				// if it's my teammate
+				else if (ballClass->GetHolder()->GetTag() == me->GetTag())
+					DefendTeammate();
 
-				// if they're on the enemy team
-				else
-					Attack(ballClass->GetHolder());
+				// if it's enemy
+				else Attack(ballClass->GetHolder());
 			}
 
 			// if nobody has the ball
 			else
 			{
-				GameObject *myGuy = nullptr;
-
-				if (mGuy) myGuy = mGuy;
-
-				else
+				//GetBall();
+				if (mGuy)
 				{
-					for (int i = 0; i < listOfMates.size(); ++i)
-					{
-						if (!listOfMates[i]->GetComponent<AI>())
-							myGuy = listOfMates[i];
-					}
+					//hover around Guy
+					if (RunTo(mGuy, 10.0f))
+						Idle();
 				}
-
-				// hover around guy
-				if (myGuy && RunTo(myGuy, 10.0f))
-					Idle();
 			}
 		}
 #pragma endregion
