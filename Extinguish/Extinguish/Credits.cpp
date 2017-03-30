@@ -30,7 +30,7 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
 		theButton->showFPS(false);
-		theButton->setPositionMultipliers(0.5f, 0.15f + (0.15 * (float)i));
+		theButton->setPositionMultipliers(0.5f, 0.15f + (0.15f * (float)i));
 		text->AddComponent(theButton);
 
 		UIRenderer * tRender = new UIRenderer();
@@ -53,7 +53,7 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
 		theButton->showFPS(false);
-		theButton->setPositionMultipliers(0.5f, 0.10f + (0.15 * (float)i));
+		theButton->setPositionMultipliers(0.5f, 0.10f + (0.15f * (float)i));
 		text->AddComponent(theButton);
 
 		UIRenderer * tRender = new UIRenderer();
