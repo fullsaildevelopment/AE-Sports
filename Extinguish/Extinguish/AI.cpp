@@ -8,8 +8,8 @@
 #include "Movement.h"
 #include "Trigger.h"
 
-#define     RunSpeed 0.7f //0.475f //10
-#define  AttackSpeed 0.7f //0.475f 
+#define     RunSpeed 0.4f //0.475f //10
+#define  AttackSpeed 0.4f //0.475f 
 //#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////

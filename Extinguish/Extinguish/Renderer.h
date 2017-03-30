@@ -19,7 +19,7 @@ class Renderer : public Component
 private:
 	Blender* blender;
 
-	float4 TeamColor = { 1,1,1,1 };
+	float4 EmissiveColor = { 1,1,1,1 };
 
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendstate;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerstate;
@@ -78,7 +78,7 @@ public:
 	void SetProjection(XMFLOAT4X4 projection);
 	void SetBlendInfo(BlendInfo info);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
-	void SetTeamColor(float4 c);
+	void SetEmissiveColor(float4 c);
 	void SetCatch(float c);
 	void SetCatch(float4 c);
 

@@ -151,6 +151,7 @@
     <ClInclude Include="InputDownEvent.h" />
     <ClInclude Include="LoadSceneEvent.h" />
     <ClInclude Include="PowerUpEvent.h" />
+    <ClInclude Include="PulseFloorEvent.h" />
     <ClInclude Include="ScoreEvent.h" />
     <ClInclude Include="SoundEvent.h" />
     <ClInclude Include="WindowResizeEvent.h" />

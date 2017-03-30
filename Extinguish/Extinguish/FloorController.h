@@ -33,9 +33,30 @@ class FloorController : public Component
 	int StripMult = 100;
 	unsigned int team1color = 0xAD000000;
 	unsigned int team2color = 0x0000AD00;
+	unsigned int* originalColor;
 	float colortiming = 0;
 
+	struct pulseState
+	{
+		int pulseLevel;
+		int pos;
+		float pulseTimer;
+		bool pulseing;
+	};
+
+	struct ColumnRow
+	{
+		int Column;
+		int Row;
+	};
+
+	vector<pulseState> pulses;
+
 	int direction;
+
+	void FindEmptyPulseState(int _pos);
+	void DoPulses();
+	void NextLevel(int _pos, int _level);
 public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
 	~FloorController();
@@ -52,4 +73,6 @@ public:
 	void setColor(int pos, float3 color);
 	void setColor(int pos, unsigned int color);
 	unsigned int* getColors() { return colors; };
+	void PulseFloor(int pos);
+	
 };
