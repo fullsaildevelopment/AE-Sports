@@ -93,34 +93,19 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="CapsuleCollider.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="HexagonCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="SphereCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
@@ -213,6 +198,21 @@
     <ClCompile Include="Shield.cpp">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClCompile>
+    <ClCompile Include="CapsuleCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="HexagonCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Components\Colliders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XTime.h">
@@ -251,19 +251,10 @@
     <ClInclude Include="Application.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="CapsuleCollider.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
@@ -272,16 +263,10 @@
     <ClInclude Include="GameObject.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="HexagonCollider.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Physics.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereCollider.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ReadData.h">
@@ -398,6 +383,21 @@
     <ClInclude Include="Shield.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
+    <ClInclude Include="CapsuleCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="HexagonCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Components\Colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Textures\DDS\Mage.dds">
@@ -461,6 +461,9 @@
     </Filter>
     <Filter Include="Shaders\Bloom">
       <UniqueIdentifier>{413e01d3-bf27-4e25-ae8b-6753a73ebbd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Colliders">
+      <UniqueIdentifier>{5c9b8619-3f3f-4c5f-9bc0-f8f5058e001d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

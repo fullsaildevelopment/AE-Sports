@@ -1038,10 +1038,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* meterbox6 = new GameObject();
 	meterbox6->Init("MeterBox6");
 	basic->AddGameObject(meterbox6);
-	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* meterboxRenderer6 = new Renderer();
+	meterbox6->InitTransform(identity, { 0, -0.199f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	/*Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
-	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);*/
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 
