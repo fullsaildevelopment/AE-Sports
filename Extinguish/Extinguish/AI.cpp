@@ -395,8 +395,8 @@ void AI::Update(float _dt)
 
 #pragma endregion
 
-#pragma region Guy
-		else if (currState == guy)
+#pragma region Guy || Tank
+		else if (currState == guy || currState == tank)
 		{
 			// if i have the ball or one of my teammates have the ball
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
@@ -413,37 +413,19 @@ void AI::Update(float _dt)
 				else Attack(ballClass->GetHolder());
 			}
 
-			else GetBall();
-		}
-#pragma endregion
-
-#pragma region Tank
-		else if (currState == tank)
-		{
-			// if someone has the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
-			{
-				// if it's me
-				if (ballClass->GetHolder() == me)
-					Score();
-
-				// if it's my teammate
-				else if (ballClass->GetHolder()->GetTag() == me->GetTag())
-					DefendTeammate();
-
-				// if it's enemy
-				else Attack(ballClass->GetHolder());
-			}
-
-			// if nobody has the ball
 			else
 			{
-				//GetBall();
-				if (mGuy)
+				if (currState == guy)
+					GetBall();
+
+				else
 				{
-					//hover around Guy
-					if (RunTo(mGuy, 10.0f))
-						Idle();
+					if (mGuy)
+					{
+						//hover around Guy
+						if (RunTo(mGuy, 10.0f))
+							Idle();
+					}
 				}
 			}
 		}
