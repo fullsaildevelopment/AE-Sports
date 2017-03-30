@@ -281,24 +281,27 @@ void AI::Update(float _dt)
 
 				if (setCanMove)
 				{
-					Movement* movement = ogTarget->GetComponent<Movement>();
+					AI* otherAI = ogTarget->GetComponent<AI>();
 
-					// if you're a player
-					if (movement)
+					if (otherAI)
 					{
-						movement->SetCanMove(true);
+						otherAI->SetCanMove(true);
+					}
+					else
+					{
+						Movement* otherMovement = ogTarget->GetComponent<Movement>();
 
-						//move the player's camera to match stumble
+						otherMovement->SetCanMove(true);
+
+						//move the player's camera to match getting up
 						Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
 						float3 translation = otherCamera->GetForwardf3();
 						translation.x = translation.x;
 						translation.y = 3.0f;
 						translation.z = translation.z * 3.0f;
+
 						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 					}
-
-					else
-						ogTarget->GetComponent<AI>()->SetCanMove(true);
 
 					ogTarget = nullptr;
 				}
