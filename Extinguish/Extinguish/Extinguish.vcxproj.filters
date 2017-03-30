@@ -210,6 +210,9 @@
     <ClCompile Include="Shield.cpp">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClCompile>
+    <ClCompile Include="Credits.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XTime.h">
@@ -394,6 +397,9 @@
     </ClInclude>
     <ClInclude Include="Shield.h">
       <Filter>Components\Scripts\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="Credits.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
