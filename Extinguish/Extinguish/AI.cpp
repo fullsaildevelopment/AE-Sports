@@ -392,9 +392,12 @@ void AI::Update(float _dt)
 
 			//if the enemy team has the ball, attack their tank
 			if (!ballClass->GetIsThrown() && ballClass->GetIsHeld() && ballClass->GetHolder()->GetTag() != me->GetTag())
-				if (eTank) Attack(eTank);
+			{
+				if (eTank)
+					Attack(eTank);
+			}
 
-			else
+			else if (!ballClass->GetIsHeld())
 			{
 				// if the ball gets close
 				if (!ballClass->GetIsHeld() && (ball->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).magnitude() < 15)
@@ -406,8 +409,6 @@ void AI::Update(float _dt)
 
 				else if (at1 && RunTo(pos2, 1.5f))
 					at1 = false;
-
-				TurnTo(myGoal);
 			}
 		}
 
