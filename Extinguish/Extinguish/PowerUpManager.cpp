@@ -23,8 +23,9 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, DirectX::XMMatrixIdentity());
 
-	int i;
+
 	//create power up objects
+	int i;
 	for (i = 0; i < 2; ++i)
 	{
 		string name = "Super Jump";
@@ -82,24 +83,13 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		//disable them
 		powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
 		powerUps[i]->SetEnabled(false);
-
-		//add name to hashstring
-		powerUpsTable.Insert(powerUps[i]->GetGameObject()->GetName());
 	}
 
 	//initialize
-
-	//powerUpInfo[0].name = "Super Jump";
-	//powerUpInfo[1].name = "Magnet";
-	//powerUpInfo[2].name = "Shield";
-
 	for (i = 0; i < NUM_OF_POS; ++i)
 	{
 		roundTimer[i] = 0.0f;
 		posUsed[i] = false;
-		//powerUpInfo[i].isSpawned = false;
-		//powerUpInfo[i].spawnPosIndex = -1;
-		//powerUpInfo[i].triedToSpawn = false;
 	}
 
 	for (int i = 0; i < NUM_OF_UPS; ++i)
@@ -115,91 +105,65 @@ void PowerUpManager::Update(float _dt)
 		roundTimer[i] += _dt;
 	}
 
-	//maybe add two positions: right in front of goals
 	const float3 spawnPositions[] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f}, //middle positions
 									  {-20.0f, 1.0f, 35.0f}, {-20.0f, 1.0f, -35.0f} }; //goal positions
+
 	bool triedSpawn[6] = {}; //used to say whether a powerup has tried to been spawned or not so far
-	//int posIndex = 0;
 	bool triedPos[4] = {};
 
-	//for (int i = 0; i < NUM_OF_POS; ++i)
+	int posCount = 0;
+
+	for (int i = 0; i < NUM_OF_POS; ++i)
 	{
-		//if (roundTimer[i] >= TIME_TIL_SPAWN)
+		if (posUsed[i])
 		{
-			int posCount = 0;
+			++posCount;
+		}
+	}
 
-			for (int i = 0; i < NUM_OF_POS; ++i)
+	if (posCount < NUM_OF_POS)
+	{
+		//spawn items
+		for (int i = 0; i < NUM_OF_POS - posCount; ++i)
+		{
+			//figure which powerup
+			int randPowIndex;
+
+			do
 			{
-				if (posUsed[i])
-				{
-					++posCount;
-				}
-			}
+				randPowIndex = rand() % NUM_OF_UPS;
+			} while (isSpawned[randPowIndex]);
 
-			if (posCount < NUM_OF_POS)
+			int randPosIndex = 0;
+
+			//figure which position
+			do
 			{
-				//spawn items
-				//for (int i = 0; i < NUM_OF_POS - posCount; ++i)
-				for (int i = 0; i < NUM_OF_POS - posCount; ++i)
-				{
-					//figure which powerup
-					int randPowIndex;
+				randPosIndex = rand() % NUM_OF_POS;
+			} while (posUsed[randPosIndex]);
 
-					do
-					{
-						//do
-						//{
-							randPowIndex = rand() % NUM_OF_UPS;
-						//} while (triedSpawn[randPowIndex]);
-					} while (isSpawned[randPowIndex]);
+			//make sure this specific position can spawn
+			if (roundTimer[randPosIndex] >= TIME_TIL_SPAWN)
+			{
+				//set position
+				powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
 
-					//randPowIndex = rand() % NUM_OF_UPS;
+				//enable
+				powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+				powerUps[randPowIndex]->SetEnabled(true);
 
-					//triedSpawn[randIndex] = true;
+				//don't let it be spawned again til consumed
+				isSpawned[randPowIndex] = true;
 
-					//get correct posIndex
-					//while (posUsed[posIndex])
-					//{
-					//	++posIndex % NUM_OF_POS;
-					//}
+				//prevent pos from being used again
+				posUsed[randPosIndex] = true;
+				powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
+				powerUps[randPowIndex]->SetPosIndex(randPosIndex);
 
-					int randPosIndex = 0;
+				cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
 
-					do
-					{
-						//do
-						//{
-							randPosIndex = rand() % NUM_OF_POS;
-						//} while (triedPos[randPosIndex]);
-					} while (posUsed[randPosIndex]);
-
-					//if (!isSpawned[randPowIndex])
-					//if (!posUsed[randPowIndex])
-					if (roundTimer[randPosIndex] >= TIME_TIL_SPAWN)
-					{
-						//set position
-						powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
-
-						//enable
-						powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
-						powerUps[randPowIndex]->SetEnabled(true);
-
-						//don't let it be spawned again til consumed
-						isSpawned[randPowIndex] = true;
-
-						//prevent pos from being used again
-						posUsed[randPosIndex] = true;
-						//posUsedNames[randPosIndex] = powerUps[randPowIndex]->GetGameObject()->GetName();
-						powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
-						powerUps[randPowIndex]->SetPosIndex(randPosIndex);
-						//++posIndex;
-
-						cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
-
-						//reset timer so it's every *blank* seconds even if no spawn happened
-						roundTimer[randPosIndex] = 0.0f;
-					}
-				}
+				//reset timer so it's every *blank* seconds til spawn for this position
+				roundTimer[randPosIndex] = 0.0f;
 			}
 		}
 	}
@@ -240,16 +204,7 @@ void PowerUpManager::HandleEvent(Event* e)
 		posUsed[powerEvent->GetPosIndex()] = false;
 		roundTimer[powerEvent->GetPosIndex()] = 0.0f;
 
-		//for (int i = 0; i < NUM_OF_POS; ++i)
-		//{
-		//	if (posUsedNames[i] == powerEvent->GetName())
-		//	{
-		//		cout << powerEvent->GetName() << " picked up" << endl;
-
-		//		posUsed[i] = false;
-		//		posUsedNames[i] = "";
-		//	}
-		//}
+		cout << powerEvent->GetName() << " picked up" << endl;
 
 		return;
 	}

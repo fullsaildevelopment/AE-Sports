@@ -21,6 +21,7 @@
 				<Event Id="2063165418" Name="Play_Beep" ObjectPath="\Events\Default Work Unit\Play_Beep"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
+				<Event Id="3908868565" Name="Play_FasterLightning" ObjectPath="\Events\Default Work Unit\Play_FasterLightning"/>
 				<Event Id="95074702" Name="Play_FinalBeep" ObjectPath="\Events\Default Work Unit\Play_FinalBeep"/>
 				<Event Id="3977125916" Name="Play_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Charge_"/>
 				<Event Id="734068952" Name="Play_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Sprint_"/>
@@ -85,6 +86,10 @@
 				<File Id="797913072" Language="SFX">
 					<ShortName>Audio\Boing.wav</ShortName>
 					<Path>SFX\Audio\Boing_9E69E797.wem</Path>
+				</File>
+				<File Id="902688899" Language="SFX">
+					<ShortName>FasterLightning.wav</ShortName>
+					<Path>SFX\FasterLightning_9E69E797.wem</Path>
 				</File>
 				<File Id="990930174" Language="SFX">
 					<ShortName>FinalBeep.wav</ShortName>

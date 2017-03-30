@@ -223,6 +223,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_FasterLightning" ID="{3BF6CD02-9D97-497D-95FA-F1A55E0C1EE8}">
+					<ChildrenList>
+						<Action Name="Play" ID="{3C6964F2-9317-48EE-A723-C3596533365D}" ShortID="10089956" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{9B9CC30A-27B6-48EF-B1E1-30D73DCFE7A9}" Global="false">
+									<ObjectRef Name="FasterLightning" ID="{2672AC73-0DF9-4664-ACD0-55C8DB7472C9}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>
