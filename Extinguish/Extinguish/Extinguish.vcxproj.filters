@@ -404,6 +404,9 @@
     <ClInclude Include="SphereCollider.h">
       <Filter>Components\Colliders</Filter>
     </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Textures\DDS\Mage.dds">
