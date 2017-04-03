@@ -1590,7 +1590,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	HexBox.min.y = hex.seg.m_Start.y;
 	HexBox.min.z = hex.seg.m_Start.z - 1;
 	HexBox.max.x = hex.seg.m_End.x + 1;
-	HexBox.max.y = hex.seg.m_End.y + 3;
+	HexBox.max.y = hex.seg.m_End.y + 1.2f;
 	HexBox.max.z = hex.seg.m_End.z + 1;
 	SHexBox.min.x = s.m_Center.x - s.m_Radius - 1;
 	SHexBox.min.y = s.m_Center.y - s.m_Radius - 1;
@@ -1751,16 +1751,16 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		float3 distFromTop = endPoint - planes[0].p;
 		if (Sdirection.y <= 0)
 		{
-			if (planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f)
+			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f) || ((distFromTop * float3(1,0,1)).magnitude() < 0.90f && distFromTop.y < 0))
 			{
-				s.m_Center.y = planes[0].p.y + 0.018f;
+				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
 				pastPos = s.m_Center;
 				return planes[0].n;
 			}
 			if (planes[0].p.y < endPoint.y && distFromTop.y < 0.06f && Sdirection.y == 0)
 			{
-				s.m_Center.y = planes[0].p.y +  0.018f;
+				s.m_Center.y = planes[0].p.y +  0.0018f;
 				Stime = 1;
 				pastPos = s.m_Center;
 				return planes[0].n;
@@ -1769,7 +1769,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		if (distFromTop.y <= -0.199f)
 		{
 			float3 revPos = startPoint - endPoint;
-			endPoint = startPoint + revPos * 1.1f;
+			endPoint = startPoint + revPos * 1.15f;
 			s.m_Center = endPoint;
 			return revPos.normalize();
 		}
@@ -1815,9 +1815,12 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 			if (at != 0)
 			{
 				float goTop = (planes[0].p.y - s.m_Center.y);
-				if (goTop >= -0.1f && goTop < 0)
+				if (goTop >= -0.1f && goTop <= 0.1f)
 				{
-					s.m_Center.y += 0.00001f;
+					s.m_Center = endPoint;
+					s.m_Center.y = planes[0].p.y + 0.01256f;
+					Stime = 1;
+					return planes[0].n;
 				}
 			}
 			Stime = times[at];
