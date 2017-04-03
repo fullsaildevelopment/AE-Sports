@@ -458,7 +458,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 4.0f * jumpMultiplier, 0 });
+		transform->AddVelocity({ 0, 8.0f * jumpMultiplier, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation

@@ -853,14 +853,15 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(8.8f, 0.75f);
+		//Put it high so that it doesnt feel like your on ice
+		mageMover->Init(19.8f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 4.5f, 0.07f, 6.4f, -14.8f);
+		Physics* physics = new Physics(0.01f, 5.5f, 0.04f, 7.3f, -10.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -1082,7 +1083,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* meterbox6 = new GameObject();
 	meterbox6->Init("MeterBox6");
 	basic->AddGameObject(meterbox6);
-	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 0, -0.3f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	/*Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);*/
@@ -1099,7 +1100,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10.00001f, (float)-col));
 
 	GameObject* HexFloor = new GameObject();
 	HexFloor->Init("HexFloor");
