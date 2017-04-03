@@ -64,6 +64,7 @@ public:
 	float getFontSize() { return curSize; }
 	void setOpacity(float op) { opacity = op; if (opacity > 1.0f) opacity = 1.0f; if (opacity < 0.0f) opacity = 0.0f; }
 	float getOpacity() { return opacity; }
+	ID2D1DeviceContext* getUIDevCon() { return d2DevContext; }
 
 	void RemoveBitmap();
 };
