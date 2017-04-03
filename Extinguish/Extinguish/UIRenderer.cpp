@@ -203,8 +203,8 @@ void UIRenderer::Render()
 
 				if (pBitmap)
 				{
-					
-					if ((!theButton->isHovered() && !theButton->stayHovered()) || !theButton->isSelected() || !pBitmapHovered)
+					//(!theButton->isHovered() && !theButton->stayHovered()) || 
+					if ((!theButton->isSelected() && !theButton->getRemainSelected()) || !pBitmapHovered)
 						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(), opacity,
 							D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
 					else
