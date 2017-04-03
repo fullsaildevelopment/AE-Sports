@@ -584,13 +584,13 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 
 	tracker.Update(*padState);
 
-	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
+	if (tracker.a == GamePad::ButtonStateTracker::PRESSED && movement->CanMove())
 	{
 		Jump();
 	}
 
 	//this line will only happen once
-	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint) //16 == Left Shift
+	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{
 		Sprint();
 
