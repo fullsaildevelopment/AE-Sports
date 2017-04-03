@@ -41,7 +41,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -1957,7 +1957,7 @@ void Game::AssignPlayers()
 			clientID = 5;
 
 		// find team player selected
-		for (unsigned int i = 0; i < 8; ++i)
+		for (unsigned int i = 0; i < 2; ++i)
 		{
 			// set mage 1 to player if red team
 			if (team == TEAM_A && i != 0)
