@@ -7,7 +7,7 @@
 //structors
 Magnet::Magnet()
 {
-	SetDuration(8.0f);
+	SetDuration(10.0f);
 }
 
 void Magnet::Init(GameObject* obj)
