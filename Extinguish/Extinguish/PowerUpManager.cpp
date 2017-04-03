@@ -12,6 +12,8 @@
 #include "PowerUpEvent.h"
 #include "EventDispatcher.h"
 #include "SphereCollider.h"
+#include "Button.h"
+#include "UIRenderer.h"
 
 using namespace std;
 
@@ -98,6 +100,38 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	{
 		isSpawned[i] = false;
 	}
+
+	PCWSTR bitmaps[3] = {
+	L"../Assets/UI/Icons/SuperJump.png",
+	L"../Assets/UI/Icons/Shield.png",
+	L"../Assets/UI/Icons/Magnet.png"
+	};
+
+	for (unsigned int i = 0; i < 3; ++i)
+	{
+		GameObject * pUI = new GameObject();
+		Button * theButton = new Button(true, true, L"", (unsigned int)strlen(""), 50.0f, 50.0f, devResources, 0);
+		theButton->SetGameObject(pUI);
+		theButton->setTimer(true);
+		theButton->showFPS(false);
+		theButton->setPositionMultipliers(0.75f + (0.07f * (float)i), 0.90f);
+		pUI->AddComponent(theButton);
+
+		UIRenderer * tRender = new UIRenderer();
+		tRender->Init(true, 45.0f, devResources, theButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 0.0f));
+		pUI->AddComponent(tRender);
+		tRender->MakeRTSize();
+		theButton->MakeRect();
+		tRender->InitMetrics();
+		theButton->setOrigin();
+		tRender->DecodeBitmap(bitmaps[i]);
+		tRender->setOpacity(1.0f);
+
+		powerUpUIobjs.push_back(pUI);
+		powerUpButtons.push_back(theButton);
+		powerUpRenderers.push_back(tRender);
+	}
+
 }
 
 void PowerUpManager::Update(float _dt)
@@ -211,5 +245,28 @@ void PowerUpManager::HandleEvent(Event* e)
 		cout << powerEvent->GetName() << " picked up" << endl;
 
 		return;
+	}
+}
+
+
+void PowerUpManager::Render()
+{
+	//powerUpRenderers[0]->getUIDevCon()->BeginDraw();
+	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
+	{
+		powerUpRenderers[i]->Render();
+	}
+	//powerUpRenderers[0]->getUIDevCon()->EndDraw();
+}
+
+void PowerUpManager::UpdateSize(D2D1_SIZE_F rect)
+{
+	for (unsigned int i = 0; i < powerUpButtons.size(); ++i)
+	{
+		powerUpButtons[i]->setRT(rect);
+		powerUpButtons[i]->MakeRect();
+		powerUpButtons[i]->setOrigin();
+		powerUpButtons[i]->AdjustSize();
+		powerUpRenderers[i]->ReInit();
 	}
 }
