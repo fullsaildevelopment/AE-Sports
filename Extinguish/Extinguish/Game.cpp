@@ -200,6 +200,9 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 
 int Game::Update(float dt)
 {
+	if (gamepadCooldown > 0.0f)
+		gamepadCooldown -= dt;
+
 	if (!DEBUG_GRAPHICS) {
 		if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 		{
@@ -600,6 +603,12 @@ void Game::HandleEvent(Event* e)
 		else //client needs to send gamepad state info to sesrver
 		{
 			client.sendMessage((char*)gamePadEvent->GetState(), sizeof(GamePad::State) + 1); // plus one for the header (size of message)
+		}
+		GamePad::State* state = gamePadEvent->GetState();
+		if (state->IsStartPressed() && gamePadEvent->GetClientID() == clientID && !ResourceManager::GetSingleton()->IsPaused() && gamepadCooldown <= 0.0f)
+		{
+			gamepadCooldown = 0.2f;
+			TogglePauseMenu(false, true);
 		}
 
 		return;
@@ -1351,8 +1360,8 @@ void Game::CreateMenu(Scene * scene)
 	mButton->setGameObject(multiPlayer);
 	mButton->MakeHandler();
 	mRender->InitMetrics();
-	sButton->setBelow(mButton);
-	mButton->setAbove(sButton);
+	sButton->setBelow(mButton); // play to host
+	mButton->setAbove(sButton); // host to play
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
@@ -1373,9 +1382,10 @@ void Game::CreateMenu(Scene * scene)
 	mButton2->setGameObject(multiPlayer2);
 	mButton2->MakeHandler();
 	mRender2->InitMetrics();
-	mButton->setRight(mButton2);
-	mButton2->setLeft(mButton);
-	sButton->setRight(mButton2);
+	mButton->setRight(mButton2); // host to join
+	mButton2->setLeft(mButton); // join to host
+	sButton->setRight(mButton2); // play to join
+	mButton2->setAbove(sButton); // join to play
 
 	// credits
 	GameObject * credits = new GameObject();
@@ -1396,7 +1406,8 @@ void Game::CreateMenu(Scene * scene)
 	cButton->setGameObject(credits);
 	cButton->MakeHandler();
 	cRender->InitMetrics();
-	mButton->setBelow(cButton);
+	mButton->setBelow(cButton); // host to credits
+	cButton->setAbove(mButton); // credits to host
 
 	// exit
 	GameObject * exit = new GameObject();
@@ -1417,12 +1428,12 @@ void Game::CreateMenu(Scene * scene)
 	eButton->setGameObject(exit);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
-	mButton2->setBelow(eButton);
-	cButton->setRight(eButton);
-	eButton->setLeft(cButton);
-	eButton->setAbove(mButton2);
-	eButton->setBelow(sButton);
-	cButton->setBelow(sButton);
+	mButton2->setBelow(eButton); // join to exit
+	cButton->setRight(eButton); // credits to exit
+	eButton->setLeft(cButton); // exit to credits
+	eButton->setAbove(mButton2); // exit to join
+	eButton->setBelow(sButton); // exit to play
+	cButton->setBelow(sButton); // credits to play
 
 
 	// background 2.0
@@ -1614,7 +1625,7 @@ void Game::CreateLobby(Scene * scene)
 	sButton->setGameObject(startGame);
 	sButton->MakeHandler();
 	sRender->InitMetrics();
-	sButton->isSelected();
+	sButton->setSelected();
 
 	// start game, will only show if isServer
 	GameObject * exitGame = new GameObject();
@@ -1682,6 +1693,7 @@ void Game::CreateLobby(Scene * scene)
 	caButton->setHelper(scene->GetNumUIObjects());
 	sButton->setAbove(caButton);
 	caButton->setBelow(sButton);
+	caButton->setAbove(eButton);
 
 	// change team to B
 	GameObject * changeTeamB = new GameObject();
@@ -1704,9 +1716,11 @@ void Game::CreateLobby(Scene * scene)
 	cbButton->MakeHandler();
 	ebRender->InitMetrics();
 	cbButton->setHelper(scene->GetNumUIObjects() - 2);
-	cbButton->setLeft(caButton);
-	caButton->setRight(cbButton);
+	cbButton->setRight(caButton);
+	caButton->setLeft(cbButton);
 	cbButton->setBelow(sButton);
+	cbButton->setAbove(eButton);
+	eButton->setBelow(cbButton);
 
 	// change team logo
 	GameObject * changeTeam = new GameObject();
@@ -1794,8 +1808,6 @@ void Game::CreatePauseMenu(Scene * scene)
 	// for new game button on end game
 	Button * nButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 10);
 
-
-	// server only?
 	GameObject * resumeGame = new GameObject();
 	resumeGame->Init("pauseResume");
 	scene->AddUIObject(resumeGame);
@@ -1817,6 +1829,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	rRender->InitMetrics();
 	rButton->SetActive(false);
 	rButton->setHelper(scene->GetNumUIObjects());
+	rButton->setSelected();
 
 	// exit, closes application
 	GameObject * exitGame = new GameObject();
@@ -1839,6 +1852,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	eButton->MakeHandler();
 	eRender->InitMetrics();
 	eButton->SetActive(false);
+	rButton->setBelow(eButton);
+	eButton->setAbove(rButton);
 
 	// exit, return to menu
 	rButton->setHelper(scene->GetNumUIObjects());
@@ -1863,6 +1878,9 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 	mButton->SetActive(false);
+	rButton->setAbove(mButton);
+	mButton->setAbove(eButton);
+	eButton->setBelow(mButton);
 
 	// start new game, shown on game end
 	GameObject * newGame = new GameObject();
@@ -1884,6 +1902,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	nButton->MakeHandler();
 	nRender->InitMetrics();
 	nButton->SetActive(false);
+	nButton->setBelow(mButton);
+	nButton->setAbove(eButton);
 
 	//scoreboard
 	rButton->setHelper(scene->GetNumUIObjects());
@@ -1957,7 +1977,7 @@ void Game::AssignPlayers()
 			clientID = 5;
 
 		// find team player selected
-		for (unsigned int i = 0; i < 8; ++i)
+		for (unsigned int i = 0; i < 2; ++i)
 		{
 			// set mage 1 to player if red team
 			if (team == TEAM_A && i != 0)
@@ -2347,44 +2367,60 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 {
 	bool toggle;
 	if (ResourceManager::GetSingleton()->IsServer()) {
+
+		GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
+		GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
+		Button * resumeButton = pauseResume->GetComponent<Button>();
+		Button * menuButton = pauseMenu->GetComponent<Button>();
+		GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
+		Button * exitButton = pauseExit->GetComponent<Button>();
+		GameObject * pauseNewGame = scenes[2]->GetUIByName("New Game");
+		Button * nButton = pauseNewGame->GetComponent<Button>();
 		if (!endgame) {
-			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
-			GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
-			Button * resumeButton = pauseResume->GetComponent<Button>();
-			Button * menuButton = pauseMenu->GetComponent<Button>();
 			toggle = !resumeButton->getActive();
 			resumeButton->SetActive(toggle);
 			menuButton->SetActive(toggle);
-			GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
-			Button * exitButton = pauseExit->GetComponent<Button>();
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
 			ShowCursor(toggle);
-		}
-	}
+			resumeButton->setSelected();
+			menuButton->setSelected(false);
+			exitButton->setSelected(false);
 
-	if (endgame && ResourceManager::GetSingleton()->IsServer())
-	{
-		GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
-		Button * exitButton = pauseExit->GetComponent<Button>();
-		toggle = !exitButton->getActive();
-		exitButton->SetActive(toggle);
-		GameObject * pauseNewGame = scenes[2]->GetUIByName("New Game");
-		Button * nButton = pauseNewGame->GetComponent<Button>();
-		toggle = !nButton->getActive();
-		nButton->SetActive(toggle);
-		ShowCursor(toggle);
-
-
-		if (toggle) {
-			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
-			Button * resumeButton = pauseResume->GetComponent<Button>();
-			if (resumeButton->getActive())
+			if (exitButton->getAbove() != resumeButton)
 			{
-				GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
-				Button * menuButton = pauseMenu->GetComponent<Button>();
-				resumeButton->SetActive(!toggle);
-				menuButton->SetActive(!toggle);
+				menuButton->setBelow(resumeButton);
+				exitButton->setAbove(resumeButton);
+			}
+		}
+		else
+		{
+			toggle = !exitButton->getActive();
+			exitButton->SetActive(toggle);
+			toggle = !nButton->getActive();
+			nButton->SetActive(toggle);
+			ShowCursor(toggle);
+
+
+			nButton->setSelected();
+			exitButton->setSelected(false);
+			menuButton->setSelected(false);
+
+			//nButton->setAbove(exitButton);
+			//nButton->setBelow(menuButton);
+			exitButton->setAbove(nButton);
+			menuButton->setBelow(nButton);
+
+			if (toggle) {
+				GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
+				Button * resumeButton = pauseResume->GetComponent<Button>();
+				if (resumeButton->getActive())
+				{
+					GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
+					Button * menuButton = pauseMenu->GetComponent<Button>();
+					resumeButton->SetActive(!toggle);
+					menuButton->SetActive(!toggle);
+				}
 			}
 		}
 	}

@@ -215,6 +215,9 @@ void Button::Update(float _dt)
 	if (clickCooldown >= 0.0f)
 		clickCooldown -= _dt;
 
+	if (justSelectedCountdown >= 0.0f)
+		justSelectedCountdown -= _dt;
+
 	if (showFps)
 	{
 		int _fps = (int)(1 / _dt);
@@ -229,67 +232,78 @@ void Button::HandleEvent(Event* e)
 {
 	if (isClickable && isActive && sceneIndex == Game::currentScene)
 	{
-		InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
 
-		if (inputDownEvent && isActive)
+		if (gamePadEvent)
 		{
-			InputManager * input = inputDownEvent->GetInput();
+			gamePadConnected = true;
+			if (Game::currentScene == sceneIndex && selected)
+			{ 
+			GamePad::State* state = gamePadEvent->GetState();
+			//	GamePad::ButtonStateTracker tracker;
 
-			int mouseX = input->GetMouseX();
-			int mouseY = input->GetMouseY();
-
-			if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY > (int)rect.top && mouseY < (int)rect.bottom)
+			//	tracker.Update(*state);
+			if (justSelectedCountdown <= 0.0f)
 			{
-				if (input->GetMouseDown()[0] && clickCooldown <= 0.0f)
+				if (up && (state->IsDPadUpPressed() || state->IsLeftThumbStickUp()))
 				{
-					DoEvent();
+					up->setSelected();
+					selected = false;
+				}
+
+				else if (down && (state->IsDPadDownPressed() || state->IsLeftThumbStickDown()))
+				{
+					down->setSelected();
+					selected = false;
+				}
+				else if (left && (state->IsDPadLeftPressed() || state->IsLeftThumbStickLeft()))
+				{
+					left->setSelected();
+					selected = false;
+				}
+				else if (right && (state->IsDPadRightPressed() || state->IsLeftThumbStickRight()))
+				{
+					right->setSelected();
+					selected = false;
+				}
+
+				if (clickCooldown <= 0.0f)
+				{
+					if (selected && state->IsAPressed())
+					{
+						DoEvent();
+					}
+				}
+			}
+			}
+		}
+		
+		if (!gamePadConnected)
+		{
+			InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
+
+			if (inputDownEvent && isActive)
+			{
+				InputManager * input = inputDownEvent->GetInput();
+
+				int mouseX = input->GetMouseX();
+				int mouseY = input->GetMouseY();
+
+				if (mouseX > (int)rect.left && mouseX < (int)rect.right && mouseY >(int)rect.top && mouseY < (int)rect.bottom)
+				{
+					if (input->GetMouseDown()[0] && clickCooldown <= 0.0f)
+					{
+						DoEvent();
+					}
+					else
+					{
+						selected = true;
+					}
 				}
 				else
 				{
-					hovered = true;
-					selected = true;
+					selected = false;
 				}
-			}
-			else
-			{
-				hovered = false;
-				selected = false;
-			}
-		}
-		GamePadEvent* gamePadEvent = dynamic_cast<GamePadEvent*>(e);
-
-		if (gamePadEvent && Game::currentScene == sceneIndex && selected)
-		{
-			GamePad::State* state = gamePadEvent->GetState();
-			GamePad::ButtonStateTracker tracker;
-
-			tracker.Update(*state);
-
-			if (up && tracker.dpadUp)
-			{
-				up->setSelected();
-				selected = false;
-			}
-
-			else if (down && tracker.dpadDown)
-			{
-				down->setSelected();
-				selected = false;
-			}
-			else if (left && tracker.dpadLeft)
-			{
-				left->setSelected();
-				selected = false;
-			}
-			else if (right && tracker.dpadRight)
-			{
-				right->setSelected();
-				selected = false;
-			}
-
-			if (selected && tracker.a)
-			{
-				DoEvent();
 			}
 		}
 	}
@@ -360,14 +374,15 @@ void Button::DoEvent()
 			GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
 			Button * theirbutton = otherteam->GetComponent<Button>();
 			theirbutton->setStayHovered(false);
-			stayOnClick = true;
+			remainSelected = true;
+			
 		}
 		else if (buttonType == CHANGE_TEAM_B)
 		{
 			GameObject * otherteam = GetGameObject()->GetUIGameObjects(helperIndex[0]);
 			Button * theirbutton = otherteam->GetComponent<Button>();
 			theirbutton->setStayHovered(false);
-			stayOnClick = true;
+			remainSelected = true;
 		}
 	}
 	else if (buttonType == RESUME_GAME)
