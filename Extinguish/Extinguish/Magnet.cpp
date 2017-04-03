@@ -1,6 +1,8 @@
 #include "Magnet.h"
 #include "BallController.h"
 #include "GameObject.h"
+#include "PlayerController.h"
+#include "Crosse.h"
 
 //structors
 Magnet::Magnet()
@@ -10,16 +12,16 @@ Magnet::Magnet()
 
 void Magnet::Init(GameObject* obj)
 {
-	//cache must be done in init
-	ballC = GetGameObject()->FindGameObject("GameBall")->GetComponent<BallController>();
 }
 
 //basic
 void Magnet::Activate()
 {
 	//make magnet range bigger
-	originalMultiplier = ballC->GetMagnetMultiplier();
-	ballC->SetMagnetMultiplier(magnetRangeMultiplier);
+	crosseC = GetPlayer()->GetGameObject()->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
+
+	originalMultiplier = crosseC->GetMagnetMultiplier();
+	crosseC->SetMagnetMultiplier(magnetRangeMultiplier);
 	printf("Magnet activated\n");
 }
 
@@ -28,7 +30,7 @@ void Magnet::Deactivate()
 	PowerUp::Deactivate();
 
 	//make magnet range back to normal
-	ballC->SetMagnetMultiplier(originalMultiplier);
+	crosseC->SetMagnetMultiplier(originalMultiplier);
 
 	printf("Magnet deactivated\n");
 }

@@ -49,6 +49,8 @@ void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, fl
 	moveTotalTime = -1;
 	lookTotalTime = -1;
 	rotateTotalTime = -1;
+
+	velocity = { 0, 0, 0 };
 }
 
 void Transform::Reset()
@@ -192,6 +194,14 @@ void Transform::FixedUpdate(float _dt)
 	{
 		Rotate();
 	}
+
+	//if (GetGameObject()->GetName() == "GameBall")
+	//{
+	//	if (isnan(velocity.x))
+	//	{
+	//		cout << "uu" << endl;
+	//	}
+	//}
 }
 
 void Transform::LookAt(float3 pos, float totalTime)
@@ -265,6 +275,11 @@ void Transform::SetPosition(float3 vector)
 {
 	position = vector;
 
+	if (GetGameObject()->GetName() == "GameBall")
+	{
+		cout << "uu" << endl;
+	}
+
 	//XMMATRIX tempPosition = XMMatrixTranslation(position.x, position.y, position.z);
 	//XMMATRIX tempLocal;
 	//tempLocal = XMMatrixMultiply(XMMatrixRotationX(rotation.x), XMMatrixRotationY(rotation.y));
@@ -320,11 +335,27 @@ void Transform::SetParent(Transform* pParent)
 
 void Transform::SetVelocity(float3 v)
 {
+	if (GetGameObject()->GetName() == "GameBall")
+	{
+		if (isnan(v.x))
+		{
+			cout << "uu" << endl;
+		}
+	}
+
 	velocity = v;
 }
 
 void Transform::AddVelocity(float3 a)
 {
+	if (GetGameObject()->GetName() == "GameBall")
+	{
+		if (isnan(a.x))
+		{
+			cout << "uu" << endl;
+		}
+	}
+
 	velocity += a;
 }
 
@@ -365,7 +396,7 @@ DirectX::XMFLOAT4X4 Transform::GetWorld()
 
 DirectX::XMFLOAT4X4* Transform::GetWorldP()
 {
-	world = local;
+	GetWorld();
 
 	return &world;
 }

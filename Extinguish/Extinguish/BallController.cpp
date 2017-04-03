@@ -55,15 +55,15 @@ void BallController::Init()
 void BallController::LateInit()
 {
 	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
-	int size = (int)go.size();
-	for (int i = 0; i < size; ++i)
-	{
-		Crosse* c = go[i]->GetComponent<Crosse>();
-		if (c)
-		{
-			nets.push_back(c->GetGameObject()->GetTransform());
-		}
-	}
+	//int size = (int)go.size();
+	//for (int i = 0; i < size; ++i)
+	//{
+	//	Crosse* c = go[i]->GetComponent<Crosse>();
+	//	if (c)
+	//	{
+	//		nets.push_back(c->GetGameObject()->GetTransform());
+	//	}
+	//}
 }
 
 void BallController::Update(float _dt)
@@ -120,27 +120,27 @@ void BallController::FixedUpdate(float _dt)
 	}
 
 	//do magnet stuff
-	if (!isHeld && !isThrown)
-	{
-		float3 vel = transform->GetVelocity();
-		if (vel.isEquil(float3(0, 0, 0)))
-		{
-			transform->AddVelocity(float3(0, 10, 0));
-		}
-		int s = (int)nets.size();
-		for (int i = 0; i < s; ++i)
-		{
-			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
-			XMFLOAT4X4 net = *nets[i]->GetWorldP();
-			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
-			float l = dot_product(ball2net,ball2net);
-			if (l < 9.1f * magnetMultiplier)
-			{
-				float s = 2 / l;
-				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
-			}
-		}
-	}
+	//if (!isHeld && !isThrown)
+	//{
+	//	float3 vel = transform->GetVelocity();
+	//	if (vel.isEquil(float3(0, 0, 0)))
+	//	{
+	//		transform->AddVelocity(float3(0, 10, 0));
+	//	}
+	//	int s = (int)nets.size();
+	//	for (int i = 0; i < s; ++i)
+	//	{
+	//		XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
+	//		XMFLOAT4X4 net = *nets[i]->GetWorldP();
+	//		float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
+	//		float l = dot_product(ball2net,ball2net);
+	//		if (l < 9.1f * magnetMultiplier)
+	//		{
+	//			float s = 2 / l;
+	//			me->GetTransform()->AddVelocity(ball2net.normalize() * s);
+	//		}
+	//	}
+	//}
 }
 
 void BallController::HandleEvent(Event* e)
@@ -249,11 +249,6 @@ float BallController::GetTimeSinceThrown()
 	return timeSinceThrown;
 }
 
-float BallController::GetMagnetMultiplier()
-{
-	return magnetMultiplier;
-}
-
 float BallController::GetTimeSincePreviouslyThrown()
 {
 	return timeSincePreviouslyThrown;
@@ -297,9 +292,4 @@ void BallController::SetHolder(GameObject *person)
 		physics->SetIsKinematic(false);
 		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 	}
-}
-
-void BallController::SetMagnetMultiplier(float multiplier)
-{
-	magnetMultiplier = multiplier;
 }
