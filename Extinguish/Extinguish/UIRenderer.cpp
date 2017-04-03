@@ -157,7 +157,7 @@ void UIRenderer::Update(float _dt)
 {
 	if (theButton) {
 		if (theButton->getText() != L"") {
-			ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+			//ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 			if (pTextFormat)
 			{
@@ -187,7 +187,7 @@ void UIRenderer::Render()
 {
 	if (isEnabled())
 	{
-		ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+		//ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 		HRESULT hr;
 
@@ -195,7 +195,7 @@ void UIRenderer::Render()
 		//devContext->OMSetDepthStencilState(depthStencilState, 1);
 		d2DevContext->SaveDrawingState(stateBlock.Get());
 
-		d2DevContext->BeginDraw();
+		//d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
 		if (theButton) {
@@ -245,7 +245,7 @@ void UIRenderer::Render()
 			}
 		}
 
-		hr = d2DevContext->EndDraw();
+		//hr = d2DevContext->EndDraw();
 		d2DevContext->RestoreDrawingState(stateBlock.Get());
 		stateBlock.Reset();
 	}

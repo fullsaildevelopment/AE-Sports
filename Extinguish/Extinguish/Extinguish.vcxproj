@@ -217,6 +217,7 @@
     <ClInclude Include="Goal.h" />
     <ClInclude Include="HexagonCollider.h" />
     <ClInclude Include="Magnet.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="MathStuff.h" />
     <ClInclude Include="matrix3.h" />
     <ClInclude Include="MeterBar.h" />
