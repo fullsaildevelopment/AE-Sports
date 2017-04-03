@@ -2,12 +2,17 @@
 #include "PowerUp.h"
 
 class BallController;
+class Crosse;
 
 class Magnet : public PowerUp
 {
 private:
-	BallController* ballC;
+	//object members
+	Crosse* crosseC;
+
+	//basic members
 	float originalMultiplier;
+
 
 	//const members
 	const float magnetRangeMultiplier = 10.0f;

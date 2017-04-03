@@ -19,7 +19,7 @@ using namespace std;
 
 Crosse::Crosse()
 {
-
+	magnetMultiplier = 1.0f;
 }
 
 Crosse::~Crosse()
@@ -46,7 +46,20 @@ void Crosse::Init()
 
 void Crosse::Update(float _dt)
 {
-	//catchAgainTimer += dt;
+	//do magnet stuff
+	if (!ballC->GetIsHeld())
+	{
+		XMFLOAT4X4* ball = ballTransform->GetWorldP();
+		XMFLOAT4X4* net = transform->GetWorldP();
+		float3 ball2net = float3(net->_41, net->_42, net->_43) - float3(ball->_41, ball->_42, ball->_43);
+		float l = dot_product(ball2net, ball2net);
+
+		if (l < 9.1f * magnetMultiplier)
+		{
+			float s = 2 / l;
+			ballTransform->AddVelocity(ball2net.normalize() * s);
+		}
+	}
 }
 
 void Crosse::OnTriggerEnter(Collider* collider)
@@ -56,25 +69,6 @@ void Crosse::OnTriggerEnter(Collider* collider)
 		if (!ballC->GetIsHeld() && movement->CanMove()/* && catchAgainTimer >= timeUntilCatchAgain*/)
 		{
 			Catch();
-		}
-	}
-}
-
-void Crosse::SetColor(bool b)
-{
-	if (GetGameObject())
-	{
-		if (b)
-			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
-		else
-			GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
-		if (ResourceManager::GetSingleton()->IsServer())//Game::GetClientID() == 1)
-		{
-			CoughtEvent* ce = new CoughtEvent;
-			ce->holding = b;
-			ce->id = GetGameObject()->FindIndexOfGameObject(GetGameObject());
-			EventDispatcher::GetSingleton()->DispatchTo(ce, "Game");
-			delete ce;
 		}
 	}
 }
@@ -110,7 +104,7 @@ void Crosse::Throw()
 		soundEvent->Init(AK::EVENTS::PLAY_THROW, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
-		
+
 		cout << "Throw" << endl;
 	}
 }
@@ -361,10 +355,41 @@ void Crosse::HandleGamePad(GamePadEvent* e)
 	}
 }
 
+//getters//
+float Crosse::GetMagnetMultiplier()
+{
+	return magnetMultiplier;
+}
+
+//setters//
 void Crosse::SetHolder(GameObject* object)
 {
 	if (ballC)
 	{
 		ballC->SetHolder(object);
 	}
+}
+
+void Crosse::SetColor(bool b)
+{
+	if (GetGameObject())
+	{
+		if (b)
+			GetGameObject()->GetComponent<Renderer>()->SetCatch(1.0f);
+		else
+			GetGameObject()->GetComponent<Renderer>()->SetCatch(0.0f);
+		if (ResourceManager::GetSingleton()->IsServer())//Game::GetClientID() == 1)
+		{
+			CoughtEvent* ce = new CoughtEvent;
+			ce->holding = b;
+			ce->id = GetGameObject()->FindIndexOfGameObject(GetGameObject());
+			EventDispatcher::GetSingleton()->DispatchTo(ce, "Game");
+			delete ce;
+		}
+	}
+}
+
+void Crosse::SetMagnetMultiplier(float multiplier)
+{
+	magnetMultiplier = multiplier;
 }

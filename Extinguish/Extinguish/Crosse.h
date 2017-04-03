@@ -29,6 +29,7 @@ private:
 	float minX, minY;
 	float _dt;
 	bool catchMode;
+	float magnetMultiplier;
 
 	//float catchAgainTimer;
 	//const float timeUntilCatchAgain = 0.0f;
@@ -52,7 +53,12 @@ public:
 	void Catch();
 	void HandleEvent(Event* e) override;
 	void SetColor(bool b);
+
+	//getters//
+	float GetMagnetMultiplier();
+
 	//setters//
 	void SetHolder(GameObject* object);
+	void SetMagnetMultiplier(float multiplier);
 
 };
