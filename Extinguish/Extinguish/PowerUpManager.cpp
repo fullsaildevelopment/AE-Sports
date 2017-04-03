@@ -57,6 +57,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		magnetRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 		Magnet* magnetC = new Magnet();
 		magnet->AddComponent(magnetC);
+		magnetC->Init(magnet);
 		SphereCollider* magnetCollider = new SphereCollider(1.3f, magnet, true);
 		magnet->AddSphereCollider(magnetCollider);
 
