@@ -599,6 +599,9 @@ void Scene::Update(float _dt)
 	//	wstring score = to_wstring(redScore) + L" : " + to_wstring(blueScore);
 	//}
 	if (!DEBUG_GRAPHICS) {
+		UIRenderer* uirend = uiObjects[0]->GetComponent<UIRenderer>();
+		if (uirend)
+			uirend->getUIDevCon()->BeginDraw();
 		for (unsigned int i = 0; i < uiObjects.size(); ++i)
 		{
 			if (uiObjects[i]->GetName() != "Credits")
@@ -612,6 +615,9 @@ void Scene::Update(float _dt)
 				uiObjects[i]->GetComponent<Credits>()->Render();
 			}
 		}
+		if (uirend)
+			uirend->getUIDevCon()->EndDraw();
+
 
 		ImGui::EndFrame();
 	}
