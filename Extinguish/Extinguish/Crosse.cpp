@@ -56,8 +56,8 @@ void Crosse::Update(float _dt)
 
 		if (l < 9.1f * magnetMultiplier)
 		{
-			float s = 2 / l;
-			ballTransform->AddVelocity(ball2net.normalize() * s);
+			//float s = 2 / l;
+			ballTransform->AddVelocity(ball2net.normalize() * 2.0f);
 		}
 	}
 }
