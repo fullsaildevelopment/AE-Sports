@@ -157,7 +157,7 @@ void UIRenderer::Update(float _dt)
 {
 	if (theButton) {
 		if (theButton->getText() != L"") {
-			ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+			//ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 			if (pTextFormat)
 			{
