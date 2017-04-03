@@ -345,6 +345,7 @@ int Game::Update(float dt)
 						scorerButton->SetActive(true);
 
 						justScored = true;
+						scorerTimer = 0.0f;
 					}
 				}
 			}
