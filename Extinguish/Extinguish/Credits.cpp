@@ -75,12 +75,12 @@ void Credits::Init(DeviceResources * devResources)
 
 void Credits::Render()
 {
-	textRenderers[0]->getUIDevCon()->BeginDraw();
+	//textRenderers[0]->getUIDevCon()->BeginDraw();
 	for (unsigned int i = 0; i < textRenderers.size(); ++i)
 	{
 		textRenderers[i]->Render();
 	}
-	textRenderers[0]->getUIDevCon()->EndDraw();
+	//textRenderers[0]->getUIDevCon()->EndDraw();
 }
 
 void Credits::Update(float _dt)
@@ -251,4 +251,18 @@ void Credits::ReturnToMenu()
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
 	delete event;
 
+}
+
+
+
+void Credits::UpdateSize(D2D1_SIZE_F rect)
+{
+	for (unsigned int i = 0; i < theText.size(); ++i)
+	{
+		theText[i]->setRT(rect);
+		theText[i]->MakeRect();
+		theText[i]->setOrigin();
+		theText[i]->AdjustSize();
+		textRenderers[i]->ReInit();
+	}
 }
