@@ -105,14 +105,10 @@ void CapsuleCollider::FixedUpdate(float _dt)
 					if (!result.isEquil(float3(0, 1, 0)))
 						aG = true;
 
-					float3 invN = result.negate();
-					invN = invN * (vel * result).magnitude();
-					vel = vel - invN;
-
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false, float3(0, 0, 0), aG);
+						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false, result, aG, true);
 						if (!CollidingWith[i])
 						{
 							tg->OnCollisionEnter(box);
