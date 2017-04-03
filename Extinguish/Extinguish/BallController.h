@@ -19,6 +19,8 @@ private:
 	Transform* transform;
 	Physics* physics;
 	
+	float magnetMultiplier;
+
 	std::vector<Transform*> nets;
 
 	//members for scoring
@@ -50,8 +52,10 @@ public:
 	GameObject *GetPreviousThrower(); // returns the previous to last person who threw the ball
 	float GetTimeSinceThrown(); // returns how long it's been since the ball has been thrown
 	float GetTimeSincePreviouslyThrown(); // returns how long it's been since the previous to last person threw the ball
+	float GetMagnetMultiplier();
 
 	// mutators
 	void SetIsHeld(bool ans); // sets if the ball is held
 	void SetHolder(GameObject *person); // sets who is holding the ball
+	void SetMagnetMultiplier(float multiplier);
 };

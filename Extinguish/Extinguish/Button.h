@@ -61,7 +61,9 @@ private:
 	bool showFps = false;
 	bool hovered = false;
 	bool selected = false;
-	bool stayOnClick = false;
+	float justSelectedCountdown = 0.0f;
+	bool remainSelected = false;
+	bool gamePadConnected = false;
 	unsigned int sceneIndex;
 	std::vector<int> helperIndex;
 
@@ -96,7 +98,6 @@ public:
 		theTime += to_string((time / 60.0f));
 		return theTime;
 	}
-	bool stayHovered() { return stayOnClick; }
 
 
 	wstring getWTime() {
@@ -132,6 +133,8 @@ public:
 	bool isHovered() { return hovered; }
 	bool isSelected() { return selected; }
 	bool getActive() { return isActive; }
+	bool getRemainSelected() { return remainSelected; }
+	Button* getAbove() { return up; }
 
 	/* SETTERS */
 	void setHeight(float _height) { height = _height; }
@@ -148,14 +151,14 @@ public:
 	void SetActive(bool active) { isActive = active; }
 	void setTimer(bool active) { isTimer = active; }
 	void setHelper(int index) { helperIndex.push_back(index); }
-	void setStayHovered(bool b) { stayOnClick = b; }
+	void setStayHovered(bool b) { remainSelected = b; }
 	void setGameObject(GameObject* obj) { object = obj; }
 	void resetTime() { time = 10.0f; }
 	void setBelow(Button * below) { down = below; }
 	void setAbove(Button * above) { up = above; }
 	void setLeft(Button * left) { this->left = left; }
 	void setRight(Button * right) { this->right = right; }
-	void setSelected() { selected = true; } // only use if the first button
+	void setSelected(bool tf = true) { selected = tf; if (tf) justSelectedCountdown = 0.2f; } // only use if the first button
 
 	/* HELPERS*/
 
