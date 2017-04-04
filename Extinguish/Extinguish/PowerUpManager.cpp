@@ -14,6 +14,7 @@
 #include "SphereCollider.h"
 #include "Button.h"
 #include "UIRenderer.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -59,6 +60,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		magnetRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 		Magnet* magnetC = new Magnet();
 		magnet->AddComponent(magnetC);
+		magnetC->Init(magnet);
 		SphereCollider* magnetCollider = new SphereCollider(1.3f, magnet, true);
 		magnet->AddSphereCollider(magnetCollider);
 
@@ -215,6 +217,41 @@ void PowerUpManager::Update(float _dt)
 	// if has SuperJump 0
 	// if has Shield 1
 	// if has Magnet 2
+	/*int uiIndex = 0;
+	bool sjump, shield, magnet;
+	for (unsigned int i = 0; i < NUM_OF_UPS; ++i)
+	{
+		if (powerUps[i]->GetGameObject()->GetName() == "SuperJump")
+		{
+			uiIndex = 0;
+		}
+		else if (powerUps[i]->GetGameObject()->GetName() == "Shield")
+		{
+			uiIndex = 1;
+		}
+		else
+		{
+			uiIndex = 2;
+		}
+
+		if (powerUps[i]->GetPlayer()->GetPlayerID() == Game::GetClientID())
+		{
+			float newOpacity = (powerUpRenderers[uiIndex]->getOpacity() * powerUps[i]->GetDuration() - _dt) / powerUps[i]->GetDuration();
+			powerUpRenderers[uiIndex]->setOpacity(newOpacity);
+
+			if (uiIndex == 0)
+				sjump = true;
+			else if (uiIndex == 1)
+				shield = true;
+			else if (uiIndex == 2)
+				magnet = true;
+		}
+		else
+		{
+			if ((uiIndex == 0 && !sjump) || (uiIndex == 1 && !shield) || (uiIndex == 3 && !magnet))
+				powerUpRenderers[uiIndex]->setOpacity(0.0f);
+		}
+	}*/
 }
 
 //misc//

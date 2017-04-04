@@ -48,6 +48,8 @@ void BallController::Init()
 	//cache
 	transform = GetGameObject()->GetTransform();
 	physics = GetGameObject()->GetComponent<Physics>();
+
+	magnetMultiplier = 1.0f;
 }
 
 void BallController::LateInit()
@@ -116,6 +118,8 @@ void BallController::FixedUpdate(float _dt)
 	{
 		transform->AddVelocity(float3(0, 10, 0));
 	}
+
+	//do magnet stuff
 	if (!isHeld && !isThrown)
 	{
 		float3 vel = transform->GetVelocity();
@@ -130,7 +134,7 @@ void BallController::FixedUpdate(float _dt)
 			XMFLOAT4X4 net = *nets[i]->GetWorldP();
 			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
 			float l = dot_product(ball2net,ball2net);
-			if (l < 9.1f)
+			if (l < 9.1f * magnetMultiplier)
 			{
 				float s = 2 / l;
 				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
@@ -245,6 +249,11 @@ float BallController::GetTimeSinceThrown()
 	return timeSinceThrown;
 }
 
+float BallController::GetMagnetMultiplier()
+{
+	return magnetMultiplier;
+}
+
 float BallController::GetTimeSincePreviouslyThrown()
 {
 	return timeSincePreviouslyThrown;
@@ -288,4 +297,9 @@ void BallController::SetHolder(GameObject *person)
 		physics->SetIsKinematic(false);
 		GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 	}
+}
+
+void BallController::SetMagnetMultiplier(float multiplier)
+{
+	magnetMultiplier = multiplier;
 }
