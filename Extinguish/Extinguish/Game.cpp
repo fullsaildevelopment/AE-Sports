@@ -41,7 +41,7 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 0
+#define AI_ON 1
 
 //initialize static member
 int Game::clientID = 1;
@@ -1099,14 +1099,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	BoxCollider* meterboxcol6 = new BoxCollider(meterbox6, false, { 300,0.2f,300 }, { -300,-30,-300 });
 	meterbox6->AddBoxCollider(meterboxcol6);
 
-	/*GameObject* NewGoal = new GameObject();
-	NewGoal->Init("NewGoal");
-	basic->AddGameObject(NewGoal);
-	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
-	Renderer* NewGoalRenderer = new Renderer();
-	NewGoal->AddComponent(NewGoalRenderer);
-	NewGoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
-	NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));*/
+	//GameObject* NewGoal = new GameObject();
+	//NewGoal->Init("NewGoal");
+	//basic->AddGameObject(NewGoal);
+	//NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	//Renderer* NewGoalRenderer = new Renderer();
+	//NewGoal->AddComponent(NewGoalRenderer);
+	//NewGoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	//NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10.00001f, (float)-col));
