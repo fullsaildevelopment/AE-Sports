@@ -8,6 +8,7 @@
 #include "Credits.h"
 #include "HashString.h"
 #include "AnimatorController.h"
+#include "PowerUpManager.h"
 
 Scene::Scene()
 {
@@ -615,6 +616,12 @@ void Scene::Update(float _dt)
 				uiObjects[i]->GetComponent<Credits>()->Render();
 			}
 		}
+
+		if (Game::currentScene == 2)
+		{
+			GetGameObject("PowerUpManager")->GetComponent<PowerUpManager>()->Render();
+		}
+
 		if (uirend)
 			uirend->getUIDevCon()->EndDraw();
 
