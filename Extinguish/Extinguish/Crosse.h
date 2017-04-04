@@ -30,6 +30,7 @@ private:
 	float _dt;
 	bool catchMode;
 	float magnetMultiplier;
+	float magnetSpeedMultiplier;
 
 	//float catchAgainTimer;
 	//const float timeUntilCatchAgain = 0.0f;
@@ -56,9 +57,11 @@ public:
 
 	//getters//
 	float GetMagnetMultiplier();
+	float GetMagnetSpeedMultiplier();
 
 	//setters//
 	void SetHolder(GameObject* object);
 	void SetMagnetMultiplier(float multiplier);
+	void SetMagnetSpeedMultiplier(float multiplier);
 
 };

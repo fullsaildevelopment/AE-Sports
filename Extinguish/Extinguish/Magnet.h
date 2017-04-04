@@ -12,10 +12,12 @@ private:
 
 	//basic members
 	float originalMultiplier;
+	float originalSpeedMultiplier;
 
 
 	//const members
 	const float magnetRangeMultiplier = 10.0f;
+	const float magnetSpeedMultiplier = 20.0f;
 public:
 	//structors
 	Magnet();

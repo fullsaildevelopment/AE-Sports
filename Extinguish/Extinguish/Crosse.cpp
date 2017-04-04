@@ -20,6 +20,7 @@ using namespace std;
 Crosse::Crosse()
 {
 	magnetMultiplier = 1.0f;
+	magnetSpeedMultiplier = 1.0f;
 }
 
 Crosse::~Crosse()
@@ -56,8 +57,8 @@ void Crosse::Update(float _dt)
 
 		if (l < 9.1f * magnetMultiplier)
 		{
-			//float s = 2 / l;
-			ballTransform->AddVelocity(ball2net.normalize() * 2.0f);
+			float s = (2 * magnetSpeedMultiplier) / l;
+			ballTransform->AddVelocity(ball2net.normalize() * s);
 		}
 	}
 }
@@ -361,6 +362,11 @@ float Crosse::GetMagnetMultiplier()
 	return magnetMultiplier;
 }
 
+float Crosse::GetMagnetSpeedMultiplier()
+{
+	return magnetSpeedMultiplier;
+}
+
 //setters//
 void Crosse::SetHolder(GameObject* object)
 {
@@ -392,4 +398,9 @@ void Crosse::SetColor(bool b)
 void Crosse::SetMagnetMultiplier(float multiplier)
 {
 	magnetMultiplier = multiplier;
+}
+
+void Crosse::SetMagnetSpeedMultiplier(float multiplier)
+{
+	magnetSpeedMultiplier = multiplier;
 }
