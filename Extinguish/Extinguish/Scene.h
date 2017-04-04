@@ -77,6 +77,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> BallConstantBuffer;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState > RasterizerStateBackCull;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState > RasterizerStateFrontCull;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState > RasterizerStateNoCull;
 
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthDisabledStencilState;

@@ -58,7 +58,8 @@ void CapsuleCollider::FixedUpdate(float _dt)
 	if (objects.size() == 0)
 	{
 		objects = *GetGameObject()->GetGameObjects();
-		CollidingWith.resize(objects.size());
+		if(objects.size() != 0)
+			CollidingWith.resize(objects.size());
 	}
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();

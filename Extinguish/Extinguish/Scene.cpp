@@ -8,6 +8,7 @@
 #include "Credits.h"
 #include "HashString.h"
 #include "AnimatorController.h"
+#include "TrailRender.h"
 
 Scene::Scene()
 {
@@ -58,6 +59,10 @@ void Scene::Init(DeviceResources * devResources, InputManager* inputRef)
 	rastDesc.CullMode = D3D11_CULL_FRONT;
 
 	devResources->GetDevice()->CreateRasterizerState(&rastDesc, RasterizerStateFrontCull.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_NONE;
+
+	devResources->GetDevice()->CreateRasterizerState(&rastDesc, RasterizerStateNoCull.GetAddressOf());
 
 	//temporary
 	curFrame = 0;
@@ -422,6 +427,8 @@ void Scene::Update(float _dt)
 	opaqueObjects.clear();
 	SLLIter<RenderItem> transparentIter(transparentObjects);
 	SLLIter<RenderItem> opaqueIter(opaqueObjects);
+
+	TrailRender* ballTrail = nullptr;
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
 
@@ -567,6 +574,12 @@ void Scene::Update(float _dt)
 				animator->Update(_dt);
 			}
 		}
+		TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
+		if (trender)
+		{
+			trender->SetView(cameraCam);
+			ballTrail = trender;
+		}
 	}
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
 	///////////////Clear BackBuffer//////////////
@@ -576,6 +589,12 @@ void Scene::Update(float _dt)
 	{
 		opaqueIter.current().rend->Update(_dt);
 		opaqueIter.current().rend->Render();
+	}
+	//////////////////////////////////////////////////////////////////////
+	if (ballTrail)
+	{
+		devContext->RSSetState(RasterizerStateNoCull.Get());
+		ballTrail->Render();
 	}
 	////////////////////////RenderTransparentObjects//////////////////////
 	for (transparentIter.begin(); !transparentIter.end(); ++transparentIter)
@@ -598,7 +617,8 @@ void Scene::Update(float _dt)
 	//	Button * scoreButton = scoreUpdate->GetComponent<Button>();
 	//	wstring score = to_wstring(redScore) + L" : " + to_wstring(blueScore);
 	//}
-	if (!DEBUG_GRAPHICS) {
+	if (!DEBUG_GRAPHICS) 
+	{
 		UIRenderer* uirend = uiObjects[0]->GetComponent<UIRenderer>();
 		if (uirend)
 			uirend->getUIDevCon()->BeginDraw();
