@@ -257,12 +257,15 @@ void Credits::ReturnToMenu()
 
 void Credits::UpdateSize(D2D1_SIZE_F rect)
 {
+	float ratio = 1.0f;
 	for (unsigned int i = 0; i < theText.size(); ++i)
 	{
 		theText[i]->setRT(rect);
+		theText[i]->AdjustSize();
+		if (ratio == 1.0f)
+			ratio = theText[i]->GetRatio();
 		theText[i]->MakeRect();
 		theText[i]->setOrigin();
-		theText[i]->AdjustSize();
-		textRenderers[i]->ReInit();
+		textRenderers[i]->ReInit(ratio);
 	}
 }

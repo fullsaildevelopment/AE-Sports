@@ -183,16 +183,19 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		}
 		for (int j = 0; j < UIsize; ++j)
 		{
-			if (uiGO[j]->GetName() != "Credits") {
+			float ratio = 1.0f;
+			if (uiGO[j]->GetName() != "Credits" || uiGO[j]->GetName() != "Scoreboard") {
 				B = uiGO[j]->GetComponent<Button>();
 				M = uiGO[j]->GetComponent<MeterBar>();
 				UI = uiGO[j]->GetComponent<UIRenderer>();
+
 				if (B)
 				{
 					B->setRT(rect);
+					B->AdjustSize();
+					ratio = B->GetRatio();
 					B->MakeRect();
 					B->setOrigin();
-					B->AdjustSize();
 				}
 				if (M)
 				{
@@ -201,8 +204,12 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 				}
 				if (UI)
 				{
-					UI->ReInit();
+					UI->ReInit(ratio);
 				}
+			}
+			else if (uiGO[j]->GetName() == "Scoreboard")
+			{
+				uiGO[j]->GetComponent<Scoreboard>()->UpdateSize(rect);
 			}
 			else
 			{

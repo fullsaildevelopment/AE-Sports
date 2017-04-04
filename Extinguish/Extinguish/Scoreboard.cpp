@@ -738,3 +738,72 @@ void Scoreboard::ReceiveScoreboard()
 		}
 	}
 }
+
+void Scoreboard::UpdateSize(D2D1_SIZE_F rect)
+{
+	float ratio = 1.0f;
+	
+	scoreboardBackground->GetComponent<Button>()->setRT(rect);
+	scoreboardBackground->GetComponent<Button>()->AdjustSize();
+	scoreboardBackground->GetComponent<Button>()->GetRatio();
+	scoreboardBackground->GetComponent<Button>()->MakeRect();
+	scoreboardBackground->GetComponent<UIRenderer>()->ReInit(ratio);
+
+	for (unsigned int i = 0; i < 2; ++i)
+	{
+		labels[i]->GetComponent<Button>()->setRT(rect);
+		labels[i]->GetComponent<Button>()->AdjustSize();
+		labels[i]->GetComponent<Button>()->MakeRect();
+		labels[i]->GetComponent<Button>()->setOrigin();
+		labels[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+
+		teamScores[i]->GetComponent<Button>()->setRT(rect);
+		teamScores[i]->GetComponent<Button>()->AdjustSize();
+		teamScores[i]->GetComponent<Button>()->MakeRect();
+		teamScores[i]->GetComponent<Button>()->setOrigin();
+		teamScores[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+	}
+
+	for (unsigned int i = 0; i < playerNames.size(); ++i)
+	{
+		playerNames[i]->GetComponent<Button>()->setRT(rect);
+		playerNames[i]->GetComponent<Button>()->AdjustSize();
+		playerNames[i]->GetComponent<Button>()->MakeRect();
+		playerNames[i]->GetComponent<Button>()->setOrigin();
+		playerNames[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+
+		playerBars[i]->GetComponent<Button>()->setRT(rect);
+		playerBars[i]->GetComponent<Button>()->AdjustSize();
+		playerBars[i]->GetComponent<Button>()->MakeRect();
+		playerBars[i]->GetComponent<Button>()->setOrigin();
+		playerBars[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+
+
+		playerScores[i]->GetComponent<Button>()->setRT(rect);
+		playerScores[i]->GetComponent<Button>()->AdjustSize();
+		playerScores[i]->GetComponent<Button>()->MakeRect();
+		playerScores[i]->GetComponent<Button>()->setOrigin();
+		playerScores[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+
+
+		playerGoals[i]->GetComponent<Button>()->setRT(rect);
+		playerGoals[i]->GetComponent<Button>()->AdjustSize();
+		playerGoals[i]->GetComponent<Button>()->MakeRect();
+		playerGoals[i]->GetComponent<Button>()->setOrigin();
+		playerGoals[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+
+
+		playerAssists[i]->GetComponent<Button>()->setRT(rect);
+		playerAssists[i]->GetComponent<Button>()->AdjustSize();
+		playerAssists[i]->GetComponent<Button>()->MakeRect();
+		playerAssists[i]->GetComponent<Button>()->setOrigin();
+		playerAssists[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+
+
+		playerSaves[i]->GetComponent<Button>()->setRT(rect);
+		playerSaves[i]->GetComponent<Button>()->AdjustSize();
+		playerSaves[i]->GetComponent<Button>()->MakeRect();
+		playerSaves[i]->GetComponent<Button>()->setOrigin();
+		playerSaves[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+	}
+}
