@@ -10,6 +10,8 @@ private:
 	//object members
 	Crosse* crosseC;
 
+	std::string name = "Magnet";
+
 	//basic members
 	float originalMultiplier;
 	float originalSpeedMultiplier;
@@ -26,4 +28,5 @@ public:
 	void Init(GameObject* obj) override;
 	void Activate() override;
 	void Deactivate() override;
+	std::string GetName() override;
 };

@@ -25,3 +25,9 @@ void SuperJump::Deactivate()
 
 	player->SetJumpMultiplier(originalMultiplier);
 }
+
+
+std::string SuperJump::GetName()
+{
+	return name;
+}
