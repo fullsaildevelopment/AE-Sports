@@ -84,7 +84,7 @@ void BallController::Update(float _dt)
 		GetGameObject()->FindGameObject("Crosse1")->GetComponent<Crosse>()->Catch();
 	}
 
-	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+	if (isHeld && !isThrown && !transform->GetPosition().isEqual(float3( 0,0,0 )))
 		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)
@@ -123,7 +123,7 @@ void BallController::FixedUpdate(float _dt)
 	if (!isHeld && !isThrown)
 	{
 		float3 vel = transform->GetVelocity();
-		if (vel.isEquil(float3(0, 0, 0)))
+		if (vel.isEqual(float3(0, 0, 0)))
 		{
 			transform->AddVelocity(float3(0, 10, 0));
 		}
