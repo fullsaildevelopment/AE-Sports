@@ -54,6 +54,7 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 			{
 				player = capsCollider->GetGameObject()->GetComponent<PlayerController>();
 
+				//don't allow AI to get powerup
 				if (player)
 				{
 					isActivated = true;

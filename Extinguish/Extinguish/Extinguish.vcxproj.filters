@@ -392,9 +392,6 @@
     <ClInclude Include="PowerUpManager.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
-    <ClInclude Include="Magnet.h">
-      <Filter>Components\Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="Shield.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
@@ -418,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Magnet.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
     <ClInclude Include="TrailRender.h">
       <Filter>Components</Filter>

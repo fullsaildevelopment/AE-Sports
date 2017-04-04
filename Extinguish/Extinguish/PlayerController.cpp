@@ -233,7 +233,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (boxCollider->collisionNormal.isEquil(UP))
+			if (boxCollider->collisionNormal.isEqual(UP))
 			{
 				if (justJumped)
 				{
@@ -256,7 +256,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (hexCollider->collisionNormal.isEquil(UP))
+		if (hexCollider->collisionNormal.isEqual(UP))
 		{
 			if (justJumped)
 			{
@@ -282,7 +282,7 @@ void PlayerController::OnCollisionStay(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (boxCollider->collisionNormal.isEquil(UP))
+			if (boxCollider->collisionNormal.isEqual(UP))
 			{
 				if (justJumped)
 				{
@@ -306,7 +306,7 @@ void PlayerController::OnCollisionStay(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (hexCollider->collisionNormal.isEquil(UP))
+		if (hexCollider->collisionNormal.isEqual(UP))
 		{
 			if (justJumped)
 			{
@@ -584,13 +584,13 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 
 	tracker.Update(*padState);
 
-	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
+	if (tracker.a == GamePad::ButtonStateTracker::PRESSED && movement->CanMove())
 	{
 		Jump();
 	}
 
 	//this line will only happen once
-	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint) //16 == Left Shift
+	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{
 		Sprint();
 
@@ -879,4 +879,9 @@ void PlayerController::SetTeamID(unsigned int id)
 void PlayerController::SetJumpMultiplier(float multiplier)
 {
 	jumpMultiplier = multiplier;
+}
+
+unsigned int PlayerController::GetPlayerID()
+{
+	return playerID;
 }

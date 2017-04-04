@@ -108,6 +108,7 @@ public:
 	unsigned int GetAssists();
 	unsigned int GetTeamID();
 	float GetJumpMultiplier();
+	unsigned int GetPlayerID();
 
 	//setters//
 	void SetName(std::string name);

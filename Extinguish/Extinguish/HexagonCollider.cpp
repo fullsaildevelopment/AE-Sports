@@ -517,12 +517,12 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, GameObject* ob, int _min, int
 			for (int j = 0; j < col; ++j)
 			{
 				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos, smallT, mesh);
-				if (!n.isEquil(zeroF))
+				if (!n.isEqual(zeroF))
 				{
 					collisionNormal = n;
 					cap->collisionNormal = n;
 					bool apg = false;
-					if (!n.isEquil(float3(0, 1, 0)))
+					if (!n.isEqual(float3(0, 1, 0)))
 						apg = true;
 					Physics* op = ob->GetComponent<Physics>();
 					if (op)
@@ -753,7 +753,7 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 			for (int j = 0; j < col; ++j)
 			{
 				float3 n = HexagonToSphere(*GetWorldHex(i * col + j), s, pastPos, smallT);
-				if (!n.isEquil(zeroF) && smallT < St)
+				if (!n.isEqual(zeroF) && smallT < St)
 				{
 					collisionNormal = n;
 					sphere->collisionNormal = n;
@@ -812,7 +812,7 @@ void HexagonCollider::FixedUpdate(float dt)
 					Sphere s = sphere->GetWorldSphere();
 					float t = 100;
 					float3 n = HexagonToSphere(*GetWorldHex(), s, pastPos, t, mesh);
-					if (!n.isEquil(zeroF))
+					if (!n.isEqual(zeroF))
 					{
 						collisionNormal = n;
 						Physics* op = ob->GetComponent<Physics>();
@@ -846,11 +846,11 @@ void HexagonCollider::FixedUpdate(float dt)
 					Capsule c = cap->GetWorldCapsule();
 					float t = 100;
 					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t, mesh);
-					if (!n.isEquil(zeroF))
+					if (!n.isEqual(zeroF))
 					{
 						collisionNormal = n;
 						bool apg = false;
-						if (!n.isEquil(float3(0, 1, 0)))
+						if (!n.isEqual(float3(0, 1, 0)))
 							apg = true;
 						Physics* op = ob->GetComponent<Physics>();
 						if (op)
