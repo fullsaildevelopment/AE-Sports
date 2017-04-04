@@ -1057,13 +1057,13 @@ bool OldHexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
 	bottom.max = float3(hex.seg.m_Start.x + hh * 0.9f, hex.seg.m_Start.y + 0.33f, hex.seg.m_Start.z + hex.s * 0.4f);
 
 	float3 tc = SweptSpheretoAABB(s, top, vel);
-	if (!tc.isEquil(float3(0, 0, 0)))
+	if (!tc.isEqual(float3(0, 0, 0)))
 	{
 		vel *= tc;
 		return true;
 	}
 	float3 bc = SweptSpheretoAABB(s, bottom, vel);
-	if (!bc.isEquil(float3(0, 0, 0)))
+	if (!bc.isEqual(float3(0, 0, 0)))
 	{
 		vel *= bc;
 		return true;
@@ -1705,7 +1705,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	////////////////////////////////////////////////////////////////////////
 
 	//If not moveing we need to add epsilon so that inf does not happen
-	if (Sdirection.isEquil(float3(0, 0, 0)))
+	if (Sdirection.isEqual(float3(0, 0, 0)))
 	{
 		endPoint += 0.00001f;
 		startPoint -= 0.00001f;
@@ -2249,7 +2249,7 @@ float3 HexagonToCapsule(const Hexagon& hex, Capsule& c, float3& pastPos, float& 
 	capShex.m_Center = c.m_Segment.m_Start;
 	capShex.m_Radius = c.m_Radius;
 	float3 n = HexagonToSphere(hex, capShex, pastPos, time, mesh);
-	if (!n.isEquil(zeroF))
+	if (!n.isEqual(zeroF))
 	{
 		float3 diff = c.m_Segment.m_Start - capShex.m_Center;
 		diff = n * dot_product(diff, n);
