@@ -161,6 +161,7 @@
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
     <ClCompile Include="Magnet.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="MeterBar.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Physics.cpp" />

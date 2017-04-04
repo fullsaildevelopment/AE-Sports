@@ -228,6 +228,9 @@
     <ClCompile Include="TrailRender.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XTime.h">
