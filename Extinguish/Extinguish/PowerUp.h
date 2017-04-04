@@ -23,6 +23,7 @@ public:
 	void Shutdown() override;
 	void HandleEvent(Event* e) override;
 	void OnTriggerEnter(Collider* collider) override;
+	virtual std::string GetName() = 0;
 
 	//misc
 	virtual void Activate();
@@ -34,6 +35,7 @@ public:
 	PlayerController* GetPlayer();
 	int GetSpawnIndex();
 	int GetPosIndex();
+	float GetElapsed() { return (duration - timer) / duration; }
 
 	//setters
 	void SetDuration(float dur);
