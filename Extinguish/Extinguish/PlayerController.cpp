@@ -233,7 +233,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (boxCollider->collisionNormal.isEquil(UP))
+			if (boxCollider->collisionNormal.isEqual(UP))
 			{
 				if (justJumped)
 				{
@@ -256,7 +256,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (hexCollider->collisionNormal.isEquil(UP))
+		if (hexCollider->collisionNormal.isEqual(UP))
 		{
 			if (justJumped)
 			{
@@ -282,7 +282,7 @@ void PlayerController::OnCollisionStay(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (boxCollider->collisionNormal.isEquil(UP))
+			if (boxCollider->collisionNormal.isEqual(UP))
 			{
 				if (justJumped)
 				{
@@ -306,7 +306,7 @@ void PlayerController::OnCollisionStay(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (hexCollider->collisionNormal.isEquil(UP))
+		if (hexCollider->collisionNormal.isEqual(UP))
 		{
 			if (justJumped)
 			{
