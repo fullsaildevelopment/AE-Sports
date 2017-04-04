@@ -13,6 +13,7 @@
 #include "GamePadEvent.h"
 #include "Physics.h"
 #include "CanPlayEvent.h"
+#include "AI.h"
 
 //namespace Move
 //{
@@ -62,8 +63,9 @@ void Movement::Update(float _dt)
 	else 
 	{
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+		AI* ai = GetGameObject()->GetComponent<AI>();
 
-		if (animator)
+		if (animator && !ai)
 		{
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle" && !animator->GetState(animator->GetNextStateIndex()))
 			{

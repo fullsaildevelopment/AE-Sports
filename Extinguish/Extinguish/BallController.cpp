@@ -48,20 +48,22 @@ void BallController::Init()
 	//cache
 	transform = GetGameObject()->GetTransform();
 	physics = GetGameObject()->GetComponent<Physics>();
+
+	magnetMultiplier = 1.0f;
 }
 
 void BallController::LateInit()
 {
 	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
-	int size = (int)go.size();
-	for (int i = 0; i < size; ++i)
-	{
-		Crosse* c = go[i]->GetComponent<Crosse>();
-		if (c)
-		{
-			nets.push_back(c->GetGameObject()->GetTransform());
-		}
-	}
+	//int size = (int)go.size();
+	//for (int i = 0; i < size; ++i)
+	//{
+	//	Crosse* c = go[i]->GetComponent<Crosse>();
+	//	if (c)
+	//	{
+	//		nets.push_back(c->GetGameObject()->GetTransform());
+	//	}
+	//}
 }
 
 void BallController::Update(float _dt)
@@ -82,7 +84,7 @@ void BallController::Update(float _dt)
 		GetGameObject()->FindGameObject("Crosse1")->GetComponent<Crosse>()->Catch();
 	}
 
-	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+	if (isHeld && !isThrown && !transform->GetPosition().isEqual(float3( 0,0,0 )))
 		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)
@@ -116,27 +118,29 @@ void BallController::FixedUpdate(float _dt)
 	{
 		transform->AddVelocity(float3(0, 10, 0));
 	}
-	if (!isHeld && !isThrown)
-	{
-		float3 vel = transform->GetVelocity();
-		if (vel.isEquil(float3(0, 0, 0)))
-		{
-			transform->AddVelocity(float3(0, 10, 0));
-		}
-		int s = (int)nets.size();
-		for (int i = 0; i < s; ++i)
-		{
-			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
-			XMFLOAT4X4 net = *nets[i]->GetWorldP();
-			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
-			float l = dot_product(ball2net,ball2net);
-			if (l < 9.1f)
-			{
-				float s = 2 / l;
-				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
-			}
-		}
-	}
+
+	//do magnet stuff
+	//if (!isHeld && !isThrown)
+	//{
+	//	float3 vel = transform->GetVelocity();
+	//	if (vel.isEquil(float3(0, 0, 0)))
+	//	{
+	//		transform->AddVelocity(float3(0, 10, 0));
+	//	}
+	//	int s = (int)nets.size();
+	//	for (int i = 0; i < s; ++i)
+	//	{
+	//		XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
+	//		XMFLOAT4X4 net = *nets[i]->GetWorldP();
+	//		float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
+	//		float l = dot_product(ball2net,ball2net);
+	//		if (l < 9.1f * magnetMultiplier)
+	//		{
+	//			float s = 2 / l;
+	//			me->GetTransform()->AddVelocity(ball2net.normalize() * s);
+	//		}
+	//	}
+	//}
 }
 
 void BallController::HandleEvent(Event* e)

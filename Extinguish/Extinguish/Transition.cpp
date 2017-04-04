@@ -37,6 +37,7 @@ void Transition::Init(State* curState, State* nextState, float exitTime, float t
 
 bool Transition::Update(float _dt)
 {
+	bool result = true;
 	timer += _dt;
 
 	if (!doTransition)
@@ -86,6 +87,8 @@ bool Transition::Update(float _dt)
 			doTransition = false;
 			timer = 0.0f;
 		}
+
+		result = false;
 	}
 
 	//if (doTransition)
@@ -93,7 +96,7 @@ bool Transition::Update(float _dt)
 	//	cout << doTransition;
 	//}
 
-	return doTransition;
+	return result;
 }
 
 void Transition::AddCondition(Parameter* parameter)

@@ -19,6 +19,7 @@
 
 class GameObject;
 class HashString;
+class PowerUpManager;
 
 class Scene
 {

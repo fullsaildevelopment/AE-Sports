@@ -19,7 +19,9 @@ private:
 	Transform* transform;
 	Physics* physics;
 	
-	std::vector<Transform*> nets;
+	float magnetMultiplier;
+
+	//std::vector<Transform*> nets;
 
 	//members for scoring
 	GameObject* prevThrower = nullptr;
