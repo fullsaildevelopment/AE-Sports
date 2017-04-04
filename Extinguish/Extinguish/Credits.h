@@ -35,6 +35,6 @@ public:
 	void Shutdown();
 	void HandleEvent(Event* e);
 	void Render();
-
+	void UpdateSize(D2D1_SIZE_F rect);
 };
 

@@ -162,6 +162,11 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		UIRenderer* UI;
 
 		Renderer* R;
+
+		D2D1_SIZE_F rect;
+		rect.height = h;
+		rect.width = w;
+
 		int size = (int)go.size();
 		int UIsize = (int)uiGO.size();
 		for (int j = 0; j < size; ++j)
@@ -169,30 +174,38 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 			R = go[j]->GetComponent<Renderer>();
 			if (R)
 				R->SetProjection(projection);
+
+			if (go[j]->GetName() == "PowerUpManager")
+			{
+				go[j]->GetComponent<PowerUpManager>()->UpdateSize(rect);
+			}
 		}
-		D2D1_SIZE_F rect;
-		rect.height = h;
-		rect.width = w;
 		for (int j = 0; j < UIsize; ++j)
 		{
-			B = uiGO[j]->GetComponent<Button>();
-			M = uiGO[j]->GetComponent<MeterBar>();
-			UI = uiGO[j]->GetComponent<UIRenderer>();
-			if (B)
-			{
-				B->setRT(rect);
-				B->MakeRect();
-				B->setOrigin();
-				B->AdjustSize();
+			if (uiGO[j]->GetName() != "Credits") {
+				B = uiGO[j]->GetComponent<Button>();
+				M = uiGO[j]->GetComponent<MeterBar>();
+				UI = uiGO[j]->GetComponent<UIRenderer>();
+				if (B)
+				{
+					B->setRT(rect);
+					B->MakeRect();
+					B->setOrigin();
+					B->AdjustSize();
+				}
+				if (M)
+				{
+					M->setRT(rect);
+					M->MakeRects();
+				}
+				if (UI)
+				{
+					UI->ReInit();
+				}
 			}
-			if (M)
+			else
 			{
-				M->setRT(rect);
-				M->MakeRects();
-			}
-			if (UI)
-			{
-				UI->ReInit();
+				uiGO[j]->GetComponent<Credits>()->UpdateSize(rect);
 			}
 		}
 	}

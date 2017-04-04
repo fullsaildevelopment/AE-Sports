@@ -84,7 +84,7 @@ void BallController::Update(float _dt)
 		GetGameObject()->FindGameObject("Crosse1")->GetComponent<Crosse>()->Catch();
 	}
 
-	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+	if (isHeld && !isThrown && !transform->GetPosition().isEqual(float3( 0,0,0 )))
 		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)

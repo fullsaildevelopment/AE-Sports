@@ -8,6 +8,8 @@
 class Scene;
 class PowerUp;
 class DeviceResources;
+class UIRenderer;
+class Button;
 
 //this class will create all of the powerups in the beginning
 //it will figure out where to spawn the powerups and when
@@ -17,6 +19,14 @@ class PowerUpManager : public Component
 private:
 	//object members
 	std::vector<PowerUp*> powerUps;
+
+	//ui for powerups
+	// 0 == superjump
+	// 1 == shield
+	// 2 == magnet
+	std::vector<GameObject*> powerUpUIobjs;
+	std::vector<Button*> powerUpButtons;
+	std::vector<UIRenderer*> powerUpRenderers;
 
 	//basic members
 	float roundTimer[4];
@@ -35,4 +45,8 @@ public:
 
 	//misc
 	void HandleEvent(Event* e) override;
+
+	//ui
+	void Render();
+	void UpdateSize(D2D1_SIZE_F rect);
 };

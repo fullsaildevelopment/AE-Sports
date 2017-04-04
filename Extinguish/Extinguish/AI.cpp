@@ -290,13 +290,14 @@ void AI::Update(float _dt)
 			}
 		}
 
+		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Idle" && !anim->GetState(anim->GetNextStateIndex())) anim->SetTrigger("Idle");
 		if (!canMove) Idle();
 		if (!isAttacking) realTarget = nullptr;
 		if (startTimer) timer -= _dt;
 		if (!crosse) crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
 		if (!camera) camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
 
-		if (!eTank)
+		if (!eTank || !mGuy || !mGo2)
 		{
 			for (int i = 0; i < listOfEnemies.size(); ++i)
 			{
@@ -316,6 +317,21 @@ void AI::Update(float _dt)
 					mGuy = listOfMates[i];
 			}
 		}
+
+		/*if (!mGuy || !mGo2)
+		{
+			for (int i = 0; i < listOfMates.size(); ++i)
+			{
+				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
+					mGo2 = listOfMates[i];
+
+				else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+					mGuy = listOfMates[i];
+
+				else if (!mGuy && !listOfMates[i]->GetComponent<AI>())
+					mGuy = listOfMates[i];
+			}
+		}*/
 
 #pragma endregion
 
@@ -343,7 +359,7 @@ void AI::Update(float _dt)
 			// if the ball is too far from the goal
 			else if (dist.magnitude() > 34)
 			{
-				if (RunTo(myGoal, 15.0f))
+				if (RunTo(myGoal, 16.0f))
 				{
 					TurnTo(enemyGoal);
 					Idle();
@@ -411,6 +427,10 @@ void AI::Update(float _dt)
 
 				// if it's enemy
 				else Attack(ballClass->GetHolder());
+				//{
+				//	if (currState == guy) Attack(ballClass->GetHolder());
+				//	//else
+				//}
 			}
 
 			else

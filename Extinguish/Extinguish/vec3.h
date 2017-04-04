@@ -170,7 +170,7 @@ public:
       return *this;
    }
 
-   bool isEquil(reference r)
+   bool isEqual(reference r)
    {
 	   if (x == r.x && y == r.y && z == r.z) return true;
 	   return false;
