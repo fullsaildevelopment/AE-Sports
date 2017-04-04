@@ -136,77 +136,85 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 
 void PowerUpManager::Update(float _dt)
 {
-	for (int i = 0; i < NUM_OF_POS; ++i)
+
+	if (ResourceManager::GetSingleton()->IsServer())
 	{
-		roundTimer[i] += _dt;
-	}
-
-	const float3 spawnPositions[] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f}, //middle positions
-									  {-20.0f, 1.0f, 35.0f}, {-20.0f, 1.0f, -35.0f} }; //goal positions
-
-	bool triedSpawn[6] = {}; //used to say whether a powerup has tried to been spawned or not so far
-	bool triedPos[4] = {};
-
-	int posCount = 0;
-
-	for (int i = 0; i < NUM_OF_POS; ++i)
-	{
-		if (posUsed[i])
+		for (int i = 0; i < NUM_OF_POS; ++i)
 		{
-			++posCount;
+			roundTimer[i] += _dt;
 		}
-	}
 
-	if (posCount < NUM_OF_POS)
-	{
-		//spawn items
-		for (int i = 0; i < NUM_OF_POS - posCount; ++i)
+		const float3 spawnPositions[] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f}, //middle positions
+										  {-20.0f, 1.0f, 35.0f}, {-20.0f, 1.0f, -35.0f} }; //goal positions
+
+		bool triedSpawn[6] = {}; //used to say whether a powerup has tried to been spawned or not so far
+		bool triedPos[4] = {};
+
+		int posCount = 0;
+
+		for (int i = 0; i < NUM_OF_POS; ++i)
 		{
-			//figure which powerup
-			int randPowIndex;
-
-			do
+			if (posUsed[i])
 			{
-				randPowIndex = rand() % NUM_OF_UPS;
-			} while (isSpawned[randPowIndex]);
+				++posCount;
+			}
+		}
 
-			int randPosIndex = 0;
-
-			//figure which position
-			do
+		if (posCount < NUM_OF_POS)
+		{
+			//spawn items
+			for (int i = 0; i < NUM_OF_POS - posCount; ++i)
 			{
-				randPosIndex = rand() % NUM_OF_POS;
-			} while (posUsed[randPosIndex]);
+				//figure which powerup
+				int randPowIndex;
 
-			//make sure this specific position can spawn
-			if (roundTimer[randPosIndex] >= TIME_TIL_SPAWN)
-			{
-				//set position
-				powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
+				do
+				{
+					randPowIndex = rand() % NUM_OF_UPS;
+				} while (isSpawned[randPowIndex]);
 
-				//enable
-				powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
-				powerUps[randPowIndex]->SetEnabled(true);
-				powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+				int randPosIndex = 0;
 
-				//don't let it be spawned again til consumed
-				isSpawned[randPowIndex] = true;
+				//figure which position
+				do
+				{
+					randPosIndex = rand() % NUM_OF_POS;
+				} while (posUsed[randPosIndex]);
 
-				//prevent pos from being used again
-				posUsed[randPosIndex] = true;
-				powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
-				powerUps[randPowIndex]->SetPosIndex(randPosIndex);
+				//make sure this specific position can spawn
+				if (roundTimer[randPosIndex] >= TIME_TIL_SPAWN)
+				{
+					//set position
+					powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
 
-				cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
+					//enable
+					powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+					powerUps[randPowIndex]->SetEnabled(true);
+					powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 
-				//reset timer so it's every *blank* seconds til spawn for this position
-				roundTimer[randPosIndex] = 0.0f;
+					//don't let it be spawned again til consumed
+					isSpawned[randPowIndex] = true;
+
+					//prevent pos from being used again
+					posUsed[randPosIndex] = true;
+					powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
+					powerUps[randPowIndex]->SetPosIndex(randPosIndex);
+
+					cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
+
+					//reset timer so it's every *blank* seconds til spawn for this position
+					roundTimer[randPosIndex] = 0.0f;
+				}
 			}
 		}
 	}
-
 	//TODO: play a sound to indicate spawning
 
+
+	// update ui if player has specific powerup
+	// if has SuperJump 0
+	// if has Shield 1
+	// if has Magnet 2
 }
 
 //misc//
