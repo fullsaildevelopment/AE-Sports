@@ -605,6 +605,21 @@ void ResourceManager::LoadAndCreateShaders()
 						inputLayouts.push_back(bindInput);
 						inputLayoutsTable.Insert(curFileName);
 					}
+					else if (inputLayoutsTable.GetKey("Trail") == -1 && curFileName == "Trail")
+					{
+						Microsoft::WRL::ComPtr<ID3D11InputLayout> staticInput;
+
+						D3D11_INPUT_ELEMENT_DESC staticInputElementDescs[] =
+						{
+							{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+							{ "SIZE", 0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+						};
+
+						HRESULT inputResult = device->CreateInputLayout(staticInputElementDescs, ARRAYSIZE(staticInputElementDescs), &shaderData[0], shaderData.size(), staticInput.GetAddressOf());
+
+						inputLayouts.push_back(staticInput);
+						inputLayoutsTable.Insert(curFileName);
+					}
 					else if (inputLayoutsTable.GetKey("Static") == -1 && curFileName == "Static")
 					{
 						Microsoft::WRL::ComPtr<ID3D11InputLayout> staticInput;
@@ -677,6 +692,10 @@ void ResourceManager::LoadAndCreateShaders()
 					//remove prefix and then insert
 					curFileName.erase(0, 3);
 					computeShadersTable.Insert(curFileName);
+				}
+				else if (curFileName.find("GS") != -1)
+				{
+					HRESULT csResult = device->CreateGeometryShader(&shaderData[0], shaderData.size(), NULL, &geometryShader);
 				}
 			}
 		} while (::FindNextFile(hFileFind, &fileData));
