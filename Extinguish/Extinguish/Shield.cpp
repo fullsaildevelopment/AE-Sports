@@ -16,3 +16,8 @@ void Shield::Deactivate()
 {
 	PowerUp::Deactivate();
 }
+
+std::string Shield::GetName()
+{
+	return name;
+}
