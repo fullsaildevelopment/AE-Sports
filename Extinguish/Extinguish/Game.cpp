@@ -1977,7 +1977,7 @@ void Game::AssignPlayers()
 			clientID = 5;
 
 		// find team player selected
-		for (unsigned int i = 0; i < 2; ++i)
+		for (unsigned int i = 0; i < 8; ++i)
 		{
 			// set mage 1 to player if red team
 			if (team == TEAM_A && i != 0)

@@ -215,10 +215,10 @@ void SphereCollider::FixedUpdate(float _dt)
 				float3 bvel = tgt->GetVelocity() * _dt;
 				float3 svel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
 				float3 bsvel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
-				if (!vel.isEquil(float3(0, 0, 0)) && svel.isEquil(float3().make_zero()))
+				if (!vel.isEqual(float3(0, 0, 0)) && svel.isEqual(float3().make_zero()))
 				{
 					float3 n = SweptSpheretoSphere(s, os, vel);
-					if (!n.isEquil(float3(0, 0, 0)))
+					if (!n.isEqual(float3(0, 0, 0)))
 					{
 						collisionNormal = n;
 						tgt->SetVelocity(vel / _dt);
@@ -238,7 +238,7 @@ void SphereCollider::FixedUpdate(float _dt)
 						tg->OnCollisionExit(sphere);
 					}
 				}
-				else if (!vel.isEquil(float3(0, 0, 0)) && !svel.isEquil(float3().make_zero()))
+				else if (!vel.isEqual(float3(0, 0, 0)) && !svel.isEqual(float3().make_zero()))
 				{
 					if (SweptSpheretoSweptSphere(s, os, vel, svel))
 					{
