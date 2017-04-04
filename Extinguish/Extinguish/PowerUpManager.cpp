@@ -75,7 +75,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		shield->AddComponent(shieldRenderer);
 		shieldRenderer->Init("Shield", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
 		shieldRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
-		SuperJump* shieldC = new SuperJump();
+		Shield* shieldC = new Shield();
 		shield->AddComponent(shieldC);
 		SphereCollider* shieldCollider = new SphereCollider(1.3f, shield, true);
 		shield->AddSphereCollider(shieldCollider);

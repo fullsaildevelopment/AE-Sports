@@ -9,6 +9,7 @@
 #include "SoundEvent.h"
 #include "SoundEngine.h"
 #include "SphereCollider.h"
+#include "AI.h"
 //#include "BoxCollider.h"
 
 //structors//
@@ -53,11 +54,14 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 			if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 			{
 				player = capsCollider->GetGameObject()->GetComponent<PlayerController>();
+				AI* ai = capsCollider->GetGameObject()->GetComponent<AI>();
 
 				//don't allow AI to get powerup
-				if (player)
+				if (player && !ai)
 				{
 					isActivated = true;
+					timer = 0.0f;
+
 					Activate();
 
 					//stop rendering
