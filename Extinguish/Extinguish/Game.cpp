@@ -841,7 +841,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 	gameBall->SetTag("Ball");
-	TrailRender* ballTrail = new TrailRender(gameBall, devResources, 300, 0.21f, 0.0f);
+	TrailRender* ballTrail = new TrailRender(gameBall, devResources, 10, 0.21f, 0.0f);
 	ballTrail->SetProjection(projection);
 	gameBall->AddComponent(ballTrail);
 
@@ -1030,7 +1030,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* bottomWall = new GameObject();
 	bottomWall->Init("BottomWall");
 	basic->AddGameObject(bottomWall);
-	bottomWall->InitTransform(identity, { 0, 0, (float)-row + 12.0f }, { 3.14195f * 0.5f, 3.14195f, 0 }, { 300,  300,  300 }, nullptr, nullptr, nullptr);
+	bottomWall->InitTransform(identity, { 0, 0, (float)-row + 12.0f }, { 3.14195f * 0.5f, 3.14195f, 0 }, { 0.01f,  0.01f,  0.01f }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer4 = new Renderer();
 	bottomWall->AddComponent(WallRenderer4);
 	WallRenderer4->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1128,7 +1128,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* NewGoal = new GameObject();
 	NewGoal->Init("NewGoal");
 	basic->AddGameObject(NewGoal);
-	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0, 0, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
+	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 3.14195f * 0.5f, 0, 0 }, { 10, 10, 10 }, nullptr, nullptr, nullptr);
 	Renderer* NewGoalRenderer = new Renderer();
 	NewGoal->AddComponent(NewGoalRenderer);
 	NewGoalRenderer->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
