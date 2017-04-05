@@ -38,3 +38,8 @@ void Magnet::Deactivate()
 
 	printf("Magnet deactivated\n");
 }
+
+std::string Magnet::GetName()
+{
+	return name;
+}
