@@ -28,6 +28,8 @@ public:
 	//misc
 	virtual void Activate();
 	virtual void Deactivate();
+	virtual void Enable();
+	virtual void Disable();
 
 	//getters
 	float GetDuration();

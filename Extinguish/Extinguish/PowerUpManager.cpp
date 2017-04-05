@@ -75,7 +75,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		shield->AddComponent(shieldRenderer);
 		shieldRenderer->Init("Shield", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
 		shieldRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
-		Shield* shieldC = new Shield();
+		Shield* shieldC = new Shield(scene);
 		shield->AddComponent(shieldC);
 		SphereCollider* shieldCollider = new SphereCollider(1.3f, shield, true);
 		shield->AddSphereCollider(shieldCollider);
@@ -190,9 +190,10 @@ void PowerUpManager::Update(float _dt)
 					powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
 
 					//enable
-					powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
-					powerUps[randPowIndex]->SetEnabled(true);
-					powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+					//powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+					//powerUps[randPowIndex]->SetEnabled(true);
+					//powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+					powerUps[randPowIndex]->Enable();
 
 					//don't let it be spawned again til consumed
 					isSpawned[randPowIndex] = true;
@@ -276,9 +277,7 @@ void PowerUpManager::HandleEvent(Event* e)
 		//disable them
 		for (i = 0; i < powerUps.size(); ++i)
 		{
-			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-			powerUps[i]->SetEnabled(false);
-			powerUps[i]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+			powerUps[i]->Disable();
 		}
 
 		return;
