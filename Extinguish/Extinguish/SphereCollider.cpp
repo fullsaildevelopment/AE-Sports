@@ -8,12 +8,19 @@
 SphereCollider::SphereCollider(float r, GameObject* o, bool t) : Collider(o, t, CTSphere)
 {
 	radius = r;
+	offset = float3(0, 0, 0);
 }
 
 SphereCollider::SphereCollider(float r, GameObject* o, bool t, float3 v) : Collider(o, t, CTSphere)
 {
 	radius = r;
 	GetGameObject()->GetTransform()->AddVelocity(v * 3);
+	offset = float3(0, 0, 0);
+}
+
+void SphereCollider::SetOffset(float3 o)
+{
+	offset = o;
 }
 
 void SphereCollider::FixedUpdate(float _dt)
@@ -64,7 +71,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel * c / _dt, s.m_Center, true);
+						op->HandlePhysics(tgt, vel * c / _dt, s.m_Center - offset, true);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
@@ -145,7 +152,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, s.m_Center, true);
+						op->HandlePhysics(tgt, vel, s.m_Center - offset, true);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
@@ -261,7 +268,7 @@ void SphereCollider::FixedUpdate(float _dt)
 Sphere SphereCollider::GetSphere()
 {
 	Sphere s;
-	s.m_Center = float3(0, 0, 0);
+	s.m_Center = offset;
 	s.m_Radius = radius;
 	return s;
 }
@@ -273,7 +280,7 @@ Sphere SphereCollider::GetWorldSphere()
 	}
 	XMFLOAT4X4* m = transform->GetWorldP();
 	Sphere s;
-	s.m_Center = float3(m->_41, m->_42, m->_43);
+	s.m_Center += float3(m->_41, m->_42, m->_43);
 	s.m_Radius = radius;
 	return s;
 }

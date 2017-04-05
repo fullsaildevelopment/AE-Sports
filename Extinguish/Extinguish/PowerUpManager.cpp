@@ -108,7 +108,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	L"../Assets/UI/Icons/Shield.png",
 	L"../Assets/UI/Icons/Magnet.png"
 	};
-
+#if !DEBUG_GRAPHICS
 	for (unsigned int i = 0; i < 3; ++i)
 	{
 		GameObject * pUI = new GameObject();
@@ -133,7 +133,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		powerUpButtons.push_back(theButton);
 		powerUpRenderers.push_back(tRender);
 	}
-
+#endif
 }
 
 void PowerUpManager::Update(float _dt)
@@ -215,12 +215,9 @@ void PowerUpManager::Update(float _dt)
 
 
 	// update ui if player has specific powerup
-	// if has SuperJump 0
-	// if has Shield 1
-	// if has Magnet 2
 	int uiIndex = 0;
 	bool sjump, shield, magnet;
-	for (unsigned int i = 0; i < NUM_OF_UPS; ++i)
+	for (unsigned int i = 0; i < (unsigned int)NUM_OF_UPS; ++i)
 	{
 		if (powerUps[i]->GetName() == "SuperJump")
 		{
@@ -300,22 +297,23 @@ void PowerUpManager::HandleEvent(Event* e)
 
 void PowerUpManager::Render()
 {
-	//powerUpRenderers[0]->getUIDevCon()->BeginDraw();
 	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
 	{
 		powerUpRenderers[i]->Render();
 	}
-	//powerUpRenderers[0]->getUIDevCon()->EndDraw();
 }
 
 void PowerUpManager::UpdateSize(D2D1_SIZE_F rect)
 {
+	float ratio = 1.0f;
 	for (unsigned int i = 0; i < powerUpButtons.size(); ++i)
 	{
 		powerUpButtons[i]->setRT(rect);
+		powerUpButtons[i]->AdjustSize();
+		if (ratio == 1.0f)
+			ratio = powerUpButtons[i]->GetRatio();
 		powerUpButtons[i]->MakeRect();
 		powerUpButtons[i]->setOrigin();
-		powerUpButtons[i]->AdjustSize();
-		powerUpRenderers[i]->ReInit();
+		powerUpRenderers[i]->ReInit(ratio);
 	}
 }
