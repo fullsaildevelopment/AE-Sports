@@ -34,7 +34,7 @@ void AI::OnCollisionEnter(Collider *obj)
 		{
 			CapsuleCollider *col = (CapsuleCollider*)obj;
 
-			if (obj->GetGameObject() == realTarget)
+			if (obj->GetGameObject() == realTarget && !obj->GetGameObject()->GetComponent<AnimatorController>()->GetTrigger("Stumble")->GetTrigger())
 			{
 				if (!realTarget->GetComponent<PlayerController>()->IsInvincible())
 				{
@@ -251,6 +251,8 @@ void AI::Update(float _dt)
 		if (ogTarget)
 		{
 			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
+			Param::Trigger *p = animator->GetTrigger("Stumble");
+			bool a = animator->GetTrigger("Stumble")->GetTrigger();
 
 			// if your current anim isn't stumble AND ???the the trigger isn't stumble???
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
