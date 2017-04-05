@@ -25,7 +25,7 @@ private:
 	};
 
 
-	std::vector<std::vector<Node *>> nodes; // will be an array
+	std::vector<std::vector<Node *>> nodes; // all the nodes in the map
 	int numRows; // number of rows
 	int numCols; // number of columns
 
