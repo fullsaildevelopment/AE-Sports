@@ -67,6 +67,8 @@ private:
 	unsigned int sceneIndex;
 	std::vector<int> helperIndex;
 
+	float ratio = 1.0f;
+
 	// for gamepad
 	Button * up, * down, * left, * right;
 
@@ -129,6 +131,7 @@ public:
 
 	float getOriginX() { return originX; }
 	float getOriginY() { return originY; }
+	float GetRatio() { return ratio; }
 
 	bool isHovered() { return hovered; }
 	bool isSelected() { return selected; }
@@ -188,6 +191,7 @@ public:
 	void AdjustSize()
 	{
 		float tWidth, tHeight;
+		ratio = (rtSize.width / oldSize.width);
 		tWidth = width * (rtSize.width / oldSize.width);
 		tHeight = height * (rtSize.height / oldSize.height);
 
