@@ -108,7 +108,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	L"../Assets/UI/Icons/Shield.png",
 	L"../Assets/UI/Icons/Magnet.png"
 	};
-
+#if !DEBUG_GRAPHICS
 	for (unsigned int i = 0; i < 3; ++i)
 	{
 		GameObject * pUI = new GameObject();
@@ -133,7 +133,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		powerUpButtons.push_back(theButton);
 		powerUpRenderers.push_back(tRender);
 	}
-
+#endif
 }
 
 void PowerUpManager::Update(float _dt)
