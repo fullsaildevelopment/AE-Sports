@@ -561,7 +561,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 
 	if (physics)
 	{
-		pastPos = physics->pastPos;
+		pastPos = physics->pastPos + sphere->GetOffset();
 	}
 
 	//Top

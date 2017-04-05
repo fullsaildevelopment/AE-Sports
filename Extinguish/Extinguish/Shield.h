@@ -13,6 +13,7 @@ private:
 
 	//object members
 	GameObject* shieldBubble;
+	//GameObject* shieldCollider;
 	SphereCollider* collider;
 
 public:
