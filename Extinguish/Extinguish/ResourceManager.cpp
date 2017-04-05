@@ -853,7 +853,7 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
 
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoal\\ArenaGoal.fbx", "ArenaGoal");
-	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall.fbx", "ArenaGoalWall");
+	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall.fbx", "ArenaGoalWall");
 
 #endif
 }
