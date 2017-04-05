@@ -50,7 +50,7 @@ public:
 	~UIRenderer();
 	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor);
 	void Init(bool isButton, DeviceResources* deviceResources, MeterBar * meter);
-	void ReInit();
+	void ReInit(float ratio);
 	void Update(float _dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);

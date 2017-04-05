@@ -75,7 +75,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		shield->AddComponent(shieldRenderer);
 		shieldRenderer->Init("Shield", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
 		shieldRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
-		SuperJump* shieldC = new SuperJump();
+		Shield* shieldC = new Shield();
 		shield->AddComponent(shieldC);
 		SphereCollider* shieldCollider = new SphereCollider(1.3f, shield, true);
 		shield->AddSphereCollider(shieldCollider);
@@ -127,7 +127,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		tRender->InitMetrics();
 		theButton->setOrigin();
 		tRender->DecodeBitmap(bitmaps[i]);
-		tRender->setOpacity(1.0f);
+		tRender->setOpacity(0.0f);
 
 		powerUpUIobjs.push_back(pUI);
 		powerUpButtons.push_back(theButton);
@@ -214,44 +214,46 @@ void PowerUpManager::Update(float _dt)
 
 
 	// update ui if player has specific powerup
-	// if has SuperJump 0
-	// if has Shield 1
-	// if has Magnet 2
-	/*int uiIndex = 0;
+	int uiIndex = 0;
 	bool sjump, shield, magnet;
-	for (unsigned int i = 0; i < NUM_OF_UPS; ++i)
+	for (unsigned int i = 0; i < (unsigned int)NUM_OF_UPS; ++i)
 	{
-		if (powerUps[i]->GetGameObject()->GetName() == "SuperJump")
+		if (powerUps[i]->GetName() == "SuperJump")
 		{
 			uiIndex = 0;
 		}
-		else if (powerUps[i]->GetGameObject()->GetName() == "Shield")
+		else if (powerUps[i]->GetName() == "Shield")
 		{
 			uiIndex = 1;
 		}
-		else
+		else if (powerUps[i]->GetName() == "Magnet")
 		{
 			uiIndex = 2;
 		}
 
-		if (powerUps[i]->GetPlayer()->GetPlayerID() == Game::GetClientID())
+		if (powerUps[i]->GetPlayer())
 		{
-			float newOpacity = (powerUpRenderers[uiIndex]->getOpacity() * powerUps[i]->GetDuration() - _dt) / powerUps[i]->GetDuration();
-			powerUpRenderers[uiIndex]->setOpacity(newOpacity);
+			if (powerUps[i]->GetPlayer()->GetPlayerID() == Game::GetClientID())
+			{
+				float newOpacity = powerUps[i]->GetElapsed();
+				if (newOpacity < 0.0f)
+					newOpacity = 0.0f;
+				powerUpRenderers[uiIndex]->setOpacity(newOpacity);
 
-			if (uiIndex == 0)
-				sjump = true;
-			else if (uiIndex == 1)
-				shield = true;
-			else if (uiIndex == 2)
-				magnet = true;
+				if (uiIndex == 0)
+					sjump = true;
+				else if (uiIndex == 1)
+					shield = true;
+				else if (uiIndex == 2)
+					magnet = true;
+			}
 		}
 		else
 		{
 			if ((uiIndex == 0 && !sjump) || (uiIndex == 1 && !shield) || (uiIndex == 3 && !magnet))
 				powerUpRenderers[uiIndex]->setOpacity(0.0f);
 		}
-	}*/
+	}
 }
 
 //misc//
@@ -296,22 +298,23 @@ void PowerUpManager::HandleEvent(Event* e)
 
 void PowerUpManager::Render()
 {
-	//powerUpRenderers[0]->getUIDevCon()->BeginDraw();
 	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
 	{
 		powerUpRenderers[i]->Render();
 	}
-	//powerUpRenderers[0]->getUIDevCon()->EndDraw();
 }
 
 void PowerUpManager::UpdateSize(D2D1_SIZE_F rect)
 {
+	float ratio = 1.0f;
 	for (unsigned int i = 0; i < powerUpButtons.size(); ++i)
 	{
 		powerUpButtons[i]->setRT(rect);
+		powerUpButtons[i]->AdjustSize();
+		if (ratio == 1.0f)
+			ratio = powerUpButtons[i]->GetRatio();
 		powerUpButtons[i]->MakeRect();
 		powerUpButtons[i]->setOrigin();
-		powerUpButtons[i]->AdjustSize();
-		powerUpRenderers[i]->ReInit();
+		powerUpRenderers[i]->ReInit(ratio);
 	}
 }

@@ -64,13 +64,16 @@ UIRenderer::~UIRenderer()
 		delete theButton;
 }
 
-void UIRenderer::ReInit()
+void UIRenderer::ReInit(float ratio)
 {
 	pDWriteFactory = devResources->GetWriteFactory();
 	pD2DFactory = devResources->GetID2D1Factory();
 	layoutRect = devResources->GetRect();
 	pRT = devResources->GetRenderTarget();
 	d2DevContext = devResources->Get2DContext();
+	if (ratio != 1.0f)
+		SetFontSize(getFontSize() * ratio);
+
 }
 
 void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor)
