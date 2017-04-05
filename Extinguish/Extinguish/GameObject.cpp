@@ -91,6 +91,22 @@ void GameObject::AddSphereCollider(SphereCollider* s)
 	spherecolliders.push_back(s);
 }
 
+void GameObject::RemoveSphereCollider(SphereCollider* s)
+{
+	int i = 0;
+	for (; i < spherecolliders.size(); ++i)
+	{
+		if (s == spherecolliders[i])
+		{
+			break;
+		}
+	}
+
+	if (i < spherecolliders.size())
+	{
+		spherecolliders.erase(spherecolliders.begin() + i);
+	}
+}
 
 void GameObject::AddCapsuleCollider(CapsuleCollider* c)
 {

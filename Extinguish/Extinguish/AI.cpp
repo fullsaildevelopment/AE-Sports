@@ -36,33 +36,36 @@ void AI::OnCollisionEnter(Collider *obj)
 
 			if (obj->GetGameObject() == realTarget)
 			{
-				startTimer = true;
-
-				// dropping the ball
-				if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
-					ballClass->DropBall(realTarget);
-
-				// disabling movement
-				if (realTarget->GetComponent<AI>())
-					realTarget->GetComponent<AI>()->SetCanMove(false);
-
-				else
+				if (!realTarget->GetComponent<PlayerController>()->IsInvincible())
 				{
-					realTarget->GetComponent<Movement>()->SetCanMove(false);
+					startTimer = true;
 
-					//move the player's camera to match stumble
-					Transform* otherCamera = realTarget->GetTransform()->GetChild(0);
-					float3 translation = otherCamera->GetForwardf3();
-					translation.x = -translation.x;
-					translation.y = -3.0f;
-					translation.z = -translation.z * 3.0f;
-					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+					// dropping the ball
+					if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
+						ballClass->DropBall(realTarget);
+
+					// disabling movement
+					if (realTarget->GetComponent<AI>())
+						realTarget->GetComponent<AI>()->SetCanMove(false);
+
+					else
+					{
+						realTarget->GetComponent<Movement>()->SetCanMove(false);
+
+						//move the player's camera to match stumble
+						Transform* otherCamera = realTarget->GetTransform()->GetChild(0);
+						float3 translation = otherCamera->GetForwardf3();
+						translation.x = -translation.x;
+						translation.y = -3.0f;
+						translation.z = -translation.z * 3.0f;
+						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+					}
+
+					// triggering the animation
+					realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
+					ogTarget = realTarget;
+					realTarget = nullptr;
 				}
-
-				// triggering the animation
-				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
-				ogTarget = realTarget;
-				realTarget = nullptr;
 			}
 		}
 	}
