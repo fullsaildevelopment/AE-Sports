@@ -20,7 +20,7 @@ TrailRender::TrailRender(GameObject* o, DeviceResources* devRes, int numPoints, 
 	for (int i = 0; i < _numTrailPoints; ++i)
 	{
 		_points[i].position = position;
-		_points[i].size = 1;
+		_points[i].size = 0;
 	}
 	_mvpData.model = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	_vertexBuffer = ResourceManager::GetSingleton()->CreateVertexBuffer(_points, _numTrailPoints, sizeof(TrailPoint));
@@ -31,9 +31,9 @@ TrailRender::~TrailRender()
 	_vertexBuffer->Release();
 }
 
-void TrailRender::FixedUpdate(float dt)
+void TrailRender::Update(float dt)
 {
-	memmove_s(_points + 1u,sizeof(TrailPoint) * _numTrailPoints,_points,sizeof(TrailPoint) * _numTrailPoints);
+	memmove_s(_points + 1u,sizeof(TrailPoint) * (_numTrailPoints - 1),_points,sizeof(TrailPoint) * (_numTrailPoints - 1));
 
 	_points[0].position = float4(GetGameObject()->GetTransform()->GetWorldPosition(), 1);
 	float Scale = GetGameObject()->GetTransform()->GetScale().x;
@@ -63,7 +63,7 @@ void TrailRender::Render()
 	devContext->GSSetShader(_geometryShader, NULL, NULL);
 	devContext->PSSetShader(_pixelShader, NULL, NULL);
 
-	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	devContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ);
 
 	UINT offset = 0;
 	UINT stride = sizeof(TrailPoint);

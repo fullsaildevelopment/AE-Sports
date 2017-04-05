@@ -761,7 +761,7 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 					if (op)
 					{
 						St = smallT;
-						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
+						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center - sphere->GetOffset(), true, n);
 						if (!CollidingWith[f])
 						{
 							tg->OnCollisionEnter(sphere);
@@ -818,7 +818,7 @@ void HexagonCollider::FixedUpdate(float dt)
 						Physics* op = ob->GetComponent<Physics>();
 						if (op)
 						{
-							op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
+							op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center - sphere->GetOffset(), true, n);
 							if (!CollidingWith[i])
 							{
 								tg->OnCollisionEnter(sphere);
