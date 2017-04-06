@@ -1755,14 +1755,14 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 			{
 				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
-				pastPos = s.m_Center;
+				//pastPos = s.m_Center;
 				return planes[0].n;
 			}
 			if (planes[0].p.y < endPoint.y && distFromTop.y < 0.06f && Sdirection.y == 0)
 			{
 				s.m_Center.y = planes[0].p.y +  0.0018f;
 				Stime = 1;
-				pastPos = s.m_Center;
+				//pastPos = s.m_Center;
 				return planes[0].n;
 			}
 		}

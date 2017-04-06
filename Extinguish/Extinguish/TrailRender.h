@@ -29,7 +29,7 @@ private:
 public:
 	TrailRender(GameObject* o, DeviceResources* devRes, int numPoints = 5, float startSize = 1, float endSize = 0);
 	~TrailRender();
-	void FixedUpdate(float dt) override;
+	void Update(float dt) override;
 	void Render();
 
 	void SetView(XMFLOAT4X4 view)
