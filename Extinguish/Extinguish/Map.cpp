@@ -58,7 +58,23 @@ Map::~Map()
 
 Map::Node *Map::FindClosest(float3 pos)
 {
-	
+	float dist = 98700;
+	Node *closest = nullptr;
 
-	return nullptr;
+	for (int row = 0; row < nodes.size(); ++row)
+	{
+		for (int col = 0; col < nodes.size(); ++col)
+		{
+			float3 tmp = (*nodes[row][col]->pos - pos);
+			float dot = dot_product(tmp, tmp);
+
+			if (dot < dist)
+			{
+				dist = dot;
+				closest = nodes[row][col];
+			}
+		}
+	}
+
+	return closest;
 }
