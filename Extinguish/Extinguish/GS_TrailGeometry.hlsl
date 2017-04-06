@@ -44,9 +44,9 @@ void main(lineadj GSInput input[4], inout TriangleStream< GSOutput > output)
 	float3 rightAxisLeft = cross(normDirLeft, up);
 	float3 rightAxis = cross(normDir, up);
 	float3 rightAxisRight = cross(normDirRight, up);
-	float3 upAxis = saturate(normalize(cross(rightAxis, normDir)));
-	float3 upAxisLeft = saturate(normalize(cross(rightAxisLeft, normDirLeft)));
-	float3 upAxisRight = saturate(normalize(cross(rightAxisRight, normDirRight)));
+	float3 upAxis = clamp(normalize(cross(rightAxis, normDir)), -1, 1);
+	float3 upAxisLeft = clamp(normalize(cross(rightAxisLeft, normDirLeft)), -1, 1);
+	float3 upAxisRight = clamp(normalize(cross(rightAxisRight, normDirRight)), -1, 1);
 	upAxisLeft = normalize(upAxisLeft + upAxis);
 	upAxisRight = normalize(upAxisRight + upAxis);
 	GSOutput element[4] = { { 0,0,0,1 }, { 0,0,0,1 }, { 0,0,0,1 }, { 0,0,0,1 } };
