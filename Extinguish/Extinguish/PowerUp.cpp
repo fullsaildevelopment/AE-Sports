@@ -97,6 +97,20 @@ void PowerUp::Deactivate()
 	isActivated = false;
 }
 
+void PowerUp::Enable()
+{
+	GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+	SetEnabled(true);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+}
+
+void PowerUp::Disable()
+{
+	GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+	SetEnabled(false);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+}
+
 //getters//
 float PowerUp::GetDuration()
 {

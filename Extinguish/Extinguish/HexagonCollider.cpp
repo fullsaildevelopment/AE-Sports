@@ -552,11 +552,18 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 {
 	GameObject* ob = objects[f];
 	Sphere s = sphere->GetWorldSphere();
-	float3 pastPos = objects[f]->GetComponent<Physics>()->pastPos;
+	Physics* physics = objects[f]->GetComponent<Physics>();
+	float3 pastPos;
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	float smallestT = 100;
 	bool collided = false;
+
+	if (physics)
+	{
+		pastPos = physics->pastPos + sphere->GetOffset();
+	}
+
 	//Top
 	if (CheckSphereAABB((int)floor(row * 0.49f) * col, row * col - 1, s))
 	{

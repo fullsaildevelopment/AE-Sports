@@ -183,101 +183,128 @@ void SphereCollider::FixedUpdate(float _dt)
 		SphereCollider* sphere = ob->GetComponent<SphereCollider>();
 		if (sphere)
 		{
-			if (sphere->isTrigger() || isTrigger())
+			if (sphere->isEnabled())
 			{
-				if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
+				if (sphere->isTrigger() || isTrigger())
 				{
-					if (!CollidingWith[i])
+					if (SphereToSphere(sphere->GetWorldSphere(), GetWorldSphere()))
 					{
-						ob->OnTriggerEnter(this);
-						tg->OnTriggerEnter(sphere);
+						if (!CollidingWith[i])
+						{
+							ob->OnTriggerEnter(this);
+							tg->OnTriggerEnter(sphere);
+						}
+						else if (CollidingWith[i])
+						{
+							ob->OnTriggerStay(this);
+							tg->OnTriggerStay(sphere);
+						}
+						continue;
 					}
-					else if (CollidingWith[i])
+					else
 					{
-						ob->OnTriggerStay(this);
-						tg->OnTriggerStay(sphere);
+						if (CollidingWith[i])
+						{
+							ob->OnTriggerExit(this);
+							tg->OnTriggerExit(sphere);
+						}
 					}
 				}
+
 				else
 				{
-					if (CollidingWith[i])
+					Sphere s = GetWorldSphere();
+					Sphere os = sphere->GetWorldSphere();
+					float3 vel = tgt->GetVelocity() * _dt;
+					float3 bvel = tgt->GetVelocity() * _dt;
+					float3 svel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
+					float3 bsvel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
+					/*if (!vel.isEqual(float3(0, 0, 0)) && svel.isEqual(float3().make_zero()))
 					{
-						ob->OnTriggerExit(this);
-						tg->OnTriggerExit(sphere);
-					}
-				}
-			}
-
-			else
-			{
-				Sphere s = GetWorldSphere();
-				Sphere os = sphere->GetWorldSphere();
-				float3 vel = tgt->GetVelocity() * _dt;
-				float3 bvel = tgt->GetVelocity() * _dt;
-				float3 svel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
-				float3 bsvel = sphere->GetGameObject()->GetTransform()->GetVelocity() * _dt;
-				if (!vel.isEqual(float3(0, 0, 0)) && svel.isEqual(float3().make_zero()))
-				{
-					float3 n = SweptSpheretoSphere(s, os, vel);
-					if (!n.isEqual(float3(0, 0, 0)))
-					{
-						Physics* op = tg->GetComponent<Physics>();
-						if (op)
+						float3 n = SweptSpheretoSphere(s, os, vel);
+						if (!n.isEqual(float3(0, 0, 0)))
 						{
-							op->HandlePhysics(tgt, vel / _dt, s.m_Center - offset, true, n);
 							collisionNormal = n;
+							tgt->SetVelocity(vel / _dt);
+							tgt->SetPosition(s.m_Center);
 							if (!CollidingWith[i])
 							{
 								ob->OnCollisionEnter(this);
 								tg->OnCollisionEnter(sphere);
 								CollidingWith[i] = true;
 							}
+							continue;
 						}
-					}
-					else if (CollidingWith[i])
+						if (CollidingWith[i])
+						{
+							CollidingWith[i] = false;
+							ob->OnCollisionExit(this);
+							tg->OnCollisionExit(sphere);
+						}
+					}*/
+					if (!vel.isEqual(float3(0, 0, 0)) && svel.isEqual(float3().make_zero()))
 					{
-						CollidingWith[i] = false;
-						ob->OnCollisionExit(this);
-						tg->OnCollisionExit(sphere);
-					}
-				}
-				else if (!vel.isEqual(float3(0, 0, 0)) && !svel.isEqual(float3().make_zero()))
-				{
-					if (SweptSpheretoSweptSphere(s, os, vel, svel))
-					{
-						Physics* op = tg->GetComponent<Physics>();
-						Physics* oop = ob->GetComponent<Physics>();
-						if (op && oop)
+						float3 n = SweptSpheretoSphere(s, os, vel);
+						if (!n.isEqual(float3(0, 0, 0)))
 						{
-							op->HandlePhysics(tgt, vel / _dt, s.m_Center - offset, true);
-							oop->HandlePhysics(ob->GetTransform(), svel / _dt, os.m_Center - sphere->offset, true);
-						}
-						else
-						{
-							tgt->SetVelocity(vel / _dt);
-							tgt->SetPosition(s.m_Center - offset);
-							ob->GetTransform()->SetVelocity(svel / _dt);
-							ob->GetTransform()->SetPosition(os.m_Center - offset);
-						}
-						if (!CollidingWith[i])
-						{
-							ob->OnCollisionEnter(this);
-							tg->OnCollisionEnter(sphere);
-							CollidingWith[i] = true;
+							Physics* op = tg->GetComponent<Physics>();
+							if (op)
+							{
+								op->HandlePhysics(tgt, vel / _dt, s.m_Center - offset, true, n);
+								collisionNormal = n;
+								if (!CollidingWith[i])
+								{
+									ob->OnCollisionEnter(this);
+									tg->OnCollisionEnter(sphere);
+									CollidingWith[i] = true;
+								}
+							}
 						}
 						else if (CollidingWith[i])
 						{
-							ob->OnCollisionStay(this);
-							tg->OnCollisionStay(sphere);
+							CollidingWith[i] = false;
+							ob->OnCollisionExit(this);
+							tg->OnCollisionExit(sphere);
 						}
-						checked.push_back(sphere);
-						sphere->checked.push_back((Collider*)this);
 					}
-					else if (CollidingWith[i])
+					else if (!vel.isEqual(float3(0, 0, 0)) && !svel.isEqual(float3().make_zero()))
 					{
-						CollidingWith[i] = false;
-						ob->OnCollisionExit(this);
-						tg->OnCollisionExit(sphere);
+						if (SweptSpheretoSweptSphere(s, os, vel, svel))
+						{
+							Physics* op = tg->GetComponent<Physics>();
+							Physics* oop = ob->GetComponent<Physics>();
+							if (op && oop)
+							{
+								op->HandlePhysics(tgt, vel / _dt, s.m_Center - offset, true);
+								oop->HandlePhysics(ob->GetTransform(), svel / _dt, os.m_Center - sphere->offset, true);
+							}
+							else
+							{
+								tgt->SetVelocity(vel / _dt);
+								tgt->SetPosition(s.m_Center - offset);
+								ob->GetTransform()->SetVelocity(svel / _dt);
+								ob->GetTransform()->SetPosition(os.m_Center - sphere->offset);
+							}
+							if (!CollidingWith[i])
+							{
+								ob->OnCollisionEnter(this);
+								tg->OnCollisionEnter(sphere);
+								CollidingWith[i] = true;
+							}
+							else if (CollidingWith[i])
+							{
+								ob->OnCollisionStay(this);
+								tg->OnCollisionStay(sphere);
+							}
+							checked.push_back(sphere);
+							sphere->checked.push_back((Collider*)this);
+						}
+						else if (CollidingWith[i])
+						{
+							CollidingWith[i] = false;
+							ob->OnCollisionExit(this);
+							tg->OnCollisionExit(sphere);
+						}
 					}
 				}
 			}
@@ -299,8 +326,8 @@ Sphere SphereCollider::GetWorldSphere()
 		transform = GetGameObject()->GetTransform();
 	}
 	XMFLOAT4X4* m = transform->GetWorldP();
-	Sphere s;
+	Sphere s = GetSphere();
 	s.m_Center += float3(m->_41, m->_42, m->_43);
-	s.m_Radius = radius;
+	//s.m_Radius = radius;
 	return s;
 }
