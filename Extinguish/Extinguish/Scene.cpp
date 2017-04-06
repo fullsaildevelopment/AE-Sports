@@ -580,7 +580,8 @@ void Scene::Update(float _dt)
 		{
 			trender->SetView(cameraCam);
 			ballTrail = trender;
-			trender->Update(_dt);
+			if(!ResourceManager::GetSingleton()->IsServer())
+				trender->Update(_dt);
 		}
 	}
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());

@@ -41,7 +41,7 @@
 //defines
 #define CLIENT_WIDTH 1000
 #define CLIENT_HEIGHT 800
-#define DEBUG_GRAPHICS 0
+#define DEBUG_GRAPHICS 1
 
 //enums
 enum VertexShaderTypes
