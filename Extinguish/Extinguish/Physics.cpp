@@ -76,7 +76,7 @@ void Physics::HandlePhysics(Transform* tt, float3 nV, float3& nP, bool _bounce, 
 		tt->SetPosition(nP);
 		stillapplygravity = _stillApplyGravity;
 		colliding = true;
-		nP += nV * 0.02f;
+		//nP += nV * 0.02f;
 	}
 }
 
