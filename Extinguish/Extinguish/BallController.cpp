@@ -8,6 +8,8 @@
 #include "SoundEvent.h"
 #include "EventDispatcher.h"
 #include "CanPlayEvent.h"
+#include "AI.h"
+#include "Movement.h"
 
 using namespace std;
 
@@ -48,8 +50,6 @@ void BallController::Init()
 	//cache
 	transform = GetGameObject()->GetTransform();
 	physics = GetGameObject()->GetComponent<Physics>();
-
-	magnetMultiplier = 1.0f;
 }
 
 void BallController::LateInit()
@@ -177,6 +177,9 @@ void BallController::Throw()
 	//turn on physics
 	physics->SetIsKinematic(false);
 	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+
+	//make player go back to regular speed
+
 }
 
 void BallController::DropBall(GameObject *person)
@@ -208,6 +211,9 @@ void BallController::DropBall(GameObject *person)
 	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 	timer.Restart();
 	isThrown = true;
+
+	//make player go back to regular speed
+
 }
 
 bool  BallController::GetIsHeld()
@@ -276,6 +282,18 @@ void BallController::SetHolder(GameObject *person)
 		transform->GetWorld();
 		transform->SetVelocity(float3(0, 0, 0));
 		transform->SetPosition(float3(0, 0, 0));
+
+		//make the player move slower
+		AI* ai = person->GetComponent<AI>();
+
+		if (ai)
+		{
+
+		}
+		else
+		{
+			
+		}
 	}
 	else //this isn't the same as throwing or dropping. Just no one has it anymore
 	{

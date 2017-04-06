@@ -25,6 +25,7 @@ private:
 	bool canMove = false; //added by Tom for countdown portion
 	float timer = 5.0f; // timer for attack
 	int fakeTeam = 0; // number of AI on my team
+	float moveSpeedMultiplier = 1.0f;
 
 	State currState; // the AI's current state or position that they'll take
 	Transform *camera; // gives me access to the camera transform
