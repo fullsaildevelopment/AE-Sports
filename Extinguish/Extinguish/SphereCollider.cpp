@@ -145,12 +145,16 @@ void SphereCollider::FixedUpdate(float _dt)
 			{
 				Sphere s = GetWorldSphere();
 				float3 vel = tgt->GetVelocity();
-				if (CapsuleToSphereReact(capsule->GetWorldCapsule(), s, vel))
+				Capsule c = capsule->GetWorldCapsule();
+				float3 n = CapsuleToSphereReact(c, s, vel);
+				if (!n.isEqual(float3().make_zero()))
 				{
 					Physics* op = tg->GetComponent<Physics>();
-					if (op)
+					Physics* oop = ob->GetComponent<Physics>();
+					if (op && oop)
 					{
-						op->HandlePhysics(tgt, vel, s.m_Center - offset, true);
+						op->HandlePhysics(tgt, vel, s.m_Center - offset, true, n);
+						oop->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), ob->GetTransform()->GetPosition(), false,n,true,true);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
