@@ -841,7 +841,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 	gameBall->SetTag("Ball");
-	TrailRender* ballTrail = new TrailRender(gameBall, devResources, 22, 0.125f, 0.0f);
+	TrailRender* ballTrail = new TrailRender(gameBall, devResources, 22, 0.0756f, 0.0f);
 	ballTrail->SetProjection(projection);
 	gameBall->AddComponent(ballTrail);
 
@@ -1128,10 +1128,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* NewGoal = new GameObject();
 	NewGoal->Init("NewGoal");
 	basic->AddGameObject(NewGoal);
-	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 3.14195f * 0.5f, 0, 0 }, { 10, 10, 10 }, nullptr, nullptr, nullptr);
+	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0.0f, 0.0f, 0.0f }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* NewGoalRenderer = new Renderer();
 	NewGoal->AddComponent(NewGoalRenderer);
-	NewGoalRenderer->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	NewGoalRenderer->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

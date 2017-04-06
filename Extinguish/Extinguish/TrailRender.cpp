@@ -31,17 +31,21 @@ TrailRender::~TrailRender()
 	_vertexBuffer->Release();
 }
 
-void TrailRender::Update(float dt)
+void TrailRender::RenderUpdate(float dt)
 {
 	memmove_s(_points + 1u,sizeof(TrailPoint) * (_numTrailPoints - 1),_points,sizeof(TrailPoint) * (_numTrailPoints - 1));
 
 	_points[0].position = float4(GetGameObject()->GetTransform()->GetWorldPosition(), 1);
-	_points[0].size = _startSize;
+	float scale = GetGameObject()->GetTransform()->GetScale().x;
+	_points[0].size = _startSize * scale;
+	float diff = _subDiff * scale;
 
 	for (int i = 1; i < _numTrailPoints; ++i)
 	{
-		_points[i].size -= _subDiff;
+		_points[i].size -= diff;
 	}
+
+	_points[_numTrailPoints - 1].size = 0.0f;
 
 	ID3D11DeviceContext* devContext = _deviceResources->GetDeviceContext();
 	devContext->UpdateSubresource(_vertexBuffer, NULL, NULL, _points, NULL, NULL);

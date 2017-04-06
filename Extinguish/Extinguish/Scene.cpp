@@ -580,8 +580,7 @@ void Scene::Update(float _dt)
 		{
 			trender->SetView(cameraCam);
 			ballTrail = trender;
-			if(!ResourceManager::GetSingleton()->IsServer())
-				trender->Update(_dt);
+			trender->RenderUpdate(_dt);
 		}
 	}
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
@@ -677,11 +676,11 @@ void Scene::FixedUpdate(float _dt)
 			animator->FixedUpdate(_dt);
 		}
 
-		TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
+		/*TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
 		if (trender && !ResourceManager::GetSingleton()->IsServer())
 		{
 			trender->FixedUpdate(_dt);
-		}
+		}*/
 	}
 }
 
