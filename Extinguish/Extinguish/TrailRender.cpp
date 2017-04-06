@@ -7,7 +7,7 @@ TrailRender::TrailRender(GameObject* o, DeviceResources* devRes, int numPoints, 
 	_numTrailPoints = numPoints;
 	_startSize = startSize;
 	_endSize = endSize;
-	_subDiff = (startSize - endSize) / numPoints;
+	_subDiff = (startSize - endSize) / (numPoints - 1);
 	_points = new TrailPoint[numPoints];
 	_deviceResources = devRes;
 
@@ -36,14 +36,11 @@ void TrailRender::Update(float dt)
 	memmove_s(_points + 1u,sizeof(TrailPoint) * (_numTrailPoints - 1),_points,sizeof(TrailPoint) * (_numTrailPoints - 1));
 
 	_points[0].position = float4(GetGameObject()->GetTransform()->GetWorldPosition(), 1);
-	float Scale = GetGameObject()->GetTransform()->GetScale().x;
-	_points[0].size = _startSize * Scale;
-
-	float tempSubDiff = _subDiff * Scale;
+	_points[0].size = _startSize;
 
 	for (int i = 1; i < _numTrailPoints; ++i)
 	{
-		_points[i].size -= tempSubDiff;
+		_points[i].size -= _subDiff;
 	}
 
 	ID3D11DeviceContext* devContext = _deviceResources->GetDeviceContext();
