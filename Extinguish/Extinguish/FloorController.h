@@ -10,6 +10,7 @@ class FloorController : public Component
 	{
 		STRIPS = 0,
 		GROUPS,
+		LEVEL,
 		NUM_OF_STATES,
 	};
 
@@ -45,14 +46,14 @@ class FloorController : public Component
 	int randStateIndex = -1;
 	float resetableTimer = 0.0f;
 	bool cooldownDone = true;
-
+	bool stateRunning = false;
 	bool dontRaiseGenerated = false;
 	std::vector<int*> dontRaise;
 
 	//const members
-	const float TIME_TIL_COOLDOWN = 10.0f;
-	const float TIME_TIL_STATE = 10.0f;
-	const float TIME_TO_RUN_STATE = 10.0f;
+	const float TIME_TIL_COOLDOWN = 10.0f; //how long til after the state is finished til it starts another state
+	const float TIME_TIL_STATE = 10.0f; //how long til the state runs
+	const float TIME_TO_RUN_STATE = 15.0f; //how long to run the state
 
 	struct pulseState
 	{

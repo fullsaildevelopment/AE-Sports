@@ -5,7 +5,7 @@
 //structors//
 SuperJump::SuperJump() : PowerUp()
 {
-	SetDuration(4.0f);
+	SetDuration(8.0f);
 }
 
 //basic//
