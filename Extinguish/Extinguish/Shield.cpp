@@ -4,9 +4,10 @@
 #include "Scene.h"
 #include "SphereCollider.h"
 #include "Renderer.h"
+#include "DeviceResources.h"
 
 //structors
-Shield::Shield(Scene* scene)
+Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResources)
 {
 	SetDuration(9.0f);
 
@@ -14,10 +15,12 @@ Shield::Shield(Scene* scene)
 	shieldBubble = new GameObject();
 	shieldBubble->Init("ShieldBubble");
 	scene->AddGameObject(shieldBubble);
-	//Renderer* renderer = new Renderer();
-	//shieldBubble->AddComponent(renderer);
-	//renderer->Init(
+	Renderer* renderer = new Renderer();
+	shieldBubble->AddComponent(renderer);
+	renderer->Init("ShieldBubble", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+	renderer->SetEnabled(false);
 	collider = new SphereCollider(1.0f, shieldBubble, false);
+	shieldBubble->AddSphereCollider(collider);
 	collider->SetOffset({ 0, 1.1f, 0 });
 	//shieldBubble->AddSphereCollider(collider);
 }
@@ -28,9 +31,11 @@ void Shield::Activate()
 	GetPlayer()->SetIsInvincible(true);
 
 	//attach collider to player
-	GetPlayer()->GetGameObject()->AddSphereCollider(collider);
-	collider->SetGameObject(GetPlayer()->GetGameObject());
+	//GetPlayer()->GetGameObject()->AddSphereCollider(collider);
+	//collider->SetGameObject(GetPlayer()->GetGameObject());
+	shieldBubble->GetTransform()->SetParent(GetPlayer()->GetGameObject()->GetTransform());
 	collider->SetEnabled(true);
+	shieldBubble->GetComponent<Renderer>()->SetEnabled(true);
 
 	//disable ball collider
 	GameObject* ball = GetGameObject()->FindGameObject("GameBall");
@@ -50,8 +55,8 @@ void Shield::Deactivate()
 
 	//detach collider from player
 	//shieldBubble->AddSphereCollider(collider);
-	GetPlayer()->GetGameObject()->RemoveSphereCollider(collider);
-	GetPlayer()->GetGameObject()->RemoveComponent<SphereCollider>();
+	//GetPlayer()->GetGameObject()->RemoveSphereCollider(collider);
+	//GetPlayer()->GetGameObject()->RemoveComponent<SphereCollider>();
 	collider->SetEnabled(false);
 
 	//enable ball collider
