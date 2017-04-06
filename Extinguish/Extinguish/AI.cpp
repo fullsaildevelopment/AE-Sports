@@ -323,35 +323,26 @@ void AI::Update(float _dt)
 			}
 		}
 
-		/*if (!mGuy || !mGo2)
-		{
-			for (int i = 0; i < listOfMates.size(); ++i)
-			{
-				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
-					mGo2 = listOfMates[i];
-
-				else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
-					mGuy = listOfMates[i];
-
-				else if (!mGuy && !listOfMates[i]->GetComponent<AI>())
-					mGuy = listOfMates[i];
-			}
-		}*/
-
 #pragma endregion
 
-#pragma region Goalie
-		if (currState == goalie)
+		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 		{
-			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
+			// if it's me
+			if (currState != goalie)
+				Score();
 
-			// if i have the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
+			else
 			{
 				camera->RotateX(-0.4f);
 				crosse->Throw();
 				camera->RotateX(0.4f);
 			}
+		}
+
+#pragma region Goalie
+		if (currState == goalie)
+		{
+			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
 			// if the ball gets close
 			if (dist.magnitude() < 34)
@@ -385,18 +376,10 @@ void AI::Update(float _dt)
 				pos2.z *= -1;
 			}
 
-			// if someone has the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
+			// if the enemy has the ball
+			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder()->GetTag() != me->GetTag())
 			{
-				// if it's me
-				if (ballClass->GetHolder() == me)
-					Score();
-
-				// if it's enemy
-				else if (ballClass->GetHolder()->GetTag() != me->GetTag())
-				{
-					if (eTank) Attack(eTank);
-				}
+				if (eTank) Attack(eTank);
 			}
 
 			else
@@ -422,20 +405,12 @@ void AI::Update(float _dt)
 			// if i have the ball or one of my teammates have the ball
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 			{
-				// if it's me
-				if (ballClass->GetHolder() == me)
-					Score();
-
 				// if it's my teammate
-				else if (ballClass->GetHolder()->GetTag() == me->GetTag())
+				if (ballClass->GetHolder()->GetTag() == me->GetTag())
 					DefendTeammate();
 
 				// if it's enemy
 				else Attack(ballClass->GetHolder());
-				//{
-				//	if (currState == guy) Attack(ballClass->GetHolder());
-				//	//else
-				//}
 			}
 
 			else
