@@ -5,6 +5,7 @@ class Scene;
 class GameObject;
 class SphereCollider;
 class DeviceResources;
+class Collider;
 
 class Shield : public PowerUp
 {
@@ -26,6 +27,9 @@ public:
 	void Deactivate() override;
 	void Enable() override;
 	void Disable() override;
+
+	//collision
+	void OnCollisionEnter(Collider* collider) override;
 
 	//getters
 	std::string GetName() override;
