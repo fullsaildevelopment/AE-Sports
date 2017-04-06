@@ -3,6 +3,8 @@
 Map::Map(int rows, int cols, float3 *positions)
 {
 	nodes.resize(rows);
+	numRows = rows;
+	numCols = cols;
 
 	for (int r = 0; r < rows; ++r)
 	{
@@ -77,4 +79,15 @@ Map::Node *Map::FindClosest(float3 pos)
 	}
 
 	return closest;
+}
+
+Map::Node *Map::FindBallNode(float3 ballPos)
+{
+	if (!ballPos.isEqual(prevBallPos))
+	{
+		prevBallPos = ballPos;
+		ballNode = FindClosest(ballPos);
+	}
+
+	return ballNode;
 }
