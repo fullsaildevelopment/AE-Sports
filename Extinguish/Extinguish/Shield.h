@@ -4,6 +4,7 @@
 class Scene;
 class GameObject;
 class SphereCollider;
+class DeviceResources;
 
 class Shield : public PowerUp
 {
@@ -18,7 +19,7 @@ private:
 
 public:
 	//structors
-	Shield(Scene* scene);
+	Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResources);
 
 	//basic
 	void Activate() override;

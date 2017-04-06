@@ -28,6 +28,8 @@ public:
 	//misc
 	virtual void Activate();
 	virtual void Deactivate();
+
+	//these are used when they are spawned (to render and enable collision)
 	virtual void Enable();
 	virtual void Disable();
 
