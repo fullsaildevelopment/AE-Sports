@@ -91,3 +91,8 @@ Map::Node *Map::FindBallNode(float3 ballPos)
 
 	return ballNode;
 }
+
+std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
+{
+
+}
