@@ -425,6 +425,9 @@
     <ClInclude Include="TrailRender.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="PriorityQueue.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Textures\DDS\Mage.dds">

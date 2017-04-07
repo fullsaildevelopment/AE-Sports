@@ -39,5 +39,5 @@ public:
 
 	Node *FindClosest(float3 pos);
 	Node *FindBallNode(float3 ballPos);
-
+	std::vector<Node *> CreatePath(Node * start, Node *end);
 };
