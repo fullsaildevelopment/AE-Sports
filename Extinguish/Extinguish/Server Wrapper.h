@@ -22,7 +22,7 @@ private:
 	UINT8 objIDs[8];
 
 public:
-	~ServerWrapper() { 
+	~ServerWrapper() {
 		if (isMultiplayer && isServer)
 			newServer.stop();
 	}
@@ -54,7 +54,7 @@ public:
 				if (newServer.isInput(i))
 				{
 					InputEventStruct * tempEvent = new InputEventStruct;
-					
+
 					tempEvent->clientID = newServer.getInputEvent(i)->clientID;
 					memcpy(tempEvent->keyboard, newServer.getInputEvent(i)->keyboard, 256);
 					memcpy(tempEvent->keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
@@ -78,7 +78,7 @@ public:
 			}
 
 			newServer.resetInput();
-			
+
 			delete inputEvent;
 			delete input;
 			//result = 2;
@@ -89,10 +89,10 @@ public:
 		{
 			for (unsigned int i = 0; i < states.size(); ++i)
 			{
-			//	memcpy(&states[i]->animationName, newServer.getState(i)->animationName, newServer.getState(i)->nameLength);
+				//	memcpy(&states[i]->animationName, newServer.getState(i)->animationName, newServer.getState(i)->nameLength);
 				states[i]->clientID = newServer.getState(i)->clientID;
 				states[i]->hasBall = newServer.getState(i)->hasBall;
-		//		states[i]->nameLength = newServer.getState(i)->nameLength;
+				//		states[i]->nameLength = newServer.getState(i)->nameLength;
 				states[i]->position = newServer.getState(i)->position;
 				states[i]->rotation = newServer.getState(i)->rotation;
 			}
@@ -116,8 +116,8 @@ public:
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
 			newServer.setStates(i,
-				gameStates[i]->hasBall, 
-				gameStates[i]->position, 
+				gameStates[i]->hasBall,
+				gameStates[i]->position,
 				gameStates[i]->rotation,
 				gameStates[i]->parentIndex,
 				gameStates[i]->animationIndex,
@@ -193,8 +193,8 @@ public:
 	void sendGameState() { newServer.sendState(); }
 	void StartGame() { newServer.StartGame(); }
 
-	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight) 
-	{ 
+	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight)
+	{
 		objIDs[0] = one;
 		objIDs[1] = two;
 		objIDs[2] = three;
@@ -215,7 +215,7 @@ public:
 	}
 	void setMeterDown(bool toggle, unsigned int i) { return newServer.setMeterDown(toggle, i); }
 
-	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i);}
+	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i); }
 	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
 	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
 
@@ -246,9 +246,30 @@ public:
 	{
 		newServer.SendScored((char*)name.c_str(), length);
 	}
-	
+
 	void setPulse(int pulse)
 	{
 		newServer.setPulse(pulse);
 	}
+
+	void SetPowerUp(int index, float3 pos, bool active)
+	{
+		newServer.SetPowerUp(index, XMFLOAT3(pos.x, pos.y, pos.z), active);
+	}
+
+	void SendPowerUps()
+	{
+		newServer.SendPowerUps();
+	}
+
+	void RemovePowerUp(int index, int id)
+	{
+		newServer.RemovePowerUp(index, id);
+	}
+
+	void SendRemoved()
+	{
+		newServer.SendRemoved();
+	}
 };
+

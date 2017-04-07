@@ -64,7 +64,7 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
-		bool paused = false;
+		bool paused = true;
 		bool countdown = false;
 		UINT8 scene = 1;
 		int floorPulse = -1;
@@ -108,16 +108,28 @@ private:
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
 		ID_INCOMING_FLOOR,
-		ID_SOMEONE_SCORED
+		ID_SOMEONE_SCORED,
+		ID_SPAWN_POWERUP,
+		ID_REMOVE_POWERUP
 
 	};
+
+
+#pragma pack(push, 1)
+	struct PowerUps
+	{
+		// spawn
+		std::vector<bool> isactive;
+		std::vector<XMFLOAT3> positions;
+		// despawn
+		std::vector<int> removeindices;
+		std::vector<int> ids;
+	};
+#pragma pack(pop)
 
 	static RakPeerInterface * peer;
 	static Packet * packet;
 	static char * address;
-//	static CLIENT_GAME_STATE * myState;
-//	static CLIENT_GAME_STATE * clientStates;
-//	static GAME_STATE * gameState;
 	std::vector<CLIENT_GAME_STATE> * clientStates;
 	std::vector<CLIENT_GAME_STATE> * myState;
 	std::vector<GAME_STATE> * gameState;
@@ -125,6 +137,8 @@ private:
 
 	UINT8 curNumOfClients;
 	UINT8 objID;
+
+	PowerUps pUp;
 
 
 	UINT8 objects;
@@ -139,7 +153,7 @@ private:
 	string * scoreName;
 
 	// all the results
-	bool states, scored, packets;
+	bool states, scored, packets, spowerup, rpowerup;
 
 public:
 
@@ -231,9 +245,20 @@ public:
 	const char * getScoreName() { return scoreName[0].c_str(); }
 	int getPulse() { return gameState[0][0].floorPulse; }
 
+	// power ups
+	int SpawnedPowerUpAmount() { return 6; }
+	bool getSpawnedPowerUpActive(int i) { return pUp.isactive[i]; }
+	XMFLOAT3 GetSpawnedPowerUpPos(int i) { return pUp.positions[i]; }
+	int RemovedPowerUpAmount() { return (int)pUp.removeindices.size(); }
+	int getRemovedPowerUpIndex(int i) { return pUp.removeindices[i]; }
+	int getRemovedPlayerID(int i) { return pUp.ids[i]; }
+
+	// which packets have arrived
 	bool hasScored() { return scored; }
 	bool hasPackets() { return packets; }
 	bool hasState() { return states; }
+	bool SpawnedPowerUps() { return spowerup; }
+	bool RemovedPowerUp() { return rpowerup; }
 
 private:
 	bool gameStart = false;
@@ -246,6 +271,7 @@ private:
 	void receivePackets();
 	void receiveGameState();
 	void receiveFloor();
-
+	void receiveRPU();
+	void receiveSPU();
 };
 

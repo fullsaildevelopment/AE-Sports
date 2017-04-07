@@ -463,6 +463,8 @@ void Scene::Update(float _dt)
 		{
 			gameObjects[i]->Update(_dt);
 		}
+		else if (gameObjects[i]->GetName() == "PowerUpManager")
+			gameObjects[i]->Update(_dt);
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
 
