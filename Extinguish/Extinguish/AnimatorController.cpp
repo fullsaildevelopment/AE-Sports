@@ -51,7 +51,7 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 
 void AnimatorController::FixedUpdate(float _dt)
 {
-	if (GetGameObject()->GetName() == "Mage2")
+	if (GetGameObject()->GetName() == "Mage1")
 	{
 		int breakPoint = 69;
 		breakPoint++;
