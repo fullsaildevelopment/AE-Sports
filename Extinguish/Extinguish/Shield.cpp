@@ -32,7 +32,6 @@ Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResource
 	shieldBubble->AddComponent(physics);
 	physics->Init();
 	physics->SetIsKinematic(true);
-	//shieldBubble->AddSphereCollider(collider);
 }
 
 //basic
@@ -40,22 +39,11 @@ void Shield::Activate()
 {
 	GetPlayer()->SetIsInvincible(true);
 
-	//attach collider to player
-	//GetPlayer()->GetGameObject()->AddSphereCollider(collider);
-	//collider->SetGameObject(GetPlayer()->GetGameObject());
+	//attach shield buble to player
 	shieldBubble->GetTransform()->SetParent(GetPlayer()->GetGameObject()->GetTransform());
 	collider->SetEnabled(true);
 	shieldBubble->GetComponent<Renderer>()->SetEnabled(true);
 	shieldBubble->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
-
-	//disable ball collider //this is bad logic. What if they throw it?
-	//GameObject* ball = GetGameObject()->FindGameObject("GameBall");
-	//ball->GetComponent<SphereCollider>()->SetEnabled(false);
-	//ball->RemoveSphereCollider(collider);
-	//ball->RemoveComponent<SphereCollider>();
-
-	//shieldBubble->RemoveSphereCollider(collider);
-	//shieldBubble->RemoveComponent<SphereCollider>();
 }
 
 void Shield::Deactivate()
@@ -64,17 +52,10 @@ void Shield::Deactivate()
 
 	GetPlayer()->SetIsInvincible(false);
 
-	//detach collider from player
-	//shieldBubble->AddSphereCollider(collider);
-	//GetPlayer()->GetGameObject()->RemoveSphereCollider(collider);
-	//GetPlayer()->GetGameObject()->RemoveComponent<SphereCollider>();
+	//detach shield bubble from player
 	GetPlayer()->GetGameObject()->GetTransform()->RemoveChild(GetGameObject()->GetTransform());
 	collider->SetEnabled(false);
 	shieldBubble->GetComponent<Renderer>()->SetEnabled(false);
-
-	//enable ball collider
-	//GameObject* ball = GetGameObject()->FindGameObject("GameBall");
-	//ball->GetComponent<SphereCollider>()->SetEnabled(true);
 }
 
 void Shield::Enable()

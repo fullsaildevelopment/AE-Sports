@@ -92,6 +92,7 @@ public:
 	void AddAssist();
 	void AddCatch();
 	void ReadInStats(std::string playerName);
+	void DropBall();
 
 	//actions
 	void Jump();

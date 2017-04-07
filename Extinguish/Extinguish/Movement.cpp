@@ -74,6 +74,8 @@ void Movement::Update(float _dt)
 			}
 		}
 	}
+
+	cout << moveSpeed << endl;
 }
 
 void Movement::HandleEvent(Event* e)
@@ -137,6 +139,12 @@ bool Movement::CanMove()
 	return canMove;
 }
 
+float Movement::GetMoveSpeed()
+{
+	return moveSpeed;
+}
+
+
 //setters//
 void Movement::SetKeys(char forward, char back, char left, char right, char up, char down)
 {
@@ -151,6 +159,11 @@ void Movement::SetKeys(char forward, char back, char left, char right, char up, 
 void Movement::SetCanMove(bool toggle)
 {
 	canMove = toggle;
+}
+
+void Movement::SetMoveSpeed(float speed)
+{
+	moveSpeed = speed;
 }
 
 //private helper functions
