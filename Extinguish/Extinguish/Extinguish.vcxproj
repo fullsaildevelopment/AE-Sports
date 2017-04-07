@@ -229,6 +229,7 @@
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowerUpManager.h" />
+    <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="AI.h" />
