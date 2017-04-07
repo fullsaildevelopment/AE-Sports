@@ -94,5 +94,56 @@ Map::Node *Map::FindBallNode(float3 ballPos)
 
 std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 {
+	std::vector<Node *> path;
 
+	/*
+	  PriorityQueue open(isGreater);
+      std::map visited;
+      open.enqueue(new PlannerNode(start));
+      visited[start] = open.front();
+      
+      open.front().givenCost = 0;
+      open.front().heuristicCost = estimate(start, end);
+      open.front().finalCost = givenCost + heuristicCost * hWeight;
+
+	  while (!open.empty())
+	  {
+		PlannerNode *current = open.dequeue();
+	    if current.vertex is the end, we’re done;
+	    
+	    for each edge of current.vertex:
+	    {
+	      SearchNode *successor = edge.endpoint;
+	      float tempGivenCost = current.givenCost + edge.cost;
+	      
+	      if (visited[successor] != NULL)
+	      {
+	        PlannerNode *node = visted[successor];
+	        
+	        if (tempGivenCost < node.givenCost)
+	        {
+	          open.remove(node);
+	          node.givenCost = tempGivenCost;
+	          node.finalCost = node.givenCost + node.heuristicCost * hWeight;
+	          node.parent = current;
+	          open.enqueue(node);
+	        }
+	      }
+	      
+	      else
+	      {
+	        node = new PlannerNode(successor);
+	        node.givenCost = tempGivenCost;
+	        node.heuristicCost = estimate(successor, end);
+	        node.finalCost = node.givenCost + node.heuristicCost * hWeight;
+	        node.parent = current;
+	        visited[successor] = node;
+	        open.enqueue(node);
+	      }
+	    }
+	  }
+
+	*/
+
+	return path;
 }
