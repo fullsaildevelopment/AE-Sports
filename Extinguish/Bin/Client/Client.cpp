@@ -18,8 +18,8 @@ Client::Client()
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
 	gameState[0].resize(MAX_PLAYERS);
-	floorState = new std::vector<XMFLOAT3>();
-	floorState[0].resize(2090);
+	//floorState = new std::vector<XMFLOAT3>();
+	//floorState[0].resize(2090);
 
 	for (int i = 0; i < gameState->size(); ++i)
 	{
@@ -29,6 +29,8 @@ Client::Client()
 
 	pUp.positions.resize(6);
 	pUp.isactive.resize(6);
+
+	clientID = 1;
 
 	scoreName = new string;
 }
@@ -110,7 +112,7 @@ int Client::run()
 			printf("Connected to server.\nWelcome to the lobby.\n");
 
 			sendMessage("idpls", ID_REQUEST);
-		break;
+			break;
 		}
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 		{
@@ -118,9 +120,9 @@ int Client::run()
 			break;
 		}
 		case ID_REMOTE_CONNECTION_LOST:
-		{	
+		{
 			printf("Another client has lost the connection.\n");
-		break;
+			break;
 		}
 		case ID_REMOTE_NEW_INCOMING_CONNECTION:
 		{
@@ -130,26 +132,26 @@ int Client::run()
 		case ID_NEW_INCOMING_CONNECTION:
 		{
 			printf("A connection is incoming.\n");
-		break; 
+			break;
 		}
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 		{
 			printf("The server is full.\n");
 			return 0;
-		break; 
+			break;
 		}
 		case ID_DISCONNECTION_NOTIFICATION:
 		{
 			printf("We have been disconnected.\n");
 			return 0;
-		break;
+			break;
 		}
 		case ID_CONNECTION_LOST:
 		{
 			//printf("Connection lost.\n");
 			peer->Shutdown(100);
 			return 0;
-		break;
+			break;
 		}
 		case ID_CLIENT_MESSAGE:
 		{
@@ -190,6 +192,9 @@ int Client::run()
 		}
 		case ID_INCOMING_STATE:
 		{
+			if (clientID == 0)
+				clientID = 2;
+
 			receiveGameState();
 			states = true;
 			break;
@@ -210,7 +215,7 @@ int Client::run()
 			bIn.Read(temp);
 			if (temp == 11)
 			{
-				gameState[0][0].paused = false;
+				gameState[0][0].paused = true;
 				gameStart = true;
 				return 6;
 			}
@@ -265,7 +270,7 @@ int Client::run()
 			rpowerup = true;
 			break;
 		}
-		
+
 		}
 	}
 

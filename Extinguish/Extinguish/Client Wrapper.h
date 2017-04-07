@@ -13,6 +13,7 @@ class ClientWrapper
 {
 private:
 	Client newClient;
+	int id = 1;
 	bool isMultiplayer = false;
 	bool isServer = false;
 public:
@@ -30,6 +31,7 @@ public:
 	int run()
 	{
 		int result = newClient.run();
+		if (ResourceManager::GetSingleton()->IsPaused() != newClient.getPaused())
 		ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
 		return result;
 	}
@@ -77,6 +79,7 @@ public:
 
 	unsigned int getID()
 	{
+		id = newClient.getID();
 		return (unsigned int)newClient.getID();
 	}
 
