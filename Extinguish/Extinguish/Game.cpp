@@ -271,7 +271,8 @@ int Game::Update(float dt)
 
 		if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
 		{
-			Time -= dt;
+			if (!ResourceManager::GetSingleton()->IsPaused())
+				Time -= dt;
 
 			if (Time < 0)
 			{
@@ -344,7 +345,8 @@ int Game::Update(float dt)
 						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
 						scoreboard->ReceiveScoreboard();
 
-						Time = client.getTime();
+						if (!ResourceManager::GetSingleton()->IsServer())
+							Time = client.getTime();
 						Team1Score = client.getScoreA();
 						Team2Score = client.getScoreB();
 						UpdateScoreUI();
@@ -719,10 +721,7 @@ void Game::CreateScenes(InputManager* input)
 		menu->Init(devResources, input);
 
 		menu->set2DRenderTarget(devResources->GetRenderTarget());
-		//CreateScoreBoard(menu); // uncomment when testing scoreboard
-		// move CreateScoreBoard into Pause Menu or whatever whenever you have everything positioned as you want.
-		// We will need an easier way to turn on the pause menu, however. There are too many UI objects to make up the scoreboard as is, and it might eat up too much time getting all those game objects. might.
-		CreateMenu(menu); // comment when testing scoreboard
+		CreateMenu(menu);
 
 		scenes.push_back(menu);
 		scenesNamesTable.Insert("Menu");
@@ -1560,6 +1559,9 @@ void Game::ResetBall()
 
 void Game::ResetCountdown()
 {
+	if (ResourceManager::GetSingleton()->IsServer())
+		ResourceManager::GetSingleton()->SetPaused(true);
+
 	GameObject* countdown = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject("Countdown");
 
 	countdown->GetComponent<Countdown>()->Reset();
@@ -2280,6 +2282,9 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
+
+		ResourceManager::GetSingleton()->SetPaused(true);
+
 		endTimer = 0.0f;
 		ShowCursor(false);
 		AssignPlayers();
