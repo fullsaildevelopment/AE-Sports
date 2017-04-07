@@ -8,6 +8,8 @@
 #include "Credits.h"
 #include "HashString.h"
 #include "AnimatorController.h"
+#include "TrailRender.h"
+#include "PowerUpManager.h"
 
 Scene::Scene()
 {
@@ -58,6 +60,10 @@ void Scene::Init(DeviceResources * devResources, InputManager* inputRef)
 	rastDesc.CullMode = D3D11_CULL_FRONT;
 
 	devResources->GetDevice()->CreateRasterizerState(&rastDesc, RasterizerStateFrontCull.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_NONE;
+
+	devResources->GetDevice()->CreateRasterizerState(&rastDesc, RasterizerStateNoCull.GetAddressOf());
 
 	//temporary
 	curFrame = 0;
@@ -272,10 +278,10 @@ void Scene::CreateLights()
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -7, -18, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
+	pointLight0.Create({ -9, -13, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -7, -18, -20.0f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 145.0f);
+	pointLight1.Create({ -9, -13, 10.0f, 0 }, { 0.0f, 0.0f, 1.0f, 1.0f }, 145.0f);
 
 	PointLight pointLight2;
 	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
@@ -422,6 +428,8 @@ void Scene::Update(float _dt)
 	opaqueObjects.clear();
 	SLLIter<RenderItem> transparentIter(transparentObjects);
 	SLLIter<RenderItem> opaqueIter(opaqueObjects);
+
+	TrailRender* ballTrail = nullptr;
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
 
@@ -455,6 +463,8 @@ void Scene::Update(float _dt)
 		{
 			gameObjects[i]->Update(_dt);
 		}
+		else if (gameObjects[i]->GetName() == "PowerUpManager")
+			gameObjects[i]->Update(_dt);
 
 		Renderer* renderer = gameObjects[i]->GetComponent<Renderer>();
 
@@ -567,6 +577,13 @@ void Scene::Update(float _dt)
 				animator->Update(_dt);
 			}
 		}
+		TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
+		if (trender)
+		{
+			trender->SetView(cameraCam);
+			ballTrail = trender;
+			trender->RenderUpdate(_dt);
+		}
 	}
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
 	///////////////Clear BackBuffer//////////////
@@ -576,6 +593,12 @@ void Scene::Update(float _dt)
 	{
 		opaqueIter.current().rend->Update(_dt);
 		opaqueIter.current().rend->Render();
+	}
+	//////////////////////////////////////////////////////////////////////
+	if (ballTrail)
+	{
+		devContext->RSSetState(RasterizerStateNoCull.Get());
+		ballTrail->Render();
 	}
 	////////////////////////RenderTransparentObjects//////////////////////
 	for (transparentIter.begin(); !transparentIter.end(); ++transparentIter)
@@ -598,7 +621,11 @@ void Scene::Update(float _dt)
 	//	Button * scoreButton = scoreUpdate->GetComponent<Button>();
 	//	wstring score = to_wstring(redScore) + L" : " + to_wstring(blueScore);
 	//}
-	if (!DEBUG_GRAPHICS) {
+	if (!DEBUG_GRAPHICS) 
+	{
+		UIRenderer* uirend = uiObjects[0]->GetComponent<UIRenderer>();
+		if (uirend)
+			uirend->getUIDevCon()->BeginDraw();
 		for (unsigned int i = 0; i < uiObjects.size(); ++i)
 		{
 			if (uiObjects[i]->GetName() != "Credits")
@@ -612,6 +639,15 @@ void Scene::Update(float _dt)
 				uiObjects[i]->GetComponent<Credits>()->Render();
 			}
 		}
+
+		if (Game::currentScene == 2)
+		{
+			GetGameObject("PowerUpManager")->GetComponent<PowerUpManager>()->Render();
+		}
+
+		if (uirend)
+			uirend->getUIDevCon()->EndDraw();
+
 
 		ImGui::EndFrame();
 	}
@@ -641,6 +677,12 @@ void Scene::FixedUpdate(float _dt)
 		{
 			animator->FixedUpdate(_dt);
 		}
+
+		/*TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
+		if (trender && !ResourceManager::GetSingleton()->IsServer())
+		{
+			trender->FixedUpdate(_dt);
+		}*/
 	}
 }
 

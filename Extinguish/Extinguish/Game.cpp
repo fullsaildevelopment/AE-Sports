@@ -36,6 +36,7 @@
 #include "Credits.h"
 #include "MeterBar.h"
 #include "PulseFloorEvent.h"
+#include "TrailRender.h"
 
 using namespace DirectX;
 using namespace std;
@@ -162,6 +163,11 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		UIRenderer* UI;
 
 		Renderer* R;
+
+		D2D1_SIZE_F rect;
+		rect.height = h;
+		rect.width = w;
+
 		int size = (int)go.size();
 		int UIsize = (int)uiGO.size();
 		for (int j = 0; j < size; ++j)
@@ -169,30 +175,45 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 			R = go[j]->GetComponent<Renderer>();
 			if (R)
 				R->SetProjection(projection);
+
+			if (go[j]->GetName() == "PowerUpManager")
+			{
+				go[j]->GetComponent<PowerUpManager>()->UpdateSize(rect);
+			}
 		}
-		D2D1_SIZE_F rect;
-		rect.height = h;
-		rect.width = w;
 		for (int j = 0; j < UIsize; ++j)
 		{
-			B = uiGO[j]->GetComponent<Button>();
-			M = uiGO[j]->GetComponent<MeterBar>();
-			UI = uiGO[j]->GetComponent<UIRenderer>();
-			if (B)
-			{
-				B->setRT(rect);
-				B->MakeRect();
-				B->setOrigin();
-				B->AdjustSize();
+			float ratio = 1.0f;
+			if (uiGO[j]->GetName() != "Credits" || uiGO[j]->GetName() != "Scoreboard") {
+				B = uiGO[j]->GetComponent<Button>();
+				M = uiGO[j]->GetComponent<MeterBar>();
+				UI = uiGO[j]->GetComponent<UIRenderer>();
+
+				if (B)
+				{
+					B->setRT(rect);
+					B->AdjustSize();
+					ratio = B->GetRatio();
+					B->MakeRect();
+					B->setOrigin();
+				}
+				if (M)
+				{
+					M->setRT(rect);
+					M->MakeRects();
+				}
+				if (UI)
+				{
+					UI->ReInit(ratio);
+				}
 			}
-			if (M)
+			else if (uiGO[j]->GetName() == "Scoreboard")
 			{
-				M->setRT(rect);
-				M->MakeRects();
+				uiGO[j]->GetComponent<Scoreboard>()->UpdateSize(rect);
 			}
-			if (UI)
+			else
 			{
-				UI->ReInit();
+				uiGO[j]->GetComponent<Credits>()->UpdateSize(rect);
 			}
 		}
 	}
@@ -200,6 +221,9 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 
 int Game::Update(float dt)
 {
+	if (gamepadCooldown > 0.0f)
+		gamepadCooldown -= dt;
+
 	if (!DEBUG_GRAPHICS) {
 		if (scenesNamesTable.GetKey("FirstLevel") == currentScene && *gameTime <= 0.0f)
 		{
@@ -247,7 +271,8 @@ int Game::Update(float dt)
 
 		if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
 		{
-			Time -= dt;
+			if (!ResourceManager::GetSingleton()->IsPaused())
+				Time -= dt;
 
 			if (Time < 0)
 			{
@@ -320,7 +345,8 @@ int Game::Update(float dt)
 						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
 						scoreboard->ReceiveScoreboard();
 
-						Time = client.getTime();
+						if (!ResourceManager::GetSingleton()->IsServer())
+							Time = client.getTime();
 						Team1Score = client.getScoreA();
 						Team2Score = client.getScoreB();
 						UpdateScoreUI();
@@ -345,6 +371,7 @@ int Game::Update(float dt)
 						scorerButton->SetActive(true);
 
 						justScored = true;
+						scorerTimer = 0.0f;
 					}
 				}
 			}
@@ -600,6 +627,12 @@ void Game::HandleEvent(Event* e)
 		{
 			client.sendMessage((char*)gamePadEvent->GetState(), sizeof(GamePad::State) + 1); // plus one for the header (size of message)
 		}
+		GamePad::State* state = gamePadEvent->GetState();
+		if (state->IsStartPressed() && gamePadEvent->GetClientID() == clientID && !ResourceManager::GetSingleton()->IsPaused() && gamepadCooldown <= 0.0f)
+		{
+			gamepadCooldown = 0.2f;
+			TogglePauseMenu(false, true);
+		}
 
 		return;
 	}
@@ -688,10 +721,7 @@ void Game::CreateScenes(InputManager* input)
 		menu->Init(devResources, input);
 
 		menu->set2DRenderTarget(devResources->GetRenderTarget());
-		//CreateScoreBoard(menu); // uncomment when testing scoreboard
-		// move CreateScoreBoard into Pause Menu or whatever whenever you have everything positioned as you want.
-		// We will need an easier way to turn on the pause menu, however. There are too many UI objects to make up the scoreboard as is, and it might eat up too much time getting all those game objects. might.
-		CreateMenu(menu); // comment when testing scoreboard
+		CreateMenu(menu);
 
 		scenes.push_back(menu);
 		scenesNamesTable.Insert("Menu");
@@ -810,6 +840,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	gameBall->AddComponent(ballController);
 	ballController->Init();
 	gameBall->SetTag("Ball");
+	TrailRender* ballTrail = new TrailRender(gameBall, devResources, 22, 0.156f, 0.0f);
+	ballTrail->SetProjection(projection);
+	gameBall->AddComponent(ballTrail);
 
 
 	GameObject* goal = new GameObject();
@@ -852,14 +885,15 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		Movement* mageMover = new Movement();
 		mage1->AddComponent(mageMover);
-		mageMover->Init(8.8f, 0.75f);
+		//Put it high so that it doesnt feel like your on ice
+		mageMover->Init(19.8f, 0.75f);
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
 		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
-		Physics* physics = new Physics(0.01f, 4.5f, 0.07f, 6.4f, -14.8f);
+		Physics* physics = new Physics(0.01f, 5.5f, 0.04f, 7.3f, -10.8f);
 		mage1->AddComponent(physics);
 		physics->Init();
 
@@ -985,20 +1019,20 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* topWall = new GameObject();
 	topWall->Init("TopWall");
 	basic->AddGameObject(topWall);
-	topWall->InitTransform(identity, { 0, 0, 45.0f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	topWall->InitTransform(identity, { 0, 0, 44.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer3 = new Renderer();
 	topWall->AddComponent(WallRenderer3);
-	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	WallRenderer3->Init("MeterBox", "Static", "Static", "", "", projection, devResources, false);
 	BoxCollider* Wallboxcol3 = new BoxCollider(topWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
 	topWall->AddBoxCollider(Wallboxcol3);
 
 	GameObject* bottomWall = new GameObject();
-	bottomWall->Init("BottomWall");
+	bottomWall->Init("MeterBox");
 	basic->AddGameObject(bottomWall);
-	bottomWall->InitTransform(identity, { 0, 0, (float)-row + 15.0f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
+	bottomWall->InitTransform(identity, { 0, 0, (float)-row + 15.5f }, { 0, 0, 0 }, { 600, 100, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer4 = new Renderer();
 	bottomWall->AddComponent(WallRenderer4);
-	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources);
+	WallRenderer4->Init("MeterBox", "Static", "Static", "", "", projection, devResources, false);
 	BoxCollider* Wallboxcol4 = new BoxCollider(bottomWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
 	bottomWall->AddBoxCollider(Wallboxcol4);
 
@@ -1008,11 +1042,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	objIDs[8] = (UINT8)basic->GetNumObjects();
 	goal->Init("RedGoal");
 	basic->AddGameObject(goal);
-	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z + 0.75f }, { 0,0,0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -20.0f, 15, bottomWall->GetTransform()->GetPosition().z - 1.65f }, { 0,0,0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
-	GoalRenderer->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 7,4,2 }, { -7,-4,-3 });
+	GoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	GoalRenderer->SetEmissiveColor(float4(1, 0, 0, 1));
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 7,4,3 }, { -7,-4,-3 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
@@ -1021,11 +1056,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	objIDs[9] = (UINT8)basic->GetNumObjects();
 	goal2->Init("BlueGoal");
 	basic->AddGameObject(goal2);
-	goal2->InitTransform(identity, { -20.0f, 15, topWall->GetTransform()->GetPosition().z - 0.75f }, { 0, 3.14159f, 0 }, { 1,1,1 }, nullptr, nullptr, nullptr);
+	goal2->InitTransform(identity, { -20.0f, 15, topWall->GetTransform()->GetPosition().z + 1.2f }, { 0, 3.14159f, 0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer2 = new Renderer();
 	goal2->AddComponent(GoalRenderer2);
-	GoalRenderer2->Init("WallGoal", "Static", "Static", "", "", projection, devResources);
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 7,4,2 }, { -7,-4,-3 });
+	GoalRenderer2->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	GoalRenderer2->SetEmissiveColor(float4(0, 0, 1, 1));
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 7,4,3 }, { -7,-4,-3 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
@@ -1049,7 +1085,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//testPlayer->AddComponent(testPlayerRenderer);
 	//testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
-	GameObject* titanPlayer = new GameObject();
+	/*GameObject* titanPlayer = new GameObject();
 	titanPlayer->Init("TitanPlayer");
 	basic->AddGameObject(titanPlayer);
 	titanPlayer->InitTransform(identity, { 0, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
@@ -1063,7 +1099,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	State* testState = new State();
 	titanAnimator->AddState(testState);
 	testState->Init(titanAnimator, titanAnimator->GetBlender()->GetAnimationSet()->GetAnimation("Test"), true, 1.0f, "Test");
-
+*/
 	//for (int j = 0; j < 11; ++j)
 	//{
 	//	for (int i = 0; i < 11; ++i)
@@ -1081,7 +1117,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* meterbox6 = new GameObject();
 	meterbox6->Init("MeterBox6");
 	basic->AddGameObject(meterbox6);
-	meterbox6->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	meterbox6->InitTransform(identity, { 0, -0.3f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	/*Renderer* meterboxRenderer6 = new Renderer();
 	meterbox6->AddComponent(meterboxRenderer6);
 	meterboxRenderer6->Init("MeterBox", "Static", "Static", "", "", projection, devResources);*/
@@ -1091,14 +1127,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	/*GameObject* NewGoal = new GameObject();
 	NewGoal->Init("NewGoal");
 	basic->AddGameObject(NewGoal);
-	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	NewGoal->InitTransform(identity, { 0, 10, 0 }, { 0.0f, 0.0f, 0.0f }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* NewGoalRenderer = new Renderer();
 	NewGoal->AddComponent(NewGoalRenderer);
-	NewGoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	NewGoalRenderer->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10, (float)-col));
+	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10.00001f, (float)-col));
 
 	GameObject* HexFloor = new GameObject();
 	HexFloor->Init("HexFloor");
@@ -1349,8 +1385,8 @@ void Game::CreateMenu(Scene * scene)
 	mButton->setGameObject(multiPlayer);
 	mButton->MakeHandler();
 	mRender->InitMetrics();
-	sButton->setBelow(mButton);
-	mButton->setAbove(sButton);
+	sButton->setBelow(mButton); // play to host
+	mButton->setAbove(sButton); // host to play
 
 	// join button
 	GameObject * multiPlayer2 = new GameObject();
@@ -1371,9 +1407,10 @@ void Game::CreateMenu(Scene * scene)
 	mButton2->setGameObject(multiPlayer2);
 	mButton2->MakeHandler();
 	mRender2->InitMetrics();
-	mButton->setRight(mButton2);
-	mButton2->setLeft(mButton);
-	sButton->setRight(mButton2);
+	mButton->setRight(mButton2); // host to join
+	mButton2->setLeft(mButton); // join to host
+	sButton->setRight(mButton2); // play to join
+	mButton2->setAbove(sButton); // join to play
 
 	// credits
 	GameObject * credits = new GameObject();
@@ -1394,7 +1431,8 @@ void Game::CreateMenu(Scene * scene)
 	cButton->setGameObject(credits);
 	cButton->MakeHandler();
 	cRender->InitMetrics();
-	mButton->setBelow(cButton);
+	mButton->setBelow(cButton); // host to credits
+	cButton->setAbove(mButton); // credits to host
 
 	// exit
 	GameObject * exit = new GameObject();
@@ -1415,12 +1453,12 @@ void Game::CreateMenu(Scene * scene)
 	eButton->setGameObject(exit);
 	eButton->MakeHandler();
 	eRender->InitMetrics();
-	mButton2->setBelow(eButton);
-	cButton->setRight(eButton);
-	eButton->setLeft(cButton);
-	eButton->setAbove(mButton2);
-	eButton->setBelow(sButton);
-	cButton->setBelow(sButton);
+	mButton2->setBelow(eButton); // join to exit
+	cButton->setRight(eButton); // credits to exit
+	eButton->setLeft(cButton); // exit to credits
+	eButton->setAbove(mButton2); // exit to join
+	eButton->setBelow(sButton); // exit to play
+	cButton->setBelow(sButton); // credits to play
 
 
 	// background 2.0
@@ -1521,6 +1559,9 @@ void Game::ResetBall()
 
 void Game::ResetCountdown()
 {
+	if (ResourceManager::GetSingleton()->IsServer())
+		ResourceManager::GetSingleton()->SetPaused(true);
+
 	GameObject* countdown = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject("Countdown");
 
 	countdown->GetComponent<Countdown>()->Reset();
@@ -1612,7 +1653,7 @@ void Game::CreateLobby(Scene * scene)
 	sButton->setGameObject(startGame);
 	sButton->MakeHandler();
 	sRender->InitMetrics();
-	sButton->isSelected();
+	sButton->setSelected();
 
 	// start game, will only show if isServer
 	GameObject * exitGame = new GameObject();
@@ -1680,6 +1721,7 @@ void Game::CreateLobby(Scene * scene)
 	caButton->setHelper(scene->GetNumUIObjects());
 	sButton->setAbove(caButton);
 	caButton->setBelow(sButton);
+	caButton->setAbove(eButton);
 
 	// change team to B
 	GameObject * changeTeamB = new GameObject();
@@ -1702,9 +1744,11 @@ void Game::CreateLobby(Scene * scene)
 	cbButton->MakeHandler();
 	ebRender->InitMetrics();
 	cbButton->setHelper(scene->GetNumUIObjects() - 2);
-	cbButton->setLeft(caButton);
-	caButton->setRight(cbButton);
+	cbButton->setRight(caButton);
+	caButton->setLeft(cbButton);
 	cbButton->setBelow(sButton);
+	cbButton->setAbove(eButton);
+	eButton->setBelow(cbButton);
 
 	// change team logo
 	GameObject * changeTeam = new GameObject();
@@ -1792,8 +1836,6 @@ void Game::CreatePauseMenu(Scene * scene)
 	// for new game button on end game
 	Button * nButton = new Button(true, true, L"", (unsigned int)strlen(""), 175.0f, 70.0f, devResources, 10);
 
-
-	// server only?
 	GameObject * resumeGame = new GameObject();
 	resumeGame->Init("pauseResume");
 	scene->AddUIObject(resumeGame);
@@ -1815,6 +1857,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	rRender->InitMetrics();
 	rButton->SetActive(false);
 	rButton->setHelper(scene->GetNumUIObjects());
+	rButton->setSelected();
 
 	// exit, closes application
 	GameObject * exitGame = new GameObject();
@@ -1837,6 +1880,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	eButton->MakeHandler();
 	eRender->InitMetrics();
 	eButton->SetActive(false);
+	rButton->setBelow(eButton);
+	eButton->setAbove(rButton);
 
 	// exit, return to menu
 	rButton->setHelper(scene->GetNumUIObjects());
@@ -1861,6 +1906,9 @@ void Game::CreatePauseMenu(Scene * scene)
 	mButton->MakeHandler();
 	mRender->InitMetrics();
 	mButton->SetActive(false);
+	rButton->setAbove(mButton);
+	mButton->setAbove(eButton);
+	eButton->setBelow(mButton);
 
 	// start new game, shown on game end
 	GameObject * newGame = new GameObject();
@@ -1882,6 +1930,8 @@ void Game::CreatePauseMenu(Scene * scene)
 	nButton->MakeHandler();
 	nRender->InitMetrics();
 	nButton->SetActive(false);
+	nButton->setBelow(mButton);
+	nButton->setAbove(eButton);
 
 	//scoreboard
 	rButton->setHelper(scene->GetNumUIObjects());
@@ -2232,6 +2282,9 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
+
+		ResourceManager::GetSingleton()->SetPaused(true);
+
 		endTimer = 0.0f;
 		ShowCursor(false);
 		AssignPlayers();
@@ -2345,44 +2398,60 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 {
 	bool toggle;
 	if (ResourceManager::GetSingleton()->IsServer()) {
+
+		GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
+		GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
+		Button * resumeButton = pauseResume->GetComponent<Button>();
+		Button * menuButton = pauseMenu->GetComponent<Button>();
+		GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
+		Button * exitButton = pauseExit->GetComponent<Button>();
+		GameObject * pauseNewGame = scenes[2]->GetUIByName("New Game");
+		Button * nButton = pauseNewGame->GetComponent<Button>();
 		if (!endgame) {
-			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
-			GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
-			Button * resumeButton = pauseResume->GetComponent<Button>();
-			Button * menuButton = pauseMenu->GetComponent<Button>();
 			toggle = !resumeButton->getActive();
 			resumeButton->SetActive(toggle);
 			menuButton->SetActive(toggle);
-			GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
-			Button * exitButton = pauseExit->GetComponent<Button>();
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
 			ShowCursor(toggle);
-		}
-	}
+			resumeButton->setSelected();
+			menuButton->setSelected(false);
+			exitButton->setSelected(false);
 
-	if (endgame && ResourceManager::GetSingleton()->IsServer())
-	{
-		GameObject * pauseExit = scenes[2]->GetUIByName("pauseExit");
-		Button * exitButton = pauseExit->GetComponent<Button>();
-		toggle = !exitButton->getActive();
-		exitButton->SetActive(toggle);
-		GameObject * pauseNewGame = scenes[2]->GetUIByName("New Game");
-		Button * nButton = pauseNewGame->GetComponent<Button>();
-		toggle = !nButton->getActive();
-		nButton->SetActive(toggle);
-		ShowCursor(toggle);
-
-
-		if (toggle) {
-			GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
-			Button * resumeButton = pauseResume->GetComponent<Button>();
-			if (resumeButton->getActive())
+			if (exitButton->getAbove() != resumeButton)
 			{
-				GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
-				Button * menuButton = pauseMenu->GetComponent<Button>();
-				resumeButton->SetActive(!toggle);
-				menuButton->SetActive(!toggle);
+				menuButton->setBelow(resumeButton);
+				exitButton->setAbove(resumeButton);
+			}
+		}
+		else
+		{
+			toggle = !exitButton->getActive();
+			exitButton->SetActive(toggle);
+			toggle = !nButton->getActive();
+			nButton->SetActive(toggle);
+			ShowCursor(toggle);
+
+
+			nButton->setSelected();
+			exitButton->setSelected(false);
+			menuButton->setSelected(false);
+
+			//nButton->setAbove(exitButton);
+			//nButton->setBelow(menuButton);
+			exitButton->setAbove(nButton);
+			menuButton->setBelow(nButton);
+
+			if (toggle) {
+				GameObject * pauseResume = scenes[2]->GetUIByName("pauseResume");
+				Button * resumeButton = pauseResume->GetComponent<Button>();
+				if (resumeButton->getActive())
+				{
+					GameObject * pauseMenu = scenes[2]->GetUIByName("pauseMenu");
+					Button * menuButton = pauseMenu->GetComponent<Button>();
+					resumeButton->SetActive(!toggle);
+					menuButton->SetActive(!toggle);
+				}
 			}
 		}
 	}

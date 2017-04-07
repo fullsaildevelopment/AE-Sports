@@ -49,6 +49,8 @@ void Transform::Init(DirectX::XMFLOAT4X4 localMatrix, float3 pos, float3 rot, fl
 	moveTotalTime = -1;
 	lookTotalTime = -1;
 	rotateTotalTime = -1;
+
+	velocity = { 0, 0, 0 };
 }
 
 void Transform::Reset()
@@ -365,7 +367,7 @@ DirectX::XMFLOAT4X4 Transform::GetWorld()
 
 DirectX::XMFLOAT4X4* Transform::GetWorldP()
 {
-	world = local;
+	GetWorld();
 
 	return &world;
 }

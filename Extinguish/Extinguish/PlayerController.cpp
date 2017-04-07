@@ -55,6 +55,7 @@ void PlayerController::Init()
 	isSprinting = false;
 	footstepsSound = 0;
 	footstepsPlayed = false;
+	isInvincible = false;
 
 	//other initialization
 	canSprint = true;
@@ -233,7 +234,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (boxCollider->collisionNormal.isEquil(UP))
+			if (boxCollider->collisionNormal.isEqual(UP))
 			{
 				if (justJumped)
 				{
@@ -256,7 +257,7 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (hexCollider->collisionNormal.isEquil(UP))
+		if (hexCollider->collisionNormal.isEqual(UP))
 		{
 			if (justJumped)
 			{
@@ -282,7 +283,7 @@ void PlayerController::OnCollisionStay(Collider* collider)
 		BoxCollider* boxCollider = (BoxCollider*)collider;
 		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
 		{
-			if (boxCollider->collisionNormal.isEquil(UP))
+			if (boxCollider->collisionNormal.isEqual(UP))
 			{
 				if (justJumped)
 				{
@@ -306,7 +307,7 @@ void PlayerController::OnCollisionStay(Collider* collider)
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
-		if (hexCollider->collisionNormal.isEquil(UP))
+		if (hexCollider->collisionNormal.isEqual(UP))
 		{
 			if (justJumped)
 			{
@@ -458,7 +459,7 @@ void PlayerController::Jump()
 	if (floor && !justJumped)
 	{
 		justJumped = true;
-		transform->AddVelocity({ 0, 4.0f * jumpMultiplier, 0 });
+		transform->AddVelocity({ 0, 8.0f * jumpMultiplier, 0 });
 		cout << "JUMP" << endl;
 
 		//do animation
@@ -480,49 +481,52 @@ void PlayerController::Attack()
 
 	if (otherPlayer)
 	{
-		if (meterBar->GetPercentage() >= attackCost)
+		if (!otherPlayer->GetComponent<PlayerController>()->IsInvincible())
 		{
-			//do animation
-			AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
-
-			animator->SetTrigger("Stumble");
-
-			cout << "Attack" << endl;
-
-			//make them drop ball
-			BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
-
-			if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+			if (meterBar->GetPercentage() >= attackCost)
 			{
-				//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-				ball->DropBall(otherPlayer);
-			}
+				//do animation
+				AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
-			//drain stamina bar
-			meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
+				animator->SetTrigger("Stumble");
 
-			ogPlayer = otherPlayer;
+				cout << "Attack" << endl;
 
-			AI* otherAI = ogPlayer->GetComponent<AI>();
+				//make them drop ball
+				BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
 
-			if (otherAI)
-			{
-				otherAI->SetCanMove(false);
-			}
-			else
-			{
-				Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+				if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+				{
+					//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
+					ball->DropBall(otherPlayer);
+				}
 
-				otherMovement->SetCanMove(false);
+				//drain stamina bar
+				meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
 
-				//move the player's camera to match getting up
-				Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
-				float3 translation = otherCamera->GetForwardf3();
-				translation.x = -translation.x;
-				translation.y = -1.0f;
-				translation.z = -translation.z * 3.0f;
+				ogPlayer = otherPlayer;
 
-				otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				AI* otherAI = ogPlayer->GetComponent<AI>();
+
+				if (otherAI)
+				{
+					otherAI->SetCanMove(false);
+				}
+				else
+				{
+					Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+
+					otherMovement->SetCanMove(false);
+
+					//move the player's camera to match getting up
+					Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+					float3 translation = otherCamera->GetForwardf3();
+					translation.x = -translation.x;
+					translation.y = -1.0f;
+					translation.z = -translation.z * 3.0f;
+
+					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				}
 			}
 		}
 	}
@@ -584,13 +588,13 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 
 	tracker.Update(*padState);
 
-	if (tracker.a == GamePad::ButtonStateTracker::PRESSED)
+	if (tracker.a == GamePad::ButtonStateTracker::PRESSED && movement->CanMove())
 	{
 		Jump();
 	}
 
 	//this line will only happen once
-	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint) //16 == Left Shift
+	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{
 		Sprint();
 
@@ -830,6 +834,16 @@ float PlayerController::GetJumpMultiplier()
 	return jumpMultiplier;
 }
 
+unsigned int PlayerController::GetPlayerID()
+{
+	return playerID;
+}
+
+bool PlayerController::IsInvincible()
+{
+	return isInvincible;
+}
+
 //setters//
 void PlayerController::SetName(std::string name)
 {
@@ -879,4 +893,9 @@ void PlayerController::SetTeamID(unsigned int id)
 void PlayerController::SetJumpMultiplier(float multiplier)
 {
 	jumpMultiplier = multiplier;
+}
+
+void PlayerController::SetIsInvincible(bool toggle)
+{
+	isInvincible = toggle;
 }

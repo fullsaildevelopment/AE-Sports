@@ -53,6 +53,7 @@ public:
 	GameObject* FindGameObject(std::string name);
 	GameObject* FindUIObject(std::string name);
 	int FindIndexOfGameObject(GameObject* object);
+	void RemoveSphereCollider(SphereCollider* s);
 
 	void OnCollisionEnter(Collider*);
 	void OnCollisionStay(Collider*);
@@ -119,7 +120,7 @@ bool GameObject::RemoveComponent()
 		if (Comp != nullptr)
 		{
 			components.erase(components.begin() + i);
-			delete Comp;
+			//delete Comp;
 			return true;
 		}
 

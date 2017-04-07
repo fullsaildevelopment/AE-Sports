@@ -1,59 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="BloomCombine.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="BloomExtract.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="CS_ForwardPlus.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="GaussianBlur.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="PS_Ball.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_Crosse.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_DepthPreShadow.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_InstStatic.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_NormalMapped.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PS_Shadow.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PS_Static.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VS_Bind.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VS_DepthPreShadow.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VS_InstancedStatic.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VS_Shadow.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VS_Static.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VS_TempStatic.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PS_PowerUp.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_Shadow.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_Static.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Bind.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_DepthPreShadow.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_InstancedStatic.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Shadow.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Static.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_TempStatic.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomCombine.hlsl">
+      <Filter>Shaders\Bloom Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="BloomExtract.hlsl">
+      <Filter>Shaders\Bloom Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GaussianBlur.hlsl">
+      <Filter>Shaders\Bloom Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GS_TrailGeometry.hlsl">
       <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_Trail.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_Trail.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +224,12 @@
     </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
       <Filter>Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="TrailRender.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,9 +395,6 @@
     <ClInclude Include="PowerUpManager.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
-    <ClInclude Include="Magnet.h">
-      <Filter>Components\Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="Shield.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
@@ -407,6 +419,15 @@
     <ClInclude Include="Map.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Magnet.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="TrailRender.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PriorityQueue.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Assets\Textures\DDS\Mage.dds">
@@ -428,7 +449,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Bloom.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Bloom Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -464,6 +485,15 @@
     </Filter>
     <Filter Include="Components\Colliders">
       <UniqueIdentifier>{af656ab4-31d2-4af3-a3bb-f0bfae16505b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Pixel Shaders">
+      <UniqueIdentifier>{dadf1fb0-9b3e-43d5-96dc-87cc3bd24672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Shaders">
+      <UniqueIdentifier>{b4a3d254-1f24-48dc-9eaa-48c99ae2ca83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Bloom Shaders">
+      <UniqueIdentifier>{2fe1fffc-af6d-4804-8e77-a827a177ad86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

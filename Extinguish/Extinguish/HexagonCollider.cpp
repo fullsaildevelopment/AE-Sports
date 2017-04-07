@@ -517,12 +517,12 @@ bool HexagonCollider::CheckCapsule(GameObject* tg, GameObject* ob, int _min, int
 			for (int j = 0; j < col; ++j)
 			{
 				float3 n = HexagonToCapsule(*GetWorldHex(i * col + j), c, pastPos, smallT, mesh);
-				if (!n.isEquil(zeroF))
+				if (!n.isEqual(zeroF))
 				{
 					collisionNormal = n;
 					cap->collisionNormal = n;
 					bool apg = false;
-					if (!n.isEquil(float3(0, 1, 0)))
+					if (!n.isEqual(float3(0, 1, 0)))
 						apg = true;
 					Physics* op = ob->GetComponent<Physics>();
 					if (op)
@@ -552,11 +552,18 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 {
 	GameObject* ob = objects[f];
 	Sphere s = sphere->GetWorldSphere();
-	float3 pastPos = objects[f]->GetComponent<Physics>()->pastPos;
+	Physics* physics = objects[f]->GetComponent<Physics>();
+	float3 pastPos;
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	float smallestT = 100;
 	bool collided = false;
+
+	if (physics)
+	{
+		pastPos = physics->pastPos + sphere->GetOffset();
+	}
+
 	//Top
 	if (CheckSphereAABB((int)floor(row * 0.49f) * col, row * col - 1, s))
 	{
@@ -753,7 +760,7 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 			for (int j = 0; j < col; ++j)
 			{
 				float3 n = HexagonToSphere(*GetWorldHex(i * col + j), s, pastPos, smallT);
-				if (!n.isEquil(zeroF) && smallT < St)
+				if (!n.isEqual(zeroF) && smallT < St)
 				{
 					collisionNormal = n;
 					sphere->collisionNormal = n;
@@ -761,7 +768,7 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 					if (op)
 					{
 						St = smallT;
-						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
+						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center - sphere->GetOffset(), true, n);
 						if (!CollidingWith[f])
 						{
 							tg->OnCollisionEnter(sphere);
@@ -812,13 +819,13 @@ void HexagonCollider::FixedUpdate(float dt)
 					Sphere s = sphere->GetWorldSphere();
 					float t = 100;
 					float3 n = HexagonToSphere(*GetWorldHex(), s, pastPos, t, mesh);
-					if (!n.isEquil(zeroF))
+					if (!n.isEqual(zeroF))
 					{
 						collisionNormal = n;
 						Physics* op = ob->GetComponent<Physics>();
 						if (op)
 						{
-							op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
+							op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center - sphere->GetOffset(), true, n);
 							if (!CollidingWith[i])
 							{
 								tg->OnCollisionEnter(sphere);
@@ -846,11 +853,11 @@ void HexagonCollider::FixedUpdate(float dt)
 					Capsule c = cap->GetWorldCapsule();
 					float t = 100;
 					float3 n = HexagonToCapsule(*GetWorldHex(), c, pastPos, t, mesh);
-					if (!n.isEquil(zeroF))
+					if (!n.isEqual(zeroF))
 					{
 						collisionNormal = n;
 						bool apg = false;
-						if (!n.isEquil(float3(0, 1, 0)))
+						if (!n.isEqual(float3(0, 1, 0)))
 							apg = true;
 						Physics* op = ob->GetComponent<Physics>();
 						if (op)

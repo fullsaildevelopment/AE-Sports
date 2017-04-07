@@ -49,4 +49,5 @@ public:
 	void ReceiveScoreboard();
 	bool isActive();
 	bool isInit() { return alreadyCreated; }
+	void UpdateSize(D2D1_SIZE_F rect);
 };

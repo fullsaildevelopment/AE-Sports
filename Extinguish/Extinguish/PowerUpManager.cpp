@@ -12,6 +12,9 @@
 #include "PowerUpEvent.h"
 #include "EventDispatcher.h"
 #include "SphereCollider.h"
+#include "Button.h"
+#include "UIRenderer.h"
+#include "Game.h"
 
 using namespace std;
 
@@ -57,6 +60,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		magnetRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
 		Magnet* magnetC = new Magnet();
 		magnet->AddComponent(magnetC);
+		magnetC->Init(magnet);
 		SphereCollider* magnetCollider = new SphereCollider(1.3f, magnet, true);
 		magnet->AddSphereCollider(magnetCollider);
 
@@ -71,7 +75,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 		shield->AddComponent(shieldRenderer);
 		shieldRenderer->Init("Shield", "PowerUp", "PowerUp", "Static", "", "", projection, devResources, false);
 		shieldRenderer->SetEmissiveColor(float4(1, 1, 0, 1));
-		SuperJump* shieldC = new SuperJump();
+		Shield* shieldC = new Shield(scene, projection, devResources);
 		shield->AddComponent(shieldC);
 		SphereCollider* shieldCollider = new SphereCollider(1.3f, shield, true);
 		shield->AddSphereCollider(shieldCollider);
@@ -98,17 +102,71 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 	{
 		isSpawned[i] = false;
 	}
+
+	PCWSTR bitmaps[3] = {
+	L"../Assets/UI/Icons/SuperJump.png",
+	L"../Assets/UI/Icons/Shield.png",
+	L"../Assets/UI/Icons/Magnet.png"
+	};
+#if !DEBUG_GRAPHICS
+	for (unsigned int i = 0; i < 3; ++i)
+	{
+		GameObject * pUI = new GameObject();
+		Button * theButton = new Button(true, true, L"", (unsigned int)strlen(""), 50.0f, 50.0f, devResources, 0);
+		theButton->SetGameObject(pUI);
+		theButton->setTimer(true);
+		theButton->showFPS(false);
+		theButton->setPositionMultipliers(0.75f + (0.07f * (float)i), 0.90f);
+		pUI->AddComponent(theButton);
+
+		UIRenderer * tRender = new UIRenderer();
+		tRender->Init(true, 45.0f, devResources, theButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 0.0f));
+		pUI->AddComponent(tRender);
+		tRender->MakeRTSize();
+		theButton->MakeRect();
+		tRender->InitMetrics();
+		theButton->setOrigin();
+		tRender->DecodeBitmap(bitmaps[i]);
+		tRender->setOpacity(0.0f);
+
+		powerUpUIobjs.push_back(pUI);
+		powerUpButtons.push_back(theButton);
+		powerUpRenderers.push_back(tRender);
+	}
+#endif
 }
 
 void PowerUpManager::Update(float _dt)
 {
+	// update powerups via server, both
+	if (ResourceManager::GetSingleton()->IsServer())
+		ServerUpdate(_dt);
+
+	//TODO: play a sound to indicate spawning
+
+
+	// update ui if player has specific powerup, solo
+	if (!ResourceManager::GetSingleton()->IsMultiplayer() || ResourceManager::GetSingleton()->IsServer())
+		NormalUpdate(_dt);
+	// update ui if player has specific powerup, client
+	else
+		ClientUpdate(_dt);
+}
+
+
+
+void PowerUpManager::ServerUpdate(float _dt)
+{
+	std::vector<int> indices;
+	std::vector<float3> positions;
+
 	for (int i = 0; i < NUM_OF_POS; ++i)
 	{
 		roundTimer[i] += _dt;
 	}
 
-	const float3 spawnPositions[] = { {-50.0f, 1.0f, 1.8f}, {5.0f, 1.0f, 1.8f}, //middle positions
-									  {-20.0f, 1.0f, 35.0f}, {-20.0f, 1.0f, -35.0f} }; //goal positions
+	const float3 spawnPositions[] = { { -50.0f, 1.0f, 1.8f },{ 5.0f, 1.0f, 1.8f }, //middle positions
+	{ -20.0f, 1.0f, 35.0f },{ -20.0f, 1.0f, -35.0f } }; //goal positions
 
 	bool triedSpawn[6] = {}; //used to say whether a powerup has tried to been spawned or not so far
 	bool triedPos[4] = {};
@@ -149,14 +207,21 @@ void PowerUpManager::Update(float _dt)
 			{
 				//set position
 				powerUps[randPowIndex]->GetGameObject()->GetTransform()->SetPosition(spawnPositions[randPosIndex]);
+				// for networking
+				positions.push_back(spawnPositions[randPosIndex]);
+				indices.push_back(randPosIndex);
 
 				//enable
 				powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
 				powerUps[randPowIndex]->SetEnabled(true);
 				powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 
-				//don't let it be spawned again til consumed
-				isSpawned[randPowIndex] = true;
+
+				//enable
+				//powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+				//powerUps[randPowIndex]->SetEnabled(true);
+				//powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+				powerUps[randPowIndex]->Enable();
 
 				//prevent pos from being used again
 				posUsed[randPosIndex] = true;
@@ -171,7 +236,164 @@ void PowerUpManager::Update(float _dt)
 		}
 	}
 
-	//TODO: play a sound to indicate spawning
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		// send information to clients
+		// send index & position
+		if (positions.size() > 0) {
+	///		for (unsigned int i = 0; i < 6; ++i)
+			{
+				for (unsigned int j = 0; j < positions.size(); ++j)
+				{
+					// if it was spawned, update the information for the client
+				//	if (i == indices[j])
+						Game::server.SetPowerUp(indices[j], positions[j], true);
+
+				}
+			}
+			Game::server.SendPowerUps();
+		}
+	}
+}
+
+void PowerUpManager::ClientUpdate(float _dt)
+{
+	// grab powerup information from server
+	if (Game::client.SpawnedPowerUps())
+	{
+		int amount = Game::client.SpawnedPowerUpAmount();
+
+		for (int i = 0; i < amount; ++i)
+		{
+			bool active;
+			float3 position;
+
+			active = Game::client.getSpawnedPowerUpActive(i);
+			position = Game::client.getSpawnedPowerUpPos(i);
+
+			// set that powerup active
+			powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
+			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(active);
+			powerUps[i]->SetEnabled(active);
+			powerUps[i]->SetActive(false);
+		}
+	}
+
+	if (Game::client.RemovedPowerUp())
+	{
+		int amount = Game::client.RemovedPowerUpAmount();
+
+		for (int i = 0; i < amount; ++i)
+		{
+			int index, id;
+
+			index = Game::client.getRemovedPowerUpIndex(i);
+			id = Game::client.getRemovedPlayerID(i);
+
+			// set that powerup inactive
+			powerUps[index]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+			powerUps[index]->SetEnabled(false);
+
+			// set that powerup's player
+			powerUps[index]->SetID(id);
+
+			if (id == Game::GetClientID())
+			{
+				powerUps[index]->ResetTimer();
+				powerUps[index]->SetActive(true);
+			}
+		}
+	}
+
+
+	// update ui
+	int uiIndex = 0;
+	bool sjump = false, shield = false, magnet = false;
+	for (unsigned int i = 0; i < (unsigned int)NUM_OF_UPS; ++i)
+	{
+		if (powerUps[i]->GetName() == "SuperJump")
+		{
+			uiIndex = 0;
+		}
+		else if (powerUps[i]->GetName() == "Shield")
+		{
+			uiIndex = 1;
+		}
+		else if (powerUps[i]->GetName() == "Magnet")
+		{
+			uiIndex = 2;
+		}
+
+		if (powerUps[i]->GetID() == Game::GetClientID())
+		{
+			powerUps[i]->Update(_dt);
+
+			float newOpacity = powerUps[i]->GetElapsed();
+			if (newOpacity < 0.0f)
+				newOpacity = 0.0f;
+			powerUpRenderers[uiIndex]->setOpacity(newOpacity);
+
+			if (uiIndex == 0)
+				sjump = true;
+			else if (uiIndex == 1)
+				shield = true;
+			else if (uiIndex == 2)
+				magnet = true;
+		}
+		else
+		{
+			if ((uiIndex == 0 && !sjump) || (uiIndex == 1 && !shield) || (uiIndex == 3 && !magnet))
+			{
+				powerUpRenderers[uiIndex]->setOpacity(0.0f);
+
+				powerUps[i]->SetActive(false);
+			}
+		}
+	}
+}
+
+void PowerUpManager::NormalUpdate(float _dt)
+{
+	int uiIndex = 0;
+	bool sjump = false, shield = false, magnet = false;
+	for (unsigned int i = 0; i < (unsigned int)NUM_OF_UPS; ++i)
+	{
+		if (powerUps[i]->GetName() == "SuperJump")
+		{
+			uiIndex = 0;
+		}
+		else if (powerUps[i]->GetName() == "Shield")
+		{
+			uiIndex = 1;
+		}
+		else if (powerUps[i]->GetName() == "Magnet")
+		{
+			uiIndex = 2;
+		}
+
+		if (powerUps[i]->GetPlayer())
+		{
+			if (powerUps[i]->GetPlayer()->GetPlayerID() == Game::GetClientID())
+			{
+				float newOpacity = powerUps[i]->GetElapsed();
+				if (newOpacity < 0.0f)
+					newOpacity = 0.0f;
+				powerUpRenderers[uiIndex]->setOpacity(newOpacity);
+
+				if (uiIndex == 0)
+					sjump = true;
+				else if (uiIndex == 1)
+					shield = true;
+				else if (uiIndex == 2)
+					magnet = true;
+			}
+		}
+		else
+		{
+			if ((uiIndex == 0 && !sjump) || (uiIndex == 1 && !shield) || (uiIndex == 3 && !magnet))
+				powerUpRenderers[uiIndex]->setOpacity(0.0f);
+		}
+	}
 
 }
 
@@ -192,9 +414,7 @@ void PowerUpManager::HandleEvent(Event* e)
 		//disable them
 		for (i = 0; i < powerUps.size(); ++i)
 		{
-			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-			powerUps[i]->SetEnabled(false);
-			powerUps[i]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
+			powerUps[i]->Disable();
 		}
 
 		return;
@@ -210,6 +430,46 @@ void PowerUpManager::HandleEvent(Event* e)
 
 		cout << powerEvent->GetName() << " picked up" << endl;
 
+		if (ResourceManager::GetSingleton()->IsMultiplayer())
+		{
+			std::string n = powerEvent->GetName();
+			int index = -1;
+			for (unsigned int i = 0; i < powerUps.size(); ++i)
+			{
+				if (n == powerUps[i]->GetGameObject()->GetName())
+					index = i;
+			}
+			// sent to client to despawn powerup
+			if (index != -1) {
+				Game::server.RemovePowerUp(index, powerEvent->GetClientID());
+				Game::server.SendRemoved();
+			}
+		}
+
 		return;
+	}
+}
+
+
+void PowerUpManager::Render()
+{
+	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
+	{
+		powerUpRenderers[i]->Render();
+	}
+}
+
+void PowerUpManager::UpdateSize(D2D1_SIZE_F rect)
+{
+	float ratio = 1.0f;
+	for (unsigned int i = 0; i < powerUpButtons.size(); ++i)
+	{
+		powerUpButtons[i]->setRT(rect);
+		powerUpButtons[i]->AdjustSize();
+		if (ratio == 1.0f)
+			ratio = powerUpButtons[i]->GetRatio();
+		powerUpButtons[i]->MakeRect();
+		powerUpButtons[i]->setOrigin();
+		powerUpRenderers[i]->ReInit(ratio);
 	}
 }
