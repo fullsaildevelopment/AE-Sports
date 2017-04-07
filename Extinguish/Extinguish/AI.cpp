@@ -513,7 +513,7 @@ void AI::Attack(GameObject *target)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * AttackSpeed);
+			me->GetTransform()->AddVelocity(v * AttackSpeed * moveSpeedMultiplier);
 			isAttacking = false;
 		}
 	}
@@ -582,7 +582,7 @@ bool AI::RunTo(GameObject *target)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * RunSpeed);
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 		}
 	}
 
@@ -605,7 +605,7 @@ bool AI::RunTo(GameObject *target, float dist)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * RunSpeed);
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 		}
 	}
 
@@ -626,7 +626,7 @@ bool AI::RunTo(float3 target, float dist)
 		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 			anim->SetTrigger("Run");
 
-		me->GetTransform()->AddVelocity(v * RunSpeed);
+		me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 	}
 
 	return false;
@@ -679,6 +679,16 @@ GameObject * AI::GetTarget() { return (realTarget) ? realTarget : nullptr; }
 
 bool AI::GetIsAttacking() { return isAttacking; }
 
+float AI::GetMoveSpeedMultiplier()
+{
+	return moveSpeedMultiplier;
+}
+
 bool AI::GetCanMove() { return canMove; }
 
 void AI::SetCanMove(bool ans) { canMove = ans; }
+
+void AI::SetMoveSpeedMultiplier(float multiplier)
+{
+	moveSpeedMultiplier = multiplier;
+}
