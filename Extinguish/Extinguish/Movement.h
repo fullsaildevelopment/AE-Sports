@@ -34,8 +34,10 @@ public:
 	//getters
 	bool IsMoving();
 	bool CanMove();
+	float GetMoveSpeed();
 
 	//setters//
 	void SetKeys(char forward, char back, char left, char right, char up, char down);
 	void SetCanMove(bool toggle);
+	void SetMoveSpeed(float speed);
 };

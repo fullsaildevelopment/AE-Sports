@@ -163,6 +163,9 @@ void FloorController::Strips(float _dt)
 	//problem: the logic is there, but it doesn't keep track of the dontRaise the next time the function is called
 	//solution: generate them the first time only (in a 2D array)
 	//generate 2D array of dontRaise
+
+	ratios += _dt * transSpeed;
+
 	if (!dontRaiseGenerated)
 	{
 		dontRaiseGenerated = true;
@@ -190,20 +193,19 @@ void FloorController::Strips(float _dt)
 
 	for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
 	{
-		//if (r % 5 == 0)
+		for (int c = 0; c < col; ++c)
 		{
-			for (int c = 0; c < col; ++c)
+			if (dontRaise[dontI][dontJ] != c)
 			{
-				if (dontRaise[dontI][dontJ] != c)
-				{
-					MovePillar(r * col + c, ratios);
-				}
-				else
-				{
-					++dontJ;
-				}
+				MovePillar(r * col + c, ratios);
+			}
+			else
+			{
+				++dontJ;
 			}
 		}
+
+		dontJ = 0;
 	}
 }
 
@@ -212,7 +214,7 @@ void FloorController::ControlMovement(float fullTime)
 	timeing = fullTime;
 	float dt = timeing - timer;
 
-	ratios += dt * transSpeed;
+	//ratios += dt * transSpeed;
 
 	//always do this (at least for most part)
 	InitialPattern(dt);
@@ -220,27 +222,31 @@ void FloorController::ControlMovement(float fullTime)
 	timer = fullTime;
 	resetableTimer += dt;
 
-	//if we want random, we can use this code
-	//resetableTimer += dt;
-
-	//if (resetableTimer > TIME_TIL_COOLDOWN + TIME_TIL_STATE) //both times to take into consideration time 
-	//{
-	//	cooldownDone = true;
-	//}
-
-	//randStateIndex = -1;
-
-	//if (resetableTimer > TIME_TIL_STATE && cooldownDone)
-	//{
-	//	randStateIndex = rand() % NUM_OF_STATES;
-	//	resetableTimer = 0.0f;
-	//	cooldownDone = false;
-	//}
-	//else if (resetableTimer > TIME_TO_RUN_STATE)
-	//{
-
-	//}
-
+	if (cooldownDone)
+	{
+		if (resetableTimer > TIME_TIL_STATE && !stateRunning)
+		{
+			stateRunning = true;
+			randStateIndex = rand() % NUM_OF_STATES;
+			resetableTimer = 0.0f;
+			ratios = 0.0f;
+		}
+		else if (resetableTimer > TIME_TO_RUN_STATE && stateRunning)
+		{
+			cooldownDone = false;
+			stateRunning = false;
+			randStateIndex = LEVEL;
+			resetableTimer = 0.0f;
+			ratios = 0.0f;
+		}
+	}
+	else
+	{
+		if (resetableTimer > TIME_TIL_COOLDOWN)
+		{
+			cooldownDone = true;
+		}
+	}
 
 	//if (randStateIndex != -1)
 	//{
@@ -250,20 +256,13 @@ void FloorController::ControlMovement(float fullTime)
 	//		Strips(dt);
 	//		break;
 	//	case GROUPS:
-
+	//		//Strips(dt);
+	//		break;
+	//	case LEVEL:
+	//		LevelFloor(dt);
 	//		break;
 	//	}
 	//}
-/*
-	if (resetableTimer > TIME_TIL_STATE + TIME_TIL_COOLDOWN)
-	{
-		transState = -1;
-		LevelFloor(dt);
-	}
-	else *//*if (resetableTimer > TIME_TIL_STATE)
-	{
-		Strips(dt);
-	}*/
 
 	//if (timeing < 10 && currPattern != 1)
 	//{
@@ -589,6 +588,6 @@ FloorController::~FloorController()
 
 	for (int i = 0; i < row; ++i)
 	{
-		delete [] dontRaise[i];
+		delete[] dontRaise[i];
 	}
 }
