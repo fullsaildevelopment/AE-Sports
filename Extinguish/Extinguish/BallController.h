@@ -20,7 +20,7 @@ private:
 	Physics* physics;
 	
 	//float magnetMultiplier;
-	float playerOriginalSpeed;
+	float playerOriginalSpeedMultiplier;
 	float aiOriginalSpeedMultiplier;
 
 	//std::vector<Transform*> nets;

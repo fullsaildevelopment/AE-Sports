@@ -154,7 +154,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					if (op && oop)
 					{
 						op->HandlePhysics(tgt, vel, s.m_Center - offset, true, n);
-						oop->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), ob->GetTransform()->GetPosition(), false,n,true,true);
+						oop->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), ob->GetTransform()->GetPosition(), false, n.negate(),true,true);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
