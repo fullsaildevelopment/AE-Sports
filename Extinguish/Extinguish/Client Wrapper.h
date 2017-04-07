@@ -207,4 +207,21 @@ public:
 	bool hasScored() { return newClient.hasScored(); }
 
 	int GetPulse() { return newClient.getPulse(); }
+
+	bool SpawnedPowerUps() { return newClient.SpawnedPowerUps(); }
+	bool RemovedPowerUp() { return newClient.RemovedPowerUp(); }
+
+	int SpawnedPowerUpAmount() { 
+		return newClient.SpawnedPowerUpAmount(); }
+	bool getSpawnedPowerUpActive(int i) { return newClient.getSpawnedPowerUpActive(i); }
+
+	float3 getSpawnedPowerUpPos(int i) {
+		XMFLOAT3 npos = newClient.GetSpawnedPowerUpPos(i);
+		return { npos.x, npos.y, npos.z };
+	}
+
+	int RemovedPowerUpAmount() { return newClient.RemovedPowerUpAmount(); }
+	int getRemovedPowerUpIndex(int i) { return newClient.getRemovedPowerUpIndex(i); }
+	int getRemovedPlayerID(int i) { return newClient.getRemovedPlayerID(i); }
+
 };

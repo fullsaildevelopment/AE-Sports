@@ -1,6 +1,7 @@
 #pragma once
 #include "vec3.h"
 #include <vector>
+#include "PriorityQueue.h"
 
 // class for the node map to help make the 
 // path planning easier for AI around pillars
@@ -20,9 +21,36 @@ private:
 
 	struct ColumnRow
 	{
-		int Column;
-		int Row;
+		int Column, Row = 0;
 	};
+
+	/*
+	struct Position
+		{
+			int row, col = 0;
+		};
+
+		struct SearchNode
+		{
+			std::vector<Tile *> edges; // vector of existing edges
+			std::vector<Position> pEdges; // vector of existing edge positions
+			Tile *curr = nullptr; // the tile it's representing
+		};
+
+		struct PlannerNode
+		{
+			float heuristicCost = 0; 
+			float givenCost = 0; 
+			float finalCost = 0; 
+			SearchNode *path = nullptr; // the path that we'll take
+			PlannerNode *parent = nullptr; // my parent
+		};
+
+		boolean isGreater(PlannerNode *lhs, PlannerNode *rhs)
+		{
+			return (lhs.finalCost > rhs.finalCost);
+		}
+	*/
 
 	int numRows; // number of rows
 	int numCols; // number of columns
@@ -39,5 +67,5 @@ public:
 
 	Node *FindClosest(float3 pos);
 	Node *FindBallNode(float3 ballPos);
-
+	std::vector<Node *> CreatePath(Node * start, Node *end);
 };

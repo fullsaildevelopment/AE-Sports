@@ -36,6 +36,11 @@ int PowerUpEvent::GetPosIndex()
 	return posIndex;
 }
 
+int PowerUpEvent::GetClientID()
+{
+	return clientID;
+}
+
 //setters//
 void PowerUpEvent::SetName(std::string name)
 {
@@ -55,4 +60,9 @@ void PowerUpEvent::SetSpawnIndex(int index)
 void PowerUpEvent::SetPosIndex(int index)
 {
 	posIndex = index;
+}
+
+void PowerUpEvent::SetClientID(int id)
+{
+	clientID = id;
 }

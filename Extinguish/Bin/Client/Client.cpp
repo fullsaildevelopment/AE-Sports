@@ -26,6 +26,10 @@ Client::Client()
 		gameState[0][i].name = nullptr;
 	}
 
+
+	pUp.positions.resize(6);
+	pUp.isactive.resize(6);
+
 	scoreName = new string;
 }
 
@@ -76,7 +80,7 @@ int Client::init(char* _address, UINT16 port)
 
 int Client::run()
 {
-	states = packets = scored = false;
+	states = packets = scored = spowerup = rpowerup = false;
 	int result = 1;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
@@ -247,6 +251,18 @@ int Client::run()
 
 			scoreName[0] = name;
 			scored = true;
+			break;
+		}
+		case ID_SPAWN_POWERUP:
+		{
+			receiveSPU();
+			spowerup = true;
+			break;
+		}
+		case ID_REMOVE_POWERUP:
+		{
+			receiveRPU();
+			rpowerup = true;
 			break;
 		}
 		
@@ -565,4 +581,63 @@ void Client::receiveFloor()
 		bIn.Read(hex.z);
 		floorState[0][index] = hex;
 	}
+}
+
+void Client::receiveRPU() 
+{
+	pUp.ids.clear();
+	pUp.removeindices.clear();
+
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	UINT8 amount;
+	bIn.Read(amount);
+
+	for (unsigned int i = 0; i < (unsigned int)amount; ++i)
+	{
+		UINT8 index, id;
+		bIn.Read(id);
+		bIn.Read(index);
+
+		pUp.ids.push_back(id);
+		pUp.removeindices.push_back(index);
+	}
+}
+
+void Client::receiveSPU() 
+{
+//	pUp.positions.clear();
+	BitStream bIn(packet->data, packet->length, false);
+	bIn.IgnoreBytes(sizeof(MessageID));
+
+	//UINT8 amount;
+	//bIn.Read(amount);
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		UINT8 active;
+		XMFLOAT3 pos;
+		//float x, y, z;
+		bIn.Read(active);
+		if (active == 1)
+			bIn.Read(pos);
+		//bIn.Read(x);
+		//bIn.Read(y);
+		//bIn.Read(z);
+
+		if (active == 1)
+			pUp.isactive[i] = true;
+		else
+			pUp.isactive[i] = false;
+
+		if (active == 1)
+			pUp.positions[i] = pos;
+		else
+		{
+			pUp.positions[i] = { 0,0,0 };
+		}
+	}
+
+	float temp = 0.0f;
 }
