@@ -552,11 +552,18 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 {
 	GameObject* ob = objects[f];
 	Sphere s = sphere->GetWorldSphere();
-	float3 pastPos = objects[f]->GetComponent<Physics>()->pastPos;
+	Physics* physics = objects[f]->GetComponent<Physics>();
+	float3 pastPos;
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
 	float smallestT = 100;
 	bool collided = false;
+
+	if (physics)
+	{
+		pastPos = physics->pastPos + sphere->GetOffset();
+	}
+
 	//Top
 	if (CheckSphereAABB((int)floor(row * 0.49f) * col, row * col - 1, s))
 	{
@@ -761,7 +768,7 @@ bool HexagonCollider::CheckSphere(GameObject* tg, GameObject* ob, int _min, int 
 					if (op)
 					{
 						St = smallT;
-						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
+						op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center - sphere->GetOffset(), true, n);
 						if (!CollidingWith[f])
 						{
 							tg->OnCollisionEnter(sphere);
@@ -818,7 +825,7 @@ void HexagonCollider::FixedUpdate(float dt)
 						Physics* op = ob->GetComponent<Physics>();
 						if (op)
 						{
-							op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center, true, n);
+							op->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), s.m_Center - sphere->GetOffset(), true, n);
 							if (!CollidingWith[i])
 							{
 								tg->OnCollisionEnter(sphere);

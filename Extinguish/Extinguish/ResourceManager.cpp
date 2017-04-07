@@ -842,6 +842,7 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Super Jump\\Super Jump.fbx", "Super Jump");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Magnet\\Magnet.fbx", "Magnet");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Shield\\Shield.fbx", "Shield");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\ShieldBubble\\ShieldBubble.fbx", "ShieldBubble");
 
 	//test models
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");
@@ -853,6 +854,10 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
 
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoal\\ArenaGoal.fbx", "ArenaGoal");
+	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall.fbx", "ArenaGoalWall");
+	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaWall\\ArenaWall.fbx", "ArenaWall");
+	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaPillar\\ArenaPillar.fbx", "ArenaPillar");
+
 #endif
 }
 

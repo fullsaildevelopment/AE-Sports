@@ -24,10 +24,12 @@ private:
 		int Row;
 	};
 
-
-	std::vector<std::vector<Node *>> nodes; // will be an array
 	int numRows; // number of rows
 	int numCols; // number of columns
+	float3 prevBallPos;
+	Node *ballNode;
+	std::vector<std::vector<Node *>> nodes; // all the nodes in the map
+	
 
 
 public:
@@ -36,5 +38,6 @@ public:
 	~Map();
 
 	Node *FindClosest(float3 pos);
-
+	Node *FindBallNode(float3 ballPos);
+	std::vector<Node *> CreatePath(Node * start, Node *end);
 };

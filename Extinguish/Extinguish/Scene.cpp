@@ -278,10 +278,10 @@ void Scene::CreateLights()
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -7, -18, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
+	pointLight0.Create({ -9, -13, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -7, -18, 5.0f, 0 }, { 0, 0.0f, 1.0f, 1.0f }, 145.0f);
+	pointLight1.Create({ -9, -13, 10.0f, 0 }, { 0.0f, 0.0f, 1.0f, 1.0f }, 145.0f);
 
 	PointLight pointLight2;
 	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
@@ -582,6 +582,7 @@ void Scene::Update(float _dt)
 		{
 			trender->SetView(cameraCam);
 			ballTrail = trender;
+			trender->RenderUpdate(_dt);
 		}
 	}
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
@@ -676,6 +677,12 @@ void Scene::FixedUpdate(float _dt)
 		{
 			animator->FixedUpdate(_dt);
 		}
+
+		/*TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
+		if (trender && !ResourceManager::GetSingleton()->IsServer())
+		{
+			trender->FixedUpdate(_dt);
+		}*/
 	}
 }
 

@@ -3,6 +3,8 @@
 Map::Map(int rows, int cols, float3 *positions)
 {
 	nodes.resize(rows);
+	numRows = rows;
+	numCols = cols;
 
 	for (int r = 0; r < rows; ++r)
 	{
@@ -58,7 +60,40 @@ Map::~Map()
 
 Map::Node *Map::FindClosest(float3 pos)
 {
-	
+	float dist = 98700;
+	Node *closest = nullptr;
 
-	return nullptr;
+	for (int row = 0; row < nodes.size(); ++row)
+	{
+		for (int col = 0; col < nodes.size(); ++col)
+		{
+			float3 tmp = (*nodes[row][col]->pos - pos);
+			float dot = dot_product(tmp, tmp);
+
+			if (dot < dist)
+			{
+				dist = dot;
+				closest = nodes[row][col];
+			}
+		}
+	}
+
+	return closest;
+}
+
+Map::Node *Map::FindBallNode(float3 ballPos)
+{
+	if (!ballPos.isEqual(prevBallPos))
+	{
+		prevBallPos = ballPos;
+		ballNode = FindClosest(ballPos);
+	}
+
+	return ballNode;
+}
+
+std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
+{
+	std::vector<Map::Node *> temp;
+	return temp;
 }

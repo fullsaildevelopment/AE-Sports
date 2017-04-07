@@ -1011,20 +1011,17 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 	return float3(0, 0, 0);
 }
 
-bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
+float3 CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
 {
 	vec3f SE = capsule.m_Segment.m_End - capsule.m_Segment.m_Start;
 	float ratio = dot_product(SE, sphere.m_Center - capsule.m_Segment.m_Start) / dot_product(SE, SE);
 	ratio = max(0, min(ratio, 1));
 	SE = capsule.m_Segment.m_Start + SE * ratio;
 	if (dot_product(sphere.m_Center - SE, sphere.m_Center - SE) > powf(sphere.m_Radius + capsule.m_Radius, 2))
-		return false;
+		return float3().make_zero();
 	float3 cs = sphere.m_Center - SE;
-	float3 ref = cs.normalize();
-	float3 m = ref * (sphere.m_Radius + capsule.m_Radius);
-	sphere.m_Center += m;
-	vel = vel - ref * 2 * dot_product(vel, ref);
-	return true;
+	cs = cs.normalize();
+	return cs;
 }
 
 bool OldHexagonToSphere(const Hexagon& hex, Sphere& s, float3& vel)
@@ -1755,14 +1752,14 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 			{
 				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
-				pastPos = s.m_Center;
+				//pastPos = s.m_Center;
 				return planes[0].n;
 			}
 			if (planes[0].p.y < endPoint.y && distFromTop.y < 0.06f && Sdirection.y == 0)
 			{
 				s.m_Center.y = planes[0].p.y +  0.0018f;
 				Stime = 1;
-				pastPos = s.m_Center;
+				//pastPos = s.m_Center;
 				return planes[0].n;
 			}
 		}
