@@ -76,7 +76,9 @@ public:
 	GameObject *GetTarget(); // returns the target the AI is attacking
 	bool GetIsAttacking(); // returns if im attacking
 	bool GetCanMove();
+	float GetMoveSpeedMultiplier();
 
 	// Mutators
 	void SetCanMove(bool ans);
+	void SetMoveSpeedMultiplier(float multiplier);
 };

@@ -21,6 +21,7 @@ private:
 	
 	//float magnetMultiplier;
 	float playerOriginalSpeed;
+	float aiOriginalSpeedMultiplier;
 
 	//std::vector<Transform*> nets;
 

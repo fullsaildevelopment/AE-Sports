@@ -9,7 +9,8 @@
 #include "EventDispatcher.h"
 #include "CanPlayEvent.h"
 #include "AI.h"
-#include "Movement.h"
+#include "Physics.h"
+//#include "Movement.h"
 
 using namespace std;
 
@@ -157,6 +158,20 @@ void BallController::HandleEvent(Event* e)
 
 void BallController::Throw()
 {
+	//make player go back to regular speed (must be done before holder = nullptr)
+	AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
+
+	if (ai)
+	{
+		ai->SetMoveSpeedMultiplier(aiOriginalSpeedMultiplier);
+	}
+	else
+	{
+		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed);
+		//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
+		//movement->SetMoveSpeed(playerOriginalSpeed);
+	}
+
 	//store prevThrower even if null
 	prevThrower = thrower;
 
@@ -177,13 +192,24 @@ void BallController::Throw()
 	//turn on physics
 	physics->SetIsKinematic(false);
 	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
-
-	//make player go back to regular speed
-
 }
 
 void BallController::DropBall(GameObject *person)
 {
+	//make player go back to regular speed
+	AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
+
+	if (ai)
+	{
+		ai->SetMoveSpeedMultiplier(aiOriginalSpeedMultiplier);
+	}
+	else
+	{
+		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed);
+		//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
+		//movement->SetMoveSpeed(playerOriginalSpeed);
+	}
+
 	// add some velocity to me in the holders forward vec
 	float3 vel = holder->GetTransform()->GetForwardf3() * 1;
 	vel.y += 2.0f;
@@ -211,9 +237,6 @@ void BallController::DropBall(GameObject *person)
 	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 	timer.Restart();
 	isThrown = true;
-
-	//make player go back to regular speed
-
 }
 
 bool  BallController::GetIsHeld()
@@ -284,15 +307,19 @@ void BallController::SetHolder(GameObject *person)
 		transform->SetPosition(float3(0, 0, 0));
 
 		//make the player move slower
-		AI* ai = person->GetComponent<AI>();
+		AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
 
 		if (ai)
 		{
-
+			aiOriginalSpeedMultiplier = ai->GetMoveSpeedMultiplier();
+			ai->SetMoveSpeedMultiplier(PLAYER_SPEED_MULTIPLIER);
 		}
 		else
 		{
-			
+			//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
+
+			playerOriginalSpeed = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->GetMaxSpeed();
+			holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed * PLAYER_SPEED_MULTIPLIER);
 		}
 	}
 	else //this isn't the same as throwing or dropping. Just no one has it anymore
