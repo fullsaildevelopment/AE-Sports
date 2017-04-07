@@ -21,7 +21,8 @@ private:
 
 	struct ColumnRow
 	{
-		int Column, Row = 0;
+		int Column;
+		int Row;
 	};
 
 	/*
