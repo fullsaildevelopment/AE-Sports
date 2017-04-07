@@ -11,6 +11,7 @@ private:
 	std::string name;
 	int spawnIndex;
 	int posIndex;
+	int clientID;
 
 public:
 	//structors
@@ -24,10 +25,12 @@ public:
 	bool IsActive();
 	int GetSpawnIndex();
 	int GetPosIndex();
+	int GetClientID();
 
 	//setters
 	void SetName(std::string name);
 	void SetIsActive(bool active);
 	void SetSpawnIndex(int index);
 	void SetPosIndex(int index);
+	void SetClientID(int id);
 };

@@ -12,6 +12,7 @@ private:
 	float timer;
 	bool isActivated;
 	int spawnIndex, posIndex; //the manager needs this to help spawn
+	int id; // for client-side only
 
 	PlayerController* player;
 public:
@@ -40,9 +41,13 @@ public:
 	int GetSpawnIndex();
 	int GetPosIndex();
 	float GetElapsed() { return (duration - timer) / duration; }
+	int GetID() { return id; }
 
 	//setters
 	void SetDuration(float dur);
 	void SetSpawnIndex(int index);
 	void SetPosIndex(int index);
+	void SetID(int _id) { id = _id; }
+	void ResetTimer() { timer = 0.0f; }
+	void SetActive(bool active) { isActivated = active; }
 };

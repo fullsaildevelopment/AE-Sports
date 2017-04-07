@@ -58,7 +58,7 @@ public:
 #pragma pack(push, 1)
 	struct GAME_STATE
 	{
-		bool paused = false;
+		bool paused = true;
 		bool countdown = false;
 		UINT8 scene = 1;
 		int floorPulse = -1;
@@ -102,7 +102,9 @@ private:
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
 		ID_INCOMING_FLOOR,
-		ID_SOMEONE_SCORED
+		ID_SOMEONE_SCORED,
+		ID_SPAWN_POWERUP,
+		ID_REMOVE_POWERUP
 	};
 
 #pragma pack(push, 1)
@@ -137,9 +139,19 @@ private:
 		UINT8 clientID;
 		bool isServer;
 	};
-
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+	struct PowerUps
+	{
+		// spawn
+		std::vector<bool> isactive;
+		std::vector<XMFLOAT3> positions;
+		// despawn
+		std::vector<int> removeindices;
+		std::vector<int> ids;
+	};
+#pragma pack(pop)
 	
 	//static CLIENT_GAME_STATE * clientStates;
 	InputEventStruct clientInput[MAX_PLAYERS];
@@ -160,6 +172,8 @@ private:
 	std::vector<XMFLOAT3> * floorState;
 	SOCKET serverSocket;
 	bool npDec = false;
+
+	PowerUps pUp;
 
 	//for any message where stride will be cheap way of message header
 	char* message;
@@ -228,6 +242,11 @@ public:
 	void setCountdown(bool down) {gameState[0][0].countdown = down; }
 	void setPulse(int pulse) { gameState[0][0].floorPulse = pulse; }
 
+	void SetPowerUp(int index, XMFLOAT3 pos, bool active) { //pUp.newindices.push_back(index); 
+		pUp.isactive[index] = active;
+		pUp.positions[index] = pos; }
+	void RemovePowerUp(int index, int id) { pUp.ids.push_back(id); pUp.removeindices.push_back(index); }
+
 
 	/* game stuff*/
 	void clearFloor() { floorState[0].clear(); }
@@ -248,6 +267,8 @@ public:
 	}
 
 	void SendScored(char * name, UINT8 length);
+	void SendPowerUps();
+	void SendRemoved();
 
 private:
 	int lastState = 0;
