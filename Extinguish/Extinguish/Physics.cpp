@@ -9,6 +9,7 @@ void Physics::Init()
 
 	isKinematic = false;
 	hasMaxSpeed = true;
+	maxMoveSpeedMultiplier = 1.0f;
 }
 
 void Physics::FixedUpdate(float _dt)
@@ -42,15 +43,20 @@ void Physics::FixedUpdate(float _dt)
 		}
 
 		//prevents x and z of object going above maxSpeed (y isn't affected)
-		if ((nV * float3(1,0,1)).magnitude() > maxMoveSpeed && hasMaxSpeed)
+		if ((nV * float3(1,0,1)).magnitude() > maxMoveSpeed * maxMoveSpeedMultiplier && hasMaxSpeed)
 		{
-			float3 tm = (nV * float3(1, 0, 1)).normalize() * maxMoveSpeed;
+			float3 tm = (nV * float3(1, 0, 1)).normalize() * maxMoveSpeed * maxMoveSpeedMultiplier;
 			nV.x = tm.x;
 			nV.z = tm.z;
 		}
 		transform->SetVelocity(nV);
 		colliding = false;
 		transform->Translate({ nV.x * _dt, nV.y * _dt, nV.z * _dt });
+	}
+
+	if (GetGameObject()->GetName() == "Mage1")
+	{
+		cout << maxMoveSpeedMultiplier << endl;
 	}
 }
 
@@ -96,6 +102,11 @@ float Physics::GetMaxSpeed()
 	return maxMoveSpeed;
 }
 
+float Physics::GetMaxSpeedMultiplier()
+{
+	return maxMoveSpeedMultiplier;
+}
+
 //setters//
 void Physics::SetIsKinematic(bool toggle)
 {
@@ -110,6 +121,11 @@ void Physics::SetHasMaxSpeed(bool toggle)
 void Physics::SetMaxSpeed(float newMaxSpeed)
 {
 	maxMoveSpeed = newMaxSpeed;
+}
+
+void Physics::SetMaxSpeedMultiplier(float multiplier)
+{
+	maxMoveSpeedMultiplier = multiplier;
 }
 
 void Physics::SetApplyFriction(bool t)

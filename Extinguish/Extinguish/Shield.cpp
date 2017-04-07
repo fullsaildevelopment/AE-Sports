@@ -26,7 +26,7 @@ Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResource
 	renderer->SetEnabled(false);
 	collider = new SphereCollider(5.0f, shieldBubble, false);
 	shieldBubble->AddSphereCollider(collider);
-	//collider->SetOffset({ 0, 1.1f, 0 });
+	collider->SetOffset({ 0, 1.1f, 0 });
 	collider->SetEnabled(false);
 	Physics* physics = new Physics();
 	shieldBubble->AddComponent(physics);
