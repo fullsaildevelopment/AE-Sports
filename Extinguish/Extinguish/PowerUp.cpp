@@ -29,7 +29,10 @@ void PowerUp::Update(float _dt)
 
 	if (IsDone() && isActivated)
 	{
-		Deactivate();
+		if (ResourceManager::GetSingleton()->IsServer())
+			Deactivate();
+		else
+			isActivated = false;
 	}
 }
 
@@ -70,6 +73,7 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 
 					//tell powerup manager it was picked up
 					PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, spawnIndex, posIndex);
+					powerEvent->SetClientID(player->GetPlayerID());
 					EventDispatcher::GetSingleton()->DispatchTo(powerEvent, "PowerUpManager");
 					delete powerEvent;
 
