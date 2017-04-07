@@ -56,25 +56,28 @@ void Physics::FixedUpdate(float _dt)
 
 void Physics::HandlePhysics(Transform* tt, float3 nV, float3& nP, bool _bounce, float3 collisionNormal, bool _stillApplyGravity, bool stopMovement)
 {
-	if (_bounce)
+	if (!isKinematic)
 	{
-		nV = nV - collisionNormal * 2 * dot_product(nV, collisionNormal);
-		nV *= bounce;
-	}
-	if (stopMovement)
-	{
-		if (dot_product(nV, collisionNormal) < 0)
+		if (_bounce)
 		{
-			float3 invN = collisionNormal.negate();
-			invN = invN * (nV * collisionNormal).magnitude();
-			nV = nV - invN;
+			nV = nV - collisionNormal * 2 * dot_product(nV, collisionNormal);
+			nV *= bounce;
 		}
+		if (stopMovement)
+		{
+			if (dot_product(nV, collisionNormal) < 0)
+			{
+				float3 invN = collisionNormal.negate();
+				invN = invN * (nV * collisionNormal).magnitude();
+				nV = nV - invN;
+			}
+		}
+		tt->SetVelocity(nV);
+		tt->SetPosition(nP);
+		stillapplygravity = _stillApplyGravity;
+		colliding = true;
+		//nP += nV * 0.02f;
 	}
-	tt->SetVelocity(nV);
-	tt->SetPosition(nP);
-	stillapplygravity = _stillApplyGravity;
-	colliding = true;
-	nP += nV * 0.02f;
 }
 
 //getters//

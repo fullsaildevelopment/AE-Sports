@@ -55,6 +55,7 @@ void PlayerController::Init()
 	isSprinting = false;
 	footstepsSound = 0;
 	footstepsPlayed = false;
+	isInvincible = false;
 
 	//other initialization
 	canSprint = true;
@@ -480,49 +481,52 @@ void PlayerController::Attack()
 
 	if (otherPlayer)
 	{
-		if (meterBar->GetPercentage() >= attackCost)
+		if (!otherPlayer->GetComponent<PlayerController>()->IsInvincible())
 		{
-			//do animation
-			AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
-
-			animator->SetTrigger("Stumble");
-
-			cout << "Attack" << endl;
-
-			//make them drop ball
-			BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
-
-			if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+			if (meterBar->GetPercentage() >= attackCost)
 			{
-				//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
-				ball->DropBall(otherPlayer);
-			}
+				//do animation
+				AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
 
-			//drain stamina bar
-			meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
+				animator->SetTrigger("Stumble");
 
-			ogPlayer = otherPlayer;
+				cout << "Attack" << endl;
 
-			AI* otherAI = ogPlayer->GetComponent<AI>();
+				//make them drop ball
+				BallController* ball = otherPlayer->FindGameObject("GameBall")->GetComponent<BallController>();
 
-			if (otherAI)
-			{
-				otherAI->SetCanMove(false);
-			}
-			else
-			{
-				Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+				if (ball->GetCrosseHolder() == otherPlayer->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()) //if crosse == crosse
+				{
+					//ball->GetGameObject()->GetTransform()->SetPosition(ball->GetGameObject()->GetTransform()->GetParent()->GetPosition());
+					ball->DropBall(otherPlayer);
+				}
 
-				otherMovement->SetCanMove(false);
+				//drain stamina bar
+				meterBar->SetDTimeFromPercentage(meterBar->GetPercentage() - 0.50f);
 
-				//move the player's camera to match getting up
-				Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
-				float3 translation = otherCamera->GetForwardf3();
-				translation.x = -translation.x;
-				translation.y = -1.0f;
-				translation.z = -translation.z * 3.0f;
+				ogPlayer = otherPlayer;
 
-				otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				AI* otherAI = ogPlayer->GetComponent<AI>();
+
+				if (otherAI)
+				{
+					otherAI->SetCanMove(false);
+				}
+				else
+				{
+					Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+
+					otherMovement->SetCanMove(false);
+
+					//move the player's camera to match getting up
+					Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+					float3 translation = otherCamera->GetForwardf3();
+					translation.x = -translation.x;
+					translation.y = -1.0f;
+					translation.z = -translation.z * 3.0f;
+
+					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				}
 			}
 		}
 	}
@@ -830,6 +834,16 @@ float PlayerController::GetJumpMultiplier()
 	return jumpMultiplier;
 }
 
+unsigned int PlayerController::GetPlayerID()
+{
+	return playerID;
+}
+
+bool PlayerController::IsInvincible()
+{
+	return isInvincible;
+}
+
 //setters//
 void PlayerController::SetName(std::string name)
 {
@@ -881,7 +895,7 @@ void PlayerController::SetJumpMultiplier(float multiplier)
 	jumpMultiplier = multiplier;
 }
 
-unsigned int PlayerController::GetPlayerID()
+void PlayerController::SetIsInvincible(bool toggle)
 {
-	return playerID;
+	isInvincible = toggle;
 }
