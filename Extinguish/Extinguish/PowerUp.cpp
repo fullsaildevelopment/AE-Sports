@@ -9,6 +9,7 @@
 #include "SoundEvent.h"
 #include "SoundEngine.h"
 #include "SphereCollider.h"
+#include "AI.h"
 //#include "BoxCollider.h"
 
 //structors//
@@ -28,7 +29,10 @@ void PowerUp::Update(float _dt)
 
 	if (IsDone() && isActivated)
 	{
-		Deactivate();
+		if (ResourceManager::GetSingleton()->IsServer())
+			Deactivate();
+		else
+			isActivated = false;
 	}
 }
 
@@ -53,10 +57,14 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 			if (capsCollider->GetGameObject()->GetName().find("Mage") != string::npos)
 			{
 				player = capsCollider->GetGameObject()->GetComponent<PlayerController>();
+				AI* ai = capsCollider->GetGameObject()->GetComponent<AI>();
 
-				if (player)
+				//don't allow AI to get powerup
+				if (player && !ai)
 				{
 					isActivated = true;
+					timer = 0.0f;
+
 					Activate();
 
 					//stop rendering
@@ -65,6 +73,7 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 
 					//tell powerup manager it was picked up
 					PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, spawnIndex, posIndex);
+					powerEvent->SetClientID(player->GetPlayerID());
 					EventDispatcher::GetSingleton()->DispatchTo(powerEvent, "PowerUpManager");
 					delete powerEvent;
 
@@ -90,6 +99,20 @@ void PowerUp::Activate()
 void PowerUp::Deactivate()
 {
 	isActivated = false;
+}
+
+void PowerUp::Enable()
+{
+	GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
+	SetEnabled(true);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
+}
+
+void PowerUp::Disable()
+{
+	GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
+	SetEnabled(false);
+	GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 }
 
 //getters//

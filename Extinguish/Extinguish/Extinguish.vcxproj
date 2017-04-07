@@ -161,6 +161,7 @@
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="HexagonCollider.cpp" />
     <ClCompile Include="Magnet.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="MeterBar.cpp" />
     <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Physics.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="SuperJump.cpp" />
+    <ClCompile Include="TrailRender.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="Parameter.cpp" />
@@ -227,6 +229,7 @@
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowerUpManager.h" />
+    <ClInclude Include="PriorityQueue.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="AI.h" />
@@ -255,6 +258,7 @@
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="SuperJump.h" />
+    <ClInclude Include="TrailRender.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="Parameter.h" />
@@ -295,6 +299,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0_level_9_1</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="GS_TrailGeometry.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="PS_Ball.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -358,6 +372,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="PS_Trail.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="VS_Bind.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
@@ -405,6 +425,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0_level_9_1</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0_level_9_1</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="VS_Trail.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

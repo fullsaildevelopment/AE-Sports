@@ -8,6 +8,9 @@
 #include "SoundEvent.h"
 #include "EventDispatcher.h"
 #include "CanPlayEvent.h"
+#include "AI.h"
+#include "Physics.h"
+//#include "Movement.h"
 
 using namespace std;
 
@@ -53,15 +56,15 @@ void BallController::Init()
 void BallController::LateInit()
 {
 	std::vector<GameObject*> go = *GetGameObject()->GetGameObjects();
-	int size = (int)go.size();
-	for (int i = 0; i < size; ++i)
-	{
-		Crosse* c = go[i]->GetComponent<Crosse>();
-		if (c)
-		{
-			nets.push_back(c->GetGameObject()->GetTransform());
-		}
-	}
+	//int size = (int)go.size();
+	//for (int i = 0; i < size; ++i)
+	//{
+	//	Crosse* c = go[i]->GetComponent<Crosse>();
+	//	if (c)
+	//	{
+	//		nets.push_back(c->GetGameObject()->GetTransform());
+	//	}
+	//}
 }
 
 void BallController::Update(float _dt)
@@ -82,7 +85,7 @@ void BallController::Update(float _dt)
 		GetGameObject()->FindGameObject("Crosse1")->GetComponent<Crosse>()->Catch();
 	}
 
-	if (isHeld && !isThrown && !transform->GetPosition().isEquil(float3( 0,0,0 )))
+	if (isHeld && !isThrown && !transform->GetPosition().isEqual(float3( 0,0,0 )))
 		transform->SetPosition({ 0,0,0 });
 
 	if (isThrown)
@@ -116,27 +119,29 @@ void BallController::FixedUpdate(float _dt)
 	{
 		transform->AddVelocity(float3(0, 10, 0));
 	}
-	if (!isHeld && !isThrown)
-	{
-		float3 vel = transform->GetVelocity();
-		if (vel.isEquil(float3(0, 0, 0)))
-		{
-			transform->AddVelocity(float3(0, 10, 0));
-		}
-		int s = (int)nets.size();
-		for (int i = 0; i < s; ++i)
-		{
-			XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
-			XMFLOAT4X4 net = *nets[i]->GetWorldP();
-			float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
-			float l = dot_product(ball2net,ball2net);
-			if (l < 9.1f)
-			{
-				float s = 2 / l;
-				me->GetTransform()->AddVelocity(ball2net.normalize() * s);
-			}
-		}
-	}
+
+	//do magnet stuff
+	//if (!isHeld && !isThrown)
+	//{
+	//	float3 vel = transform->GetVelocity();
+	//	if (vel.isEquil(float3(0, 0, 0)))
+	//	{
+	//		transform->AddVelocity(float3(0, 10, 0));
+	//	}
+	//	int s = (int)nets.size();
+	//	for (int i = 0; i < s; ++i)
+	//	{
+	//		XMFLOAT4X4 ball = *me->GetTransform()->GetWorldP();
+	//		XMFLOAT4X4 net = *nets[i]->GetWorldP();
+	//		float3 ball2net = float3(net._41, net._42, net._43) - float3(ball._41, ball._42, ball._43);
+	//		float l = dot_product(ball2net,ball2net);
+	//		if (l < 9.1f * magnetMultiplier)
+	//		{
+	//			float s = 2 / l;
+	//			me->GetTransform()->AddVelocity(ball2net.normalize() * s);
+	//		}
+	//	}
+	//}
 }
 
 void BallController::HandleEvent(Event* e)
@@ -153,6 +158,20 @@ void BallController::HandleEvent(Event* e)
 
 void BallController::Throw()
 {
+	//make player go back to regular speed (must be done before holder = nullptr)
+	AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
+
+	if (ai)
+	{
+		ai->SetMoveSpeedMultiplier(aiOriginalSpeedMultiplier);
+	}
+	else
+	{
+		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed);
+		//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
+		//movement->SetMoveSpeed(playerOriginalSpeed);
+	}
+
 	//store prevThrower even if null
 	prevThrower = thrower;
 
@@ -177,6 +196,20 @@ void BallController::Throw()
 
 void BallController::DropBall(GameObject *person)
 {
+	//make player go back to regular speed
+	AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
+
+	if (ai)
+	{
+		ai->SetMoveSpeedMultiplier(aiOriginalSpeedMultiplier);
+	}
+	else
+	{
+		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed);
+		//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
+		//movement->SetMoveSpeed(playerOriginalSpeed);
+	}
+
 	// add some velocity to me in the holders forward vec
 	float3 vel = holder->GetTransform()->GetForwardf3() * 1;
 	vel.y += 2.0f;
@@ -272,6 +305,22 @@ void BallController::SetHolder(GameObject *person)
 		transform->GetWorld();
 		transform->SetVelocity(float3(0, 0, 0));
 		transform->SetPosition(float3(0, 0, 0));
+
+		//make the player move slower
+		AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
+
+		if (ai)
+		{
+			aiOriginalSpeedMultiplier = ai->GetMoveSpeedMultiplier();
+			ai->SetMoveSpeedMultiplier(PLAYER_SPEED_MULTIPLIER);
+		}
+		else
+		{
+			//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
+
+			playerOriginalSpeed = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->GetMaxSpeed();
+			holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed * PLAYER_SPEED_MULTIPLIER);
+		}
 	}
 	else //this isn't the same as throwing or dropping. Just no one has it anymore
 	{

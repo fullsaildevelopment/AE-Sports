@@ -139,11 +139,11 @@ void Interpolator::Interpolate(KeyFrame* previous, KeyFrame* next, float ratio)
 
 		XMVECTOR quarternion = XMQuaternionSlerp(XMQuaternionRotationMatrix(XMLoadFloat4x4(&prevBone)), XMQuaternionRotationMatrix(XMLoadFloat4x4(&nextBone)), ratio);
 
-		//XMVECTOR prevTranslation = XMVectorSet(prevBone._41, prevBone._42, prevBone._43, prevBone._44);
+		XMVECTOR prevTranslation = XMVectorSet(prevBone._41, prevBone._42, prevBone._43, prevBone._44);
 
-		//XMVECTOR nextTranslation = XMVectorSet(nextBone._41, nextBone._42, nextBone._43, nextBone._44);
+		XMVECTOR nextTranslation = XMVectorSet(nextBone._41, nextBone._42, nextBone._43, nextBone._44);
 
-		XMVECTOR newTranslation = XMVectorLerp(XMVectorSet(prevBone._41, prevBone._42, prevBone._43, prevBone._44), XMVectorSet(nextBone._41, nextBone._42, nextBone._43, nextBone._44), ratio);
+		XMVECTOR newTranslation = XMVectorLerp(prevTranslation, nextTranslation, ratio);
 
 		XMMATRIX resultMatrix = XMMatrixAffineTransformation({ 1, 1, 1, 1 }, { 0, 0, 0, 0 }, quarternion, newTranslation);
 

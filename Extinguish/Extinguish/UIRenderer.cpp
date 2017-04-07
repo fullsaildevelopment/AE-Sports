@@ -64,13 +64,16 @@ UIRenderer::~UIRenderer()
 		delete theButton;
 }
 
-void UIRenderer::ReInit()
+void UIRenderer::ReInit(float ratio)
 {
 	pDWriteFactory = devResources->GetWriteFactory();
 	pD2DFactory = devResources->GetID2D1Factory();
 	layoutRect = devResources->GetRect();
 	pRT = devResources->GetRenderTarget();
 	d2DevContext = devResources->Get2DContext();
+	if (ratio != 1.0f)
+		SetFontSize(getFontSize() * ratio);
+
 }
 
 void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor)
@@ -157,7 +160,7 @@ void UIRenderer::Update(float _dt)
 {
 	if (theButton) {
 		if (theButton->getText() != L"") {
-			ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+			//ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 			if (pTextFormat)
 			{
@@ -187,7 +190,7 @@ void UIRenderer::Render()
 {
 	if (isEnabled())
 	{
-		ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
+		//ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
 		HRESULT hr;
 
@@ -195,7 +198,7 @@ void UIRenderer::Render()
 		//devContext->OMSetDepthStencilState(depthStencilState, 1);
 		d2DevContext->SaveDrawingState(stateBlock.Get());
 
-		d2DevContext->BeginDraw();
+		//d2DevContext->BeginDraw();
 		d2DevContext->SetTransform(D2D1::IdentityMatrix());
 
 		if (theButton) {
@@ -203,8 +206,8 @@ void UIRenderer::Render()
 
 				if (pBitmap)
 				{
-					
-					if ((!theButton->isHovered() && !theButton->stayHovered()) || !theButton->isSelected() || !pBitmapHovered)
+					//(!theButton->isHovered() && !theButton->stayHovered()) || 
+					if ((!theButton->isSelected() && !theButton->getRemainSelected()) || !pBitmapHovered)
 						d2DevContext->DrawBitmap(pBitmap.Get(), theButton->getRect(), opacity,
 							D2D1_BITMAP_INTERPOLATION_MODE::D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
 					else
@@ -245,7 +248,7 @@ void UIRenderer::Render()
 			}
 		}
 
-		hr = d2DevContext->EndDraw();
+		//hr = d2DevContext->EndDraw();
 		d2DevContext->RestoreDrawingState(stateBlock.Get());
 		stateBlock.Reset();
 	}

@@ -70,6 +70,8 @@ private:
 	void CreateInputLayouts();
 	void LoadInTextures();
 public:
+	Microsoft::WRL::ComPtr<ID3D11GeometryShader> geometryShader;
+
 	std::vector<ED2Mesh*> collisionMeshes;
 	ResourceManager();
 	~ResourceManager();
@@ -150,6 +152,20 @@ public:
 		// Create the instance buffer.
 		device->CreateBuffer(&BufferDesc, &Data, &m_constantBuffer);
 		return m_constantBuffer;
+	}
+
+	template <typename T>
+	ID3D11Buffer* CreateVertexBuffer(T* data, int numOf, int sizeOfOneData)
+	{
+		D3D11_SUBRESOURCE_DATA vertexBufferData;
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+		vertexBufferData.pSysMem = data;
+
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeOfOneData * numOf, D3D11_BIND_VERTEX_BUFFER);
+		ID3D11Buffer* buffer;
+		device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &buffer);
+		return buffer;
 	}
 
 	template <typename T>

@@ -30,7 +30,7 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
 		theButton->showFPS(false);
-		theButton->setPositionMultipliers(0.5f, 0.15f + (0.15 * (float)i));
+		theButton->setPositionMultipliers(0.5f, 0.15f + (0.15f * (float)i));
 		text->AddComponent(theButton);
 
 		UIRenderer * tRender = new UIRenderer();
@@ -53,7 +53,7 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
 		theButton->showFPS(false);
-		theButton->setPositionMultipliers(0.5f, 0.10f + (0.15 * (float)i));
+		theButton->setPositionMultipliers(0.5f, 0.10f + (0.15f * (float)i));
 		text->AddComponent(theButton);
 
 		UIRenderer * tRender = new UIRenderer();
@@ -75,10 +75,12 @@ void Credits::Init(DeviceResources * devResources)
 
 void Credits::Render()
 {
+	//textRenderers[0]->getUIDevCon()->BeginDraw();
 	for (unsigned int i = 0; i < textRenderers.size(); ++i)
 	{
 		textRenderers[i]->Render();
 	}
+	//textRenderers[0]->getUIDevCon()->EndDraw();
 }
 
 void Credits::Update(float _dt)
@@ -249,4 +251,21 @@ void Credits::ReturnToMenu()
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
 	delete event;
 
+}
+
+
+
+void Credits::UpdateSize(D2D1_SIZE_F rect)
+{
+	float ratio = 1.0f;
+	for (unsigned int i = 0; i < theText.size(); ++i)
+	{
+		theText[i]->setRT(rect);
+		theText[i]->AdjustSize();
+		if (ratio == 1.0f)
+			ratio = theText[i]->GetRatio();
+		theText[i]->MakeRect();
+		theText[i]->setOrigin();
+		textRenderers[i]->ReInit(ratio);
+	}
 }

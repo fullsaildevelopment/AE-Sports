@@ -58,7 +58,8 @@ void CapsuleCollider::FixedUpdate(float _dt)
 	if (objects.size() == 0)
 	{
 		objects = *GetGameObject()->GetGameObjects();
-		CollidingWith.resize(objects.size());
+		if(objects.size() != 0)
+			CollidingWith.resize(objects.size());
 	}
 	GameObject* tg = GetGameObject();
 	Transform* tgt = tg->GetTransform();
@@ -96,23 +97,19 @@ void CapsuleCollider::FixedUpdate(float _dt)
 				float3 opos = tgt->GetPosition();
 				float3 vel = tgt->GetVelocity();
 				float3 result = AABBToCapsuleReact(box->GetWorldAABB(), c, vel, pos);
-				if (!result.isEquil(float3(0, 0, 0)))
+				if (!result.isEqual(float3(0, 0, 0)))
 				{
 					box->collisionNormal = result;
 					collisionNormal = result;
 					bool aG = false;
 
-					if (!result.isEquil(float3(0, 1, 0)))
+					if (!result.isEqual(float3(0, 1, 0)))
 						aG = true;
-
-					float3 invN = result.negate();
-					invN = invN * (vel * result).magnitude();
-					vel = vel - invN;
 
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false, float3(0, 0, 0), aG);
+						op->HandlePhysics(tgt, vel, pos - GetCapsule().m_Segment.m_Start, false, result, aG, true);
 						if (!CollidingWith[i])
 						{
 							tg->OnCollisionEnter(box);

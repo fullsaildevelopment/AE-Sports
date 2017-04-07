@@ -34,35 +34,38 @@ void AI::OnCollisionEnter(Collider *obj)
 		{
 			CapsuleCollider *col = (CapsuleCollider*)obj;
 
-			if (obj->GetGameObject() == realTarget)
+			if (obj->GetGameObject() == realTarget && !obj->GetGameObject()->GetComponent<AnimatorController>()->GetTrigger("Stumble")->GetTrigger())
 			{
-				startTimer = true;
-
-				// dropping the ball
-				if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
-					ballClass->DropBall(realTarget);
-
-				// disabling movement
-				if (realTarget->GetComponent<AI>())
-					realTarget->GetComponent<AI>()->SetCanMove(false);
-
-				else
+				if (!realTarget->GetComponent<PlayerController>()->IsInvincible())
 				{
-					realTarget->GetComponent<Movement>()->SetCanMove(false);
+					startTimer = true;
 
-					//move the player's camera to match stumble
-					Transform* otherCamera = realTarget->GetTransform()->GetChild(0);
-					float3 translation = otherCamera->GetForwardf3();
-					translation.x = -translation.x;
-					translation.y = -3.0f;
-					translation.z = -translation.z * 3.0f;
-					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+					// dropping the ball
+					if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
+						ballClass->DropBall(realTarget);
+
+					// disabling movement
+					if (realTarget->GetComponent<AI>())
+						realTarget->GetComponent<AI>()->SetCanMove(false);
+
+					else
+					{
+						realTarget->GetComponent<Movement>()->SetCanMove(false);
+
+						//move the player's camera to match stumble
+						Transform* otherCamera = realTarget->GetTransform()->GetChild(0);
+						float3 translation = otherCamera->GetForwardf3();
+						translation.x = -translation.x;
+						translation.y = -3.0f;
+						translation.z = -translation.z * 3.0f;
+						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+					}
+
+					// triggering the animation
+					realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
+					ogTarget = realTarget;
+					realTarget = nullptr;
 				}
-
-				// triggering the animation
-				realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
-				ogTarget = realTarget;
-				realTarget = nullptr;
 			}
 		}
 	}
@@ -248,6 +251,8 @@ void AI::Update(float _dt)
 		if (ogTarget)
 		{
 			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
+			Param::Trigger *p = animator->GetTrigger("Stumble");
+			bool a = animator->GetTrigger("Stumble")->GetTrigger();
 
 			// if your current anim isn't stumble AND ???the the trigger isn't stumble???
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
@@ -290,13 +295,14 @@ void AI::Update(float _dt)
 			}
 		}
 
+		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Idle" && !anim->GetState(anim->GetNextStateIndex())) anim->SetTrigger("Idle");
 		if (!canMove) Idle();
 		if (!isAttacking) realTarget = nullptr;
 		if (startTimer) timer -= _dt;
 		if (!crosse) crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
 		if (!camera) camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
 
-		if (!eTank)
+		if (!eTank || !mGuy || !mGo2)
 		{
 			for (int i = 0; i < listOfEnemies.size(); ++i)
 			{
@@ -319,18 +325,24 @@ void AI::Update(float _dt)
 
 #pragma endregion
 
-#pragma region Goalie
-		if (currState == goalie)
+		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 		{
-			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
+			// if it's me
+			if (currState != goalie)
+				Score();
 
-			// if i have the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
+			else
 			{
 				camera->RotateX(-0.4f);
 				crosse->Throw();
 				camera->RotateX(0.4f);
 			}
+		}
+
+#pragma region Goalie
+		if (currState == goalie)
+		{
+			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
 			// if the ball gets close
 			if (dist.magnitude() < 34)
@@ -343,7 +355,7 @@ void AI::Update(float _dt)
 			// if the ball is too far from the goal
 			else if (dist.magnitude() > 34)
 			{
-				if (RunTo(myGoal, 15.0f))
+				if (RunTo(myGoal, 16.0f))
 				{
 					TurnTo(enemyGoal);
 					Idle();
@@ -364,18 +376,10 @@ void AI::Update(float _dt)
 				pos2.z *= -1;
 			}
 
-			// if someone has the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
+			// if the enemy has the ball
+			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder()->GetTag() != me->GetTag())
 			{
-				// if it's me
-				if (ballClass->GetHolder() == me)
-					Score();
-
-				// if it's enemy
-				else if (ballClass->GetHolder()->GetTag() != me->GetTag())
-				{
-					if (eTank) Attack(eTank);
-				}
+				if (eTank) Attack(eTank);
 			}
 
 			else
@@ -401,12 +405,8 @@ void AI::Update(float _dt)
 			// if i have the ball or one of my teammates have the ball
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
 			{
-				// if it's me
-				if (ballClass->GetHolder() == me)
-					Score();
-
 				// if it's my teammate
-				else if (ballClass->GetHolder()->GetTag() == me->GetTag())
+				if (ballClass->GetHolder()->GetTag() == me->GetTag())
 					DefendTeammate();
 
 				// if it's enemy
@@ -513,7 +513,7 @@ void AI::Attack(GameObject *target)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * AttackSpeed);
+			me->GetTransform()->AddVelocity(v * AttackSpeed * moveSpeedMultiplier);
 			isAttacking = false;
 		}
 	}
@@ -582,7 +582,7 @@ bool AI::RunTo(GameObject *target)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * RunSpeed);
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 		}
 	}
 
@@ -605,7 +605,7 @@ bool AI::RunTo(GameObject *target, float dist)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * RunSpeed);
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 		}
 	}
 
@@ -626,7 +626,7 @@ bool AI::RunTo(float3 target, float dist)
 		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 			anim->SetTrigger("Run");
 
-		me->GetTransform()->AddVelocity(v * RunSpeed);
+		me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 	}
 
 	return false;
@@ -679,6 +679,16 @@ GameObject * AI::GetTarget() { return (realTarget) ? realTarget : nullptr; }
 
 bool AI::GetIsAttacking() { return isAttacking; }
 
+float AI::GetMoveSpeedMultiplier()
+{
+	return moveSpeedMultiplier;
+}
+
 bool AI::GetCanMove() { return canMove; }
 
 void AI::SetCanMove(bool ans) { canMove = ans; }
+
+void AI::SetMoveSpeedMultiplier(float multiplier)
+{
+	moveSpeedMultiplier = multiplier;
+}

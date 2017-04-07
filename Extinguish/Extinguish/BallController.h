@@ -19,13 +19,20 @@ private:
 	Transform* transform;
 	Physics* physics;
 	
-	std::vector<Transform*> nets;
+	//float magnetMultiplier;
+	float playerOriginalSpeed;
+	float aiOriginalSpeedMultiplier;
+
+	//std::vector<Transform*> nets;
 
 	//members for scoring
 	GameObject* prevThrower = nullptr;
 	GameObject* thrower = nullptr;
 	float timeSincePreviouslyThrown = 0;
 	float timeSinceThrown = 0;
+
+	//const members
+	const float PLAYER_SPEED_MULTIPLIER = 0.8f;
 
 public:
 	BallController(GameObject* obj);

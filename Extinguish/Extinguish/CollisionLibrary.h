@@ -102,7 +102,7 @@ bool SweptCaptoSweptCap(Capsule& cl, Capsule& cr, float3& vell, float3& velr, fl
 
 float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& pos);
 
-bool CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel);
+float3 CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel);
 
 float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& Stime, ED2Mesh* mesh = nullptr);
 

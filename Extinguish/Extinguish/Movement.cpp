@@ -13,6 +13,7 @@
 #include "GamePadEvent.h"
 #include "Physics.h"
 #include "CanPlayEvent.h"
+#include "AI.h"
 
 //namespace Move
 //{
@@ -62,8 +63,9 @@ void Movement::Update(float _dt)
 	else 
 	{
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+		AI* ai = GetGameObject()->GetComponent<AI>();
 
-		if (animator)
+		if (animator && !ai)
 		{
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle" && !animator->GetState(animator->GetNextStateIndex()))
 			{
@@ -72,6 +74,8 @@ void Movement::Update(float _dt)
 			}
 		}
 	}
+
+	cout << moveSpeed << endl;
 }
 
 void Movement::HandleEvent(Event* e)
@@ -135,6 +139,12 @@ bool Movement::CanMove()
 	return canMove;
 }
 
+float Movement::GetMoveSpeed()
+{
+	return moveSpeed;
+}
+
+
 //setters//
 void Movement::SetKeys(char forward, char back, char left, char right, char up, char down)
 {
@@ -149,6 +159,11 @@ void Movement::SetKeys(char forward, char back, char left, char right, char up, 
 void Movement::SetCanMove(bool toggle)
 {
 	canMove = toggle;
+}
+
+void Movement::SetMoveSpeed(float speed)
+{
+	moveSpeed = speed;
 }
 
 //private helper functions

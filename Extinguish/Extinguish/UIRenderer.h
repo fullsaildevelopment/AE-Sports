@@ -50,7 +50,7 @@ public:
 	~UIRenderer();
 	void Init(bool isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor);
 	void Init(bool isButton, DeviceResources* deviceResources, MeterBar * meter);
-	void ReInit();
+	void ReInit(float ratio);
 	void Update(float _dt) override;
 	void Render();
 	void DecodeBitmap(PCWSTR address);
@@ -64,6 +64,7 @@ public:
 	float getFontSize() { return curSize; }
 	void setOpacity(float op) { opacity = op; if (opacity > 1.0f) opacity = 1.0f; if (opacity < 0.0f) opacity = 0.0f; }
 	float getOpacity() { return opacity; }
+	ID2D1DeviceContext* getUIDevCon() { return d2DevContext; }
 
 	void RemoveBitmap();
 };

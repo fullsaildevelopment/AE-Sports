@@ -2,9 +2,17 @@
 #include "Component.h"
 #include "vec3.h"
 #include "XTime.h"
+#include <vector>
 
 class FloorController : public Component
 {
+	enum FloorStates
+	{
+		STRIPS = 0,
+		GROUPS,
+		LEVEL,
+		NUM_OF_STATES,
+	};
 
 	static bool score;
 	static int scorer;
@@ -12,7 +20,7 @@ class FloorController : public Component
 	int transState;
 	float3* floor;
 	unsigned int* colors;
-	float ratios;
+	float ratios, initialRatio;
 	float transSpeed;
 	int row;
 	int col;
@@ -35,6 +43,17 @@ class FloorController : public Component
 	unsigned int team2color = 0x0000AD00;
 	unsigned int* originalColor;
 	float colortiming = 0;
+	int randStateIndex = -1;
+	float resetableTimer = 0.0f;
+	bool cooldownDone = true;
+	bool stateRunning = false;
+	bool dontRaiseGenerated = false;
+	std::vector<int*> dontRaise;
+
+	//const members
+	const float TIME_TIL_COOLDOWN = 10.0f; //how long til after the state is finished til it starts another state
+	const float TIME_TIL_STATE = 10.0f; //how long til the state runs
+	const float TIME_TO_RUN_STATE = 15.0f; //how long to run the state
 
 	struct pulseState
 	{

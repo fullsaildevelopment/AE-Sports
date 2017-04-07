@@ -49,6 +49,8 @@ public:
 
 	int Team1Score;
 	int Team2Score;
+
+	float gamepadCooldown = 0.0f;
 private:
 	std::vector<Scene*> scenes;
 	HashString scenesNamesTable;

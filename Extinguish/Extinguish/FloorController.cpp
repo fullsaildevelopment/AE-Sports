@@ -34,6 +34,12 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	{
 		originalColor[i] = colors[i];
 	}
+
+	dontRaise.resize((row - 5) / 5);
+	for (int i = 0; i < dontRaise.size(); ++i)
+	{
+		dontRaise[i] = new int[3];
+	}
 }
 
 void FloorController::WavePattern(float _dt)
@@ -89,22 +95,21 @@ void FloorController::InitialPattern(float _dt)
 	direction = (int)(TIME) % 2;
 	direction = (direction < 1) ? -1 : 1;
 	float change = fmodf(TIME, 1.0f);
-	ratios = (direction == 1) ? change : 1 - change;
+	initialRatio = (direction == 1) ? change : 1 - change;
 
 	//decide which way to make the side pillars move up
-	if (ratios > 1.0f)
+	if (initialRatio > 1.0f)
 	{
-		ratios = 1.0f;
+		initialRatio = 1.0f;
 	}
-	else if (ratios < 0.0f)
+	else if (initialRatio < 0.0f)
 	{
-		ratios = 0.0f;
+		initialRatio = 0.0f;
 	}
 
 	//red goal
-	MovePillar(15, ratios);
+	MovePillar(15, initialRatio);
 	MovePillar(16, 1);
-
 	MovePillar(17, 1);
 	MovePillar(18, 1);
 	MovePillar(19, 1);
@@ -112,14 +117,12 @@ void FloorController::InitialPattern(float _dt)
 	MovePillar(21, 1);
 	MovePillar(22, 1);
 	MovePillar(23, 1);
-
 	MovePillar(24, 1);
-	MovePillar(25, ratios);
+	MovePillar(25, initialRatio);
 
 	//blue goal
-	MovePillar((38 * 54) + 15, ratios);
+	MovePillar((38 * 54) + 15, initialRatio);
 	MovePillar((38 * 54) + 16, 1);
-
 	MovePillar((38 * 54) + 17, 1);
 	MovePillar((38 * 54) + 18, 1);
 	MovePillar((38 * 54) + 19, 1);
@@ -127,9 +130,8 @@ void FloorController::InitialPattern(float _dt)
 	MovePillar((38 * 54) + 21, 1);
 	MovePillar((38 * 54) + 22, 1);
 	MovePillar((38 * 54) + 23, 1);
-
 	MovePillar((38 * 54) + 24, 1);
-	MovePillar((38 * 54) + 25, ratios);
+	MovePillar((38 * 54) + 25, initialRatio);
 }
 
 void FloorController::MovePillar(int pillar, float ratio)
@@ -158,7 +160,53 @@ void FloorController::LevelFloor(float _dt)
 
 void FloorController::Strips(float _dt)
 {
+	//problem: the logic is there, but it doesn't keep track of the dontRaise the next time the function is called
+	//solution: generate them the first time only (in a 2D array)
+	//generate 2D array of dontRaise
 
+	ratios += _dt * transSpeed;
+
+	if (!dontRaiseGenerated)
+	{
+		dontRaiseGenerated = true;
+
+		for (int i = 0; i < dontRaise.size(); ++i)
+		{
+			//decide columns not to raise
+			int randIndex = rand() % col;
+
+			//if at the end, move down randIndex
+			if (randIndex > col - 3)
+			{
+				randIndex = col - 3;
+			}
+
+			//dont raise the random one and the next two
+			for (int j = 0; j < 3; ++j)
+			{
+				dontRaise[i][j] = randIndex + j;
+			}
+		}
+	}
+
+	int dontI = 0, dontJ = 0;
+
+	for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
+	{
+		for (int c = 0; c < col; ++c)
+		{
+			if (dontRaise[dontI][dontJ] != c)
+			{
+				MovePillar(r * col + c, ratios);
+			}
+			else
+			{
+				++dontJ;
+			}
+		}
+
+		dontJ = 0;
+	}
 }
 
 void FloorController::ControlMovement(float fullTime)
@@ -166,10 +214,56 @@ void FloorController::ControlMovement(float fullTime)
 	timeing = fullTime;
 	float dt = timeing - timer;
 
+	//ratios += dt * transSpeed;
+
+	//always do this (at least for most part)
 	InitialPattern(dt);
 
-
 	timer = fullTime;
+	resetableTimer += dt;
+
+	if (cooldownDone)
+	{
+		if (resetableTimer > TIME_TIL_STATE && !stateRunning)
+		{
+			stateRunning = true;
+			randStateIndex = rand() % NUM_OF_STATES;
+			resetableTimer = 0.0f;
+			ratios = 0.0f;
+		}
+		else if (resetableTimer > TIME_TO_RUN_STATE && stateRunning)
+		{
+			cooldownDone = false;
+			stateRunning = false;
+			randStateIndex = LEVEL;
+			resetableTimer = 0.0f;
+			ratios = 0.0f;
+		}
+	}
+	else
+	{
+		if (resetableTimer > TIME_TIL_COOLDOWN)
+		{
+			cooldownDone = true;
+		}
+	}
+
+	//if (randStateIndex != -1)
+	//{
+	//	switch (randStateIndex)
+	//	{
+	//	case STRIPS:
+	//		Strips(dt);
+	//		break;
+	//	case GROUPS:
+	//		//Strips(dt);
+	//		break;
+	//	case LEVEL:
+	//		LevelFloor(dt);
+	//		break;
+	//	}
+	//}
+
 	//if (timeing < 10 && currPattern != 1)
 	//{
 	//	transState = 1;
@@ -491,4 +585,9 @@ FloorController::~FloorController()
 {
 	delete[] floor;
 	delete[] colors;
+
+	for (int i = 0; i < row; ++i)
+	{
+		delete[] dontRaise[i];
+	}
 }

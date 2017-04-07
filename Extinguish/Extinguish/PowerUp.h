@@ -8,25 +8,11 @@ class PlayerController;
 class PowerUp : public Component
 {
 private:
-	//enum POWERUP_TYPE {
-	//	NOTHING,
-	//	//LOCK_ON,
-	//	SUPER_JUMP,
-	//	MAGNET,
-	//	SPEED_BOOST,
-	//	SHIELD_BUBBLE,
-	//	ROCKET_BOOTS,
-	//	//WALL_RUNNER
-	//};
-
-	//POWERUP_TYPE type; // for the function pointers
-	// tho if it's a base class, then... i dunno. :D
-	//Tom: I like the idea of this being a base class
-
 	float duration; // how long the powerup lasts for
 	float timer;
 	bool isActivated;
 	int spawnIndex, posIndex; //the manager needs this to help spawn
+	int id; // for client-side only
 
 	PlayerController* player;
 public:
@@ -38,10 +24,15 @@ public:
 	void Shutdown() override;
 	void HandleEvent(Event* e) override;
 	void OnTriggerEnter(Collider* collider) override;
+	virtual std::string GetName() = 0;
 
 	//misc
 	virtual void Activate();
 	virtual void Deactivate();
+
+	//these are used when they are spawned (to render and enable collision)
+	virtual void Enable();
+	virtual void Disable();
 
 	//getters
 	float GetDuration();
@@ -49,9 +40,14 @@ public:
 	PlayerController* GetPlayer();
 	int GetSpawnIndex();
 	int GetPosIndex();
+	float GetElapsed() { return (duration - timer) / duration; }
+	int GetID() { return id; }
 
 	//setters
 	void SetDuration(float dur);
 	void SetSpawnIndex(int index);
 	void SetPosIndex(int index);
+	void SetID(int _id) { id = _id; }
+	void ResetTimer() { timer = 0.0f; }
+	void SetActive(bool active) { isActivated = active; }
 };
