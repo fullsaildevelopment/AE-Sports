@@ -23,6 +23,14 @@ Server::Server()
 		gameState[0][i].name = nullptr;
 	}
 
+	pUp.positions.resize(6);
+	pUp.isactive.resize(6);
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		pUp.positions[i] = { 0,0,0 };
+	}
+
 	//floorState = new std::vector<XMFLOAT3>();
 }
 
@@ -643,4 +651,53 @@ void Server::SendScored(char * name, UINT8 length)
 	out.Write(length);
 	out.Write(name, length);
 	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+}
+
+void Server::SendPowerUps()
+{
+	BitStream out;
+	out.Write((MessageID)ID_SPAWN_POWERUP);
+	//UINT8 amount = 6;
+	//out.Write(amount);
+
+	for (int i = 0; i < 6; ++i)
+	{
+		if (pUp.isactive[i])
+			out.Write((UINT8)1);
+		else
+			out.Write((UINT8)0);
+		if (pUp.isactive[i])
+			out.Write(pUp.positions[i]);
+		//out.Write((float)pUp.positions[i].x);
+		//out.Write((float)pUp.positions[i].y);
+		//out.Write((float)pUp.positions[i].z);
+	}
+	float temp = 0.0f;
+
+	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+
+//	pUp.positions.clear();
+//	pUp.newindices.clear();
+}
+
+void Server::SendRemoved()
+{
+
+	BitStream out;
+	out.Write((MessageID)ID_REMOVE_POWERUP);
+	int amount = (int)pUp.ids.size();
+	out.Write((UINT8)amount);
+
+	for (int i = 0; i < amount; ++i)
+	{
+		out.Write((UINT8)pUp.ids[i]);
+		out.Write((UINT8)pUp.removeindices[i]);
+		pUp.isactive[pUp.removeindices[i]] = false;
+		pUp.positions[pUp.removeindices[i]] = { 0,0,0 };
+	}
+
+	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+
+	pUp.removeindices.clear();
+	pUp.ids.clear();
 }
