@@ -273,8 +273,8 @@ void PowerUpManager::ClientUpdate(float _dt)
 
 			// set that powerup active
 			powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
-			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(active);
-			powerUps[i]->SetEnabled(active);
+			if (active)
+				powerUps[i]->Enable();
 			powerUps[i]->SetActive(false);
 		}
 	}
@@ -291,8 +291,7 @@ void PowerUpManager::ClientUpdate(float _dt)
 			id = Game::client.getRemovedPlayerID(i);
 
 			// set that powerup inactive
-			powerUps[index]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-			powerUps[index]->SetEnabled(false);
+			powerUps[index]->Disable();
 
 			// set that powerup's player
 			powerUps[index]->SetID(id);

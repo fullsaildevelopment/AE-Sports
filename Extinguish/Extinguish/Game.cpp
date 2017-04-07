@@ -296,7 +296,8 @@ int Game::Update(float dt)
 					server.setCountdown(false);
 				}
 				//set client id
-				Game::clientID = client.getID();
+				if (!ResourceManager::GetSingleton()->IsServer())
+				clientID = client.getID();
 
 				// if server, set game states
 				if (ResourceManager::GetSingleton()->IsServer())
@@ -319,59 +320,66 @@ int Game::Update(float dt)
 
 
 				//run client
-				int clientState = client.run();
 
-				if (clientState == 0)
+				if (!ResourceManager::GetSingleton()->IsServer())
 				{
-					returnResult = 0;
-				}
-
-				if (clientState == 69)
-				{
-					ReceiveClientMessage();
-				}
+					int clientState = client.run();
+					if (!ResourceManager::GetSingleton()->IsServer())
+						clientID = client.getID();
 
 
-
-				// if client gets server's game states, get the state's location from the client
-				// so that it can be included in update
-				if ((client.hasPackets() || client.hasState() || client.hasScored()) && client.getID() > 0)
-				{
-					UpdateClientObjects();
-
-					if (client.hasState())
+					if (clientState == 0)
 					{
-						GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
-						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-						scoreboard->ReceiveScoreboard();
-
-						if (!ResourceManager::GetSingleton()->IsServer())
-							Time = client.getTime();
-						Team1Score = client.getScoreA();
-						Team2Score = client.getScoreB();
-						UpdateScoreUI();
-						currentScene = client.getScene();
-						if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
-						{
-							TogglePauseMenu(true, true);
-						}
+						returnResult = 0;
 					}
 
-					if (client.hasScored())
+					if (clientState == 69)
 					{
-						Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+						ReceiveClientMessage();
+					}
 
-						string sname = client.getScorer();
 
-						wstring name(sname.size(), L' ');
-						copy(sname.begin(), sname.end(), name.begin());
-						scorerButton->setText(name + L"\nscored!");
-						scorerButton->MakeRect();
-						scorerButton->setOrigin();
-						scorerButton->SetActive(true);
 
-						justScored = true;
-						scorerTimer = 0.0f;
+					// if client gets server's game states, get the state's location from the client
+					// so that it can be included in update
+					if ((client.hasPackets() || client.hasState() || client.hasScored()) && clientID > 0)
+					{
+						UpdateClientObjects();
+
+						if (client.hasState())
+						{
+							GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+							Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+							scoreboard->ReceiveScoreboard();
+
+							if (!ResourceManager::GetSingleton()->IsServer())
+								Time = client.getTime();
+							Team1Score = client.getScoreA();
+							Team2Score = client.getScoreB();
+							UpdateScoreUI();
+							currentScene = client.getScene();
+							if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+							{
+								TogglePauseMenu(true, true);
+							}
+						}
+
+						if (client.hasScored())
+						{
+							Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+
+							string sname = client.getScorer();
+
+							wstring name(sname.size(), L' ');
+							copy(sname.begin(), sname.end(), name.begin());
+							scorerButton->setText(name + L"\nscored!");
+							scorerButton->MakeRect();
+							scorerButton->setOrigin();
+							scorerButton->SetActive(true);
+
+							justScored = true;
+							scorerTimer = 0.0f;
+						}
 					}
 				}
 			}

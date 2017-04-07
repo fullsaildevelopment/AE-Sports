@@ -200,10 +200,23 @@ public:
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
-	bool getMeterActive() { return gameState[0][clientID - 1].sprintA; }
-	bool getMeterDrain() { return gameState[0][clientID - 1].sprintD; }
-	bool getMeterEmpty() { return gameState[0][clientID - 1].empty; }
-	bool getMeterDown() { return gameState[0][clientID - 1].down; }
+	bool getMeterActive() { 
+		if (clientID == 0)
+			return false;
+		return gameState[0][clientID - 1].sprintA;
+	}
+	bool getMeterDrain() {
+		if (clientID == 0)
+			return false; 
+		return gameState[0][clientID - 1].sprintD; }
+	bool getMeterEmpty() {
+		if (clientID == 0)
+			return false; 
+		return gameState[0][clientID - 1].empty; }
+	bool getMeterDown() {
+		if (clientID == 0)
+			return false; 
+		return gameState[0][clientID - 1].down; }
 	UINT8 getNumClients() { return curNumOfClients; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
