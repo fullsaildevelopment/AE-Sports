@@ -38,6 +38,10 @@ private:
 	const int NUM_OF_UPS = 6;
 	const int NUM_OF_POS = 4;
 
+	void ServerUpdate(float _dt);
+	void ClientUpdate(float _dt);
+	void NormalUpdate(float _dt);
+
 public:
 	//basic
 	void Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources);

@@ -163,6 +163,7 @@ public:
 	void setRight(Button * right) { this->right = right; }
 	void setSelected(bool tf = true) { selected = tf; if (tf) justSelectedCountdown = 0.2f; } // only use if the first button
 
+
 	/* HELPERS*/
 
 	void MakeRect() {

@@ -17,6 +17,7 @@ void Magnet::Init(GameObject* obj)
 //basic
 void Magnet::Activate()
 {
+
 	//make magnet range bigger
 	crosseC = GetPlayer()->GetGameObject()->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
 

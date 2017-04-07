@@ -73,6 +73,7 @@ void Countdown::Update(float dt)
 		button->SetEnabled(false);
 		uiRenderer->SetEnabled(false);
 
+		ResourceManager::GetSingleton()->SetPaused(false);
 		//send can play event
 		SendPlayEvent(true);
 	}
