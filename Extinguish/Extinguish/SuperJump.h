@@ -17,5 +17,7 @@ public:
 	//basic
 	void Activate() override;
 	void Deactivate() override;
+
+	//getters
 	std::string GetName() override;
 };

@@ -37,6 +37,7 @@ private:
 	bool footstepsPlayed;
 	int footstepsSound;
 	unsigned int teamID;
+	bool isInvincible;
 
 	//powerup members
 	float jumpMultiplier;
@@ -109,6 +110,7 @@ public:
 	unsigned int GetTeamID();
 	float GetJumpMultiplier();
 	unsigned int GetPlayerID();
+	bool IsInvincible();
 
 	//setters//
 	void SetName(std::string name);
@@ -121,4 +123,5 @@ public:
 	void SetSaves(unsigned int amount);
 	void SetAssists(unsigned int amount);
 	void SetJumpMultiplier(float multiplier);
+	void SetIsInvincible(bool toggle);
 };

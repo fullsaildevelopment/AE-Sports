@@ -34,7 +34,8 @@ private:
 	bool isSpawned[6];
 
 	//const members
-	const float TIME_TIL_SPAWN = 10.0f;
+	//const float TIME_TIL_SPAWN = 10.0f;
+	const float TIME_TIL_SPAWN = 5.0f;
 	const int NUM_OF_UPS = 6;
 	const int NUM_OF_POS = 4;
 
