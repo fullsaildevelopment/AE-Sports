@@ -47,7 +47,7 @@ public:
 		if (newClient->hasState())
 			c = 1;
 
-		printf("ClientWrapper | Packet %i | Scored %i | State %i | ID %i\n", a, b, c, id);
+		//printf("ClientWrapper | Packet %i | Scored %i | State %i | ID %i\n", a, b, c, id);
 		if (ResourceManager::GetSingleton()->IsPaused() != newClient->getPaused())
 			ResourceManager::GetSingleton()->SetPaused(newClient->getPaused());
 		return result;

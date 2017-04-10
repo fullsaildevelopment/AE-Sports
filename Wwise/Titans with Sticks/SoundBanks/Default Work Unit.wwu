@@ -10,6 +10,7 @@
 						<ObjectRef Name="Play_Backboard_Bounce_Song" ID="{F55DBD9C-E34B-422A-852B-9984ED63830C}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Sprint_" ID="{3D96B7CC-D935-4329-9C1A-68E37754F0EE}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_MainMenu" ID="{80D8584A-A930-4432-BC04-19791453A7B6}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_BGM_Renewed" ID="{4CE04BA6-1E07-448C-97BB-67EBC0DF9363}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Charge_" ID="{1C3FA430-5470-45F5-B213-315DE5F1B04D}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Credits" ID="{FCCCF42A-829C-45FF-B8FE-37969940DB9E}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Walk____" ID="{6291372F-2A14-462A-AADD-D5FA64AF6D1E}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
@@ -22,6 +23,7 @@
 						<ObjectRef Name="Play_Score" ID="{AC95F684-FCDD-49B2-9D5D-40E0F48DF542}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Footsteps__Charge_" ID="{4FF87D44-5FC1-4AEE-9C84-EE76A60FC4F8}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Boing" ID="{2387FEB5-5381-4B02-8073-7EAEAD4FC73B}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Stop_BGM_Renewed" ID="{D4AAAD8E-E536-4B85-AF33-B6C3BC67C3BC}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Background" ID="{4E2F8214-6B58-4C34-8BBD-288657BD39DF}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_MainMenu" ID="{C1D19DBF-5FE6-4C53-B788-2D6E0686137C}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Backboard_Bounce_Song" ID="{7E1CEE49-E896-4DA3-B7C4-1793528EC690}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
