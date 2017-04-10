@@ -248,21 +248,21 @@ void FloorController::ControlMovement(float fullTime)
 		}
 	}
 
-	//if (randStateIndex != -1)
-	//{
-	//	switch (randStateIndex)
-	//	{
-	//	case STRIPS:
-	//		Strips(dt);
-	//		break;
-	//	case GROUPS:
-	//		//Strips(dt);
-	//		break;
-	//	case LEVEL:
-	//		LevelFloor(dt);
-	//		break;
-	//	}
-	//}
+	/*if (randStateIndex != -1)
+	{
+		switch (randStateIndex)
+		{
+		case STRIPS:
+			Strips(dt);
+			break;
+		case GROUPS:
+			Strips(dt);
+			break;
+		case LEVEL:
+			LevelFloor(dt);
+			break;
+		}
+	}*/
 
 	//if (timeing < 10 && currPattern != 1)
 	//{
