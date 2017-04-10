@@ -51,11 +51,11 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 
 void AnimatorController::FixedUpdate(float _dt)
 {
-	if (GetGameObject()->GetName() == "Mage2")
-	{
-		int breakPoint = 69;
-		breakPoint++;
-	}
+	//if (GetGameObject()->GetName() == "Mage1")
+	//{
+	//	int breakPoint = 69;
+	//	breakPoint++;
+	//}
 
 	//check states' transitions
 	states[curStateIndex]->Update(_dt);

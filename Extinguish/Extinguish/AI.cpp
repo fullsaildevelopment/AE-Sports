@@ -679,16 +679,10 @@ GameObject * AI::GetTarget() { return (realTarget) ? realTarget : nullptr; }
 
 bool AI::GetIsAttacking() { return isAttacking; }
 
-float AI::GetMoveSpeedMultiplier()
-{
-	return moveSpeedMultiplier;
-}
+float AI::GetMoveSpeedMultiplier() { return moveSpeedMultiplier; }
 
 bool AI::GetCanMove() { return canMove; }
 
 void AI::SetCanMove(bool ans) { canMove = ans; }
 
-void AI::SetMoveSpeedMultiplier(float multiplier)
-{
-	moveSpeedMultiplier = multiplier;
-}
+void AI::SetMoveSpeedMultiplier(float multiplier) { moveSpeedMultiplier = multiplier; }
