@@ -115,6 +115,11 @@ private:
 	};
 
 
+
+	// all the results
+	UINT8 clientID;
+	bool states = false, scored = false, packets = false, spowerup = false, rpowerup = false;
+
 #pragma pack(push, 1)
 	struct PowerUps
 	{
@@ -144,16 +149,12 @@ private:
 	UINT8 objects;
 	int numPackets = 0;
 	bool disconnect = false;
-	UINT8 clientID;
 //	char clientName[8];
 
 	char* message;
 	uint16_t messageID, stride;
 
 	string * scoreName;
-
-	// all the results
-	bool states, scored, packets, spowerup, rpowerup;
 
 public:
 

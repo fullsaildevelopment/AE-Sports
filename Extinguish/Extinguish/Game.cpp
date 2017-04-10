@@ -2353,6 +2353,8 @@ int Game::UpdateLobby()
 			clientID = client.getID();
 		}
 
+		
+
 		return clientState;
 	}
 
