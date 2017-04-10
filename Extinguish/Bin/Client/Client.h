@@ -107,7 +107,6 @@ private:
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
-		ID_INCOMING_FLOOR,
 		ID_SOMEONE_SCORED,
 		ID_SPAWN_POWERUP,
 		ID_REMOVE_POWERUP
@@ -133,7 +132,6 @@ private:
 	std::vector<CLIENT_GAME_STATE> * clientStates;
 	std::vector<CLIENT_GAME_STATE> * myState;
 	std::vector<GAME_STATE> * gameState;
-	std::vector<XMFLOAT3> * floorState;
 
 	UINT8 curNumOfClients;
 	UINT8 objID;
@@ -233,7 +231,6 @@ public:
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
-	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
 	char* getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
 	{
 		//name = gameState[0][i].name;
@@ -247,8 +244,6 @@ public:
 		return name;
 	}
 
-	bool floorIsEmpty() { if (floorState[0].size() == 0) return true; return false; }
-	int floorSize() { return (int)floorState[0].size(); }
 	int stateSize() { return (int)clientStates[0].size(); }
 	float getDT() { return gameState[0][0]._dt; }
 	bool getCountdown() { return gameState[0][0].countdown; }
@@ -279,11 +274,10 @@ private:
 	void sendMessage(char * message, GameMessages ID, SystemAddress sAddress);
 	void sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress);
 	void readMessage();
-	void GetID();
+	void GetNewID();
 	void registerName();
 	void receivePackets();
 	void receiveGameState();
-	void receiveFloor();
 	void receiveRPU();
 	void receiveSPU();
 };

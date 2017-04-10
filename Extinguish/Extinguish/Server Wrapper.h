@@ -219,14 +219,6 @@ public:
 	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
 	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
 
-	void resetFloor() { newServer.clearFloor(); }
-	void SetFloor(float3 hex)
-	{
-		newServer.setFloorState(hex.x, hex.y, hex.z);
-	}
-
-	void SendFloor() { newServer.sendFloor(); }
-
 	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals, char * name)
 	{
 		newServer.updateScoreboard(index, score, assists, saves, goals, name);
