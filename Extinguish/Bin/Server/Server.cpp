@@ -621,29 +621,6 @@ void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five
 	objIDs[7].id = eight;
 }
 
-void Server::sendFloor()
-{
-	int size = (int)floorState[0].size();
-	int tempSize = size / 40;
-
-	for (unsigned int x = 1; x <= (unsigned int)tempSize; ++x) {
-		BitStream bOut;
-		bOut.Write((MessageID)ID_INCOMING_FLOOR);
-
-		bOut.Write((UINT8)40);
-
-		for (unsigned int i = 0; i < 40; ++i)
-		{
-			bOut.Write((UINT8)i);
-			bOut.Write(floorState[0][i * x].x);
-			bOut.Write(floorState[0][i * x].y);
-			bOut.Write(floorState[0][i * x].z);
-		}
-
-		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
-	}
-}
-
 void Server::SendScored(char * name, UINT8 length)
 {
 	BitStream out;

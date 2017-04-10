@@ -98,8 +98,6 @@ private:
 	void LoadScene(std::string name);
 	int UpdateLobby();
 	void EnableButton(std::string name, bool toggle);
-	void SendFloor();
-	void GetFloor();
 	void TogglePauseMenu(bool endGame, bool scoreboard);
 
 public:

@@ -47,8 +47,8 @@ using namespace std;
 //initialize static member
 int Game::clientID = 1;
 
-ClientWrapper Game::client;
-ServerWrapper Game::server;
+ClientWrapper Game::client = ClientWrapper();
+ServerWrapper Game::server = ServerWrapper();
 unsigned int Game::currentScene;
 int Game::returnResult = 1;
 int Game::objID = 1;
@@ -324,7 +324,7 @@ int Game::Update(float dt)
 				if (!ResourceManager::GetSingleton()->IsServer())
 				{
 					int clientState = client.run();
-					if (!ResourceManager::GetSingleton()->IsServer())
+				//	if (!ResourceManager::GetSingleton()->IsServer())
 						clientID = client.getID();
 
 
@@ -2328,15 +2328,15 @@ int Game::UpdateLobby()
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer()) {
 		//set client id
-		Game::clientID = client.getID();
+		clientID = client.getID();
 
 		//run server
 		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			int serverState = server.run();
 		}
-		//	else {
-				//run client
+		
+		//run client
 		int clientState = client.run();
 		currentScene = client.getScene();
 
@@ -2351,56 +2351,11 @@ int Game::UpdateLobby()
 		}
 
 		return clientState;
-		//}
 	}
 
 	return 1;
 }
 
-void Game::SendFloor()
-{
-	GameObject * floor = scenes[2]->GetGameObject("HexFloor");
-	FloorController * fc = floor->GetComponent<FloorController>();
-	unsigned int col = (unsigned int)fc->getCol();
-	unsigned int row = (unsigned int)fc->getRow();
-	float3 * thefloor = fc->getFloor();
-	server.resetFloor();
-	unsigned int total = row * col;
-
-	for (unsigned int i = 0; i < total; ++i)
-	{
-		server.SetFloor(thefloor[i]);
-		/*for (unsigned int j = 0; j < col; ++j)
-		{
-			server.SetFloor(thefloor[i * col + j]);
-		}*/
-	}
-
-	server.SendFloor();
-}
-
-void Game::GetFloor()
-{
-	if (!client.floorIsEmpty()) {
-		GameObject * floor = scenes[2]->GetGameObject("HexFloor");
-		FloorController * fc = floor->GetComponent<FloorController>();
-		unsigned int col = (unsigned int)fc->getCol();
-		unsigned int row = (unsigned int)fc->getRow();
-		float3 * thefloor = fc->getFloor();
-		//unsigned int x = 0;
-		int floorSize = client.floorSize();
-
-		for (unsigned int i = 0; i < (unsigned int)floorSize; ++i)
-		{
-			thefloor[i] = client.getFloorHex(i);
-			/*for (unsigned int j = 0; j < col; ++j)
-			{
-				thefloor[i * col + j] = client.getFloorHex(x);
-				++x;
-			}*/
-		}
-	}
-}
 
 void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 {

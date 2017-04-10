@@ -18,14 +18,11 @@ Client::Client()
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
 	gameState[0].resize(MAX_PLAYERS);
-	//floorState = new std::vector<XMFLOAT3>();
-	//floorState[0].resize(2090);
 
 	for (int i = 0; i < gameState->size(); ++i)
 	{
 		gameState[0][i].name = nullptr;
 	}
-
 
 	pUp.positions.resize(6);
 	pUp.isactive.resize(6);
@@ -160,7 +157,7 @@ int Client::run()
 		}
 		case ID_CLIENT_REGISTER:
 		{
-			GetID();
+			GetNewID();
 			result = 3;
 			//printf("Please enter a name (8 characters max): ");
 			//memcpy(clientName, "Player", strlen("Player"));
@@ -224,14 +221,9 @@ int Client::run()
 		}
 		case ID_CLIENT_OBJ:
 		{
-			GetID();
+			GetNewID();
 			if (!gameStart)
 				return 7;
-			break;
-		}
-		case ID_INCOMING_FLOOR:
-		{
-			receiveFloor();
 			break;
 		}
 		case ID_INCOMING_MESSAGE:
@@ -346,7 +338,6 @@ void Client::sendMessage(char * message, GameMessages ID)
 
 void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)
 {
-
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message, (unsigned int)strlen(message));
@@ -356,7 +347,6 @@ void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress
 
 void Client::sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress)
 {
-
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(clientid);
@@ -397,7 +387,7 @@ void Client::ReceiveMessage()
 	}
 }
 
-void Client::GetID()
+void Client::GetNewID()
 {
 	if (!gameStart) {
 		BitStream bsIn(packet->data, packet->length, false);
@@ -430,7 +420,6 @@ void Client::sendStop()
 	bsOut.Write(clientID);
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 
-	
 	peer->CloseConnection(peer->GetGUIDFromIndex(0), true, '\000', IMMEDIATE_PRIORITY);
 }
 
@@ -467,7 +456,6 @@ void Client::receivePackets()
 		BitStream bIn(packet->data, packet->length, false);
 		bIn.IgnoreBytes(sizeof(MessageID));
 		//bIn.Read(clientState->timeStamp);
-
 
 		bIn.Read(objects);
 
@@ -565,27 +553,6 @@ void Client::sendEmpty(bool empty)
 	bsOut.Write(clientID);
 	bsOut.Write(empty);
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
-}
-
-void Client::receiveFloor()
-{
-	BitStream bIn(packet->data, packet->length, false);
-	bIn.IgnoreBytes(sizeof(MessageID));
-
-	UINT8 numFloor;
-	bIn.Read(numFloor);
-	//floorState[0].clear();
-
-	for (unsigned int i = 0; i < (unsigned int)numFloor; ++i)
-	{
-		UINT8 index;
-		bIn.Read(index);
-		XMFLOAT3 hex;
-		bIn.Read(hex.x);
-		bIn.Read(hex.y);
-		bIn.Read(hex.z);
-		floorState[0][index] = hex;
-	}
 }
 
 void Client::receiveRPU() 

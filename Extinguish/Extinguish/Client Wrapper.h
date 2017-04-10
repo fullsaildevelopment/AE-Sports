@@ -80,7 +80,7 @@ public:
 	unsigned int getID()
 	{
 		id = newClient.getID();
-		return (unsigned int)newClient.getID();
+		return (unsigned int)id;
 	}
 
 	int getPacketCount()
@@ -178,20 +178,6 @@ public:
 	bool getMeterDown() { return newClient.getMeterDown(); }
 	void sendEmpty(bool toggle) { newClient.sendEmpty(toggle); }
 
-	float3 getFloorHex(unsigned int i)
-	{
-		float3 newFloor;
-
-		XMFLOAT3 tempFloor = newClient.getFloor(i);
-		newFloor.x = tempFloor.x;
-		newFloor.y = tempFloor.y;
-		newFloor.z = tempFloor.z;
-
-		return newFloor;
-	}
-
-	bool floorIsEmpty() { return newClient.floorIsEmpty(); }
-	int floorSize() { return newClient.floorSize(); }
 	int stateSize() { return newClient.stateSize(); }
 	float getDT() { return newClient.getDT(); }
 

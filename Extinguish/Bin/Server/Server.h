@@ -101,7 +101,6 @@ private:
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
-		ID_INCOMING_FLOOR,
 		ID_SOMEONE_SCORED,
 		ID_SPAWN_POWERUP,
 		ID_REMOVE_POWERUP
@@ -169,7 +168,6 @@ private:
 	bool newInput[MAX_PLAYERS];
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
-	std::vector<XMFLOAT3> * floorState;
 	SOCKET serverSocket;
 	bool npDec = false;
 
@@ -222,9 +220,7 @@ public:
 	void setMeterActive(bool toggle, unsigned int index) { gameState[0][index].sprintA = toggle; }
 	void setMeterDrain(bool toggle, unsigned int index) { gameState[0][index].sprintD = toggle; }
 	void setMeterDown(bool toggle, unsigned int index) { gameState[0][index].down = toggle; }
-	void setFloorState(float one, float two, float three) {
-		floorState[0].push_back({ one, two, three });
-	}
+	
 	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals, char * name)
 	{
 		gameState[0][index].score = (UINT8)score;
@@ -249,8 +245,6 @@ public:
 
 
 	/* game stuff*/
-	void clearFloor() { floorState[0].clear(); }
-	void sendFloor();
 	void sendPackets();
 	void updateState(unsigned int index, XMFLOAT3 position, XMFLOAT3 rotation) { 
 		clientStates[0][index].position = position;
