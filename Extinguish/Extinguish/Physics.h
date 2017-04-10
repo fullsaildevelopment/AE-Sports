@@ -24,6 +24,7 @@ private:
 
 	bool hasMaxSpeed;
 	float maxMoveSpeed = 50;
+	float maxMoveSpeedMultiplier;
 
 	bool colliding = false;
 	bool resting = false;
@@ -45,10 +46,12 @@ public:
 	bool IsKinematic();
 	bool HasMaxSpeed();
 	float GetMaxSpeed();
+	float GetMaxSpeedMultiplier();
 
 	//setters//
 	void SetIsKinematic(bool toggle);
 	void SetHasMaxSpeed(bool toggle);
 	void SetMaxSpeed(float newMaxSpeed);
+	void SetMaxSpeedMultiplier(float multiplier);
 	void SetApplyFriction(bool t);
 };

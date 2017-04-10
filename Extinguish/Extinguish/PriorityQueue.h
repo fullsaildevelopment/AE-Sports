@@ -8,8 +8,6 @@
 #include <deque>
 #include <algorithm>
 
-namespace fullsail_ai {
-
 	//! \brief The open heap used by all cost-based search algorithms.
 	//!
 	//! This class template is basically a thin wrapper on top of both the <code>std::deque</code>
@@ -127,7 +125,7 @@ namespace fullsail_ai {
 		sorted.resize(open.size());
 		std::copy(open.begin(), open.end(), sorted.begin());
 	}
-}  // namespace fullsail_ai
+ 
 
 #include <windows.h>
 #include <tchar.h>

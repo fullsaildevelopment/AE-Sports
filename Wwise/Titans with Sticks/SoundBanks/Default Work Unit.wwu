@@ -5,11 +5,13 @@
 			<ChildrenList>
 				<SoundBank Name="TitansWithSticks" ID="{79C66171-59B0-47B6-9D9F-7B109BF2A81F}">
 					<ObjectInclusionList>
+						<ObjectRef Name="Stop_Credits" ID="{13D4A819-78ED-406A-B431-55F795B8E1E1}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Footsteps__Walk____" ID="{CE258234-FE4B-41AB-9EAD-A4AB1F046184}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Backboard_Bounce_Song" ID="{F55DBD9C-E34B-422A-852B-9984ED63830C}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Sprint_" ID="{3D96B7CC-D935-4329-9C1A-68E37754F0EE}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_MainMenu" ID="{80D8584A-A930-4432-BC04-19791453A7B6}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Charge_" ID="{1C3FA430-5470-45F5-B213-315DE5F1B04D}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
+						<ObjectRef Name="Play_Credits" ID="{FCCCF42A-829C-45FF-B8FE-37969940DB9E}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Stop_Footsteps__Walk____" ID="{6291372F-2A14-462A-AADD-D5FA64AF6D1E}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Beep" ID="{921EDF1B-1AB3-4643-B1BA-4F60B9B20AF4}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
 						<ObjectRef Name="Play_Catch" ID="{7ADB84C9-9414-481F-8B44-AD9C25B82B47}" WorkUnitID="{67CC5573-ED04-4641-A7A6-06DBF48EB74A}" Filter="7" Origin="Manual"/>
