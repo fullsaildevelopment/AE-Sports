@@ -234,6 +234,28 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Credits" ID="{FCCCF42A-829C-45FF-B8FE-37969940DB9E}">
+					<ChildrenList>
+						<Action Name="Play" ID="{8F79A492-3137-4CBA-A1A5-5B418518DF09}" ShortID="593300549" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{DDA83A08-B80C-48D5-9380-B753C908CF2F}" Global="false">
+									<ObjectRef Name="Credits" ID="{3E603988-318D-453F-8800-ACAC83AD8EBD}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_Credits" ID="{13D4A819-78ED-406A-B431-55F795B8E1E1}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{59DE5EF2-7D12-481A-8120-5B22C20DB041}" ShortID="1023695081" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{551B61E0-9EC9-4DCE-9D7D-09F1CA4A06B6}" Global="false">
+									<ObjectRef Name="Credits" ID="{3E603988-318D-453F-8800-ACAC83AD8EBD}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

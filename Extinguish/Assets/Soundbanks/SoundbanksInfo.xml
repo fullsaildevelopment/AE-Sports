@@ -21,6 +21,7 @@
 				<Event Id="2063165418" Name="Play_Beep" ObjectPath="\Events\Default Work Unit\Play_Beep"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
+				<Event Id="2970769112" Name="Play_Credits" ObjectPath="\Events\Default Work Unit\Play_Credits"/>
 				<Event Id="3908868565" Name="Play_FasterLightning" ObjectPath="\Events\Default Work Unit\Play_FasterLightning"/>
 				<Event Id="95074702" Name="Play_FinalBeep" ObjectPath="\Events\Default Work Unit\Play_FinalBeep"/>
 				<Event Id="3977125916" Name="Play_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Charge_"/>
@@ -32,6 +33,7 @@
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
 				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
 				<Event Id="1244803444" Name="Stop_Background" ObjectPath="\Events\Default Work Unit\Stop_Background"/>
+				<Event Id="873807182" Name="Stop_Credits" ObjectPath="\Events\Default Work Unit\Stop_Credits"/>
 				<Event Id="2096695406" Name="Stop_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Charge_"/>
 				<Event Id="2346218314" Name="Stop_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Sprint_"/>
 				<Event Id="2224425572" Name="Stop_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Walk____"/>
@@ -86,6 +88,10 @@
 				<File Id="797913072" Language="SFX">
 					<ShortName>Audio\Boing.wav</ShortName>
 					<Path>SFX\Audio\Boing_9E69E797.wem</Path>
+				</File>
+				<File Id="846991583" Language="SFX">
+					<ShortName>Credits.wav</ShortName>
+					<Path>SFX\Credits_4B8CC0C5.wem</Path>
 				</File>
 				<File Id="902688899" Language="SFX">
 					<ShortName>FasterLightning.wav</ShortName>

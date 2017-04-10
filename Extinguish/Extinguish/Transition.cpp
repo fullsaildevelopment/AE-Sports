@@ -64,6 +64,10 @@ bool Transition::Update(float _dt)
 				to->GetAnimationController()->TransitionTo(this);
 				//cout << to->GetName();
 			}
+			else
+			{
+				result = false;
+			}
 		}
 		else if (hasExitTime && to->GetAnimationController()->GetBlender()->GetCurInterpolator()->IsFinished())
 		{
