@@ -37,6 +37,7 @@
 #include "MeterBar.h"
 #include "PulseFloorEvent.h"
 #include "TrailRender.h"
+#include "Map.h"
 
 using namespace DirectX;
 using namespace std;
@@ -1270,6 +1271,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexagonCollider* HexFLoorCol = new HexagonCollider(row, col, floor, 10, 2, HexFloor, floorController, resourceManager->collisionMeshes[0]);
 	HexFloor->AddComponent(HexFLoorCol);
 	floorController->SetState(1 / 6.0f);
+
+	Map *aiMap = new Map(row, col, floor);
+	//vector<Map::Node *> shit = aiMap->CreatePath(aiMap->FindClosest(float3(0, 0, 0)), aiMap->FindClosest(float3(10, 0, 10)));
 
 	//GameObject* Hex = new GameObject();
 	//Hex->Init("Team2");

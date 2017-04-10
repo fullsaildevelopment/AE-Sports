@@ -167,7 +167,7 @@ void BallController::Throw()
 	}
 	else
 	{
-		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed);
+		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeedMultiplier(playerOriginalSpeedMultiplier);
 		//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
 		//movement->SetMoveSpeed(playerOriginalSpeed);
 	}
@@ -205,7 +205,7 @@ void BallController::DropBall(GameObject *person)
 	}
 	else
 	{
-		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed);
+		holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeedMultiplier(playerOriginalSpeedMultiplier);
 		//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
 		//movement->SetMoveSpeed(playerOriginalSpeed);
 	}
@@ -318,8 +318,8 @@ void BallController::SetHolder(GameObject *person)
 		{
 			//Movement* movement = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Movement>();
 
-			playerOriginalSpeed = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->GetMaxSpeed();
-			holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeed(playerOriginalSpeed * PLAYER_SPEED_MULTIPLIER);
+			playerOriginalSpeedMultiplier = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->GetMaxSpeedMultiplier();
+			holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<Physics>()->SetMaxSpeedMultiplier(PLAYER_SPEED_MULTIPLIER);
 		}
 	}
 	else //this isn't the same as throwing or dropping. Just no one has it anymore

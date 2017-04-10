@@ -74,8 +74,6 @@ void Movement::Update(float _dt)
 			}
 		}
 	}
-
-	cout << moveSpeed << endl;
 }
 
 void Movement::HandleEvent(Event* e)
