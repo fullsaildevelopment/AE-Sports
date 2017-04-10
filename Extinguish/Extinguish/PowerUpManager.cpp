@@ -228,7 +228,7 @@ void PowerUpManager::ServerUpdate(float _dt)
 				powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
 				powerUps[randPowIndex]->SetPosIndex(randPosIndex);
 
-				cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
+				//cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
 
 				//reset timer so it's every *blank* seconds til spawn for this position
 				roundTimer[randPosIndex] = 0.0f;
@@ -452,7 +452,7 @@ void PowerUpManager::HandleEvent(Event* e)
 		posUsed[powerEvent->GetPosIndex()] = false;
 		roundTimer[powerEvent->GetPosIndex()] = 0.0f;
 
-		cout << powerEvent->GetName() << " picked up" << endl;
+		//cout << powerEvent->GetName() << " picked up" << endl;
 
 		if (ResourceManager::GetSingleton()->IsMultiplayer())
 		{

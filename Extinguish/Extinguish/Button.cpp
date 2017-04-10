@@ -406,5 +406,15 @@ void Button::DoEvent()
 		event->Init("Credits");
 		EventDispatcher::GetSingleton()->DispatchTo(event, "Game");
 		delete event;
+
+		//stop menu music
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::STOP_MAINMENU, 0);
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+
+		//play credits sound
+		soundEvent->Init(AK::EVENTS::PLAY_CREDITS, 0);
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
 	}
 }
