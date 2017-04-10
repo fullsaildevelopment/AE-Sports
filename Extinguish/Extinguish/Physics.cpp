@@ -54,10 +54,10 @@ void Physics::FixedUpdate(float _dt)
 		transform->Translate({ nV.x * _dt, nV.y * _dt, nV.z * _dt });
 	}
 
-	if (GetGameObject()->GetName() == "Mage1")
-	{
-		cout << maxMoveSpeedMultiplier << endl;
-	}
+	//if (GetGameObject()->GetName() == "Mage1")
+	//{
+	//	cout << maxMoveSpeedMultiplier << endl;
+	//}
 }
 
 void Physics::HandlePhysics(Transform* tt, float3 nV, float3& nP, bool _bounce, float3 collisionNormal, bool _stillApplyGravity, bool stopMovement)
