@@ -18,6 +18,7 @@ namespace AK
         static const AkUniqueID PLAY_BEEP = 2063165418U;
         static const AkUniqueID PLAY_BOING = 3698997709U;
         static const AkUniqueID PLAY_CATCH = 3513145267U;
+        static const AkUniqueID PLAY_CREDITS = 2970769112U;
         static const AkUniqueID PLAY_FASTERLIGHTNING = 3908868565U;
         static const AkUniqueID PLAY_FINALBEEP = 95074702U;
         static const AkUniqueID PLAY_FOOTSTEPS__CHARGE_ = 3977125916U;
@@ -29,6 +30,7 @@ namespace AK
         static const AkUniqueID PLAY_THROW = 1977644338U;
         static const AkUniqueID STOP_BACKBOARD_BOUNCE_SONG = 6317442U;
         static const AkUniqueID STOP_BACKGROUND = 1244803444U;
+        static const AkUniqueID STOP_CREDITS = 873807182U;
         static const AkUniqueID STOP_FOOTSTEPS__CHARGE_ = 2096695406U;
         static const AkUniqueID STOP_FOOTSTEPS__SPRINT_ = 2346218314U;
         static const AkUniqueID STOP_FOOTSTEPS__WALK____ = 2224425572U;
