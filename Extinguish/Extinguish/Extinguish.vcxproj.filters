@@ -64,6 +64,12 @@
     <FxCompile Include="PS_Trail.hlsl">
       <Filter>Shaders\Pixel Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="PS_ShieldBubble.hlsl">
+      <Filter>Shaders\Pixel Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_ShieldBubble.hlsl">
+      <Filter>Shaders\Vertex Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XTime.cpp">
@@ -230,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="ShieldRender.cpp">
+      <Filter>Components\Scripts\PowerUps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -427,6 +436,9 @@
     </ClInclude>
     <ClInclude Include="PriorityQueue.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShieldRender.h">
+      <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
