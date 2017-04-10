@@ -70,8 +70,8 @@ public:
 		int floorPulse = -1;
 		int scoreA = 0;
 		int scoreB = 0;
-		float time;
-		float _dt;
+		float time = 0.0f;
+		float _dt = 0.0f;
 		bool sprintA = false;
 		bool sprintD = true;
 		bool empty = false;
@@ -80,7 +80,7 @@ public:
 		UINT8 assists = 0;
 		UINT8 saves = 0;
 		UINT8 goals = 0;
-		char* name;
+		char* name = nullptr;
 
 		GAME_STATE() {}
 	};

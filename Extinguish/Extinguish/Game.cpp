@@ -123,7 +123,7 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 
 	soundEngine->InitSoundEngine(ids, names);
 
-	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_MAINMENU, 1);
+	SoundEngine::GetSingleton()->PostEvent(AK::EVENTS::PLAY_MAINMENU, 0);
 
 
 	justScored = false;
@@ -338,7 +338,7 @@ int Game::Update(float dt)
 						ReceiveClientMessage();
 					}
 
-
+					cout << clientState << endl;
 
 					// if client gets server's game states, get the state's location from the client
 					// so that it can be included in update

@@ -19,6 +19,7 @@
 				<Event Id="3057195544" Name="Play_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Play_Backboard_Bounce_Song"/>
 				<Event Id="3196207338" Name="Play_Background" ObjectPath="\Events\Default Work Unit\Play_Background"/>
 				<Event Id="2063165418" Name="Play_Beep" ObjectPath="\Events\Default Work Unit\Play_Beep"/>
+				<Event Id="4100023137" Name="Play_BGM_Renewed" ObjectPath="\Events\Default Work Unit\Play_BGM_Renewed"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
 				<Event Id="2970769112" Name="Play_Credits" ObjectPath="\Events\Default Work Unit\Play_Credits"/>
@@ -33,6 +34,7 @@
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
 				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
 				<Event Id="1244803444" Name="Stop_Background" ObjectPath="\Events\Default Work Unit\Stop_Background"/>
+				<Event Id="3637461363" Name="Stop_BGM_Renewed" ObjectPath="\Events\Default Work Unit\Stop_BGM_Renewed"/>
 				<Event Id="873807182" Name="Stop_Credits" ObjectPath="\Events\Default Work Unit\Stop_Credits"/>
 				<Event Id="2096695406" Name="Stop_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Charge_"/>
 				<Event Id="2346218314" Name="Stop_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Sprint_"/>
@@ -96,6 +98,10 @@
 				<File Id="902688899" Language="SFX">
 					<ShortName>FasterLightning.wav</ShortName>
 					<Path>SFX\FasterLightning_9E69E797.wem</Path>
+				</File>
+				<File Id="903383178" Language="SFX">
+					<ShortName>BGM_Renewed.wav</ShortName>
+					<Path>SFX\BGM_Renewed_4B8CC0C5.wem</Path>
 				</File>
 				<File Id="990930174" Language="SFX">
 					<ShortName>FinalBeep.wav</ShortName>
