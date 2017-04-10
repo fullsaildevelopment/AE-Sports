@@ -1,6 +1,17 @@
 #include "Map.h"
 
-Map::Map(int rows, int cols, float3 *positions)
+bool isGreater(Map::PlannerNode *const&lhs, Map::PlannerNode *const&rhs)
+{
+	return (lhs->finalCost > rhs->finalCost);
+}
+
+float distSquared(Map::Node *start, Map::Node *end)
+{
+	float3 vectorBetween = *start->pos - *end->pos;
+	return dot_product(vectorBetween, vectorBetween);
+}
+
+Map::Map(int rows, int cols, float3 *positions) : que(isGreater)
 {
 	nodes.resize(rows);
 	numRows = rows;
@@ -16,6 +27,7 @@ Map::Map(int rows, int cols, float3 *positions)
 			//rowyoureat * numcol + columnyoureat
 			newNode->weight = &positions[r * cols + c].y;
 			newNode->pos = &positions[r * cols + c];
+			newNode->colRow = { c, r };
 
 			bool evenRow = (r % 2 == 0);
 			ColumnRow rM = { c + 1, r };
@@ -45,7 +57,7 @@ Map::Map(int rows, int cols, float3 *positions)
 					continue;
 				}
 
-				newNode->neighbors.push_back(neighbors[i].Row * cols + neighbors[i].Column);
+				newNode->neighbors.push_back(neighbors[i]);
 			}
 
 			nodes[r][c] = newNode;
@@ -60,12 +72,12 @@ Map::~Map()
 
 Map::Node *Map::FindClosest(float3 pos)
 {
-	float dist = 98700;
+	float dist = FLT_MAX;
 	Node *closest = nullptr;
 
-	for (int row = 0; row < nodes.size(); ++row)
+	for (int row = 0; row < numRows; ++row)
 	{
-		for (int col = 0; col < nodes.size(); ++col)
+		for (int col = 0; col < numCols; ++col)
 		{
 			float3 tmp = (*nodes[row][col]->pos - pos);
 			float dot = dot_product(tmp, tmp);
@@ -95,55 +107,70 @@ Map::Node *Map::FindBallNode(float3 ballPos)
 std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 {
 	std::vector<Node *> path;
+	PlannerNode *begin = new PlannerNode;
+	begin->path = start;
 
-	/*
-	  PriorityQueue open(isGreater);
-      std::map visited;
-      open.enqueue(new PlannerNode(start));
-      visited[start] = open.front();
-      
-      open.front().givenCost = 0;
-      open.front().heuristicCost = estimate(start, end);
-      open.front().finalCost = givenCost + heuristicCost * hWeight;
+	que.push(begin);
+	visited[begin->path] = que.front();
+	begin->givenCost = 0;
+	begin->heuristicCost = distSquared(start, end);
+	begin->finalCost = begin->givenCost + begin->heuristicCost * hWeight;
 
-	  while (!open.empty())
-	  {
-		PlannerNode *current = open.dequeue();
-	    if current.vertex is the end, we’re done;
-	    
-	    for each edge of current.vertex:
-	    {
-	      SearchNode *successor = edge.endpoint;
-	      float tempGivenCost = current.givenCost + edge.cost;
-	      
-	      if (visited[successor] != NULL)
-	      {
-	        PlannerNode *node = visted[successor];
-	        
-	        if (tempGivenCost < node.givenCost)
-	        {
-	          open.remove(node);
-	          node.givenCost = tempGivenCost;
-	          node.finalCost = node.givenCost + node.heuristicCost * hWeight;
-	          node.parent = current;
-	          open.enqueue(node);
-	        }
-	      }
-	      
-	      else
-	      {
-	        node = new PlannerNode(successor);
-	        node.givenCost = tempGivenCost;
-	        node.heuristicCost = estimate(successor, end);
-	        node.finalCost = node.givenCost + node.heuristicCost * hWeight;
-	        node.parent = current;
-	        visited[successor] = node;
-	        open.enqueue(node);
-	      }
-	    }
-	  }
+	while (!que.empty())
+	{
+		PlannerNode *curr = que.front();
+		que.pop();
 
-	*/
+		if (curr->path == end)
+		{
+			PlannerNode *fin = curr;
+
+			while (fin)
+			{
+				path.push_back(fin->path);
+				fin = fin->parent;
+			}
+
+			que.clear();
+			break;
+		}
+
+		int size = (int)curr->path->neighbors.size();
+
+		for (int i = 0; i < size; ++i)
+		{
+			Node *next = nodes[curr->path->neighbors[i].Row][curr->path->neighbors[i].Column];
+			float tmpCost = curr->givenCost + (*next->weight + 11.001f);
+			PlannerNode *node = visited[next];
+
+			if (node != nullptr)
+			{
+				if (tmpCost < node->givenCost)
+				{
+					que.remove(node);
+					node->givenCost = tmpCost;
+					node->heuristicCost = distSquared(next, end);
+					node->finalCost = node->givenCost + node->heuristicCost * hWeight;
+					node->parent = curr;
+
+					que.push(node);
+				}
+			}
+
+			else
+			{
+				PlannerNode *node = new PlannerNode;
+				node->path = next;
+				node->givenCost = tmpCost;
+				node->heuristicCost = distSquared(next, end);
+				node->finalCost = node->givenCost + node->heuristicCost * hWeight;
+				node->parent = curr;
+
+				visited[next] = node;
+				que.push(node);
+			}
+		}
+	}
 
 	return path;
 }
