@@ -75,12 +75,12 @@ void Credits::Init(DeviceResources * devResources)
 
 void Credits::Render()
 {
-	//textRenderers[0]->getUIDevCon()->BeginDraw();
+	textRenderers[0]->getUIDevCon()->BeginDraw();
 	for (unsigned int i = 0; i < textRenderers.size(); ++i)
 	{
 		textRenderers[i]->Render();
 	}
-	//textRenderers[0]->getUIDevCon()->EndDraw();
+	textRenderers[0]->getUIDevCon()->EndDraw();
 }
 
 void Credits::Update(float _dt)

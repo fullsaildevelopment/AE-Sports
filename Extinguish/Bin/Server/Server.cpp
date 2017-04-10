@@ -25,10 +25,12 @@ Server::Server()
 
 	pUp.positions.resize(6);
 	pUp.isactive.resize(6);
+	pUp.elapsedTime.resize(6);
 
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		pUp.positions[i] = { 0,0,0 };
+		pUp.elapsedTime[i] = 1.0f;
 	}
 
 	//floorState = new std::vector<XMFLOAT3>();
@@ -52,6 +54,8 @@ Server::~Server()
 
 int Server::init(uint16_t port)
 {
+	printf("SERVER: test\n");
+
 	shutdown = false;
 
 	peer = RakNet::RakPeerInterface::GetInstance();
@@ -71,7 +75,7 @@ int Server::init(uint16_t port)
 	for (unsigned int i = 0; i < 8; ++i)
 	{
 		//names[i] = new char[8];
-		clientIDs[i] = i + 1;
+		clientIDs[i] = (UINT8)(i + 1);
 	//	bteamIDs[i] = i + 5;
 	}
 
@@ -621,29 +625,6 @@ void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five
 	objIDs[7].id = eight;
 }
 
-void Server::sendFloor()
-{
-	int size = (int)floorState[0].size();
-	int tempSize = size / 40;
-
-	for (unsigned int x = 1; x <= (unsigned int)tempSize; ++x) {
-		BitStream bOut;
-		bOut.Write((MessageID)ID_INCOMING_FLOOR);
-
-		bOut.Write((UINT8)40);
-
-		for (unsigned int i = 0; i < 40; ++i)
-		{
-			bOut.Write((UINT8)i);
-			bOut.Write(floorState[0][i * x].x);
-			bOut.Write(floorState[0][i * x].y);
-			bOut.Write(floorState[0][i * x].z);
-		}
-
-		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
-	}
-}
-
 void Server::SendScored(char * name, UINT8 length)
 {
 	BitStream out;
@@ -668,9 +649,6 @@ void Server::SendPowerUps()
 			out.Write((UINT8)0);
 		if (pUp.isactive[i])
 			out.Write(pUp.positions[i]);
-		//out.Write((float)pUp.positions[i].x);
-		//out.Write((float)pUp.positions[i].y);
-		//out.Write((float)pUp.positions[i].z);
 	}
 	float temp = 0.0f;
 
@@ -678,6 +656,20 @@ void Server::SendPowerUps()
 
 //	pUp.positions.clear();
 //	pUp.newindices.clear();
+}
+
+void Server::SendElapsedTime()
+{
+	BitStream out;
+	out.Write((MessageID)ID_POWERUP_TIME);
+	//UINT8 amount = 6;
+	for (int i = 0; i < 6; ++i)
+	{
+		out.Write(pUp.elapsedTime[i]);
+	}
+
+	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+
 }
 
 void Server::SendRemoved()
