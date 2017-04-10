@@ -43,13 +43,13 @@ using namespace DirectX;
 using namespace std;
 
 //this is for debugging purposes of being able to toggle AI
-#define AI_ON 1
+#define AI_ON 0
 
 //initialize static member
 int Game::clientID = 1;
 
-ClientWrapper Game::client;
-ServerWrapper Game::server;
+ClientWrapper Game::client = ClientWrapper();
+ServerWrapper Game::server = ServerWrapper();
 unsigned int Game::currentScene;
 int Game::returnResult = 1;
 int Game::objID = 1;
@@ -297,7 +297,8 @@ int Game::Update(float dt)
 					server.setCountdown(false);
 				}
 				//set client id
-				Game::clientID = client.getID();
+				if (!ResourceManager::GetSingleton()->IsServer())
+				clientID = client.getID();
 
 				// if server, set game states
 				if (ResourceManager::GetSingleton()->IsServer())
@@ -320,59 +321,65 @@ int Game::Update(float dt)
 
 
 				//run client
-				int clientState = client.run();
 
-				if (clientState == 0)
+				if (!ResourceManager::GetSingleton()->IsServer())
 				{
-					returnResult = 0;
-				}
-
-				if (clientState == 69)
-				{
-					ReceiveClientMessage();
-				}
+					int clientState = client.run();
+					clientID = client.getID();
 
 
-
-				// if client gets server's game states, get the state's location from the client
-				// so that it can be included in update
-				if ((client.hasPackets() || client.hasState() || client.hasScored()) && client.getID() > 0)
-				{
-					UpdateClientObjects();
-
-					if (client.hasState())
+					if (clientState == 0)
 					{
-						GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
-						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-						scoreboard->ReceiveScoreboard();
-
-						if (!ResourceManager::GetSingleton()->IsServer())
-							Time = client.getTime();
-						Team1Score = client.getScoreA();
-						Team2Score = client.getScoreB();
-						UpdateScoreUI();
-						currentScene = client.getScene();
-						if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
-						{
-							TogglePauseMenu(true, true);
-						}
+						returnResult = 0;
 					}
 
-					if (client.hasScored())
+					if (clientState == 69)
 					{
-						Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+						ReceiveClientMessage();
+					}
 
-						string sname = client.getScorer();
 
-						wstring name(sname.size(), L' ');
-						copy(sname.begin(), sname.end(), name.begin());
-						scorerButton->setText(name + L"\nscored!");
-						scorerButton->MakeRect();
-						scorerButton->setOrigin();
-						scorerButton->SetActive(true);
 
-						justScored = true;
-						scorerTimer = 0.0f;
+					// if client gets server's game states, get the state's location from the client
+					// so that it can be included in update
+					if ((client.hasPackets() || client.hasState() || client.hasScored()) && clientID > 0)
+					{
+						UpdateClientObjects();
+
+						if (client.hasState())
+						{
+							GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+							Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+							scoreboard->ReceiveScoreboard();
+
+							if (!ResourceManager::GetSingleton()->IsServer())
+								Time = client.getTime();
+							Team1Score = client.getScoreA();
+							Team2Score = client.getScoreB();
+							UpdateScoreUI();
+							currentScene = client.getScene();
+							if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
+							{
+								TogglePauseMenu(true, true);
+							}
+						}
+
+						if (client.hasScored())
+						{
+							Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+
+							string sname = client.getScorer();
+
+							wstring name(sname.size(), L' ');
+							copy(sname.begin(), sname.end(), name.begin());
+							scorerButton->setText(name + L"\nscored!");
+							scorerButton->MakeRect();
+							scorerButton->setOrigin();
+							scorerButton->SetActive(true);
+
+							justScored = true;
+							scorerTimer = 0.0f;
+						}
 					}
 				}
 			}
@@ -2324,15 +2331,15 @@ int Game::UpdateLobby()
 {
 	if (ResourceManager::GetSingleton()->IsMultiplayer()) {
 		//set client id
-		Game::clientID = client.getID();
+		clientID = client.getID();
 
 		//run server
 		if (ResourceManager::GetSingleton()->IsServer())
 		{
 			int serverState = server.run();
 		}
-		//	else {
-				//run client
+		
+		//run client
 		int clientState = client.run();
 		currentScene = client.getScene();
 
@@ -2347,56 +2354,11 @@ int Game::UpdateLobby()
 		}
 
 		return clientState;
-		//}
 	}
 
 	return 1;
 }
 
-void Game::SendFloor()
-{
-	GameObject * floor = scenes[2]->GetGameObject("HexFloor");
-	FloorController * fc = floor->GetComponent<FloorController>();
-	unsigned int col = (unsigned int)fc->getCol();
-	unsigned int row = (unsigned int)fc->getRow();
-	float3 * thefloor = fc->getFloor();
-	server.resetFloor();
-	unsigned int total = row * col;
-
-	for (unsigned int i = 0; i < total; ++i)
-	{
-		server.SetFloor(thefloor[i]);
-		/*for (unsigned int j = 0; j < col; ++j)
-		{
-			server.SetFloor(thefloor[i * col + j]);
-		}*/
-	}
-
-	server.SendFloor();
-}
-
-void Game::GetFloor()
-{
-	if (!client.floorIsEmpty()) {
-		GameObject * floor = scenes[2]->GetGameObject("HexFloor");
-		FloorController * fc = floor->GetComponent<FloorController>();
-		unsigned int col = (unsigned int)fc->getCol();
-		unsigned int row = (unsigned int)fc->getRow();
-		float3 * thefloor = fc->getFloor();
-		//unsigned int x = 0;
-		int floorSize = client.floorSize();
-
-		for (unsigned int i = 0; i < (unsigned int)floorSize; ++i)
-		{
-			thefloor[i] = client.getFloorHex(i);
-			/*for (unsigned int j = 0; j < col; ++j)
-			{
-				thefloor[i * col + j] = client.getFloorHex(x);
-				++x;
-			}*/
-		}
-	}
-}
 
 void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 {
