@@ -103,7 +103,8 @@ private:
 		ID_SPRINT_EMPTY,
 		ID_SOMEONE_SCORED,
 		ID_SPAWN_POWERUP,
-		ID_REMOVE_POWERUP
+		ID_REMOVE_POWERUP,
+		ID_POWERUP_TIME
 	};
 
 #pragma pack(push, 1)
@@ -149,6 +150,8 @@ private:
 		// despawn
 		std::vector<int> removeindices;
 		std::vector<int> ids;
+		// elapsed time
+		std::vector<float> elapsedTime;
 	};
 #pragma pack(pop)
 	
@@ -243,6 +246,8 @@ public:
 		pUp.positions[index] = pos; }
 	void RemovePowerUp(int index, int id) { pUp.ids.push_back(id); pUp.removeindices.push_back(index); }
 
+	void setPowerUpTime(int i, float time) { pUp.elapsedTime[i] = time; }
+
 
 	/* game stuff*/
 	void sendPackets();
@@ -263,6 +268,7 @@ public:
 	void SendScored(char * name, UINT8 length);
 	void SendPowerUps();
 	void SendRemoved();
+	void SendElapsedTime();
 
 private:
 	int lastState = 0;

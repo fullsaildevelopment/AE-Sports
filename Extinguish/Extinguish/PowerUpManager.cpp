@@ -241,7 +241,7 @@ void PowerUpManager::ServerUpdate(float _dt)
 		// send information to clients
 		// send index & position
 		if (positions.size() > 0) {
-	///		for (unsigned int i = 0; i < 6; ++i)
+		//	for (unsigned int i = 0; i < 6; ++i)
 			{
 				for (unsigned int j = 0; j < positions.size(); ++j)
 				{
@@ -252,7 +252,17 @@ void PowerUpManager::ServerUpdate(float _dt)
 				}
 			}
 			Game::server.SendPowerUps();
+
 		}
+
+		for (unsigned int i = 0; i < powerUps.size(); ++i)
+		{
+			float t = powerUps[i]->GetElapsed();
+			if (t < 0.0f)
+				t = 0.0f;
+			Game::server.setPowerUpTime(i, powerUps[i]->GetElapsed());
+		}
+		Game::server.SendPUTime();
 	}
 }
 
@@ -269,13 +279,21 @@ void PowerUpManager::ClientUpdate(float _dt)
 			float3 position;
 
 			active = Game::client.getSpawnedPowerUpActive(i);
-			position = Game::client.getSpawnedPowerUpPos(i);
-
 			// set that powerup active
-			powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
 			if (active)
-				powerUps[i]->Enable();
-			powerUps[i]->SetActive(false);
+			{
+				position = Game::client.getSpawnedPowerUpPos(i);
+				powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
+
+					powerUps[i]->Enable();
+				powerUps[i]->SetActive(false);
+			}
+			else
+			{
+				powerUps[i]->Disable();
+				//powerUps[i]->SetID(0);
+				//powerUps[i]->SetActive(false);
+			}
 		}
 	}
 
@@ -301,6 +319,10 @@ void PowerUpManager::ClientUpdate(float _dt)
 				powerUps[index]->ResetTimer();
 				powerUps[index]->SetActive(true);
 			}
+			else
+			{
+				powerUps[index]->SetID(0);
+			}
 		}
 	}
 
@@ -325,11 +347,14 @@ void PowerUpManager::ClientUpdate(float _dt)
 
 		if (powerUps[i]->GetID() == Game::GetClientID())
 		{
-			powerUps[i]->Update(_dt);
+		//	powerUps[i]->Update(_dt);
 
-			float newOpacity = powerUps[i]->GetElapsed();
+			float newOpacity = Game::client.powerUpTime(i);
 			if (newOpacity < 0.0f)
+			{
 				newOpacity = 0.0f;
+				powerUps[i]->SetID(0);
+			}
 			powerUpRenderers[uiIndex]->setOpacity(newOpacity);
 
 			if (uiIndex == 0)
