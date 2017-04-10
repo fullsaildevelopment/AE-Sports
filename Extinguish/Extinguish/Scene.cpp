@@ -274,20 +274,20 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ /*0.577f, 0.577f, -0.577f*/0,0,0, 0 }, { 0.20f, 0.30f, 0.20f, 1.0f }, { 0.099f, 0.099f, 0.099f, 0.099f });
+	dirLight.Create({ /*0.577f, 0.577f, -0.577f*/0,0,0, 0 }, { 0.30f, 0.30f, 0.30f, 1.0f }, { 0.099f, 0.099f, 0.099f, 0.099f });
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -9, -13, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
+	pointLight0.Create({ -9, -13, -50.5f, 0 }, { 0.0f, 0, 0, 1.0f }, 0.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -9, -13, 10.0f, 0 }, { 0.0f, 0.0f, 1.0f, 1.0f }, 145.0f);
+	pointLight1.Create({ -9, -13, 10.0f, 0 }, { 0.0f, 0.0f, 0.0f, 1.0f }, 0.0f);
 
 	PointLight pointLight2;
-	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
+	pointLight2.Create({ -20, 18, -55.5f, 0 }, { 0.4f, 0.4f, 0.4f, 1.0f }, 255.0f);
 
 	PointLight pointLight3;
-	pointLight3.Create({ -7, 10, 20.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
+	pointLight3.Create({ -20, 18, 60.5f, 0 }, { 0.4f, 0.4f, 0.4f, 1.0f }, 255.0f);
 
 	pointLights.push_back(pointLight0);
 	pointLights.push_back(pointLight1);
