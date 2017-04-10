@@ -160,10 +160,6 @@ void FloorController::LevelFloor(float _dt)
 
 void FloorController::Strips(float _dt)
 {
-	//problem: the logic is there, but it doesn't keep track of the dontRaise the next time the function is called
-	//solution: generate them the first time only (in a 2D array)
-	//generate 2D array of dontRaise
-
 	ratios += _dt * transSpeed;
 
 	if (!dontRaiseGenerated)
@@ -191,21 +187,28 @@ void FloorController::Strips(float _dt)
 
 	int dontI = 0, dontJ = 0;
 
-	for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
+	if (ratios < 1.0f)
 	{
-		for (int c = 0; c < col; ++c)
+		for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
 		{
-			if (dontRaise[dontI][dontJ] != c)
+			for (int c = 0; c < col; ++c)
 			{
-				MovePillar(r * col + c, ratios);
+				if (dontRaise[dontI][dontJ] != c)
+				{
+					MovePillar(r * col + c, ratios);
+				}
+				else
+				{
+					++dontJ;
+				}
 			}
-			else
-			{
-				++dontJ;
-			}
-		}
 
-		dontJ = 0;
+			dontJ = 0;
+		}
+	}
+	else
+	{
+		dontRaiseGenerated = false;
 	}
 }
 
