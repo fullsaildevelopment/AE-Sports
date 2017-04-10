@@ -54,7 +54,7 @@ private:
 	string fps;
 	wstring text;
 	float time = 300.0f;
-	float clickCooldown = 0.2f;
+	float clickCooldown = 0.5f;
 	bool isActive;
 	bool isClickable;
 	bool isTimer = false;

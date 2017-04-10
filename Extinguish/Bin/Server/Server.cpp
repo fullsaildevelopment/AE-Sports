@@ -32,8 +32,6 @@ Server::Server()
 		pUp.positions[i] = { 0,0,0 };
 		pUp.elapsedTime[i] = 1.0f;
 	}
-
-	//floorState = new std::vector<XMFLOAT3>();
 }
 
 Server::~Server()
@@ -76,7 +74,6 @@ int Server::init(uint16_t port)
 	{
 		//names[i] = new char[8];
 		clientIDs[i] = (UINT8)(i + 1);
-	//	bteamIDs[i] = i + 5;
 	}
 
 	objIDs[0].inUse = true;
