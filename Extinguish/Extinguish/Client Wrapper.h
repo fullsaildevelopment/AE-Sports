@@ -24,6 +24,7 @@ public:
 	}
 	int init(char* address, UINT16 port)
 	{
+		printf("init client\n");
 		isMultiplayer = true;
 		return newClient.init(address, port);
 	}
@@ -31,6 +32,15 @@ public:
 	int run()
 	{
 		int result = newClient.run();
+		int a = 0, b = 0, c = 0;
+		if (newClient.hasPackets())
+			a = 1;
+		if (newClient.hasScored())
+			b = 1;
+		if (newClient.hasState())
+			c = 1;
+
+		printf("Results | Packet %i | Scored %i | State %i\n", a, b, c);
 		if (ResourceManager::GetSingleton()->IsPaused() != newClient.getPaused())
 		ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
 		return result;
@@ -80,6 +90,7 @@ public:
 	unsigned int getID()
 	{
 		id = newClient.getID();
+		//printf("Client ID: %i\n", id);
 		return (unsigned int)id;
 	}
 
@@ -212,5 +223,5 @@ public:
 	int RemovedPowerUpAmount() { return newClient.RemovedPowerUpAmount(); }
 	int getRemovedPowerUpIndex(int i) { return newClient.getRemovedPowerUpIndex(i); }
 	int getRemovedPlayerID(int i) { return newClient.getRemovedPlayerID(i); }
-
+	float powerUpTime(int i) {return newClient.getPowerUpTime(i);}
 };

@@ -26,6 +26,13 @@ Client::Client()
 
 	pUp.positions.resize(6);
 	pUp.isactive.resize(6);
+	pUp.elapsedTime.resize(6);
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		pUp.positions[i] = { 0,0,0 };
+		pUp.elapsedTime[i] = 1.0f;
+	}
 
 	clientID = 1;
 
@@ -50,6 +57,8 @@ Client::~Client()
 
 int Client::init(char* _address, UINT16 port)
 {
+	int resi = printf("CLIENT: Test\n");
+	OutputDebugString("CLIENT: Test\n");
 	SocketDescriptor sd(port, 0);
 	peer = RakNet::RakPeerInterface::GetInstance();
 	sd.socketFamily = AF_INET;
@@ -59,7 +68,6 @@ int Client::init(char* _address, UINT16 port)
 	UINT16 newPort = port;
 	if (res == SOCKET_PORT_ALREADY_IN_USE)
 	{
-
 		while (res == SOCKET_PORT_ALREADY_IN_USE)
 		{
 			newPort += 1;
@@ -71,7 +79,8 @@ int Client::init(char* _address, UINT16 port)
 	
 	peer->Ping("255.255.255.255", 60000, true);
 
-	//printf("Pinging\n");
+	
+	printf("Pinging\n");
 	//ConnectionAttemptResult temp = peer->Connect(address, 60000, 0, 0);
 	
 	return 1;
@@ -260,6 +269,11 @@ int Client::run()
 		{
 			receiveRPU();
 			rpowerup = true;
+			break;
+		}
+		case ID_POWERUP_TIME:
+		{
+			receiveEPU();
 			break;
 		}
 
@@ -598,6 +612,8 @@ void Client::receiveSPU()
 		//bIn.Read(y);
 		//bIn.Read(z);
 
+		bIn.Read(pUp.elapsedTime[i]);
+
 		if (active == 1)
 			pUp.isactive[i] = true;
 		else
@@ -612,4 +628,21 @@ void Client::receiveSPU()
 	}
 
 	float temp = 0.0f;
+}
+
+
+
+void Client::receiveEPU()
+{
+	BitStream in(packet->data, packet->length, false);;
+	in.IgnoreBytes(sizeof(MessageID));
+
+	//UINT8 amount = 6;
+	for (int i = 0; i < 6; ++i)
+	{
+		float t = 0.0f;
+		in.Read(t);
+		pUp.elapsedTime[i] = t;
+	}
+
 }

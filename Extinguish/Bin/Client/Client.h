@@ -1,6 +1,6 @@
 #pragma once
 
-#define _WINSOCKAPI_
+//#define _WINSOCKAPI_
 
 
 #ifdef CLIENTDLL_EXPORTS
@@ -9,11 +9,11 @@
 #define CLIENTDLL_API __declspec(dllimport)
 #endif
 
-#include "..\RakNet\WindowsIncludes.h"
+//#include "..\RakNet\WindowsIncludes.h"
 #include <stdio.h>
 #include <string.h>
-#include <iostream>
-#include <vector>
+#include <string>
+//#include <iostream>
 
 #include "..\RakNet\Gets.h"
 #include "..\RakNet\RakPeerInterface.h"
@@ -24,8 +24,8 @@
 #include "..\RakNet\Kbhit.h"
 #include "..\RakNet\GetTime.h"
 
-
 #include <DirectXMath.h>
+#include <vector>
 
 
 using namespace RakNet;
@@ -109,7 +109,8 @@ private:
 		ID_SPRINT_EMPTY,
 		ID_SOMEONE_SCORED,
 		ID_SPAWN_POWERUP,
-		ID_REMOVE_POWERUP
+		ID_REMOVE_POWERUP,
+		ID_POWERUP_TIME
 
 	};
 
@@ -123,6 +124,8 @@ private:
 		// despawn
 		std::vector<int> removeindices;
 		std::vector<int> ids;
+		// elapsed time
+		std::vector<float> elapsedTime;
 	};
 #pragma pack(pop)
 
@@ -137,7 +140,6 @@ private:
 	UINT8 objID;
 
 	PowerUps pUp;
-
 
 	UINT8 objects;
 	int numPackets = 0;
@@ -260,6 +262,7 @@ public:
 	int RemovedPowerUpAmount() { return (int)pUp.removeindices.size(); }
 	int getRemovedPowerUpIndex(int i) { return pUp.removeindices[i]; }
 	int getRemovedPlayerID(int i) { return pUp.ids[i]; }
+	float getPowerUpTime(int i) { return pUp.elapsedTime[i]; }
 
 	// which packets have arrived
 	bool hasScored() { return scored; }
@@ -280,5 +283,6 @@ private:
 	void receiveGameState();
 	void receiveRPU();
 	void receiveSPU();
+	void receiveEPU();
 };
 

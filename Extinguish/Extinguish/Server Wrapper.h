@@ -263,5 +263,12 @@ public:
 	{
 		newServer.SendRemoved();
 	}
+
+	void SendPUTime()
+	{
+		newServer.SendElapsedTime();
+	}
+
+	void setPowerUpTime(int i, float time) {newServer.setPowerUpTime(i, time); }
 };
 

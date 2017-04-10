@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	app.Init(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
-#if _DEBUG
+//#if _DEBUG
 	AllocConsole();
 
 	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -36,13 +36,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	*stdout = *hf_out;
 
 	freopen_s(&hf_out, "CONOUT$", "w", stdout);
-#endif
+//#endif
 
 	float fixedTime = 0;
 	XTime timer;
 	timer.Restart();
 	timer.Signal();
 
+	printf("Testing\n");
 	//set up function that will create dump file
 	SetUnhandledExceptionFilter(errorFunc);
 
