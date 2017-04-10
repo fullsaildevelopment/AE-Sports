@@ -12,7 +12,7 @@
 class ServerWrapper
 {
 private:
-	Server newServer;
+	Server * newServer;
 	bool shutdown = false;
 	bool noPeer = false;
 	std::vector<GameState*> states;
@@ -22,9 +22,16 @@ private:
 	UINT8 objIDs[8];
 
 public:
+	ServerWrapper()
+	{
+		newServer = new Server();
+	}
 	~ServerWrapper() {
 		if (isMultiplayer && isServer)
-			newServer.stop();
+			newServer->stop();
+
+		if (newServer)
+			delete newServer;
 	}
 
 	int init(char * address, UINT16 port)
@@ -33,16 +40,16 @@ public:
 		isMultiplayer = true;
 		noPeer = false;
 		shutdown = false;
-		return newServer.init(port);
+		return newServer->init(port);
 	}
 	int run()
 	{
 		if (shutdown && !noPeer)
-			noPeer = newServer.Shutdown();
+			noPeer = newServer->Shutdown();
 
-		newServer.gamePaused(ResourceManager::GetSingleton()->IsPaused());
-		newServer.sendPackets();
-		int result = newServer.update();
+		newServer->gamePaused(ResourceManager::GetSingleton()->IsPaused());
+		newServer->sendPackets();
+		int result = newServer->update();
 
 		if (result == 3)
 		{
@@ -51,20 +58,20 @@ public:
 
 			for (unsigned int i = 0; i < 8; ++i)
 			{
-				if (newServer.isInput(i))
+				if (newServer->isInput(i))
 				{
 					InputEventStruct * tempEvent = new InputEventStruct;
 
-					tempEvent->clientID = newServer.getInputEvent(i)->clientID;
-					memcpy(tempEvent->keyboard, newServer.getInputEvent(i)->keyboard, 256);
-					memcpy(tempEvent->keyboardUp, newServer.getInputEvent(i)->keyboardUp, 256);
-					memcpy(tempEvent->keyboardDown, newServer.getInputEvent(i)->keyboardDown, 256);
-					memcpy(tempEvent->mouse, newServer.getInputEvent(i)->mouse, 3);
-					memcpy(tempEvent->mouseDown, newServer.getInputEvent(i)->mouseDown, 3);
-					memcpy(tempEvent->mouseUp, newServer.getInputEvent(i)->mouseUp, 3);
-					tempEvent->mouseX = newServer.getInputEvent(i)->mouseX;
-					tempEvent->mouseY = newServer.getInputEvent(i)->mouseY;
-					tempEvent->isServer = newServer.getInputEvent(i)->isServer;
+					tempEvent->clientID = newServer->getInputEvent(i)->clientID;
+					memcpy(tempEvent->keyboard, newServer->getInputEvent(i)->keyboard, 256);
+					memcpy(tempEvent->keyboardUp, newServer->getInputEvent(i)->keyboardUp, 256);
+					memcpy(tempEvent->keyboardDown, newServer->getInputEvent(i)->keyboardDown, 256);
+					memcpy(tempEvent->mouse, newServer->getInputEvent(i)->mouse, 3);
+					memcpy(tempEvent->mouseDown, newServer->getInputEvent(i)->mouseDown, 3);
+					memcpy(tempEvent->mouseUp, newServer->getInputEvent(i)->mouseUp, 3);
+					tempEvent->mouseX = newServer->getInputEvent(i)->mouseX;
+					tempEvent->mouseY = newServer->getInputEvent(i)->mouseY;
+					tempEvent->isServer = newServer->getInputEvent(i)->isServer;
 
 					input->Init(tempEvent->keyboard, tempEvent->keyboardDown, tempEvent->keyboardUp, tempEvent->mouse, tempEvent->mouseDown, tempEvent->mouseUp, tempEvent->mouseX, tempEvent->mouseY);
 					inputEvent->SetInput(input);
@@ -77,45 +84,45 @@ public:
 				}
 			}
 
-			newServer.resetInput();
+			newServer->resetInput();
 
 			delete inputEvent;
 			delete input;
 			//result = 2;
-			newServer.sendPackets();
+			newServer->sendPackets();
 		}
 
 		if (result == 2)
 		{
 			for (unsigned int i = 0; i < states.size(); ++i)
 			{
-				//	memcpy(&states[i]->animationName, newServer.getState(i)->animationName, newServer.getState(i)->nameLength);
-				states[i]->clientID = newServer.getState(i)->clientID;
-				states[i]->hasBall = newServer.getState(i)->hasBall;
-				//		states[i]->nameLength = newServer.getState(i)->nameLength;
-				states[i]->position = newServer.getState(i)->position;
-				states[i]->rotation = newServer.getState(i)->rotation;
+				//	memcpy(&states[i]->animationName, newServer->getState(i)->animationName, newServer->getState(i)->nameLength);
+				states[i]->clientID = newServer->getState(i)->clientID;
+				states[i]->hasBall = newServer->getState(i)->hasBall;
+				//		states[i]->nameLength = newServer->getState(i)->nameLength;
+				states[i]->position = newServer->getState(i)->position;
+				states[i]->rotation = newServer->getState(i)->rotation;
 			}
 
-			newServer.sendPackets();
+			newServer->sendPackets();
 		}
 
 		return result;
 	}
 	void stop()
 	{
-		noPeer = newServer.Shutdown();
+		noPeer = newServer->Shutdown();
 		shutdown = true;
 	}
 
 	void SetGameStates(std::vector<GameState*> gameStates)
 	{
 		states = gameStates;
-		newServer.setStateSize((unsigned int)gameStates.size());
+		newServer->setStateSize((unsigned int)gameStates.size());
 
 		for (unsigned int i = 0; i < states.size(); ++i)
 		{
-			newServer.setStates(i,
+			newServer->setStates(i,
 				gameStates[i]->hasBall,
 				gameStates[i]->position,
 				gameStates[i]->rotation,
@@ -131,12 +138,12 @@ public:
 
 	void sendStates()
 	{
-		newServer.sendPackets();
+		newServer->sendPackets();
 	}
 
 	void sendMessage(char * message, uint16_t stride, uint16_t messageID)
 	{
-		newServer.sendMessage(message, stride, messageID);
+		newServer->sendMessage(message, stride, messageID);
 	}
 
 	std::vector<GameState*> getStates()
@@ -146,52 +153,52 @@ public:
 
 	XMFLOAT3 getLocation(unsigned int index)
 	{
-		return newServer.getLocation(index);
+		return newServer->getLocation(index);
 	}
 
 	XMFLOAT3 getRotation(unsigned int index)
 	{
-		return newServer.getRotation(index);
+		return newServer->getRotation(index);
 	}
 
 	char* getMessage()
 	{
-		return newServer.getMessage();
+		return newServer->getMessage();
 	}
 
 	uint16_t GetStride()
 	{
-		return newServer.GetStride();
+		return newServer->GetStride();
 	}
 
 	void setObjCount(int count)
 	{
 		objCount = count;
-		newServer.setObjectCount(count);
+		newServer->setObjectCount(count);
 	}
 
 	int getNewState()
 	{
-		return newServer.getNewState();
+		return newServer->getNewState();
 	}
 
 	unsigned int getTotalPlayers()
 	{
-		return newServer.getPlayerCount();
+		return newServer->getPlayerCount();
 	}
 
 	/*char * getInput()
 	{
-		return newServer.
+	return newServer->
 	}*/
 
 	unsigned int getObjCount() { return objCount; }
 
-	void setScores(int scoreA, int scoreB) { newServer.setScores(scoreA, scoreB); }
-	void setTime(float time, float _dt) { newServer.setTime(time, _dt); }
+	void setScores(int scoreA, int scoreB) { newServer->setScores(scoreA, scoreB); }
+	void setTime(float time, float _dt) { newServer->setTime(time, _dt); }
 
-	void sendGameState() { newServer.sendState(); }
-	void StartGame() { newServer.StartGame(); }
+	void sendGameState() { newServer->sendState(); }
+	void StartGame() { newServer->StartGame(); }
 
 	void setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five, UINT8 six, UINT8 seven, UINT8 eight)
 	{
@@ -203,72 +210,72 @@ public:
 		objIDs[5] = six;
 		objIDs[6] = seven;
 		objIDs[7] = eight;
-		newServer.setObjIDs(one, two, three, four, five, six, seven, eight);
+		newServer->setObjIDs(one, two, three, four, five, six, seven, eight);
 	}
 
-	bool isPlayer(unsigned int i) { return newServer.isPlayer(i); }
-	UINT8 getObjID(unsigned int i) { return newServer.getObjID(i); }
+	bool isPlayer(unsigned int i) { return newServer->isPlayer(i); }
+	UINT8 getObjID(unsigned int i) { return newServer->getObjID(i); }
 
-	void setMeterActive(bool toggle, unsigned int i) { newServer.setMeterActive(toggle, i); }
-	void setMeterDrain(bool toggle, unsigned int i) { newServer.setMeterDrain(toggle, i); }
-	void setMeterEmpty(bool toggle, unsigned int i) { //newServer.setMeterEmpty(toggle, i);
+	void setMeterActive(bool toggle, unsigned int i) { newServer->setMeterActive(toggle, i); }
+	void setMeterDrain(bool toggle, unsigned int i) { newServer->setMeterDrain(toggle, i); }
+	void setMeterEmpty(bool toggle, unsigned int i) { //newServer->setMeterEmpty(toggle, i);
 	}
-	void setMeterDown(bool toggle, unsigned int i) { return newServer.setMeterDown(toggle, i); }
+	void setMeterDown(bool toggle, unsigned int i) { return newServer->setMeterDown(toggle, i); }
 
-	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i); }
-	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
-	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
+	bool getMeterDrain(unsigned int i) { return  newServer->getMeterDrain(i); }
+	bool getMeterActive(unsigned int i) { return newServer->getMeterActive(i); }
+	bool getEmpty(unsigned int i) { return newServer->getEmpty(i); }
 
 	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals, char * name)
 	{
-		newServer.updateScoreboard(index, score, assists, saves, goals, name);
+		newServer->updateScoreboard(index, score, assists, saves, goals, name);
 	}
 
 	void sceneChange(unsigned int i)
 	{
-		newServer.setCurScene(i);
+		newServer->setCurScene(i);
 	}
 
 	void setCountdown(bool down)
 	{
-		newServer.setCountdown(down);
+		newServer->setCountdown(down);
 	}
 
 	void SendScorer(string name, UINT8 length)
 	{
-		newServer.SendScored((char*)name.c_str(), length);
+		newServer->SendScored((char*)name.c_str(), length);
 	}
 
 	void setPulse(int pulse)
 	{
-		newServer.setPulse(pulse);
+		newServer->setPulse(pulse);
 	}
 
 	void SetPowerUp(int index, float3 pos, bool active)
 	{
-		newServer.SetPowerUp(index, XMFLOAT3(pos.x, pos.y, pos.z), active);
+		newServer->SetPowerUp(index, XMFLOAT3(pos.x, pos.y, pos.z), active);
 	}
 
 	void SendPowerUps()
 	{
-		newServer.SendPowerUps();
+		newServer->SendPowerUps();
 	}
 
 	void RemovePowerUp(int index, int id)
 	{
-		newServer.RemovePowerUp(index, id);
+		newServer->RemovePowerUp(index, id);
 	}
 
 	void SendRemoved()
 	{
-		newServer.SendRemoved();
+		newServer->SendRemoved();
 	}
 
 	void SendPUTime()
 	{
-		newServer.SendElapsedTime();
+		newServer->SendElapsedTime();
 	}
 
-	void setPowerUpTime(int i, float time) {newServer.setPowerUpTime(i, time); }
+	void setPowerUpTime(int i, float time) { newServer->setPowerUpTime(i, time); }
 };
 

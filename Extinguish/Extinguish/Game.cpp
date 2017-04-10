@@ -325,8 +325,7 @@ int Game::Update(float dt)
 				if (!ResourceManager::GetSingleton()->IsServer())
 				{
 					int clientState = client.run();
-				//	if (!ResourceManager::GetSingleton()->IsServer())
-						clientID = client.getID();
+					clientID = client.getID();
 
 
 					if (clientState == 0)
