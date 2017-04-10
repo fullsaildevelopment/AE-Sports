@@ -155,6 +155,29 @@ public:
 	}
 
 	template <typename T>
+	ID3D11Buffer* CreateConstantBuffer(T* data, int numOf, int sizeOfOne)
+	{
+		ID3D11Buffer* m_constantBuffer;
+		D3D11_BUFFER_DESC BufferDesc;
+		D3D11_SUBRESOURCE_DATA Data;
+
+		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		BufferDesc.ByteWidth = sizeOfOne * numOf;
+		BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		BufferDesc.CPUAccessFlags = 0;
+		BufferDesc.MiscFlags = 0;
+		BufferDesc.StructureByteStride = 0;
+
+		Data.pSysMem = data;
+		Data.SysMemPitch = 0;
+		Data.SysMemSlicePitch = 0;
+
+		// Create the instance buffer.
+		device->CreateBuffer(&BufferDesc, &Data, &m_constantBuffer);
+		return m_constantBuffer;
+	}
+
+	template <typename T>
 	ID3D11Buffer* CreateVertexBuffer(T* data, int numOf, int sizeOfOneData)
 	{
 		D3D11_SUBRESOURCE_DATA vertexBufferData;

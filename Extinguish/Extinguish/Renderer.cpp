@@ -357,6 +357,7 @@ void Renderer::SetView(XMFLOAT4X4 view)
 {
 	mvpData.view = view;
 }
+
 void Renderer::SetProjection(XMFLOAT4X4 projection)
 {
 	mvpData.projection = projection;

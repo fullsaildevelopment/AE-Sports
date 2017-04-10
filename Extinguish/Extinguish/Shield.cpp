@@ -23,6 +23,7 @@ Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResource
 	Renderer* renderer = new Renderer();
 	shieldBubble->AddComponent(renderer);
 	renderer->Init("ShieldBubble", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
+	renderer->SetEmissiveColor(float4(0, 0, 0.5f, 1));
 	renderer->SetEnabled(false);
 	collider = new SphereCollider(5.0f, shieldBubble, false);
 	shieldBubble->AddSphereCollider(collider);
