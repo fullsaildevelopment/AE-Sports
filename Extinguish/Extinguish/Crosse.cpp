@@ -106,7 +106,7 @@ void Crosse::Throw()
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
 
-		cout << "Throw" << endl;
+		//cout << "Throw" << endl;
 	}
 }
 
@@ -139,7 +139,7 @@ void Crosse::Catch()
 			direction = 1;
 		}
 
-		cout << ballPos.x << " " << ballPos.y << " " << ballPos.z << "\t" << goalPos.x << " " << goalPos.y << " " << goalPos.z << endl;
+		//cout << ballPos.x << " " << ballPos.y << " " << ballPos.z << "\t" << goalPos.x << " " << goalPos.y << " " << goalPos.z << endl;
 
 		if ((ballPos.x <= goalPos.x + 8.0f || ballPos.x >= goalPos.x - 8.0f) && (ballPos.y >= goalPos.y - 4.0f) && ((ballPos.z >= goalPos.z - 8.0f && direction == 1) || (ballPos.z <= goalPos.z + 8.0f && direction == -1)))
 		{
