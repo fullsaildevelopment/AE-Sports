@@ -826,7 +826,7 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Plane\\Plane.fbx", "Plane");
 
 	//load in crosse
-	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Crosse\\Crosse.fbx", "Crosse");
+	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Crosse\\LacrosseStickFinal.fbx", "Crosse");
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\MeterBox\\MeterBox.fbx", "MeterBox");
 
@@ -855,8 +855,8 @@ void ResourceManager::DoFBXExporting()
 
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoal\\ArenaGoal.fbx", "ArenaGoal");
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall.fbx", "ArenaGoalWall");
-	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall02.fbx", "ArenaGoalWall02");
-	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaWall\\ArenaWallNew2.fbx", "ArenaWall");
+	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall02.fbx", "ArenaGoalWall02");
+	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaWall\\ArenaWallNew2.fbx", "ArenaWall");
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaPillar\\ArenaPillarNew.fbx", "ArenaPillar");
 
 #endif

@@ -43,6 +43,7 @@ private:
 	BallController *ballClass; // gives me access to the balls script
 	Crosse *crosse; // gives me access to the crosse script
 	AnimatorController* anim; // gives access to animations
+	//static Map *aiPath; 
 
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
 	std::vector<GameObject*> listOfMates; // list of AI's teammates
