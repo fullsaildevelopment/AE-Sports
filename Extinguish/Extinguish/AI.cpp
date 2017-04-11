@@ -7,10 +7,10 @@
 #include "State.h"
 #include "Movement.h"
 #include "Trigger.h"
+#include "Map.h"
 
 #define     RunSpeed 0.7f //0.475f //10
 #define  AttackSpeed 0.7f //0.475f 
-//#define StumbleSpeed 10
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -566,29 +566,6 @@ void AI::Paranoia()
 	}
 }
 
-bool AI::RunTo(GameObject *target)
-{
-	if (canMove)
-	{
-		if (target)
-		{
-			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < 5)
-				return true;
-
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
-			v.y = 0;
-			TurnTo(target);
-
-			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
-				anim->SetTrigger("Run");
-
-			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
-		}
-	}
-
-	return false;
-}
-
 bool AI::RunTo(GameObject *target, float dist)
 {
 	if (canMove)
@@ -610,6 +587,15 @@ bool AI::RunTo(GameObject *target, float dist)
 	}
 
 	return false;
+
+	/*std::vector<Map::Node *> path;
+
+	
+
+	for (int i = 0; i < 2; ++i)
+	{
+
+	}*/
 }
 
 bool AI::RunTo(float3 target, float dist)
