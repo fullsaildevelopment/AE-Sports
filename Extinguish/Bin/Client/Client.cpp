@@ -24,10 +24,6 @@ Client::Client()
 		gameState[0][i].name = nullptr;
 	}
 
-	pUp.positions.resize(6);
-	pUp.isactive.resize(6);
-	pUp.elapsedTime.resize(6);
-
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		pUp.positions[i] = { 0,0,0 };
@@ -571,34 +567,24 @@ void Client::sendEmpty(bool empty)
 
 void Client::receiveRPU() 
 {
-	pUp.ids.clear();
-	pUp.removeindices.clear();
 
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
-	UINT8 amount;
-	bIn.Read(amount);
+	UINT8 index, id;
+	bIn.Read(id);
+	bIn.Read(index);
 
-	for (unsigned int i = 0; i < (unsigned int)amount; ++i)
-	{
-		UINT8 index, id;
-		bIn.Read(id);
-		bIn.Read(index);
-
-		pUp.ids.push_back(id);
-		pUp.removeindices.push_back(index);
-	}
+	pUp.id = id;
+	pUp.removeindices = index;
+	pUp.isactive[index] = false;
+	pUp.positions[index] = { 0,0,0 };
 }
 
 void Client::receiveSPU() 
 {
-//	pUp.positions.clear();
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
-
-	//UINT8 amount;
-	//bIn.Read(amount);
 
 	for (unsigned int i = 0; i < 6; ++i)
 	{
@@ -608,11 +594,6 @@ void Client::receiveSPU()
 		bIn.Read(active);
 		if (active == 1)
 			bIn.Read(pos);
-		//bIn.Read(x);
-		//bIn.Read(y);
-		//bIn.Read(z);
-
-		bIn.Read(pUp.elapsedTime[i]);
 
 		if (active == 1)
 			pUp.isactive[i] = true;
