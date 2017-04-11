@@ -17,6 +17,8 @@
 #include "Game.h"
 
 using namespace std;
+float tempcooldown = 0.0f;
+bool spawned = false;
 
 void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources)
 {
@@ -152,6 +154,11 @@ void PowerUpManager::Update(float _dt)
 	// update ui if player has specific powerup, client
 	else
 		ClientUpdate(_dt);
+
+
+
+	if (spawned)
+		tempcooldown -= _dt;
 #endif
 }
 
@@ -214,15 +221,6 @@ void PowerUpManager::ServerUpdate(float _dt)
 				indices.push_back(randPosIndex);
 
 				//enable
-				powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
-				powerUps[randPowIndex]->SetEnabled(true);
-				powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
-
-
-				//enable
-				//powerUps[randPowIndex]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(true);
-				//powerUps[randPowIndex]->SetEnabled(true);
-				//powerUps[randPowIndex]->GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(true);
 				powerUps[randPowIndex]->Enable();
 
 				//prevent pos from being used again
@@ -242,19 +240,28 @@ void PowerUpManager::ServerUpdate(float _dt)
 	{
 		// send information to clients
 		// send index & position
-		if (positions.size() > 0) {
-	///		for (unsigned int i = 0; i < 6; ++i)
+		if (positions.size() > 0) 
+		{
+			for (unsigned int j = 0; j < positions.size(); ++j)
 			{
-				for (unsigned int j = 0; j < positions.size(); ++j)
-				{
-					// if it was spawned, update the information for the client
-				//	if (i == indices[j])
-						Game::server.SetPowerUp(indices[j], positions[j], true);
+				// if it was spawned, update the information for the client
+				Game::server.SetPowerUp(indices[j], positions[j], true);
 
-				}
 			}
+
 			Game::server.SendPowerUps();
+			spawned = true;
+
 		}
+
+		for (unsigned int i = 0; i < powerUps.size(); ++i)
+		{
+			float t = powerUps[i]->GetElapsed();
+			if (t < 0.0f)
+				t = 0.0f;
+			Game::server.setPowerUpTime(i, powerUps[i]->GetElapsed());
+		}
+		Game::server.SendPUTime();
 	}
 }
 
@@ -263,7 +270,7 @@ void PowerUpManager::ClientUpdate(float _dt)
 	// grab powerup information from server
 	if (Game::client.SpawnedPowerUps())
 	{
-		int amount = Game::client.SpawnedPowerUpAmount();
+		int amount = 6;
 
 		for (int i = 0; i < amount; ++i)
 		{
@@ -271,39 +278,44 @@ void PowerUpManager::ClientUpdate(float _dt)
 			float3 position;
 
 			active = Game::client.getSpawnedPowerUpActive(i);
-			position = Game::client.getSpawnedPowerUpPos(i);
-
 			// set that powerup active
-			powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
-			powerUps[i]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(active);
-			powerUps[i]->SetEnabled(active);
-			powerUps[i]->SetActive(false);
+			if (active)
+			{
+				position = Game::client.getSpawnedPowerUpPos(i);
+				powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
+				powerUps[i]->Enable();
+
+				printf("SPAWNED: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
+				spawned = true;
+			}
+			else
+			{
+				powerUps[i]->Disable();
+				powerUps[i]->GetGameObject()->GetTransform()->SetPosition({ 0,0,0 });
+			}
 		}
 	}
 
 	if (Game::client.RemovedPowerUp())
 	{
-		int amount = Game::client.RemovedPowerUpAmount();
+		int index, id;
 
-		for (int i = 0; i < amount; ++i)
+		index = Game::client.getRemovedPowerUpIndex();
+		id = Game::client.getRemovedPlayerID();
+
+		// set that powerup inactive
+		powerUps[index]->Disable();
+
+		// set that powerup's player
+		powerUps[index]->SetID(id);
+
+		if (id != Game::GetClientID())
 		{
-			int index, id;
-
-			index = Game::client.getRemovedPowerUpIndex(i);
-			id = Game::client.getRemovedPlayerID(i);
-
-			// set that powerup inactive
-			powerUps[index]->GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
-			powerUps[index]->SetEnabled(false);
-
-			// set that powerup's player
-			powerUps[index]->SetID(id);
-
-			if (id == Game::GetClientID())
-			{
-				powerUps[index]->ResetTimer();
-				powerUps[index]->SetActive(true);
-			}
+			powerUps[index]->SetID(0);
+		}
+		else
+		{
+			printf("CLIENT PICKED UP: %s\n", powerUps[index]->GetName().c_str());
 		}
 	}
 
@@ -328,11 +340,13 @@ void PowerUpManager::ClientUpdate(float _dt)
 
 		if (powerUps[i]->GetID() == Game::GetClientID())
 		{
-			powerUps[i]->Update(_dt);
 
-			float newOpacity = powerUps[i]->GetElapsed();
+			float newOpacity = Game::client.powerUpTime(i);
 			if (newOpacity < 0.0f)
+			{
 				newOpacity = 0.0f;
+				powerUps[i]->SetID(0);
+			}
 			powerUpRenderers[uiIndex]->setOpacity(newOpacity);
 
 			if (uiIndex == 0)
@@ -347,8 +361,6 @@ void PowerUpManager::ClientUpdate(float _dt)
 			if ((uiIndex == 0 && !sjump) || (uiIndex == 1 && !shield) || (uiIndex == 3 && !magnet))
 			{
 				powerUpRenderers[uiIndex]->setOpacity(0.0f);
-
-				powerUps[i]->SetActive(false);
 			}
 		}
 	}
@@ -439,7 +451,10 @@ void PowerUpManager::HandleEvent(Event* e)
 			for (unsigned int i = 0; i < powerUps.size(); ++i)
 			{
 				if (n == powerUps[i]->GetGameObject()->GetName())
+				{
 					index = i;
+					break;
+				}
 			}
 			// sent to client to despawn powerup
 			if (index != -1) {
@@ -452,13 +467,25 @@ void PowerUpManager::HandleEvent(Event* e)
 	}
 }
 
-
 void PowerUpManager::Render()
 {
 	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
 	{
+		// to check positions
 		powerUpRenderers[i]->Render();
 	}
+
+	for (unsigned int i = 0; i < powerUps.size(); ++i)
+	{
+		if (powerUps[i]->isEnabled() && tempcooldown <= 0.0f && !ResourceManager::GetSingleton()->IsServer())
+		{
+			float3 position = powerUps[i]->GetGameObject()->GetTransform()->GetPosition();
+			printf("POSITION CHECK: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
+		}
+	}
+
+	if (tempcooldown < 0.0f)
+		tempcooldown = 2.0f;
 }
 
 void PowerUpManager::UpdateSize(D2D1_SIZE_F rect)

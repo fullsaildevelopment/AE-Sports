@@ -43,6 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	timer.Restart();
 	timer.Signal();
 
+	printf("Testing\n");
 	//set up function that will create dump file
 	SetUnhandledExceptionFilter(errorFunc);
 

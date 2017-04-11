@@ -3,7 +3,8 @@
 #include "UIRenderer.h"
 #include "InputDownEvent.h"
 #include "LoadSceneEvent.h"
-
+#include "SoundEngine.h"
+#include "SoundEvent.h"
 
 Credits::Credits()
 {
@@ -75,12 +76,12 @@ void Credits::Init(DeviceResources * devResources)
 
 void Credits::Render()
 {
-	//textRenderers[0]->getUIDevCon()->BeginDraw();
+	textRenderers[0]->getUIDevCon()->BeginDraw();
 	for (unsigned int i = 0; i < textRenderers.size(); ++i)
 	{
 		textRenderers[i]->Render();
 	}
-	//textRenderers[0]->getUIDevCon()->EndDraw();
+	textRenderers[0]->getUIDevCon()->EndDraw();
 }
 
 void Credits::Update(float _dt)
@@ -244,6 +245,16 @@ void Credits::ReturnToMenu()
 	nextName = 0;
 	fadeInOut = 0.0f;
 	fadeIn = true;
+
+	//stop playing credits song
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::STOP_CREDITS, 0);
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+
+	//play main menu music
+	soundEvent->Init(AK::EVENTS::PLAY_MAINMENU, 0);
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");	
+	delete soundEvent;
 
 	ResourceManager::GetSingleton()->SetPaused(false);
 	LoadSceneEvent* event = new LoadSceneEvent();

@@ -40,6 +40,26 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	{
 		dontRaise[i] = new int[3];
 	}
+
+	//allocate groups
+	groupPositions = new int[NUM_OF_GROUPS];
+	for (int i = 0; i < NUM_OF_GROUPS; ++i)
+	{
+		groupPositions[i] = 0;
+	}
+}
+
+FloorController::~FloorController()
+{
+	delete[] floor;
+	delete[] colors;
+
+	for (int i = 0; i < row; ++i)
+	{
+		delete[] dontRaise[i];
+	}
+
+	delete[] groupPositions;
 }
 
 void FloorController::WavePattern(float _dt)
@@ -160,15 +180,11 @@ void FloorController::LevelFloor(float _dt)
 
 void FloorController::Strips(float _dt)
 {
-	//problem: the logic is there, but it doesn't keep track of the dontRaise the next time the function is called
-	//solution: generate them the first time only (in a 2D array)
-	//generate 2D array of dontRaise
-
 	ratios += _dt * transSpeed;
 
-	if (!dontRaiseGenerated)
+	if (!positionsGenerated)
 	{
-		dontRaiseGenerated = true;
+		positionsGenerated = true;
 
 		for (int i = 0; i < dontRaise.size(); ++i)
 		{
@@ -191,21 +207,80 @@ void FloorController::Strips(float _dt)
 
 	int dontI = 0, dontJ = 0;
 
-	for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
+	if (ratios < 1.0f)
 	{
-		for (int c = 0; c < col; ++c)
+		for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
 		{
-			if (dontRaise[dontI][dontJ] != c)
+			for (int c = 0; c < col; ++c)
 			{
-				MovePillar(r * col + c, ratios);
+				if (dontRaise[dontI][dontJ] != c)
+				{
+					MovePillar(r * col + c, ratios);
+				}
+				else
+				{
+					++dontJ;
+				}
 			}
-			else
-			{
-				++dontJ;
-			}
+
+			dontJ = 0;
+		}
+	}
+	else
+	{
+		positionsGenerated = false;
+	}
+}
+
+void FloorController::Groups(float _dt)
+{
+	ratios += _dt * transSpeed;
+
+	groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
+	groupPositions[1] = { (row / 4 * col) + 9 };
+
+	//if (!positionsGenerated)
+	//{
+	//	positionsGenerated = true;
+
+	//	for (int i = 0; i < NUM_OF_GROUPS; ++i)
+	//	{
+	//		while (true)
+	//		{
+	//			int tempCol = rand() % col;
+	//			int tempRow = rand() % row;
+
+	//			if (tempCol - 1 > 0 && tempCol + 1 < col && tempRow - 1 > 5 && tempRow + 1 < row - 5)
+	//			{
+	//				groupPositions[i] = tempCol * tempRow;
+	//				//groupPositions[i] = rand() % (row * col) + ConvertTo1D(5, 0) - ConvertTo1D(row - 5, 0); //range is total amount of pillars. 5 rows away from goals.
+	//				break;
+	//			}
+
+	//			//if (groupPositions[i] + 1 < 
+	//		}
+	//	}
+	//}
+
+	for (int i = 0; i < 2; ++i)
+	{
+		int x, y;
+		ConvertTo2D(groupPositions[i], x, y);
+
+		int offset = 1;
+
+		if (x % 2 == 0)
+		{
+			offset = -1;
 		}
 
-		dontJ = 0;
+		MovePillar(groupPositions[i] - col + offset, ratios);
+		MovePillar(groupPositions[i] - col, ratios);
+		MovePillar(groupPositions[i] - 1, ratios);
+		MovePillar(groupPositions[i], ratios);
+		MovePillar(groupPositions[i] + 1, ratios);
+		MovePillar(groupPositions[i] + col, ratios);
+		MovePillar(groupPositions[i] + col + offset, ratios);
 	}
 }
 
@@ -248,21 +323,23 @@ void FloorController::ControlMovement(float fullTime)
 		}
 	}
 
-	/*if (randStateIndex != -1)
+	if (randStateIndex != -1)
 	{
 		switch (randStateIndex)
 		{
 		case STRIPS:
-			Strips(dt);
+			//Strips(dt);
+			Groups(dt);
 			break;
 		case GROUPS:
-			Strips(dt);
+			//Strips(dt);
+			Groups(dt);
 			break;
 		case LEVEL:
 			LevelFloor(dt);
 			break;
 		}
-	}*/
+	}
 
 	//if (timeing < 10 && currPattern != 1)
 	//{
@@ -581,13 +658,17 @@ void FloorController::PulseFloor(int _pos)
 	DoPulses();
 }
 
-FloorController::~FloorController()
+int FloorController::ConvertTo1D(int x, int y)
 {
-	delete[] floor;
-	delete[] colors;
+	int result = -1;
 
-	for (int i = 0; i < row; ++i)
-	{
-		delete[] dontRaise[i];
-	}
+	result = x * col + y;
+
+	return result;
+}
+
+void FloorController::ConvertTo2D(int num, int& x, int& y)
+{
+	x = num % col;
+	y = num / col;
 }
