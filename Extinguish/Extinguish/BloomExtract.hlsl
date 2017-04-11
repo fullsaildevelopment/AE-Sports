@@ -6,5 +6,6 @@ sampler TextureSampler : register(s0);
 float4 main(float4 color : COLOR0, float2 texCoord : TEXCOORD0) : SV_Target0
 {
     float4 c = Texture.Sample(TextureSampler, texCoord);
+	c.w = 1;
     return saturate((c - BloomThreshold) / (1 - BloomThreshold));
 }

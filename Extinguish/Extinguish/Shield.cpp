@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "SphereCollider.h"
-#include "Renderer.h"
+#include "ShieldRender.h"
 #include "DeviceResources.h"
 #include "Physics.h"
 
@@ -20,10 +20,10 @@ Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResource
 	shieldBubble->Init("ShieldBubble");
 	shieldBubble->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 9, 9, 9 }, nullptr, nullptr, nullptr);
 	scene->AddGameObject(shieldBubble);
-	Renderer* renderer = new Renderer();
+	ShieldRender* renderer = new ShieldRender(shieldBubble);
 	shieldBubble->AddComponent(renderer);
-	renderer->Init("ShieldBubble", "NormalMapped", "TempStatic", "", "", projection, devResources, true);
-	renderer->SetEmissiveColor(float4(0, 0, 0.5f, 1));
+	renderer->Init("ShieldBubble", projection, devResources, 0.1f, 0.56f);
+	renderer->SetShieldColor(float4(0.9f, 0.9f, 0, 1));
 	renderer->SetEnabled(false);
 	collider = new SphereCollider(5.0f, shieldBubble, false);
 	shieldBubble->AddSphereCollider(collider);
@@ -43,7 +43,7 @@ void Shield::Activate()
 	//attach shield buble to player
 	shieldBubble->GetTransform()->SetParent(GetPlayer()->GetGameObject()->GetTransform());
 	collider->SetEnabled(true);
-	shieldBubble->GetComponent<Renderer>()->SetEnabled(true);
+	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(true);
 	shieldBubble->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
 }
 
@@ -56,7 +56,7 @@ void Shield::Deactivate()
 	//detach shield bubble from player
 	GetPlayer()->GetGameObject()->GetTransform()->RemoveChild(GetGameObject()->GetTransform());
 	collider->SetEnabled(false);
-	shieldBubble->GetComponent<Renderer>()->SetEnabled(false);
+	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(false);
 }
 
 void Shield::Enable()
