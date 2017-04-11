@@ -38,6 +38,7 @@
 #include "PulseFloorEvent.h"
 #include "TrailRender.h"
 #include "Map.h"
+#include "ShieldRender.h"
 
 using namespace DirectX;
 using namespace std;
@@ -1016,6 +1017,24 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	BoxCollider* Wallboxcol = new BoxCollider(rightWall, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
 	rightWall->AddBoxCollider(Wallboxcol);
 
+	GameObject* rightWallCol = new GameObject();
+	rightWallCol->Init("RightWallCol");
+	basic->AddGameObject(rightWallCol);
+	rightWallCol->InitTransform(identity, { (float)col / 2 - 7.5f, -0.3f, 14.55f }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* rightWallColRenderer = new Renderer();
+	rightWallCol->AddComponent(rightWallColRenderer);
+	rightWallColRenderer->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	rightWallColRenderer->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
+
+	GameObject* rightWallCol2 = new GameObject();
+	rightWallCol2->Init("RightWallCol2");
+	basic->AddGameObject(rightWallCol2);
+	rightWallCol2->InitTransform(identity, { (float)col / 2 - 7.5f, -0.3f, -10.55f }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* rightWallColRenderer2 = new Renderer();
+	rightWallCol2->AddComponent(rightWallColRenderer2);
+	rightWallColRenderer2->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	rightWallColRenderer2->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
+
 	GameObject* rightWall2 = new GameObject();
 	rightWall2->Init("RightWall");
 	basic->AddGameObject(rightWall2);
@@ -1024,8 +1043,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	rightWall2->AddComponent(rWallRenderer2);
 	rWallRenderer2->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	rWallRenderer2->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* rWallboxcol2 = new BoxCollider(rightWall2, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
-	rightWall2->AddBoxCollider(rWallboxcol2);
 
 	GameObject* rightWall3 = new GameObject();
 	rightWall3->Init("RightWall3");
@@ -1035,8 +1052,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	rightWall3->AddComponent(rWallRenderer3);
 	rWallRenderer3->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	rWallRenderer3->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* rWallboxcol3 = new BoxCollider(rightWall3, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
-	rightWall3->AddBoxCollider(rWallboxcol3);
 
 	GameObject* rightWall4 = new GameObject();
 	rightWall4->Init("RightWall4");
@@ -1046,8 +1061,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	rightWall4->AddComponent(rWallRenderer4);
 	rWallRenderer4->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	rWallRenderer4->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* rWallboxcol4 = new BoxCollider(rightWall4, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
-	rightWall4->AddBoxCollider(rWallboxcol4);
 
 	GameObject* rightWall5 = new GameObject();
 	rightWall5->Init("RightWall");
@@ -1057,8 +1070,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	rightWall5->AddComponent(rWallRenderer5);
 	rWallRenderer5->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	rWallRenderer5->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* rWallboxcol5 = new BoxCollider(rightWall5, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
-	rightWall5->AddBoxCollider(rWallboxcol5);
 
 	////////////////////////////////////////////////////////
 
@@ -1073,6 +1084,24 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	BoxCollider* lWallboxcol = new BoxCollider(leftWall, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
 	leftWall->AddBoxCollider(lWallboxcol);
 
+	GameObject* leftWallCol = new GameObject();
+	leftWallCol->Init("LeftWallCol");
+	basic->AddGameObject(leftWallCol);
+	leftWallCol->InitTransform(identity, { (float)-col - col * 0.5f, -0.3f, 14.55f }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* leftWallColRenderer = new Renderer();
+	leftWallCol->AddComponent(leftWallColRenderer);
+	leftWallColRenderer->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	leftWallColRenderer->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
+
+	GameObject* leftWallCol2 = new GameObject();
+	leftWallCol2->Init("leftWallCol2");
+	basic->AddGameObject(leftWallCol2);
+	leftWallCol2->InitTransform(identity, { (float)-col - col * 0.5f, -0.3f, -10.55f }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	Renderer* leftWallColRenderer2 = new Renderer();
+	leftWallCol2->AddComponent(leftWallColRenderer2);
+	leftWallColRenderer2->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	leftWallColRenderer2->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
+
 	GameObject* leftWall2 = new GameObject();
 	leftWall2->Init("LeftWall2");
 	basic->AddGameObject(leftWall2);
@@ -1081,8 +1110,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	leftWall2->AddComponent(lWallRenderer2);
 	lWallRenderer2->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	lWallRenderer2->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* lWallboxcol2 = new BoxCollider(leftWall2, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
-	leftWall2->AddBoxCollider(lWallboxcol2);
 
 	GameObject* leftWall3 = new GameObject();
 	leftWall3->Init("LeftWall3");
@@ -1092,8 +1119,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	leftWall3->AddComponent(lWallRenderer3);
 	lWallRenderer3->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	lWallRenderer3->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* lWallboxcol3 = new BoxCollider(leftWall3, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
-	leftWall3->AddBoxCollider(lWallboxcol3);
 
 	GameObject* leftWall4 = new GameObject();
 	leftWall4->Init("LeftWall4");
@@ -1103,8 +1128,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	leftWall4->AddComponent(lWallRenderer4);
 	lWallRenderer4->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	lWallRenderer4->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* lWallboxcol4 = new BoxCollider(leftWall4, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
-	leftWall4->AddBoxCollider(lWallboxcol4);
 
 	GameObject* leftWall5 = new GameObject();
 	leftWall5->Init("LeftWall5");
@@ -1114,8 +1137,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	leftWall5->AddComponent(lWallRenderer5);
 	lWallRenderer5->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	lWallRenderer5->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* lWallboxcol5 = new BoxCollider(leftWall5, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
-	leftWall5->AddBoxCollider(lWallboxcol5);
 
 	////////////////////////////////////////////////////////
 
@@ -1138,8 +1159,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	topWall2->AddComponent(tWallRenderer2);
 	tWallRenderer2->Init("ArenaGoalWall02", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	tWallRenderer2->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* tWallboxcol2 = new BoxCollider(topWall2, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
-	topWall2->AddBoxCollider(tWallboxcol2);
 
 	GameObject* topWall3 = new GameObject();
 	topWall3->Init("TopWall3");
@@ -1149,8 +1168,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	topWall3->AddComponent(tWallRenderer3);
 	tWallRenderer3->Init("ArenaGoalWall02", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	tWallRenderer3->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* tWallboxcol3 = new BoxCollider(topWall3, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
-	topWall3->AddBoxCollider(tWallboxcol3);
 
 	////////////////////////////////////////////////////////
 
@@ -1173,8 +1190,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	bottomWall2->AddComponent(bWallRenderer2);
 	bWallRenderer2->Init("ArenaGoalWall02", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	bWallRenderer2->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* bWallboxcol2 = new BoxCollider(bottomWall2, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
-	bottomWall2->AddBoxCollider(bWallboxcol2);
 
 	GameObject* bottomWall3 = new GameObject();
 	bottomWall3->Init("MeterBox");
@@ -1184,8 +1199,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	bottomWall3->AddComponent(bWallRenderer3);
 	bWallRenderer3->Init("ArenaGoalWall02", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	bWallRenderer3->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* bWallboxcol3 = new BoxCollider(bottomWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
-	bottomWall3->AddBoxCollider(bWallboxcol3);
 	
 	////////////////////////////////////////////////////////
 	//create goals
@@ -1194,7 +1207,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	objIDs[8] = (UINT8)basic->GetNumObjects();
 	goal->Init("RedGoal");
 	basic->AddGameObject(goal);
-	goal->InitTransform(identity, { -20.0f, 18.299f, bottomWall->GetTransform()->GetPosition().z - 1.65f }, { 0,0,0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
+	goal->InitTransform(identity, { -20.0f, 18.299f, bottomWall->GetTransform()->GetPosition().z - 1.2f }, { 0,0,0 }, { 0.01f, 0.01f, 0.01f }, nullptr, nullptr, nullptr);
 	Renderer* GoalRenderer = new Renderer();
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1284,6 +1297,15 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	NewGoal->AddComponent(NewGoalRenderer);
 	NewGoalRenderer->Init("ArenaGoalWall02", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	NewGoalRenderer->SetEmissiveColor(float4(1, 1, 1, 1));*/
+
+	/*GameObject* surroundingNet = new GameObject();
+	surroundingNet->Init("Neting");
+	basic->AddGameObject(surroundingNet);
+	surroundingNet->InitTransform(identity, { -20.0f, 10, 0 }, { 0.0f, 0.0f, 0.0f }, { 110, 110, 110 }, nullptr, nullptr, nullptr);
+	ShieldRender* netRender = new ShieldRender(surroundingNet);
+	netRender->Init("ShieldBubble", projection, devResources, 0.1f, 0.56f);
+	netRender->SetShieldColor(float4(1, 1, 1, 1));
+	surroundingNet->AddComponent(netRender);*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	float3* floor = CreateFloor(2.0f, row, col, float3((float)-row, -10.00001f, (float)-col));
