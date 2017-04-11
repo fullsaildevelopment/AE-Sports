@@ -43,10 +43,27 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 
 	//allocate groups
 	groupPositions = new int[NUM_OF_GROUPS];
-	for (int i = 0; i < NUM_OF_GROUPS; ++i)
-	{
-		groupPositions[i] = 0;
-	}
+	//for (int i = 0; i < NUM_OF_GROUPS; ++i)
+	//{
+	//	//groupPositions[i] = 0;
+	//	int colNum = col / ((i % 3) + 1);
+	//	int rowOffset = 5;
+
+	//	if (i % 3 == 0)
+	//	{
+	//		rowOffset = 7;
+	//	}
+	//	else if (i % 3 == 2)
+	//	{
+	//		colNum -= 5;
+	//	}
+
+	//	groupPositions[i] = (i + 1) * rowOffset * col + colNum;
+	//}
+
+	groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
+	groupPositions[1] = { (row / 4 * col) + 9 };
+
 }
 
 FloorController::~FloorController()
@@ -236,9 +253,6 @@ void FloorController::Groups(float _dt)
 {
 	ratios += _dt * transSpeed;
 
-	groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
-	groupPositions[1] = { (row / 4 * col) + 9 };
-
 	//if (!positionsGenerated)
 	//{
 	//	positionsGenerated = true;
@@ -262,25 +276,28 @@ void FloorController::Groups(float _dt)
 	//	}
 	//}
 
-	for (int i = 0; i < 2; ++i)
+	if (ratios < 1.0f)
 	{
-		int x, y;
-		ConvertTo2D(groupPositions[i], x, y);
-
-		int offset = 1;
-
-		if (x % 2 == 0)
+		for (int i = 0; i < 2; ++i)
 		{
-			offset = -1;
-		}
+			int x, y;
+			ConvertTo2D(groupPositions[i], x, y);
 
-		MovePillar(groupPositions[i] - col + offset, ratios);
-		MovePillar(groupPositions[i] - col, ratios);
-		MovePillar(groupPositions[i] - 1, ratios);
-		MovePillar(groupPositions[i], ratios);
-		MovePillar(groupPositions[i] + 1, ratios);
-		MovePillar(groupPositions[i] + col, ratios);
-		MovePillar(groupPositions[i] + col + offset, ratios);
+			int offset = 1;
+
+			if (x % 2 == 0)
+			{
+				offset = -1;
+			}
+
+			MovePillar(groupPositions[i] - col + offset, ratios);
+			MovePillar(groupPositions[i] - col, ratios);
+			MovePillar(groupPositions[i] - 1, ratios);
+			MovePillar(groupPositions[i], ratios);
+			MovePillar(groupPositions[i] + 1, ratios);
+			MovePillar(groupPositions[i] + col, ratios);
+			MovePillar(groupPositions[i] + col + offset, ratios);
+		}
 	}
 }
 
@@ -305,6 +322,7 @@ void FloorController::ControlMovement(float fullTime)
 			randStateIndex = rand() % NUM_OF_STATES;
 			resetableTimer = 0.0f;
 			ratios = 0.0f;
+			positionsGenerated = false;
 		}
 		else if (resetableTimer > TIME_TO_RUN_STATE && stateRunning)
 		{
