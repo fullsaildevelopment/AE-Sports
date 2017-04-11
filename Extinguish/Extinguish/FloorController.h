@@ -54,7 +54,7 @@ class FloorController : public Component
 
 	//const members
 	const float TIME_TIL_COOLDOWN = 10.0f; //how long til after the state is finished til it starts another state
-	const float TIME_TIL_STATE = 10.0f; //how long til the state runs
+	const float TIME_TIL_STATE = 5.0f; //how long til the state runs
 	const float TIME_TO_RUN_STATE = 15.0f; //how long to run the state
 	const int NUM_OF_GROUPS = 12;
 
@@ -81,6 +81,7 @@ class FloorController : public Component
 	void NextLevel(int _pos, int _level);
 
 	int ConvertTo1D(int x, int y);
+	void ConvertTo2D(int num, int& x, int& y);
 public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
 	~FloorController();

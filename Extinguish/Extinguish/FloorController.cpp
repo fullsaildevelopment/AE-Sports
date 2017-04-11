@@ -236,40 +236,51 @@ void FloorController::Groups(float _dt)
 {
 	ratios += _dt * transSpeed;
 
-	//groupPositions[0] = { (17 * 54) + 19 };
+	groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
+	groupPositions[1] = { (row / 4 * col) + 9 };
 
-	if (!positionsGenerated)
+	//if (!positionsGenerated)
+	//{
+	//	positionsGenerated = true;
+
+	//	for (int i = 0; i < NUM_OF_GROUPS; ++i)
+	//	{
+	//		while (true)
+	//		{
+	//			int tempCol = rand() % col;
+	//			int tempRow = rand() % row;
+
+	//			if (tempCol - 1 > 0 && tempCol + 1 < col && tempRow - 1 > 5 && tempRow + 1 < row - 5)
+	//			{
+	//				groupPositions[i] = tempCol * tempRow;
+	//				//groupPositions[i] = rand() % (row * col) + ConvertTo1D(5, 0) - ConvertTo1D(row - 5, 0); //range is total amount of pillars. 5 rows away from goals.
+	//				break;
+	//			}
+
+	//			//if (groupPositions[i] + 1 < 
+	//		}
+	//	}
+	//}
+
+	for (int i = 0; i < 2; ++i)
 	{
-		positionsGenerated = true;
+		int x, y;
+		ConvertTo2D(groupPositions[i], x, y);
 
-		for (int i = 0; i < NUM_OF_GROUPS; ++i)
+		int offset = 1;
+
+		if (x % 2 == 0)
 		{
-			while (true)
-			{
-				int tempCol = rand() % col;
-				int tempRow = rand() % row;
-
-				if (tempCol - 1 > 0 && tempCol + 1 < col && tempRow - 1 > 5 && tempRow + 1 < row - 5)
-				{
-					groupPositions[i] = tempCol * tempRow;
-					//groupPositions[i] = rand() % (row * col) + ConvertTo1D(5, 0) - ConvertTo1D(row - 5, 0); //range is total amount of pillars. 5 rows away from goals.
-					break;
-				}
-
-				//if (groupPositions[i] + 1 < 
-			}
+			offset = -1;
 		}
-	}
 
-	for (int i = 0; i < NUM_OF_GROUPS; ++i)
-	{
-		MovePillar(groupPositions[i] - col - 1, ratios);
+		MovePillar(groupPositions[i] - col + offset, ratios);
 		MovePillar(groupPositions[i] - col, ratios);
 		MovePillar(groupPositions[i] - 1, ratios);
 		MovePillar(groupPositions[i], ratios);
 		MovePillar(groupPositions[i] + 1, ratios);
 		MovePillar(groupPositions[i] + col, ratios);
-		MovePillar(groupPositions[i] + col - 1, ratios);
+		MovePillar(groupPositions[i] + col + offset, ratios);
 	}
 }
 
@@ -654,4 +665,10 @@ int FloorController::ConvertTo1D(int x, int y)
 	result = x * col + y;
 
 	return result;
+}
+
+void FloorController::ConvertTo2D(int num, int& x, int& y)
+{
+	x = num % col;
+	y = num / col;
 }
