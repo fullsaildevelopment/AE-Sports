@@ -338,7 +338,7 @@ void AI::Update(float _dt)
 				camera->RotateX(0.4f);
 			}
 		}
-
+		
 #pragma region Goalie
 		if (currState == goalie)
 		{
@@ -355,7 +355,7 @@ void AI::Update(float _dt)
 			// if the ball is too far from the goal
 			else if (dist.magnitude() > 34)
 			{
-				if (RunTo(myGoal, 16.0f))
+				if (RunTo(myGoal, 20.0f))
 				{
 					TurnTo(enemyGoal);
 					Idle();
@@ -398,7 +398,7 @@ void AI::Update(float _dt)
 		}
 
 #pragma endregion
-
+		
 #pragma region Guy || Tank
 		else if (currState == guy || currState == tank)
 		{
@@ -651,9 +651,10 @@ void AI::Score()
 {
 	if (RunTo(enemyGoal, 28.0f))
 	{
-		camera->RotateX(-0.9f);
+		camera->RotateX(-0.98f);
+		me->GetTransform()->AddVelocity(float3(0, 8, 0));
 		crosse->Throw();
-		camera->RotateX(0.9f);
+		camera->RotateX(0.98f);
 	}
 
 	Paranoia();

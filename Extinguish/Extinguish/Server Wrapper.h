@@ -48,7 +48,7 @@ public:
 		newServer.sendPackets();
 		int result = newServer.update();
 
-		if (result == 3)
+		if (newServer.hasInput())
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();
 			InputManager* input = new InputManager();
