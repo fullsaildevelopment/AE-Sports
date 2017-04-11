@@ -86,6 +86,7 @@ int  Server::update()
 	if (!peer)
 		float temp = 0.0f;
 	int result = 1;
+	input = false;
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
 		switch (packet->data[0])
@@ -159,14 +160,13 @@ int  Server::update()
 		{
 			recievePacket();
 			++packRec;
-			if (result != 3)
-				result = 2;
+			result = 2;
 			break;
 		}
 		case ID_INCOMING_INPUT:
 		{
 			recieveInput();
-			result = 3;
+			input = true;
 			break;
 		}
 

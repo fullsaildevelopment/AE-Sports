@@ -172,7 +172,7 @@ private:
 	std::vector<Server::CLIENT_GAME_STATE> * clientStates;
 	std::vector<Server::GAME_STATE> * gameState;
 	SOCKET serverSocket;
-	bool npDec = false;
+	bool npDec = false, input = false;
 
 	PowerUps pUp;
 
@@ -206,6 +206,7 @@ public:
 	bool getMeterActive(unsigned int i) { return gameState[0][i].sprintA; }
 	bool getEmpty(unsigned int i) { return gameState[0][i].empty; }
 	bool getPaused() { return gameState[0][0].paused; }
+	bool hasInput() { return input; }
 
 	/* setters */
 	void setStateSize(unsigned int size) { 
