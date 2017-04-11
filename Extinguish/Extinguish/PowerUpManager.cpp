@@ -285,7 +285,9 @@ void PowerUpManager::ClientUpdate(float _dt)
 				powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
 				powerUps[i]->Enable();
 
+#if _DEBUG
 				printf("SPAWNED: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
+#endif
 				spawned = true;
 			}
 			else
@@ -315,7 +317,9 @@ void PowerUpManager::ClientUpdate(float _dt)
 		}
 		else
 		{
+#if _DEBUG
 			printf("CLIENT PICKED UP: %s\n", powerUps[index]->GetName().c_str());
+#endif
 		}
 	}
 
@@ -469,12 +473,15 @@ void PowerUpManager::HandleEvent(Event* e)
 
 void PowerUpManager::Render()
 {
+	float temp = 0.0f;
+
 	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
 	{
 		// to check positions
 		powerUpRenderers[i]->Render();
 	}
 
+#if _DEBUG
 	for (unsigned int i = 0; i < powerUps.size(); ++i)
 	{
 		if (powerUps[i]->isEnabled() && tempcooldown <= 0.0f && !ResourceManager::GetSingleton()->IsServer())
@@ -483,6 +490,7 @@ void PowerUpManager::Render()
 			printf("POSITION CHECK: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
 		}
 	}
+#endif
 
 	if (tempcooldown < 0.0f)
 		tempcooldown = 2.0f;
