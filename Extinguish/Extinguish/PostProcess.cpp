@@ -293,7 +293,7 @@ void PostProcess::DoPostProcess()
 
 void PostProcess::Clear()
 {
-	deviceContext->ClearRenderTargetView(m_sceneRT.Get(), Colors::CornflowerBlue);
+	deviceContext->ClearRenderTargetView(m_sceneRT.Get(), Colors::Black);
 	deviceContext->ClearDepthStencilView(devRes->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	deviceContext->OMSetRenderTargets(1, m_sceneRT.GetAddressOf(), devRes->GetDepthStencilView());
 }

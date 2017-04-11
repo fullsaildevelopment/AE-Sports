@@ -40,8 +40,8 @@ class FloorController : public Component
 	bool StripColor();
 	int StripCurr = 0;
 	int StripMult = 100;
-	unsigned int team1color = 0xAD000000;
-	unsigned int team2color = 0x0000AD00;
+	unsigned int team1color = 0x88000000;
+	unsigned int team2color = 0x00008800;
 	unsigned int* originalColor;
 	float colortiming = 0;
 	int randStateIndex = -1;

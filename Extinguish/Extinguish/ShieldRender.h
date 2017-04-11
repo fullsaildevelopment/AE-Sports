@@ -11,10 +11,10 @@
 
 
 
-class ShieldRender
+class ShieldRender : public Component
 {
 private:
-	float scrollRate;
+	float scrollRate[2];
 	Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendstate;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerstate;
 	DeviceResources* devResources;
@@ -33,14 +33,15 @@ private:
 	unsigned int numVerts;
 	unsigned int numIndices;
 	float4 shieldColor;
-	float noiseOffsets[2];
+	float noiseOffsets[4];
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	UINT sampleMask = 0xffffffff;
 public:
-	void Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate = 1.0f);
+	ShieldRender(GameObject* o);
+	void Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate1 = 1.0f, float rate2 = 1.0f);
 	void SetProjection(XMFLOAT4X4 projection);
-	void Render();
+	void Render(ID3D11RasterizerState* front, ID3D11RasterizerState* back);
 	void SetModel(XMFLOAT4X4& model);
 	void SetView(XMFLOAT4X4 view);
 	void SetShieldColor(float4 c);
