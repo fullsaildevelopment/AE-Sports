@@ -157,10 +157,8 @@ public:
 	template <typename T>
 	ID3D11Buffer* CreateConstantBuffer(T* data, int numOf, int sizeOfOne)
 	{
-		ID3D11Buffer* m_constantBuffer;
-		D3D11_BUFFER_DESC BufferDesc;
-		D3D11_SUBRESOURCE_DATA Data;
 
+		D3D11_BUFFER_DESC BufferDesc;
 		BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		BufferDesc.ByteWidth = sizeOfOne * numOf;
 		BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -168,11 +166,12 @@ public:
 		BufferDesc.MiscFlags = 0;
 		BufferDesc.StructureByteStride = 0;
 
+		D3D11_SUBRESOURCE_DATA Data;
 		Data.pSysMem = data;
 		Data.SysMemPitch = 0;
 		Data.SysMemSlicePitch = 0;
 
-		// Create the instance buffer.
+		ID3D11Buffer* m_constantBuffer;
 		device->CreateBuffer(&BufferDesc, &Data, &m_constantBuffer);
 		return m_constantBuffer;
 	}

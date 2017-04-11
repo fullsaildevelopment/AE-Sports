@@ -10,6 +10,7 @@
 #include "AnimatorController.h"
 #include "TrailRender.h"
 #include "PowerUpManager.h"
+#include "ShieldRender.h"
 
 Scene::Scene()
 {
@@ -274,20 +275,20 @@ void Scene::CreateDevResources(DeviceResources const * devResources)
 void Scene::CreateLights()
 {
 	//create only directional light
-	dirLight.Create({ /*0.577f, 0.577f, -0.577f*/0,0,0, 0 }, { 0.20f, 0.30f, 0.20f, 1.0f }, { 0.099f, 0.099f, 0.099f, 0.099f });
+	dirLight.Create({ /*0.577f, 0.577f, -0.577f*/0,0,0, 0 }, { 0.30f, 0.30f, 0.30f, 1.0f }, { 0.099f, 0.099f, 0.099f, 0.099f });
 
 	//create point lights
 	PointLight pointLight0;
-	pointLight0.Create({ -9, -13, -50.5f, 0 }, { 1.0f, 0, 0, 1.0f }, 145.0f);
+	pointLight0.Create({ -9, -13, -50.5f, 0 }, { 0.0f, 0, 0, 1.0f }, 0.0f);
 
 	PointLight pointLight1;
-	pointLight1.Create({ -9, -13, 10.0f, 0 }, { 0.0f, 0.0f, 1.0f, 1.0f }, 145.0f);
+	pointLight1.Create({ -9, -13, 10.0f, 0 }, { 0.0f, 0.0f, 0.0f, 1.0f }, 0.0f);
 
 	PointLight pointLight2;
-	pointLight2.Create({ -7, 10, -80.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
+	pointLight2.Create({ -20, 18, -55.5f, 0 }, { 0.4f, 0.4f, 0.4f, 1.0f }, 255.0f);
 
 	PointLight pointLight3;
-	pointLight3.Create({ -7, 10, 20.5f, 0 }, { 0.2f, 0.2f, 0.2f, 1.0f }, 100.0f);
+	pointLight3.Create({ -20, 18, 60.5f, 0 }, { 0.4f, 0.4f, 0.4f, 1.0f }, 255.0f);
 
 	pointLights.push_back(pointLight0);
 	pointLights.push_back(pointLight1);
@@ -319,7 +320,6 @@ void Scene::CreateLights()
 		device->CreateBuffer(&pointLightConstantBufferDesc, nullptr, &pointLightConstantBuffer);
 
 		devContext->UpdateSubresource(pointLightConstantBuffer.Get(), NULL, NULL, pointLights.data(), NULL, NULL);
-
 		devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
 	}
 	//Create spot light constant buffer
@@ -430,6 +430,7 @@ void Scene::Update(float _dt)
 	SLLIter<RenderItem> opaqueIter(opaqueObjects);
 
 	TrailRender* ballTrail = nullptr;
+	vector<ShieldRender*> shieldRends;
 	//error case... just in case client id isn't initialized and client id is 0
 	string cameraName = "Camera";
 
@@ -583,9 +584,26 @@ void Scene::Update(float _dt)
 			trender->SetView(cameraCam);
 			ballTrail = trender;
 			trender->RenderUpdate(_dt);
+			trender = nullptr;
+		}
+		ShieldRender* srender = gameObjects[i]->GetComponent<ShieldRender>();
+		if (srender && srender->isEnabled())
+		{
+			srender->SetView(cameraCam);
+			Transform* transform = gameObjects[i]->GetTransform();
+			if (transform)
+			{
+				XMFLOAT4X4 world;
+				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&transform->GetWorld())));
+				srender->SetModel(world);
+			}
+			srender->UpdateOffsets(_dt);
+			shieldRends.push_back(srender);
+			srender = nullptr;
 		}
 	}
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
+	devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
 	///////////////Clear BackBuffer//////////////
 	PostProcessing.Clear();
 	//////////////////////////RenderOpaqueObjects/////////////////////////
@@ -601,6 +619,10 @@ void Scene::Update(float _dt)
 		ballTrail->Render();
 	}
 	////////////////////////RenderTransparentObjects//////////////////////
+	for (int shield = 0; shield < shieldRends.size(); ++shield)
+	{
+		shieldRends[shield]->Render(RasterizerStateFrontCull.Get(), RasterizerStateBackCull.Get());
+	}
 	for (transparentIter.begin(); !transparentIter.end(); ++transparentIter)
 	{
 		transparentIter.current().rend->Update(_dt);
@@ -677,12 +699,6 @@ void Scene::FixedUpdate(float _dt)
 		{
 			animator->FixedUpdate(_dt);
 		}
-
-		/*TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
-		if (trender && !ResourceManager::GetSingleton()->IsServer())
-		{
-			trender->FixedUpdate(_dt);
-		}*/
 	}
 }
 
