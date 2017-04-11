@@ -145,13 +145,13 @@ private:
 	struct PowerUps
 	{
 		// spawn
-		std::vector<bool> isactive;
-		std::vector<XMFLOAT3> positions;
+		bool isactive[6];
+		XMFLOAT3 positions[6];
 		// despawn
-		std::vector<int> removeindices;
-		std::vector<int> ids;
+		int removeindices;
+		int id;
 		// elapsed time
-		std::vector<float> elapsedTime;
+		float elapsedTime[6];
 	};
 #pragma pack(pop)
 	
@@ -241,10 +241,10 @@ public:
 	void setCountdown(bool down) {gameState[0][0].countdown = down; }
 	void setPulse(int pulse) { gameState[0][0].floorPulse = pulse; }
 
-	void SetPowerUp(int index, XMFLOAT3 pos, bool active) { //pUp.newindices.push_back(index); 
+	void SetPowerUp(int index, XMFLOAT3 pos, bool active) { 
 		pUp.isactive[index] = active;
 		pUp.positions[index] = pos; }
-	void RemovePowerUp(int index, int id) { pUp.ids.push_back(id); pUp.removeindices.push_back(index); }
+	void RemovePowerUp(int index, int id) { pUp.id = id; pUp.removeindices = index; }
 
 	void setPowerUpTime(int i, float time) { pUp.elapsedTime[i] = time; }
 

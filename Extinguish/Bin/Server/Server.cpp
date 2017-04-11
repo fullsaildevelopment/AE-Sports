@@ -23,17 +23,11 @@ Server::Server()
 		gameState[0][i].name = nullptr;
 	}
 
-	pUp.positions.resize(6);
-	pUp.isactive.resize(6);
-	pUp.elapsedTime.resize(6);
-
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		pUp.positions[i] = { 0,0,0 };
 		pUp.elapsedTime[i] = 1.0f;
 	}
-
-	//floorState = new std::vector<XMFLOAT3>();
 }
 
 Server::~Server()
@@ -76,7 +70,6 @@ int Server::init(uint16_t port)
 	{
 		//names[i] = new char[8];
 		clientIDs[i] = (UINT8)(i + 1);
-	//	bteamIDs[i] = i + 5;
 	}
 
 	objIDs[0].inUse = true;
@@ -677,19 +670,13 @@ void Server::SendRemoved()
 
 	BitStream out;
 	out.Write((MessageID)ID_REMOVE_POWERUP);
-	int amount = (int)pUp.ids.size();
-	out.Write((UINT8)amount);
 
-	for (int i = 0; i < amount; ++i)
-	{
-		out.Write((UINT8)pUp.ids[i]);
-		out.Write((UINT8)pUp.removeindices[i]);
-		pUp.isactive[pUp.removeindices[i]] = false;
-		pUp.positions[pUp.removeindices[i]] = { 0,0,0 };
-	}
+	out.Write((UINT8)pUp.id);
+	out.Write((UINT8)pUp.removeindices);
+	pUp.isactive[pUp.removeindices] = false;
+	pUp.positions[pUp.removeindices] = { 0,0,0 };
 
 	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 
-	pUp.removeindices.clear();
-	pUp.ids.clear();
+
 }

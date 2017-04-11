@@ -115,17 +115,22 @@ private:
 	};
 
 
+
+	// all the results
+	UINT8 clientID;
+	bool states = false, scored = false, packets = false, spowerup = false, rpowerup = false;
+
 #pragma pack(push, 1)
 	struct PowerUps
 	{
 		// spawn
-		std::vector<bool> isactive;
-		std::vector<XMFLOAT3> positions;
+		bool isactive[6];
+		XMFLOAT3 positions[6];
 		// despawn
-		std::vector<int> removeindices;
-		std::vector<int> ids;
+		UINT8 removeindices;
+		UINT8 id;
 		// elapsed time
-		std::vector<float> elapsedTime;
+		float elapsedTime[6];
 	};
 #pragma pack(pop)
 
@@ -144,16 +149,12 @@ private:
 	UINT8 objects;
 	int numPackets = 0;
 	bool disconnect = false;
-	UINT8 clientID;
 //	char clientName[8];
 
 	char* message;
 	uint16_t messageID, stride;
 
 	string * scoreName;
-
-	// all the results
-	bool states, scored, packets, spowerup, rpowerup;
 
 public:
 
@@ -256,12 +257,10 @@ public:
 	int getPulse() { return gameState[0][0].floorPulse; }
 
 	// power ups
-	int SpawnedPowerUpAmount() { return 6; }
 	bool getSpawnedPowerUpActive(int i) { return pUp.isactive[i]; }
 	XMFLOAT3 GetSpawnedPowerUpPos(int i) { return pUp.positions[i]; }
-	int RemovedPowerUpAmount() { return (int)pUp.removeindices.size(); }
-	int getRemovedPowerUpIndex(int i) { return pUp.removeindices[i]; }
-	int getRemovedPlayerID(int i) { return pUp.ids[i]; }
+	int getRemovedPowerUpIndex() { return pUp.removeindices; }
+	int getRemovedPlayerID() { return pUp.id; }
 	float getPowerUpTime(int i) { return pUp.elapsedTime[i]; }
 
 	// which packets have arrived
