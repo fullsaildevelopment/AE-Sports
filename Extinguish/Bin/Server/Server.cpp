@@ -23,15 +23,11 @@ Server::Server()
 		gameState[0][i].name = nullptr;
 	}
 
-	pUp.positions.resize(6);
-	pUp.isactive.resize(6);
-
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		pUp.positions[i] = { 0,0,0 };
+		pUp.elapsedTime[i] = 1.0f;
 	}
-
-	//floorState = new std::vector<XMFLOAT3>();
 }
 
 Server::~Server()
@@ -52,6 +48,8 @@ Server::~Server()
 
 int Server::init(uint16_t port)
 {
+	printf("SERVER: test\n");
+
 	shutdown = false;
 
 	peer = RakNet::RakPeerInterface::GetInstance();
@@ -71,8 +69,7 @@ int Server::init(uint16_t port)
 	for (unsigned int i = 0; i < 8; ++i)
 	{
 		//names[i] = new char[8];
-		clientIDs[i] = i + 1;
-	//	bteamIDs[i] = i + 5;
+		clientIDs[i] = (UINT8)(i + 1);
 	}
 
 	objIDs[0].inUse = true;
@@ -621,29 +618,6 @@ void Server::setObjIDs(UINT8 one, UINT8 two, UINT8 three, UINT8 four, UINT8 five
 	objIDs[7].id = eight;
 }
 
-void Server::sendFloor()
-{
-	int size = (int)floorState[0].size();
-	int tempSize = size / 40;
-
-	for (unsigned int x = 1; x <= (unsigned int)tempSize; ++x) {
-		BitStream bOut;
-		bOut.Write((MessageID)ID_INCOMING_FLOOR);
-
-		bOut.Write((UINT8)40);
-
-		for (unsigned int i = 0; i < 40; ++i)
-		{
-			bOut.Write((UINT8)i);
-			bOut.Write(floorState[0][i * x].x);
-			bOut.Write(floorState[0][i * x].y);
-			bOut.Write(floorState[0][i * x].z);
-		}
-
-		peer->Send(&bOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
-	}
-}
-
 void Server::SendScored(char * name, UINT8 length)
 {
 	BitStream out;
@@ -668,9 +642,6 @@ void Server::SendPowerUps()
 			out.Write((UINT8)0);
 		if (pUp.isactive[i])
 			out.Write(pUp.positions[i]);
-		//out.Write((float)pUp.positions[i].x);
-		//out.Write((float)pUp.positions[i].y);
-		//out.Write((float)pUp.positions[i].z);
 	}
 	float temp = 0.0f;
 
@@ -680,24 +651,32 @@ void Server::SendPowerUps()
 //	pUp.newindices.clear();
 }
 
+void Server::SendElapsedTime()
+{
+	BitStream out;
+	out.Write((MessageID)ID_POWERUP_TIME);
+	//UINT8 amount = 6;
+	for (int i = 0; i < 6; ++i)
+	{
+		out.Write(pUp.elapsedTime[i]);
+	}
+
+	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
+
+}
+
 void Server::SendRemoved()
 {
 
 	BitStream out;
 	out.Write((MessageID)ID_REMOVE_POWERUP);
-	int amount = (int)pUp.ids.size();
-	out.Write((UINT8)amount);
 
-	for (int i = 0; i < amount; ++i)
-	{
-		out.Write((UINT8)pUp.ids[i]);
-		out.Write((UINT8)pUp.removeindices[i]);
-		pUp.isactive[pUp.removeindices[i]] = false;
-		pUp.positions[pUp.removeindices[i]] = { 0,0,0 };
-	}
+	out.Write((UINT8)pUp.id);
+	out.Write((UINT8)pUp.removeindices);
+	pUp.isactive[pUp.removeindices] = false;
+	pUp.positions[pUp.removeindices] = { 0,0,0 };
 
 	peer->Send(&out, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetMyBoundAddress(), true);
 
-	pUp.removeindices.clear();
-	pUp.ids.clear();
+
 }

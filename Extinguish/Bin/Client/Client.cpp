@@ -18,17 +18,19 @@ Client::Client()
 	clientStates = new std::vector<CLIENT_GAME_STATE>();
 	gameState = new std::vector<GAME_STATE>();
 	gameState[0].resize(MAX_PLAYERS);
-	floorState = new std::vector<XMFLOAT3>();
-	floorState[0].resize(2090);
 
 	for (int i = 0; i < gameState->size(); ++i)
 	{
 		gameState[0][i].name = nullptr;
 	}
 
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		pUp.positions[i] = { 0,0,0 };
+		pUp.elapsedTime[i] = 1.0f;
+	}
 
-	pUp.positions.resize(6);
-	pUp.isactive.resize(6);
+	clientID = 1;
 
 	scoreName = new string;
 }
@@ -51,6 +53,8 @@ Client::~Client()
 
 int Client::init(char* _address, UINT16 port)
 {
+	int resi = printf("CLIENT: Test\n");
+	OutputDebugString("CLIENT: Test\n");
 	SocketDescriptor sd(port, 0);
 	peer = RakNet::RakPeerInterface::GetInstance();
 	sd.socketFamily = AF_INET;
@@ -60,7 +64,6 @@ int Client::init(char* _address, UINT16 port)
 	UINT16 newPort = port;
 	if (res == SOCKET_PORT_ALREADY_IN_USE)
 	{
-
 		while (res == SOCKET_PORT_ALREADY_IN_USE)
 		{
 			newPort += 1;
@@ -72,7 +75,8 @@ int Client::init(char* _address, UINT16 port)
 	
 	peer->Ping("255.255.255.255", 60000, true);
 
-	//printf("Pinging\n");
+	
+	printf("Pinging\n");
 	//ConnectionAttemptResult temp = peer->Connect(address, 60000, 0, 0);
 	
 	return 1;
@@ -110,7 +114,7 @@ int Client::run()
 			printf("Connected to server.\nWelcome to the lobby.\n");
 
 			sendMessage("idpls", ID_REQUEST);
-		break;
+			break;
 		}
 		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 		{
@@ -118,9 +122,9 @@ int Client::run()
 			break;
 		}
 		case ID_REMOTE_CONNECTION_LOST:
-		{	
+		{
 			printf("Another client has lost the connection.\n");
-		break;
+			break;
 		}
 		case ID_REMOTE_NEW_INCOMING_CONNECTION:
 		{
@@ -130,26 +134,26 @@ int Client::run()
 		case ID_NEW_INCOMING_CONNECTION:
 		{
 			printf("A connection is incoming.\n");
-		break; 
+			break;
 		}
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 		{
 			printf("The server is full.\n");
 			return 0;
-		break; 
+			break;
 		}
 		case ID_DISCONNECTION_NOTIFICATION:
 		{
 			printf("We have been disconnected.\n");
 			return 0;
-		break;
+			break;
 		}
 		case ID_CONNECTION_LOST:
 		{
 			//printf("Connection lost.\n");
 			peer->Shutdown(100);
 			return 0;
-		break;
+			break;
 		}
 		case ID_CLIENT_MESSAGE:
 		{
@@ -158,7 +162,7 @@ int Client::run()
 		}
 		case ID_CLIENT_REGISTER:
 		{
-			GetID();
+			GetNewID();
 			result = 3;
 			//printf("Please enter a name (8 characters max): ");
 			//memcpy(clientName, "Player", strlen("Player"));
@@ -190,6 +194,9 @@ int Client::run()
 		}
 		case ID_INCOMING_STATE:
 		{
+			if (clientID == 0)
+				clientID = 2;
+
 			receiveGameState();
 			states = true;
 			break;
@@ -210,7 +217,7 @@ int Client::run()
 			bIn.Read(temp);
 			if (temp == 11)
 			{
-				gameState[0][0].paused = false;
+				gameState[0][0].paused = true;
 				gameStart = true;
 				return 6;
 			}
@@ -219,14 +226,9 @@ int Client::run()
 		}
 		case ID_CLIENT_OBJ:
 		{
-			GetID();
+			GetNewID();
 			if (!gameStart)
 				return 7;
-			break;
-		}
-		case ID_INCOMING_FLOOR:
-		{
-			receiveFloor();
 			break;
 		}
 		case ID_INCOMING_MESSAGE:
@@ -265,7 +267,12 @@ int Client::run()
 			rpowerup = true;
 			break;
 		}
-		
+		case ID_POWERUP_TIME:
+		{
+			receiveEPU();
+			break;
+		}
+
 		}
 	}
 
@@ -341,7 +348,6 @@ void Client::sendMessage(char * message, GameMessages ID)
 
 void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress)
 {
-
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(message, (unsigned int)strlen(message));
@@ -351,7 +357,6 @@ void Client::sendMessage(char * message, GameMessages ID, SystemAddress sAddress
 
 void Client::sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress)
 {
-
 	BitStream bsOut;
 	bsOut.Write((RakNet::MessageID)ID);
 	bsOut.Write(clientid);
@@ -392,7 +397,7 @@ void Client::ReceiveMessage()
 	}
 }
 
-void Client::GetID()
+void Client::GetNewID()
 {
 	if (!gameStart) {
 		BitStream bsIn(packet->data, packet->length, false);
@@ -425,7 +430,6 @@ void Client::sendStop()
 	bsOut.Write(clientID);
 	peer->Send(&bsOut, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 
-	
 	peer->CloseConnection(peer->GetGUIDFromIndex(0), true, '\000', IMMEDIATE_PRIORITY);
 }
 
@@ -462,7 +466,6 @@ void Client::receivePackets()
 		BitStream bIn(packet->data, packet->length, false);
 		bIn.IgnoreBytes(sizeof(MessageID));
 		//bIn.Read(clientState->timeStamp);
-
 
 		bIn.Read(objects);
 
@@ -562,57 +565,26 @@ void Client::sendEmpty(bool empty)
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
 
-void Client::receiveFloor()
-{
-	BitStream bIn(packet->data, packet->length, false);
-	bIn.IgnoreBytes(sizeof(MessageID));
-
-	UINT8 numFloor;
-	bIn.Read(numFloor);
-	//floorState[0].clear();
-
-	for (unsigned int i = 0; i < (unsigned int)numFloor; ++i)
-	{
-		UINT8 index;
-		bIn.Read(index);
-		XMFLOAT3 hex;
-		bIn.Read(hex.x);
-		bIn.Read(hex.y);
-		bIn.Read(hex.z);
-		floorState[0][index] = hex;
-	}
-}
-
 void Client::receiveRPU() 
 {
-	pUp.ids.clear();
-	pUp.removeindices.clear();
 
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
 
-	UINT8 amount;
-	bIn.Read(amount);
+	UINT8 index, id;
+	bIn.Read(id);
+	bIn.Read(index);
 
-	for (unsigned int i = 0; i < (unsigned int)amount; ++i)
-	{
-		UINT8 index, id;
-		bIn.Read(id);
-		bIn.Read(index);
-
-		pUp.ids.push_back(id);
-		pUp.removeindices.push_back(index);
-	}
+	pUp.id = id;
+	pUp.removeindices = index;
+	pUp.isactive[index] = false;
+	pUp.positions[index] = { 0,0,0 };
 }
 
 void Client::receiveSPU() 
 {
-//	pUp.positions.clear();
 	BitStream bIn(packet->data, packet->length, false);
 	bIn.IgnoreBytes(sizeof(MessageID));
-
-	//UINT8 amount;
-	//bIn.Read(amount);
 
 	for (unsigned int i = 0; i < 6; ++i)
 	{
@@ -622,9 +594,6 @@ void Client::receiveSPU()
 		bIn.Read(active);
 		if (active == 1)
 			bIn.Read(pos);
-		//bIn.Read(x);
-		//bIn.Read(y);
-		//bIn.Read(z);
 
 		if (active == 1)
 			pUp.isactive[i] = true;
@@ -640,4 +609,21 @@ void Client::receiveSPU()
 	}
 
 	float temp = 0.0f;
+}
+
+
+
+void Client::receiveEPU()
+{
+	BitStream in(packet->data, packet->length, false);;
+	in.IgnoreBytes(sizeof(MessageID));
+
+	//UINT8 amount = 6;
+	for (int i = 0; i < 6; ++i)
+	{
+		float t = 0.0f;
+		in.Read(t);
+		pUp.elapsedTime[i] = t;
+	}
+
 }

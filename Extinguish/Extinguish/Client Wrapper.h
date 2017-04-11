@@ -13,9 +13,14 @@ class ClientWrapper
 {
 private:
 	Client newClient;
+	int id = 1;
 	bool isMultiplayer = false;
 	bool isServer = false;
 public:
+	ClientWrapper()
+	{
+	//	newClient = Client();
+	}
 	~ClientWrapper()
 	{
 		if (isMultiplayer && !isServer)
@@ -23,6 +28,7 @@ public:
 	}
 	int init(char* address, UINT16 port)
 	{
+		printf("init client\n");
 		isMultiplayer = true;
 		return newClient.init(address, port);
 	}
@@ -30,7 +36,17 @@ public:
 	int run()
 	{
 		int result = newClient.run();
-		ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
+		/*int a = 0, b = 0, c = 0;
+		if (newClient.hasPackets())
+			a = 1;
+		if (newClient.hasScored())
+			b = 1;
+		if (newClient.hasState())
+			c = 1;
+
+		printf("ClientWrapper | Packet %i | Scored %i | State %i | ID %i\n", a, b, c, id);*/
+		if (ResourceManager::GetSingleton()->IsPaused() != newClient.getPaused())
+			ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
 		return result;
 	}
 	void sendStop()
@@ -77,7 +93,9 @@ public:
 
 	unsigned int getID()
 	{
-		return (unsigned int)newClient.getID();
+		id = newClient.getID();
+		//printf("Client ID: %i\n", id);
+		return (unsigned int)id;
 	}
 
 	int getPacketCount()
@@ -175,20 +193,6 @@ public:
 	bool getMeterDown() { return newClient.getMeterDown(); }
 	void sendEmpty(bool toggle) { newClient.sendEmpty(toggle); }
 
-	float3 getFloorHex(unsigned int i)
-	{
-		float3 newFloor;
-
-		XMFLOAT3 tempFloor = newClient.getFloor(i);
-		newFloor.x = tempFloor.x;
-		newFloor.y = tempFloor.y;
-		newFloor.z = tempFloor.z;
-
-		return newFloor;
-	}
-
-	bool floorIsEmpty() { return newClient.floorIsEmpty(); }
-	int floorSize() { return newClient.floorSize(); }
 	int stateSize() { return newClient.stateSize(); }
 	float getDT() { return newClient.getDT(); }
 
@@ -211,17 +215,16 @@ public:
 	bool SpawnedPowerUps() { return newClient.SpawnedPowerUps(); }
 	bool RemovedPowerUp() { return newClient.RemovedPowerUp(); }
 
-	int SpawnedPowerUpAmount() { 
-		return newClient.SpawnedPowerUpAmount(); }
+
 	bool getSpawnedPowerUpActive(int i) { return newClient.getSpawnedPowerUpActive(i); }
 
 	float3 getSpawnedPowerUpPos(int i) {
 		XMFLOAT3 npos = newClient.GetSpawnedPowerUpPos(i);
-		return { npos.x, npos.y, npos.z };
+		return{ npos.x, npos.y, npos.z };
 	}
 
-	int RemovedPowerUpAmount() { return newClient.RemovedPowerUpAmount(); }
-	int getRemovedPowerUpIndex(int i) { return newClient.getRemovedPowerUpIndex(i); }
-	int getRemovedPlayerID(int i) { return newClient.getRemovedPlayerID(i); }
 
+	int getRemovedPowerUpIndex() { return (int)newClient.getRemovedPowerUpIndex(); }
+	int getRemovedPlayerID() { return (int)newClient.getRemovedPlayerID(); }
+	float powerUpTime(int i) { return newClient.getPowerUpTime(i); }
 };

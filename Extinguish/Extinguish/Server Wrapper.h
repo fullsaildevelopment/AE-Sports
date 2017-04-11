@@ -22,6 +22,10 @@ private:
 	UINT8 objIDs[8];
 
 public:
+	ServerWrapper()
+	{
+	//	newServer = Server();
+	}
 	~ServerWrapper() {
 		if (isMultiplayer && isServer)
 			newServer.stop();
@@ -182,7 +186,7 @@ public:
 
 	/*char * getInput()
 	{
-		return newServer.
+	return newServer.
 	}*/
 
 	unsigned int getObjCount() { return objCount; }
@@ -218,14 +222,6 @@ public:
 	bool getMeterDrain(unsigned int i) { return  newServer.getMeterDrain(i); }
 	bool getMeterActive(unsigned int i) { return newServer.getMeterActive(i); }
 	bool getEmpty(unsigned int i) { return newServer.getEmpty(i); }
-
-	void resetFloor() { newServer.clearFloor(); }
-	void SetFloor(float3 hex)
-	{
-		newServer.setFloorState(hex.x, hex.y, hex.z);
-	}
-
-	void SendFloor() { newServer.sendFloor(); }
 
 	void updateScoreboard(unsigned int index, unsigned int score, unsigned int assists, unsigned int saves, unsigned int goals, char * name)
 	{
@@ -271,5 +267,12 @@ public:
 	{
 		newServer.SendRemoved();
 	}
+
+	void SendPUTime()
+	{
+		newServer.SendElapsedTime();
+	}
+
+	void setPowerUpTime(int i, float time) { newServer.setPowerUpTime(i, time); }
 };
 

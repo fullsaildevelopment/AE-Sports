@@ -1,6 +1,6 @@
 #pragma once
 
-#define _WINSOCKAPI_
+//#define _WINSOCKAPI_
 
 
 #ifdef CLIENTDLL_EXPORTS
@@ -9,11 +9,11 @@
 #define CLIENTDLL_API __declspec(dllimport)
 #endif
 
-#include "..\RakNet\WindowsIncludes.h"
+//#include "..\RakNet\WindowsIncludes.h"
 #include <stdio.h>
 #include <string.h>
-#include <iostream>
-#include <vector>
+#include <string>
+//#include <iostream>
 
 #include "..\RakNet\Gets.h"
 #include "..\RakNet\RakPeerInterface.h"
@@ -24,8 +24,8 @@
 #include "..\RakNet\Kbhit.h"
 #include "..\RakNet\GetTime.h"
 
-
 #include <DirectXMath.h>
+#include <vector>
 
 
 using namespace RakNet;
@@ -107,23 +107,30 @@ private:
 		ID_CHANGE_TEAM_B,
 		ID_CLIENT_OBJ,
 		ID_SPRINT_EMPTY,
-		ID_INCOMING_FLOOR,
 		ID_SOMEONE_SCORED,
 		ID_SPAWN_POWERUP,
-		ID_REMOVE_POWERUP
+		ID_REMOVE_POWERUP,
+		ID_POWERUP_TIME
 
 	};
 
+
+
+	// all the results
+	UINT8 clientID;
+	bool states = false, scored = false, packets = false, spowerup = false, rpowerup = false;
 
 #pragma pack(push, 1)
 	struct PowerUps
 	{
 		// spawn
-		std::vector<bool> isactive;
-		std::vector<XMFLOAT3> positions;
+		bool isactive[6];
+		XMFLOAT3 positions[6];
 		// despawn
-		std::vector<int> removeindices;
-		std::vector<int> ids;
+		UINT8 removeindices;
+		UINT8 id;
+		// elapsed time
+		float elapsedTime[6];
 	};
 #pragma pack(pop)
 
@@ -133,27 +140,21 @@ private:
 	std::vector<CLIENT_GAME_STATE> * clientStates;
 	std::vector<CLIENT_GAME_STATE> * myState;
 	std::vector<GAME_STATE> * gameState;
-	std::vector<XMFLOAT3> * floorState;
 
 	UINT8 curNumOfClients;
 	UINT8 objID;
 
 	PowerUps pUp;
 
-
 	UINT8 objects;
 	int numPackets = 0;
 	bool disconnect = false;
-	UINT8 clientID;
 //	char clientName[8];
 
 	char* message;
 	uint16_t messageID, stride;
 
 	string * scoreName;
-
-	// all the results
-	bool states, scored, packets, spowerup, rpowerup;
 
 public:
 
@@ -200,10 +201,23 @@ public:
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
-	bool getMeterActive() { return gameState[0][clientID - 1].sprintA; }
-	bool getMeterDrain() { return gameState[0][clientID - 1].sprintD; }
-	bool getMeterEmpty() { return gameState[0][clientID - 1].empty; }
-	bool getMeterDown() { return gameState[0][clientID - 1].down; }
+	bool getMeterActive() { 
+		if (clientID == 0)
+			return false;
+		return gameState[0][clientID - 1].sprintA;
+	}
+	bool getMeterDrain() {
+		if (clientID == 0)
+			return false; 
+		return gameState[0][clientID - 1].sprintD; }
+	bool getMeterEmpty() {
+		if (clientID == 0)
+			return false; 
+		return gameState[0][clientID - 1].empty; }
+	bool getMeterDown() {
+		if (clientID == 0)
+			return false; 
+		return gameState[0][clientID - 1].down; }
 	UINT8 getNumClients() { return curNumOfClients; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
@@ -220,7 +234,6 @@ public:
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
-	XMFLOAT3 getFloor(unsigned int i) { return floorState[0][i]; }
 	char* getScoreboard(unsigned int i, unsigned int &score, unsigned int &assists, unsigned int &saves, unsigned int &goals, char * name)
 	{
 		//name = gameState[0][i].name;
@@ -234,8 +247,6 @@ public:
 		return name;
 	}
 
-	bool floorIsEmpty() { if (floorState[0].size() == 0) return true; return false; }
-	int floorSize() { return (int)floorState[0].size(); }
 	int stateSize() { return (int)clientStates[0].size(); }
 	float getDT() { return gameState[0][0]._dt; }
 	bool getCountdown() { return gameState[0][0].countdown; }
@@ -246,12 +257,11 @@ public:
 	int getPulse() { return gameState[0][0].floorPulse; }
 
 	// power ups
-	int SpawnedPowerUpAmount() { return 6; }
 	bool getSpawnedPowerUpActive(int i) { return pUp.isactive[i]; }
 	XMFLOAT3 GetSpawnedPowerUpPos(int i) { return pUp.positions[i]; }
-	int RemovedPowerUpAmount() { return (int)pUp.removeindices.size(); }
-	int getRemovedPowerUpIndex(int i) { return pUp.removeindices[i]; }
-	int getRemovedPlayerID(int i) { return pUp.ids[i]; }
+	int getRemovedPowerUpIndex() { return pUp.removeindices; }
+	int getRemovedPlayerID() { return pUp.id; }
+	float getPowerUpTime(int i) { return pUp.elapsedTime[i]; }
 
 	// which packets have arrived
 	bool hasScored() { return scored; }
@@ -266,12 +276,12 @@ private:
 	void sendMessage(char * message, GameMessages ID, SystemAddress sAddress);
 	void sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress);
 	void readMessage();
-	void GetID();
+	void GetNewID();
 	void registerName();
 	void receivePackets();
 	void receiveGameState();
-	void receiveFloor();
 	void receiveRPU();
 	void receiveSPU();
+	void receiveEPU();
 };
 
