@@ -854,9 +854,10 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
 
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoal\\ArenaGoal.fbx", "ArenaGoal");
-	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall.fbx", "ArenaGoalWall");
-	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaWall\\ArenaWall.fbx", "ArenaWall");
-	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaPillar\\ArenaPillar.fbx", "ArenaPillar");
+	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall.fbx", "ArenaGoalWall");
+	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaGoalWall\\ArenaGoalWall02.fbx", "ArenaGoalWall02");
+	FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaWall\\ArenaWallNew2.fbx", "ArenaWall");
+	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaPillar\\ArenaPillarNew.fbx", "ArenaPillar");
 
 #endif
 }

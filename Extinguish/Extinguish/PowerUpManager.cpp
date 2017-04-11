@@ -138,6 +138,7 @@ void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources*
 
 void PowerUpManager::Update(float _dt)
 {
+#if !DEBUG_GRAPHICS
 	// update powerups via server, both
 	if (ResourceManager::GetSingleton()->IsServer())
 		ServerUpdate(_dt);
@@ -151,6 +152,7 @@ void PowerUpManager::Update(float _dt)
 	// update ui if player has specific powerup, client
 	else
 		ClientUpdate(_dt);
+#endif
 }
 
 

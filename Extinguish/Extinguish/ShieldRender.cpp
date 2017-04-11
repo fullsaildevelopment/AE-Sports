@@ -1,10 +1,17 @@
 #include "ShieldRender.h"
+#include "GameObject.h"
+#include "Transform.h"
 
-void ShieldRender::Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate)
+ShieldRender::ShieldRender(GameObject* o) : Component(o)
+{
+
+}
+
+void ShieldRender::Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate1, float rate2)
 {
 	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
 	vertexBuffer = ResourceManager::GetSingleton()->GetVertexBuffer(mesh);
-	inputLayout = ResourceManager::GetSingleton()->GetInputLayout("ShieldBubble");
+	inputLayout = ResourceManager::GetSingleton()->GetInputLayout("Static");
 	pixelShader = ResourceManager::GetSingleton()->GetPixelShader("ShieldBubble");
 	vertexShader = ResourceManager::GetSingleton()->GetVertexShader("ShieldBubble");
 	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
@@ -49,8 +56,13 @@ void ShieldRender::Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources
 	samplerDesc.MaxLOD = FLT_MAX;
 
 	deviceResources->GetDevice()->CreateSamplerState(&samplerDesc, m_samplerstate.GetAddressOf());
-
-	scrollRate = rate;
+	noiseOffsetBuffer = ResourceManager::GetSingleton()->CreateConstantBuffer(&noiseOffsets, 4, sizeof(float));
+	noiseOffsets[0] = 0;
+	noiseOffsets[1] = 0;
+	noiseOffsets[2] = 0;
+	noiseOffsets[3] = 0;
+	scrollRate[0] = rate1;
+	scrollRate[1] = rate2;
 }
 
 void ShieldRender::SetProjection(XMFLOAT4X4 projection)
@@ -58,7 +70,7 @@ void ShieldRender::SetProjection(XMFLOAT4X4 projection)
 	mvpData.projection = projection;
 }
 
-void ShieldRender::Render()
+void ShieldRender::Render(ID3D11RasterizerState* front, ID3D11RasterizerState* back)
 {
 	ID3D11DeviceContext* devContext = devResources->GetDeviceContext();
 
@@ -89,14 +101,21 @@ void ShieldRender::Render()
 	devContext->PSSetShaderResources(0, 1, &diffuseSRV);
 	devContext->PSSetShaderResources(1, 1, &Noisemap1SRV);
 	devContext->PSSetShaderResources(2, 1, &Noisemap2SRV);
+
 	devContext->OMSetBlendState(m_blendstate.Get(), blendFactor, sampleMask);
 	devContext->PSSetSamplers(0, 1, m_samplerstate.GetAddressOf());
 
 	devContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
+	devContext->RSSetState(front);
 	//and finally... draw model
 	devContext->DrawIndexed(numIndices, 0, 0);
 
+	devContext->RSSetState(back);
+
+	devContext->DrawIndexed(numIndices, 0, 0);
+
+	devContext->OMSetBlendState(nullptr, blendFactor, sampleMask);
 }
 
 void ShieldRender::SetModel(XMFLOAT4X4& model)
@@ -118,8 +137,6 @@ void ShieldRender::SetShieldColor(float4 c)
 
 void ShieldRender::UpdateOffsets(float dt)
 {
-	noiseOffsets[0] += dt * scrollRate;
-	noiseOffsets[1] += dt * scrollRate;
-	if (noiseOffsetBuffer) noiseOffsetBuffer->Release();
-	noiseOffsetBuffer = ResourceManager::GetSingleton()->CreateConstantBuffer(&noiseOffsets, 2, sizeof(float));
+	noiseOffsets[0] += dt * scrollRate[0];
+	noiseOffsets[1] += dt * scrollRate[1];
 }
