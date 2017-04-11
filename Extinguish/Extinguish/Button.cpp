@@ -23,10 +23,10 @@ void StartGame()
 	delete event;
 
 	SoundEvent* soundEvent = new SoundEvent();
-	soundEvent->Init(AK::EVENTS::STOP_MAINMENU, 1);
+	soundEvent->Init(AK::EVENTS::STOP_MAINMENU, 0);
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 
-	soundEvent->Init(AK::EVENTS::PLAY_BACKGROUND, 1);
+	soundEvent->Init(AK::EVENTS::PLAY_BGM_RENEWED, 0);
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 	delete soundEvent;
 
@@ -124,6 +124,21 @@ void ReturnToMenu()
 			ResourceManager::GetSingleton()->SetServer(true);
 		}
 	}
+
+	if (Game::currentScene == 2) //only if you were in game
+	{
+		//stop background music
+		SoundEvent* soundEvent = new SoundEvent();
+		soundEvent->Init(AK::EVENTS::STOP_BGM_RENEWED, 0);
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+
+		//play mainmenu
+		soundEvent->Init(AK::EVENTS::PLAY_MAINMENU, 0);
+		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+		delete soundEvent;
+
+	}
+
 	LoadSceneEvent* event = new LoadSceneEvent();
 	event->Init("Menu");
 	EventDispatcher::GetSingleton()->DispatchTo(event, "Game");

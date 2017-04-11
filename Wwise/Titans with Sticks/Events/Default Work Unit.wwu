@@ -256,6 +256,28 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_BGM_Renewed" ID="{4CE04BA6-1E07-448C-97BB-67EBC0DF9363}">
+					<ChildrenList>
+						<Action Name="Play" ID="{AA18E451-E9C4-490A-BE99-B55DEE58CCA1}" ShortID="738080373" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{9EAD3156-D0CE-40DF-9B5D-21D3F2FD4807}" Global="false">
+									<ObjectRef Name="BGM_Renewed" ID="{80055754-8024-41E0-B5B6-6C1085A025A9}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_BGM_Renewed" ID="{D4AAAD8E-E536-4B85-AF33-B6C3BC67C3BC}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{B0DB325D-2F55-492E-95F3-E653C2C7C457}" ShortID="938682800" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{AB1CA13E-4DB0-4825-9D90-AF85E98511E7}" Global="false">
+									<ObjectRef Name="BGM_Renewed" ID="{80055754-8024-41E0-B5B6-6C1085A025A9}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

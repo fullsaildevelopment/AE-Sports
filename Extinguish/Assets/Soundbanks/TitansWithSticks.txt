@@ -18,10 +18,12 @@ Event	ID	Name			Wwise Object Path	Notes
 	3196207338	Play_Background			\Default Work Unit\Play_Background	
 	3240049516	Play_Score			\Default Work Unit\Play_Score	
 	3513145267	Play_Catch			\Default Work Unit\Play_Catch	
+	3637461363	Stop_BGM_Renewed			\Default Work Unit\Stop_BGM_Renewed	
 	3698997709	Play_Boing			\Default Work Unit\Play_Boing	
 	3738780720	Play_MainMenu			\Default Work Unit\Play_MainMenu	
 	3908868565	Play_FasterLightning			\Default Work Unit\Play_FasterLightning	
 	3977125916	Play_Footsteps__Charge_			\Default Work Unit\Play_Footsteps__Charge_	
+	4100023137	Play_BGM_Renewed			\Default Work Unit\Play_BGM_Renewed	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	7247516	Beep	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Beep_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Beep		63552
@@ -38,5 +40,6 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	797913072	Boing	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Boing_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Boing		81140
 	846991583	Credits	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Credits_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Credits		5644944
 	902688899	FasterLightning	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\FasterLightning_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\FasterLightning		107116
+	903383178	BGM_Renewed	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\BGM_Renewed_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\BGM_Renewed		20321472
 	990930174	FinalBeep	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\FinalBeep_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\FinalBeep		121320
 

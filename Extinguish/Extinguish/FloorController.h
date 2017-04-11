@@ -10,8 +10,8 @@ class FloorController : public Component
 	{
 		STRIPS = 0,
 		GROUPS,
-		LEVEL,
 		NUM_OF_STATES,
+		LEVEL, //level must come after num_of_states to prevent itself from being randomly chosen
 	};
 
 	static bool score;
@@ -30,6 +30,7 @@ class FloorController : public Component
 	void WavePattern(float _dt);
 	void BigHexPattern(float _dt);
 	void Strips(float _dt);
+	void Groups(float _dt);
 	void StripPattern(float _dt);
 	void InitialPattern(float _dt);
 	void ControlMovement(float fullTime);
@@ -47,13 +48,15 @@ class FloorController : public Component
 	float resetableTimer = 0.0f;
 	bool cooldownDone = true;
 	bool stateRunning = false;
-	bool dontRaiseGenerated = false;
+	int* groupPositions;
+	bool positionsGenerated = false;
 	std::vector<int*> dontRaise;
 
 	//const members
 	const float TIME_TIL_COOLDOWN = 10.0f; //how long til after the state is finished til it starts another state
-	const float TIME_TIL_STATE = 10.0f; //how long til the state runs
+	const float TIME_TIL_STATE = 5.0f; //how long til the state runs
 	const float TIME_TO_RUN_STATE = 15.0f; //how long to run the state
+	const int NUM_OF_GROUPS = 12;
 
 	struct pulseState
 	{
@@ -76,6 +79,9 @@ class FloorController : public Component
 	void FindEmptyPulseState(int _pos);
 	void DoPulses();
 	void NextLevel(int _pos, int _level);
+
+	int ConvertTo1D(int x, int y);
+	void ConvertTo2D(int num, int& x, int& y);
 public:
 	FloorController(float3* f, int rows, int cols, float _maxHeight, unsigned int* _colors);
 	~FloorController();

@@ -231,14 +231,14 @@
     <ClCompile Include="SphereCollider.cpp">
       <Filter>Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="TrailRender.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="ShieldRender.cpp">
       <Filter>Components\Scripts\PowerUps</Filter>
+    </ClCompile>
+    <ClCompile Include="TrailRender.cpp">
+      <Filter>Components\Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,14 +431,14 @@
     <ClInclude Include="Magnet.h">
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
-    <ClInclude Include="TrailRender.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="PriorityQueue.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="ShieldRender.h">
       <Filter>Components\Scripts\PowerUps</Filter>
+    </ClInclude>
+    <ClInclude Include="TrailRender.h">
+      <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
