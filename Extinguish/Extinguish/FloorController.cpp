@@ -43,27 +43,33 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 
 	//allocate groups
 	groupPositions = new int[NUM_OF_GROUPS];
-	//for (int i = 0; i < NUM_OF_GROUPS; ++i)
-	//{
-	//	//groupPositions[i] = 0;
-	//	int colNum = col / ((i % 3) + 1);
-	//	int rowOffset = 5;
+	for (int i = 0; i < NUM_OF_GROUPS; ++i)
+	{
+		//groupPositions[i] = 0;
+		int colNum = (col / 4) * (i % 4);
+		//int colNum = col / (i % 3);
+		int rowOffset = 10;
 
-	//	if (i % 3 == 0)
-	//	{
-	//		rowOffset = 7;
-	//	}
-	//	else if (i % 3 == 2)
-	//	{
-	//		colNum -= 5;
-	//	}
+		if (i % 4 == 1 || i % 4 == 3)
+		{
+			rowOffset = 15;
+		}
+		//else if (i % 4 == 0)
+		//{
+		//	colNum += 5;
+		//}
+		//else if (i % 4 == 3)
+		//{
+		//	colNum -= 5;
+		//}
 
-	//	groupPositions[i] = (i + 1) * rowOffset * col + colNum;
-	//}
+		//if (i % 2 
 
-	groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
-	groupPositions[1] = { (row / 4 * col) + 9 };
+		groupPositions[i] = ConvertTo1D((i / 4 + 1) * rowOffset, colNum + 5);
+	}
 
+	//groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
+	//groupPositions[1] = { (row / 4 * col) + 9 };
 }
 
 FloorController::~FloorController()
@@ -278,7 +284,7 @@ void FloorController::Groups(float _dt)
 
 	if (ratios < 1.0f)
 	{
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < NUM_OF_GROUPS; ++i)
 		{
 			int x, y;
 			ConvertTo2D(groupPositions[i], x, y);
@@ -687,6 +693,6 @@ int FloorController::ConvertTo1D(int x, int y)
 
 void FloorController::ConvertTo2D(int num, int& x, int& y)
 {
-	x = num % col;
-	y = num / col;
+	x = num / col;
+	y = num % col;
 }
