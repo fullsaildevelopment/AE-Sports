@@ -43,17 +43,26 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 
 	//allocate groups
 	groupPositions = new int[NUM_OF_GROUPS];
+
 	for (int i = 0; i < NUM_OF_GROUPS; ++i)
 	{
-		//groupPositions[i] = 0;
-		int colNum = (col / 4) * (i % 4);
-		//int colNum = col / (i % 3);
-		int rowOffset = 10;
+		groupPositions[i] = 0;
+	}
 
-		if (i % 4 == 1 || i % 4 == 3)
-		{
-			rowOffset = 15;
-		}
+	for (int i = 0; i < NUM_OF_GROUPS * 2; ++i)
+	{
+		//set positions of rows of *blank*
+		const int NUM_OF_GROUPS = 5;
+
+		//groupPositions[i] = 0;
+		int colNum = (col / NUM_OF_GROUPS) * (i % NUM_OF_GROUPS);
+		//int colNum = col / (i % 3);
+		int initialRowOffset = 10, rowOffset = 20;
+
+		//if (i % 4 == 1 || i % 4 == 3)
+		//{
+		//	rowOffset = 15;
+		//}
 		//else if (i % 4 == 0)
 		//{
 		//	colNum += 5;
@@ -63,9 +72,24 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 		//	colNum -= 5;
 		//}
 
-		//if (i % 2 
+		//if (i % 2 == 0)
+		//{
+		//	colNum 
+		//}
 
-		groupPositions[i] = ConvertTo1D((i / 4 + 1) * rowOffset, colNum + 5);
+		groupPositions[i] = ConvertTo1D(initialRowOffset + ( i / NUM_OF_GROUPS * rowOffset), colNum + 5);
+	}
+
+	for (int i = 0; i < NUM_OF_GROUPS - ; ++i)
+	{
+		//set positions of rows of *blank*
+		const int NUM_OF_GROUPS = 4;
+
+		int colNum = (col / NUM_OF_GROUPS) * (i % NUM_OF_GROUPS);
+		int rowOffset = 20;
+		int colOffset = 8;
+
+		groupPositions[i + 8] = ConvertTo1D(rowOffset + (i / NUM_OF_GROUPS * rowOffset), colNum + colOffset);
 	}
 
 	//groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
@@ -286,23 +310,26 @@ void FloorController::Groups(float _dt)
 	{
 		for (int i = 0; i < NUM_OF_GROUPS; ++i)
 		{
-			int x, y;
-			ConvertTo2D(groupPositions[i], x, y);
-
-			int offset = 1;
-
-			if (x % 2 == 0)
+			if (groupPositions[i]) //simple thing so I can have null positions for now
 			{
-				offset = -1;
-			}
+				int x, y;
+				ConvertTo2D(groupPositions[i], x, y);
 
-			MovePillar(groupPositions[i] - col + offset, ratios);
-			MovePillar(groupPositions[i] - col, ratios);
-			MovePillar(groupPositions[i] - 1, ratios);
-			MovePillar(groupPositions[i], ratios);
-			MovePillar(groupPositions[i] + 1, ratios);
-			MovePillar(groupPositions[i] + col, ratios);
-			MovePillar(groupPositions[i] + col + offset, ratios);
+				int offset = 1;
+
+				if (x % 2 == 0)
+				{
+					offset = -1;
+				}
+
+				MovePillar(groupPositions[i] - col + offset, ratios);
+				MovePillar(groupPositions[i] - col, ratios);
+				MovePillar(groupPositions[i] - 1, ratios);
+				MovePillar(groupPositions[i], ratios);
+				MovePillar(groupPositions[i] + 1, ratios);
+				MovePillar(groupPositions[i] + col, ratios);
+				MovePillar(groupPositions[i] + col + offset, ratios);
+			}
 		}
 	}
 }
