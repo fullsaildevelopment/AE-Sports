@@ -49,10 +49,11 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 		groupPositions[i] = 0;
 	}
 
+	const int NUM_OF_GROUPS = 5;
+
 	for (int i = 0; i < NUM_OF_GROUPS * 2; ++i)
 	{
 		//set positions of rows of *blank*
-		const int NUM_OF_GROUPS = 5;
 
 		//groupPositions[i] = 0;
 		int colNum = (col / NUM_OF_GROUPS) * (i % NUM_OF_GROUPS);
@@ -80,16 +81,17 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 		groupPositions[i] = ConvertTo1D(initialRowOffset + ( i / NUM_OF_GROUPS * rowOffset), colNum + 5);
 	}
 
-	for (int i = 0; i < NUM_OF_GROUPS - ; ++i)
+	const int NUM_OF_GROUPS_2 = 4;
+
+	for (int i = 0; i < NUM_OF_GROUPS_2 - NUM_OF_GROUPS * 2; ++i)
 	{
 		//set positions of rows of *blank*
-		const int NUM_OF_GROUPS = 4;
 
-		int colNum = (col / NUM_OF_GROUPS) * (i % NUM_OF_GROUPS);
+		int colNum = (col / NUM_OF_GROUPS_2) * (i % NUM_OF_GROUPS_2);
 		int rowOffset = 20;
 		int colOffset = 8;
 
-		groupPositions[i + 8] = ConvertTo1D(rowOffset + (i / NUM_OF_GROUPS * rowOffset), colNum + colOffset);
+		groupPositions[i + NUM_OF_GROUPS * 2] = ConvertTo1D(rowOffset + (i / NUM_OF_GROUPS_2 * rowOffset), colNum + colOffset);
 	}
 
 	//groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
