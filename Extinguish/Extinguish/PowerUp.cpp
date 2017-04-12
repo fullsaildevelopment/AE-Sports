@@ -71,6 +71,8 @@ void PowerUp::OnTriggerEnter(Collider* collider)
 					GetGameObject()->GetComponent<Renderer>()->SetEnabled(false);
 					GetGameObject()->GetComponent<SphereCollider>()->SetEnabled(false);
 
+					SetID(player->GetPlayerID());
+
 					//tell powerup manager it was picked up
 					PowerUpEvent* powerEvent = new PowerUpEvent(GetGameObject()->GetName(), true, spawnIndex, posIndex);
 					powerEvent->SetClientID(player->GetPlayerID());

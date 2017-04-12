@@ -238,21 +238,6 @@ void PowerUpManager::ServerUpdate(float _dt)
 
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
-		// send information to clients
-		// send index & position
-		if (positions.size() > 0) 
-		{
-			for (unsigned int j = 0; j < positions.size(); ++j)
-			{
-				// if it was spawned, update the information for the client
-				Game::server.SetPowerUp(indices[j], positions[j], true);
-
-			}
-
-			Game::server.SendPowerUps();
-			spawned = true;
-
-		}
 
 		for (unsigned int i = 0; i < powerUps.size(); ++i)
 		{
@@ -267,63 +252,6 @@ void PowerUpManager::ServerUpdate(float _dt)
 
 void PowerUpManager::ClientUpdate(float _dt)
 {
-	// grab powerup information from server
-	if (Game::client.SpawnedPowerUps())
-	{
-		int amount = 6;
-
-		for (int i = 0; i < amount; ++i)
-		{
-			bool active;
-			float3 position;
-
-			active = Game::client.getSpawnedPowerUpActive(i);
-			// set that powerup active
-			if (active)
-			{
-				position = Game::client.getSpawnedPowerUpPos(i);
-				powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
-				powerUps[i]->Enable();
-
-#if _DEBUG
-				printf("SPAWNED: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
-#endif
-				spawned = true;
-			}
-			else
-			{
-				powerUps[i]->Disable();
-				powerUps[i]->GetGameObject()->GetTransform()->SetPosition({ 0,0,0 });
-			}
-		}
-	}
-
-	if (Game::client.RemovedPowerUp())
-	{
-		int index, id;
-
-		index = Game::client.getRemovedPowerUpIndex();
-		id = Game::client.getRemovedPlayerID();
-
-		// set that powerup inactive
-		powerUps[index]->Disable();
-
-		// set that powerup's player
-		powerUps[index]->SetID(id);
-
-		if (id != Game::GetClientID())
-		{
-			powerUps[index]->SetID(0);
-		}
-		else
-		{
-#if _DEBUG
-			printf("CLIENT PICKED UP: %s\n", powerUps[index]->GetName().c_str());
-#endif
-		}
-	}
-
-
 	// update ui
 	int uiIndex = 0;
 	bool sjump = false, shield = false, magnet = false;
@@ -447,25 +375,6 @@ void PowerUpManager::HandleEvent(Event* e)
 		roundTimer[powerEvent->GetPosIndex()] = 0.0f;
 
 		//cout << powerEvent->GetName() << " picked up" << endl;
-
-		if (ResourceManager::GetSingleton()->IsMultiplayer())
-		{
-			std::string n = powerEvent->GetName();
-			int index = -1;
-			for (unsigned int i = 0; i < powerUps.size(); ++i)
-			{
-				if (n == powerUps[i]->GetGameObject()->GetName())
-				{
-					index = i;
-					break;
-				}
-			}
-			// sent to client to despawn powerup
-			if (index != -1) {
-				Game::server.RemovePowerUp(index, powerEvent->GetClientID());
-				Game::server.SendRemoved();
-			}
-		}
 
 		return;
 	}
