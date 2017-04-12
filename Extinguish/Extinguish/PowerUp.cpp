@@ -165,3 +165,8 @@ void PowerUp::SetPosIndex(int index)
 {
 	posIndex = index;
 }
+
+void PowerUp::SetPlayer(PlayerController* playerC)
+{
+	player = playerC;
+}
