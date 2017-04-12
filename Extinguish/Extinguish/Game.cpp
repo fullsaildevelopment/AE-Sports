@@ -75,7 +75,8 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 	devResources = _devResources;
 
 	//set seed
-	srand((unsigned int)time(nullptr));
+	seed = (unsigned int)time(nullptr);
+	srand(seed);
 
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
@@ -2652,5 +2653,6 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
 		toggle = !scoreBoard2->isActive();
 		scoreBoard2->Toggle(toggle);
+		scoreBoard2->SetEnabled(toggle);
 	}
 }

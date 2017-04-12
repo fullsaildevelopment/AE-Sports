@@ -35,10 +35,31 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 		originalColor[i] = colors[i];
 	}
 
-	dontRaise.resize((row - 5) / 5);
+	//set positions for strips to not raise
+	dontRaise.resize((row - 5 - 5) / 5);
 	for (int i = 0; i < dontRaise.size(); ++i)
 	{
 		dontRaise[i] = new int[3];
+	}
+
+	dontRaise[0][0] = col - 3; //right
+	dontRaise[1][0] = col / 2; //middle
+	dontRaise[2][0] = col / 2 + 5; //right
+	dontRaise[3][0] = 0; //left
+	dontRaise[4][0] = col / 10; //left
+	dontRaise[5][0] = 0; //left
+	dontRaise[6][0] = col / 2 + 10; //right
+	dontRaise[7][0] = col / 2 - 8; //left 
+	dontRaise[8][0] = col / 3; //middle
+	//dontRaise[9][0] = col - 3; //right
+
+	//dont raise the random one and the next two
+	for (int i = 0; i < dontRaise.size(); ++i)
+	{
+		for (int j = 1; j < 3; ++j)
+		{
+			dontRaise[i][j] = dontRaise[i][0] + j;
+		}
 	}
 
 	//allocate groups
@@ -49,49 +70,30 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 		groupPositions[i] = 0;
 	}
 
-	const int NUM_OF_GROUPS = 5;
+	const int NUM_IN_ROW = 5;
+	const int NUM_OF_ROW = 3;
 
-	for (int i = 0; i < NUM_OF_GROUPS * 2; ++i)
+	for (int i = 0; i < NUM_IN_ROW * NUM_OF_ROW; ++i)
 	{
-		//set positions of rows of *blank*
+		//set positions of 1st row and 3rd row
+		int colNum = (col / NUM_IN_ROW) * (i % NUM_IN_ROW);
+		int initialRowOffset = 6, rowOffset = 16;
+		int colOffset = 5;
 
-		//groupPositions[i] = 0;
-		int colNum = (col / NUM_OF_GROUPS) * (i % NUM_OF_GROUPS);
-		//int colNum = col / (i % 3);
-		int initialRowOffset = 10, rowOffset = 20;
-
-		//if (i % 4 == 1 || i % 4 == 3)
-		//{
-		//	rowOffset = 15;
-		//}
-		//else if (i % 4 == 0)
-		//{
-		//	colNum += 5;
-		//}
-		//else if (i % 4 == 3)
-		//{
-		//	colNum -= 5;
-		//}
-
-		//if (i % 2 == 0)
-		//{
-		//	colNum 
-		//}
-
-		groupPositions[i] = ConvertTo1D(initialRowOffset + ( i / NUM_OF_GROUPS * rowOffset), colNum + 5);
+		groupPositions[i] = ConvertTo1D(initialRowOffset + ( i / NUM_IN_ROW * rowOffset), colNum + colOffset);
 	}
 
-	const int NUM_OF_GROUPS_2 = 4;
+	const int NUM_IN_ROW_2 = 4;
+	const int NUM_OF_ROW_2 = 3;
 
-	for (int i = 0; i < NUM_OF_GROUPS_2 - NUM_OF_GROUPS * 2; ++i)
+	for (int i = 0; i < NUM_OF_GROUPS - NUM_IN_ROW * NUM_OF_ROW_2; ++i)
 	{
-		//set positions of rows of *blank*
+		//set positions of 2nd row and 4th 
+		int colNum = (col / NUM_IN_ROW_2) * (i % NUM_IN_ROW_2);
+		int rowOffset = 16;
+		int initialColOffset = 8, colOffset = 2;
 
-		int colNum = (col / NUM_OF_GROUPS_2) * (i % NUM_OF_GROUPS_2);
-		int rowOffset = 20;
-		int colOffset = 8;
-
-		groupPositions[i + NUM_OF_GROUPS * 2] = ConvertTo1D(rowOffset + (i / NUM_OF_GROUPS_2 * rowOffset), colNum + colOffset);
+		groupPositions[i + NUM_IN_ROW * NUM_OF_ROW] = ConvertTo1D(rowOffset + (i / NUM_IN_ROW_2 * rowOffset), initialColOffset + colNum - (colOffset * (i % NUM_IN_ROW_2)));
 	}
 
 	//groupPositions[0] = { ((row / 2 - 1) * col) + 20 };
@@ -231,40 +233,40 @@ void FloorController::Strips(float _dt)
 {
 	ratios += _dt * transSpeed;
 
-	if (!positionsGenerated)
-	{
-		positionsGenerated = true;
+	//if (!positionsGenerated)
+	//{
+	//	positionsGenerated = true;
 
-		for (int i = 0; i < dontRaise.size(); ++i)
-		{
-			//decide columns not to raise
-			int randIndex = rand() % col;
+	//	for (int i = 0; i < dontRaise.size(); ++i)
+	//	{
+	//		//decide columns not to raise
+	//		int randIndex = rand() % col;
 
-			//if at the end, move down randIndex
-			if (randIndex > col - 3)
-			{
-				randIndex = col - 3;
-			}
+	//		//if at the end, move down randIndex
+	//		if (randIndex > col - 3)
+	//		{
+	//			randIndex = col - 3;
+	//		}
 
-			//dont raise the random one and the next two
-			for (int j = 0; j < 3; ++j)
-			{
-				dontRaise[i][j] = randIndex + j;
-			}
-		}
-	}
+	//		//dont raise the random one and the next two
+	//		for (int j = 0; j < 3; ++j)
+	//		{
+	//			dontRaise[i][j] = randIndex + j;
+	//		}
+	//	}
+	//}
 
 	int dontI = 0, dontJ = 0;
 
 	if (ratios < 1.0f)
 	{
-		for (int r = 5; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
+		for (int r = 9; r < row - 5; r += 5, ++dontI) //i don't want the walls to be up near the goals... so 5 away from goal walls
 		{
 			for (int c = 0; c < col; ++c)
 			{
 				if (dontRaise[dontI][dontJ] != c)
 				{
-					MovePillar(r * col + c, ratios);
+					MovePillar(ConvertTo1D(r, c), ratios);
 				}
 				else
 				{
@@ -381,12 +383,12 @@ void FloorController::ControlMovement(float fullTime)
 		switch (randStateIndex)
 		{
 		case STRIPS:
-			//Strips(dt);
-			Groups(dt);
+			Strips(dt);
+			//Groups(dt);
 			break;
 		case GROUPS:
-			//Strips(dt);
-			Groups(dt);
+			Strips(dt);
+			//Groups(dt);
 			break;
 		case LEVEL:
 			LevelFloor(dt);
