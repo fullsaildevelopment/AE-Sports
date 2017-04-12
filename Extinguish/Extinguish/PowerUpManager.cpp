@@ -295,6 +295,17 @@ void PowerUpManager::ClientUpdate(float _dt)
 				powerUpRenderers[uiIndex]->setOpacity(0.0f);
 			}
 		}
+
+
+		// shield activation
+		if (Game::client.powerUpTime(i) <= 0.0f && powerUps[i]->GetName() == "Shield")
+		{
+			powerUps[i]->Deactivate();
+		}
+	//	else if (Game::client.powerUpTime(i) > 0.0f && powerUps[i]->GetName() == "Shield"
+		{
+			// activation of shield here
+		}
 	}
 }
 
