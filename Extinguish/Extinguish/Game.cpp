@@ -2389,7 +2389,14 @@ void Game::UpdateClientObjects()
 					{
 						Shield* shield = gameObject->GetComponent<Shield>();
 						shield->SetID(client.getRemovedPlayerID(i));
+
 						// set shield render stuff here
+						if (client.getRemovedPlayerID(i))
+						{
+							PlayerController* player = gameObject->FindGameObject("Mage" + to_string(client.getRemovedPlayerID(i)))->GetComponent<PlayerController>();
+							shield->SetPlayer(player);
+							shield->Activate();
+						}
 					}
 
 
