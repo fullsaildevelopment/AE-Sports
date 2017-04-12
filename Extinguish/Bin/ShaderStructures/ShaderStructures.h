@@ -98,10 +98,7 @@ struct GameState //practically an object state
 {
 	uint8_t clientID;
 	uint8_t nameLength;
-	//char animationName[125];
 	bool hasBall = false;
-//	XMFLOAT4X4 world;
-
 	XMFLOAT3 position;
 	XMFLOAT3 rotation;
 	int8_t parentIndex;
@@ -111,6 +108,8 @@ struct GameState //practically an object state
 	int8_t transitionIndex;
 	int32_t soundID;
 	bool hasSound;
+	bool enabled = true;
+	uint8_t extraID = 0;
 };
 #pragma pack(pop)
 

@@ -33,13 +33,9 @@ public:
 #pragma pack(push, 1)
 	struct CLIENT_GAME_STATE
 	{
-		Time timeStamp;
 		UINT8 clientID;
 		UINT8 nameLength;
-		//char animationName[125];
 		bool hasBall;
-		//UINT8 hasBall;
-		//XMFLOAT4X4 world;
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
 		INT8 parentIndex;
@@ -48,6 +44,8 @@ public:
 		INT8 transitionIndex;
 		UINT32 soundID;
 		bool hasSound;
+		bool enabled = true;
+		UINT8 extraID = 0;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -144,12 +142,6 @@ private:
 #pragma pack(push, 1)
 	struct PowerUps
 	{
-		// spawn
-		bool isactive[6];
-		XMFLOAT3 positions[6];
-		// despawn
-		int removeindices;
-		int id;
 		// elapsed time
 		float elapsedTime[6];
 	};
@@ -242,13 +234,9 @@ public:
 	void setCountdown(bool down) {gameState[0][0].countdown = down; }
 	void setPulse(int pulse) { gameState[0][0].floorPulse = pulse; }
 
-	void SetPowerUp(int index, XMFLOAT3 pos, bool active) { 
-		pUp.isactive[index] = active;
-		pUp.positions[index] = pos; }
-	void RemovePowerUp(int index, int id) { pUp.id = id; pUp.removeindices = index; }
-
 	void setPowerUpTime(int i, float time) { pUp.elapsedTime[i] = time; }
-
+	void setObjectEnabled(bool en, int i) { clientStates[0][i].enabled = en; }
+	void setObjectPlayerID(int i, int id) { clientStates[0][i].extraID = id; }
 
 	/* game stuff*/
 	void sendPackets();
