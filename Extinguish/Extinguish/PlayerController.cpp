@@ -608,6 +608,11 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 		Jump();
 	}
 
+	if (padState->IsRightStickPressed())
+	{
+		Attack();
+	}
+
 	//this line will only happen once
 	if (padState->IsLeftStickPressed() && padState->thumbSticks.leftY && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{

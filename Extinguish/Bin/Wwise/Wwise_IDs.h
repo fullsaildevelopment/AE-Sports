@@ -19,6 +19,8 @@ namespace AK
         static const AkUniqueID PLAY_BEEP = 2063165418U;
         static const AkUniqueID PLAY_BGM_RENEWED = 4100023137U;
         static const AkUniqueID PLAY_BOING = 3698997709U;
+        static const AkUniqueID PLAY_BUTTON_CLICK = 1149159311U;
+        static const AkUniqueID PLAY_BUTTON_HOVER = 4021863785U;
         static const AkUniqueID PLAY_CATCH = 3513145267U;
         static const AkUniqueID PLAY_CREDITS = 2970769112U;
         static const AkUniqueID PLAY_FASTERLIGHTNING = 3908868565U;
