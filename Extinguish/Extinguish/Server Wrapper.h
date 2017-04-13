@@ -48,7 +48,7 @@ public:
 		newServer.sendPackets();
 		int result = newServer.update();
 
-		if (result == 3)
+		if (newServer.hasInput())
 		{
 			InputDownEvent* inputEvent = new InputDownEvent();
 			InputManager* input = new InputManager();
@@ -130,6 +130,10 @@ public:
 				gameStates[i]->transitionIndex,
 				gameStates[i]->soundID,
 				gameStates[i]->hasSound);
+
+			newServer.setObjectEnabled(gameStates[i]->enabled, i);
+			newServer.setObjectPlayerID(i, gameStates[i]->extraID);
+
 		}
 	}
 
@@ -246,26 +250,6 @@ public:
 	void setPulse(int pulse)
 	{
 		newServer.setPulse(pulse);
-	}
-
-	void SetPowerUp(int index, float3 pos, bool active)
-	{
-		newServer.SetPowerUp(index, XMFLOAT3(pos.x, pos.y, pos.z), active);
-	}
-
-	void SendPowerUps()
-	{
-		newServer.SendPowerUps();
-	}
-
-	void RemovePowerUp(int index, int id)
-	{
-		newServer.RemovePowerUp(index, id);
-	}
-
-	void SendRemoved()
-	{
-		newServer.SendRemoved();
 	}
 
 	void SendPUTime()

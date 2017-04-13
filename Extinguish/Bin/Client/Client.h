@@ -42,10 +42,7 @@ public:
 	{
 		UINT8 clientID;
 		UINT8 nameLength;
-		//char animationName[125];
 		bool hasBall;
-		//UINT8 hasBall;
-		//	XMFLOAT4X4 world;
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
 		INT8 parentIndex;
@@ -55,6 +52,8 @@ public:
 		INT8 transitionIndex;
 		UINT32 soundID;
 		bool hasSound;
+		bool enabled = true;
+		UINT8 extraID = 0;
 
 		CLIENT_GAME_STATE() {}
 	};
@@ -123,12 +122,6 @@ private:
 #pragma pack(push, 1)
 	struct PowerUps
 	{
-		// spawn
-		bool isactive[6];
-		XMFLOAT3 positions[6];
-		// despawn
-		UINT8 removeindices;
-		UINT8 id;
 		// elapsed time
 		float elapsedTime[6];
 	};
@@ -230,7 +223,6 @@ public:
 	CLIENT_GAME_STATE getMyState();
 	bool getPaused() { return gameState[0][0].paused; }
 	UINT8 getScene() { return gameState[0][0].scene; }
-	//UINT8 hasBall(unsigned int index) { return clientStates[index].hasBall; }
 	bool hasBall(unsigned int index) { return clientStates[0][index].hasBall; }
 	bool HasSound(unsigned int index) { return clientStates[0][index].hasSound; }
 	UINT8 getObjID() { return objID; }
@@ -257,10 +249,8 @@ public:
 	int getPulse() { return gameState[0][0].floorPulse; }
 
 	// power ups
-	bool getSpawnedPowerUpActive(int i) { return pUp.isactive[i]; }
-	XMFLOAT3 GetSpawnedPowerUpPos(int i) { return pUp.positions[i]; }
-	int getRemovedPowerUpIndex() { return pUp.removeindices; }
-	int getRemovedPlayerID() { return pUp.id; }
+	int getPowerUpPlayerID(int i) { return (int)clientStates[0][i].extraID; }
+	bool getObjectEnabled(int i) { return clientStates[0][i].enabled; }
 	float getPowerUpTime(int i) { return pUp.elapsedTime[i]; }
 
 	// which packets have arrived
