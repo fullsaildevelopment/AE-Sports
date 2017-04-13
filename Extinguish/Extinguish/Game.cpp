@@ -1686,6 +1686,7 @@ void Game::ResetPlayers()
 			teamOffset = 4;
 		}
 
+		//generate random index for random position
 		int randIndex;
 		while (true)
 		{
@@ -1698,35 +1699,18 @@ void Game::ResetPlayers()
 			}
 		}
 
-		//do camera lerp before set position for MoveTo logic
-
 		//reset camera
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-		if (Team1Score > 0 || Team2Score > 0)
-		{
-			Camera * cam = camera->GetComponent<Camera>();
-			float3 dest;
-			dest = positions[randIndex];
-
-			//if (Team1Score > 0 || Team2Score > 0) 
-			//{
-			//	Camera * cam = camera->GetComponent<Camera>();
-			//	float3 dest;
-			//	dest = positions[randIndex];
-			//	
-			//	//cam->SetDestination(dest);
-			//	//cam->StartLerp();
-			//	//cam->MoveTo(dest, 1.0f);
-			//}
-
-			camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
-		}
+		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
 
 		player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
 		player->GetTransform()->RotateTo({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
+
+		//reset player's velocity
+		player->GetTransform()->SetVelocity({ 0.0f, 0.0f, 0.0f });
 	}
 }
 

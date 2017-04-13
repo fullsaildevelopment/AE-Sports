@@ -233,6 +233,7 @@ void FloorController::Strips(float _dt)
 {
 	ratios += _dt * transSpeed;
 
+	//If we want random, uncomment this out
 	//if (!positionsGenerated)
 	//{
 	//	positionsGenerated = true;
@@ -287,6 +288,7 @@ void FloorController::Groups(float _dt)
 {
 	ratios += _dt * transSpeed;
 
+	//if we want random, uncomment this out and make the logic better
 	//if (!positionsGenerated)
 	//{
 	//	positionsGenerated = true;
@@ -314,7 +316,7 @@ void FloorController::Groups(float _dt)
 	{
 		for (int i = 0; i < NUM_OF_GROUPS; ++i)
 		{
-			if (groupPositions[i]) //simple thing so I can have null positions for now
+			//if (groupPositions[i]) //simple thing so I can have null positions for now
 			{
 				int x, y;
 				ConvertTo2D(groupPositions[i], x, y);
@@ -387,8 +389,8 @@ void FloorController::ControlMovement(float fullTime)
 			//Groups(dt);
 			break;
 		case GROUPS:
-			Strips(dt);
-			//Groups(dt);
+			//Strips(dt);
+			Groups(dt);
 			break;
 		case LEVEL:
 			LevelFloor(dt);

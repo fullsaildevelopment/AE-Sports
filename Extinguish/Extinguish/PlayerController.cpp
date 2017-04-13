@@ -67,7 +67,7 @@ void PlayerController::Update(float _dt)
 	this->_dt = _dt;
 	//chargeTimer += _dt;
 	//sprintAgainTimer += dt;
-	if (!DEBUG_GRAPHICS)
+	if (!DEBUG_GRAPHICS && !ResourceManager::GetSingleton()->IsPaused())
 		HandleSprintAndCharge();
 
 	PlayFootstepsSound();
