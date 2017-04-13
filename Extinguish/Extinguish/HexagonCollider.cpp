@@ -810,6 +810,13 @@ void HexagonCollider::FixedUpdate(float dt)
 		for (int i = 0; i < size; ++i)
 		{
 			ob = objects[i];
+			bool c = false;
+			for (int j = 0; j < ignore.size(); ++j)
+			{
+				if (ignore[j] == ob)
+					c = true;
+			}
+			if (c) continue;
 			SphereCollider* sphere = ob->GetComponent<SphereCollider>();
 			if (sphere)
 			{
@@ -888,6 +895,13 @@ void HexagonCollider::FixedUpdate(float dt)
 		for (int f = 0; f < size; ++f)
 		{
 			ob = objects[f];
+			bool c = false;
+			for (int j = 0; j < ignore.size(); ++j)
+			{
+				if (ignore[j] == ob)
+					c = true;
+			}
+			if (c) continue;
 			bool collided = false;
 			SphereCollider* sphere = ob->GetComponent<SphereCollider>();
 			if (sphere)

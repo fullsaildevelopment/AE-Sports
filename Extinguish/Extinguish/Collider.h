@@ -26,6 +26,7 @@ private:
 protected:
 	Transform* transform;
 	std::vector<Collider*> checked;
+	std::vector<GameObject*> ignore;
 	vector<GameObject*> objects;
 	vector<bool> CollidingWith;
 public:
@@ -41,4 +42,6 @@ public:
 	bool isStatic() { return IsStatic; };
 	void SetStatic(bool s) { IsStatic = s; };
 	ColliderType GetColliderType() { return type; };
+	void IgnoreGameObject(GameObject* object);
+	void UnIgnoreGameObject(GameObject* object);
 };
