@@ -67,6 +67,8 @@ private:
 	float* gameTime;
 	float endTimer;
 
+	unsigned int seed;
+
 	bool justScored;
 	float scorerTimer;
 

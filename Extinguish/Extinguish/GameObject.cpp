@@ -204,7 +204,7 @@ Transform* GameObject::GetTransform()
 	return transform;
 }
 
-std::string GameObject::GetName()
+std::string& GameObject::GetName()
 {
 	return name;
 }

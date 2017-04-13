@@ -523,6 +523,7 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 	}
 
 	Toggle(false);
+	SetEnabled(false);
 }
 
 void Scoreboard::Update(float dt)
@@ -539,16 +540,16 @@ void Scoreboard::Update(float dt)
 			//playerBars[i]->Update(dt);
 			//playerNames[i]->Update(dt);
 
-			playerScores[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetScore()).c_str());
+			playerScores[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetScore()));
 			//playerScores[i]->Update(dt);
 
-			playerGoals[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetGoals()).c_str());
+			playerGoals[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetGoals()));
 			//playerGoals[i]->Update(dt);
 
-			playerAssists[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetAssists()).c_str());
+			playerAssists[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetAssists()));
 			//playerAssists[i]->Update(dt);
 
-			playerSaves[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetSaves()).c_str());
+			playerSaves[i]->GetComponent<Button>()->setText(to_wstring(players[i]->GetSaves()));
 			//playerSaves[i]->Update(dt);
 		}
 	}

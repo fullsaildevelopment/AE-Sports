@@ -39,6 +39,9 @@
 #include "TrailRender.h"
 #include "Map.h"
 #include "ShieldRender.h"
+#include "Shield.h"
+#include "Magnet.h"
+#include "SuperJump.h"
 
 using namespace DirectX;
 using namespace std;
@@ -72,7 +75,8 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 	devResources = _devResources;
 
 	//set seed
-	srand((unsigned int)time(nullptr));
+	seed = (unsigned int)time(nullptr);
+	srand(seed);
 
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
@@ -2250,6 +2254,26 @@ void Game::UpdateServerStates()
 		////	state->_dt = dt;
 		//}
 
+		if (gameObject->GetName() == "Shield0" || gameObject->GetName() == "Shield1")
+		{
+		Shield* shield = gameObject->GetComponent<Shield>();
+			state->extraID = shield->GetID();
+		}
+		else if (gameObject->GetName() == "Magnet0" || gameObject->GetName() == "Magnet1")
+		{
+		Magnet* magnet = gameObject->GetComponent<Magnet>();
+			state->extraID = magnet->GetID();
+		}
+		else if (gameObject->GetName() == "Super Jump0" || gameObject->GetName() == "Super Jump1")
+		{
+			SuperJump* superjump = gameObject->GetComponent<SuperJump>();
+			state->extraID = superjump->GetID();
+		}
+
+		Renderer* rend = gameObject->GetComponent<Renderer>();
+		if (rend)
+			state->enabled = rend->isEnabled();
+
 		float3 position = gameObject->GetTransform()->GetPosition();
 		float3 rotation = gameObject->GetTransform()->GetRotation();
 		state->position = { position.x, position.y, position.z };
@@ -2258,6 +2282,8 @@ void Game::UpdateServerStates()
 		//parent info
 		int parentIndex = -1;
 		Transform* parent = gameObject->GetTransform()->GetParent();
+
+		
 
 		if (parent)
 		{
@@ -2343,6 +2369,37 @@ void Game::UpdateClientObjects()
 				//if (i != id)
 				{
 					GameObject* gameObject = (*gameObjects)[i];
+
+					Renderer* rend = gameObject->GetComponent<Renderer>();
+
+					if (rend)
+					rend->SetEnabled(client.getObjectEnabled(i));
+
+
+					if (gameObject->GetName() == "Super Jump0" || gameObject->GetName() == "Super Jump1")
+					{
+						SuperJump* sjump = gameObject->GetComponent<SuperJump>();
+						sjump->SetID(client.getRemovedPlayerID(i));
+					}
+					else if (gameObject->GetName() == "Magnet0" || gameObject->GetName() == "Magnet1")
+					{
+						Magnet* magnet = gameObject->GetComponent<Magnet>();
+						magnet->SetID(client.getRemovedPlayerID(i));
+					}
+					else if (gameObject->GetName() == "Shield0" || gameObject->GetName() == "Shield1")
+					{
+						Shield* shield = gameObject->GetComponent<Shield>();
+						shield->SetID(client.getRemovedPlayerID(i));
+
+						// set shield render stuff here
+						if (client.getRemovedPlayerID(i))
+						{
+							PlayerController* player = gameObject->FindGameObject("Mage" + to_string(client.getRemovedPlayerID(i)))->GetComponent<PlayerController>();
+							shield->SetPlayer(player);
+							shield->Activate();
+						}
+					}
+
 
 					if (gameObject->GetName() == "HexFloor")
 					{
@@ -2596,5 +2653,6 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
 		toggle = !scoreBoard2->isActive();
 		scoreBoard2->Toggle(toggle);
+		scoreBoard2->SetEnabled(toggle);
 	}
 }
