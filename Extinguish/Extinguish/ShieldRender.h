@@ -39,7 +39,7 @@ private:
 	UINT sampleMask = 0xffffffff;
 public:
 	ShieldRender(GameObject* o);
-	void Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate1 = 1.0f, float rate2 = 1.0f);
+	void Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate1, float rate2, std::string noiseMap1 = "ShieldBubble", std::string noiseMap2 = "ShieldBubble");
 	void SetProjection(XMFLOAT4X4 projection);
 	void Render(ID3D11RasterizerState* front, ID3D11RasterizerState* back);
 	void SetModel(XMFLOAT4X4& model);

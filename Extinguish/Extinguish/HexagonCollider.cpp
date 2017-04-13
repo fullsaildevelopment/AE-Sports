@@ -810,8 +810,15 @@ void HexagonCollider::FixedUpdate(float dt)
 		for (int i = 0; i < size; ++i)
 		{
 			ob = objects[i];
+			bool c = false;
+			for (int j = 0; j < ignore.size(); ++j)
+			{
+				if (ignore[j] == ob)
+					c = true;
+			}
+			if (c) continue;
 			SphereCollider* sphere = ob->GetComponent<SphereCollider>();
-			if (sphere)
+			if (sphere && !sphere->IgnoreHex())
 			{
 				if (!sphere->isTrigger() && sphere->isEnabled())
 				{
@@ -844,7 +851,7 @@ void HexagonCollider::FixedUpdate(float dt)
 				}
 			}
 			CapsuleCollider* cap = ob->GetComponent<CapsuleCollider>();
-			if (cap)
+			if (cap && !cap->IgnoreHex())
 			{
 				if (!cap->isTrigger() && cap->isEnabled())
 				{
@@ -888,9 +895,16 @@ void HexagonCollider::FixedUpdate(float dt)
 		for (int f = 0; f < size; ++f)
 		{
 			ob = objects[f];
+			bool c = false;
+			for (int j = 0; j < ignore.size(); ++j)
+			{
+				if (ignore[j] == ob)
+					c = true;
+			}
+			if (c) continue;
 			bool collided = false;
 			SphereCollider* sphere = ob->GetComponent<SphereCollider>();
-			if (sphere)
+			if (sphere && !sphere->IgnoreHex())
 			{
 				if (!sphere->isTrigger() && sphere->isEnabled())
 				{
@@ -899,7 +913,7 @@ void HexagonCollider::FixedUpdate(float dt)
 			}
 
 			CapsuleCollider* cap = ob->GetComponent<CapsuleCollider>();
-			if (cap)
+			if (cap && !cap->IgnoreHex())
 			{
 				if (!cap->isTrigger() && cap->isEnabled())
 				{
