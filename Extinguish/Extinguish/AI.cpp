@@ -36,7 +36,7 @@ void AI::OnCollisionEnter(Collider *obj)
 
 			if (obj->GetGameObject() == realTarget && !obj->GetGameObject()->GetComponent<AnimatorController>()->GetTrigger("Stumble")->GetTrigger())
 			{
-				if (!realTarget->GetComponent<PlayerController>()->IsInvincible())
+				if (!realTarget->GetComponent<PlayerController>()->IsInvincible() && realTarget->GetComponent<Movement>()->CanMove())
 				{
 					startTimer = true;
 
