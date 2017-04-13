@@ -69,6 +69,9 @@ private:
 
 	float ratio = 1.0f;
 
+	//for hover sound
+	bool playedHover = false;
+
 	// for gamepad
 	Button * up, * down, * left, * right;
 

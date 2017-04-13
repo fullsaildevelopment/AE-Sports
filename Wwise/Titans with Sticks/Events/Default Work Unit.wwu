@@ -322,6 +322,28 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Button_Hover" ID="{F40E61B3-9D60-4B3F-A05B-8E6BBB746AD1}">
+					<ChildrenList>
+						<Action Name="Play" ID="{B64A3B69-85A8-431C-9C59-CFF2105C69E3}" ShortID="97692298" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{F0AF8FB2-94A0-4F50-BC1F-330788DE3782}" Global="false">
+									<ObjectRef Name="Button Hover" ID="{8BBCE260-8F8C-4910-B32C-D1B87D9161F9}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Button_Click" ID="{C62FFDB6-260C-499B-A568-64357BB10DDC}">
+					<ChildrenList>
+						<Action Name="Play" ID="{1FCC5CEE-5A45-4D5B-A6F2-C62BEE84F315}" ShortID="662180248" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{DDA2A113-9DEE-4E7D-B9C5-A13694E53BAE}" Global="false">
+									<ObjectRef Name="Button Click" ID="{8109B4F1-ED20-40B2-9D8F-E9EB7167105F}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

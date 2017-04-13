@@ -22,6 +22,8 @@
 				<Event Id="2063165418" Name="Play_Beep" ObjectPath="\Events\Default Work Unit\Play_Beep"/>
 				<Event Id="4100023137" Name="Play_BGM_Renewed" ObjectPath="\Events\Default Work Unit\Play_BGM_Renewed"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
+				<Event Id="1149159311" Name="Play_Button_Click" ObjectPath="\Events\Default Work Unit\Play_Button_Click"/>
+				<Event Id="4021863785" Name="Play_Button_Hover" ObjectPath="\Events\Default Work Unit\Play_Button_Hover"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
 				<Event Id="2970769112" Name="Play_Credits" ObjectPath="\Events\Default Work Unit\Play_Credits"/>
 				<Event Id="3908868565" Name="Play_FasterLightning" ObjectPath="\Events\Default Work Unit\Play_FasterLightning"/>
@@ -63,6 +65,10 @@
 					<ShortName>Audio\Backboard Bounce Song.wav</ShortName>
 					<Path>SFX\Audio\Backboard Bounce Song_9E69E797.wem</Path>
 				</File>
+				<File Id="335513371" Language="SFX">
+					<ShortName>Button Click.wav</ShortName>
+					<Path>SFX\Button Click_9E69E797.wem</Path>
+				</File>
 				<File Id="360398386" Language="SFX">
 					<ShortName>Forcefield.wav</ShortName>
 					<Path>SFX\Forcefield_9E69E797.wem</Path>
@@ -86,6 +92,10 @@
 				<File Id="527908285" Language="SFX">
 					<ShortName>Audio\Catch.wav</ShortName>
 					<Path>SFX\Audio\Catch_9E69E797.wem</Path>
+				</File>
+				<File Id="692161060" Language="SFX">
+					<ShortName>Button Hover.wav</ShortName>
+					<Path>SFX\Button Hover_9E69E797.wem</Path>
 				</File>
 				<File Id="694589771" Language="SFX">
 					<ShortName>Score.wav</ShortName>

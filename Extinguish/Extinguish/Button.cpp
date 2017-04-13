@@ -313,11 +313,22 @@ void Button::HandleEvent(Event* e)
 					else
 					{
 						selected = true;
+
+						if (!playedHover)
+						{
+							SoundEvent* soundEvent = new SoundEvent();
+							soundEvent->Init(AK::EVENTS::PLAY_BUTTON_HOVER, 0);
+							EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+							delete soundEvent;
+
+							playedHover = true;
+						}
 					}
 				}
 				else
 				{
 					selected = false;
+					playedHover = false;
 				}
 			}
 		}
@@ -377,6 +388,12 @@ void Button::setButtonType()
 
 void Button::DoEvent()
 {
+	//play clicked sound effect
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::PLAY_BUTTON_CLICK, 0);
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
+
 	if (buttonType == RETURN || buttonType == HOST || buttonType == JOIN)
 	{
 		clickCooldown = 1.0f;
