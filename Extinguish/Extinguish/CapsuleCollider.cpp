@@ -85,7 +85,7 @@ void CapsuleCollider::FixedUpdate(float _dt)
 
 		///////////////////////////////////////Capsule vs AABB///////////////////////////////////////
 		BoxCollider* box = ob->GetComponent<BoxCollider>();
-		if (box)
+		if (box && !box->IgnoreCapsule())
 		{
 			if (box->isTrigger() || isTrigger())
 			{
@@ -140,7 +140,7 @@ void CapsuleCollider::FixedUpdate(float _dt)
 		}
 		///////////////////////////////////////Capsule vs Capsule///////////////////////////////////////
 		CapsuleCollider* capsule = ob->GetComponent<CapsuleCollider>();
-		if (capsule)
+		if (capsule && !capsule->IgnoreCapsule())
 		{
 			if (isTrigger() || capsule->isTrigger())
 			{

@@ -29,6 +29,10 @@ protected:
 	std::vector<GameObject*> ignore;
 	vector<GameObject*> objects;
 	vector<bool> CollidingWith;
+	bool ignoreAABB;
+	bool ignoreCapsule;
+	bool ignoreSphere;
+	bool ignoreHex;
 public:
 	float3 collisionNormal;
 	Collider(GameObject* o, bool trigger);
@@ -44,4 +48,12 @@ public:
 	ColliderType GetColliderType() { return type; };
 	void IgnoreGameObject(GameObject* object);
 	void UnIgnoreGameObject(GameObject* object);
+	void IgnoreAABB(bool toggle) { ignoreAABB = toggle; };
+	void IgnoreCapsule(bool toggle) { ignoreCapsule = toggle; };
+	void IgnoreSphere(bool toggle) { ignoreSphere = toggle; };
+	void IgnoreHex(bool toggle) { ignoreHex = toggle; };
+	bool IgnoreAABB() { return ignoreAABB; };
+	bool IgnoreCapsule() { return ignoreCapsule; };
+	bool IgnoreSphere() { return ignoreSphere; };
+	bool IgnoreHex() { return ignoreHex; };
 };
