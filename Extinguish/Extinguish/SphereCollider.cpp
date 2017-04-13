@@ -37,17 +37,21 @@ void SphereCollider::FixedUpdate(float _dt)
 	for (int i = 0; i < size; ++i)
 	{
 		ob = objects[i];
-		if (ob == GetGameObject()) continue;
+		if (ob == tg) continue;
 		bool c = false;
 		for (int j = 0; j < checked.size(); ++j)
 		{
 			if (ob->GetComponent<Collider>() == checked[j]) c = true;
 		}
+		for (int j = 0; j < ignore.size(); ++j)
+		{
+			if (ignore[j] == ob)
+				c = true;
+		}
 		if (c) continue;
-
 		///////////////////////////////////////Sphere vs AABB///////////////////////////////////////
 		BoxCollider* box = ob->GetComponent<BoxCollider>();
-		if (box)
+		if (box && !box->IgnoreSphere())
 		{
 			if (box->isTrigger() || isTrigger())
 			{
@@ -112,7 +116,7 @@ void SphereCollider::FixedUpdate(float _dt)
 		}
 		///////////////////////////////////////Sphere vs Capsule///////////////////////////////////////
 		CapsuleCollider* capsule = ob->GetComponent<CapsuleCollider>();
-		if (capsule)
+		if (capsule && !capsule->IgnoreSphere())
 		{
 			if (capsule->isTrigger() || isTrigger())
 			{
@@ -154,7 +158,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					if (op && oop)
 					{
 						op->HandlePhysics(tgt, vel, s.m_Center - offset, true, n);
-						oop->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), ob->GetTransform()->GetPosition(), false, n.negate(),true,true);
+						oop->HandlePhysics(ob->GetTransform(), ob->GetTransform()->GetVelocity(), c.m_Segment.m_Start - capsule->GetCapsule().m_Segment.m_Start, false, n.negate(),true,true);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);
@@ -185,7 +189,7 @@ void SphereCollider::FixedUpdate(float _dt)
 		}
 		///////////////////////////////////////Sphere vs Sphere///////////////////////////////////////
 		SphereCollider* sphere = ob->GetComponent<SphereCollider>();
-		if (sphere)
+		if (sphere && !sphere->IgnoreSphere())
 		{
 			if (sphere->isEnabled())
 			{

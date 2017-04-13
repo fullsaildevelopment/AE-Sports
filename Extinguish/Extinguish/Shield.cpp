@@ -28,6 +28,7 @@ Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResource
 	collider = new SphereCollider(5.0f, shieldBubble, false);
 	shieldBubble->AddSphereCollider(collider);
 	collider->SetOffset({ 0, 1.1f, 0 });
+	collider->IgnoreHex(true);
 	collider->SetEnabled(false);
 	Physics* physics = new Physics();
 	shieldBubble->AddComponent(physics);
@@ -42,6 +43,7 @@ void Shield::Activate()
 
 	//attach shield buble to player
 	shieldBubble->GetTransform()->SetParent(GetPlayer()->GetGameObject()->GetTransform());
+	collider->IgnoreGameObject(GetPlayer()->GetGameObject());
 	collider->SetEnabled(true);
 	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(true);
 	shieldBubble->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -56,6 +58,7 @@ void Shield::Deactivate()
 	//detach shield bubble from player
 	GetPlayer()->GetGameObject()->GetTransform()->RemoveChild(GetGameObject()->GetTransform());
 	collider->SetEnabled(false);
+	collider->UnIgnoreGameObject(GetPlayer()->GetGameObject());
 	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(false);
 }
 

@@ -126,7 +126,7 @@ float4 main(PS_BasicInput input) : SV_TARGET
 	}
 
 	float4 finalColor = diffuseColor * ((ambientColor + directionalColor + directionalSpecColor + pointColor + pointSpecColor) * black);
-	finalColor += emissiveColor;
+	finalColor = emissiveColor + finalColor * (1 - emissiveColor.a);
 	finalColor.a = diffuseColor.a + emissiveColor.a;
 	return saturate(finalColor);
 }

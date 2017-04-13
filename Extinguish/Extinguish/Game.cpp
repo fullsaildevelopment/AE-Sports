@@ -75,7 +75,8 @@ void Game::Init(DeviceResources* _devResources, InputManager* inputManager)
 	devResources = _devResources;
 
 	//set seed
-	srand((unsigned int)time(nullptr));
+	seed = (unsigned int)time(nullptr);
+	srand(seed);
 
 	//register to event dispatcher
 	EventDispatcher::GetSingleton()->RegisterHandler(this, "Game");
@@ -995,7 +996,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
 		crosse->AddComponent(crosseRenderer);
-		crosseRenderer->Init("Crosse", "Crosse", "Static", "", "", projection, devResources, false);
+		crosseRenderer->Init("Crosse", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 		if (i <= 4)
 			crosseRenderer->SetEmissiveColor({ 1,0,0,0 });
 		else
@@ -1012,18 +1013,18 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* rightWall = new GameObject();
 	rightWall->Init("RightWall");
 	basic->AddGameObject(rightWall);
-	rightWall->InitTransform(identity, { (float)col / 2 - 7.5f, 0, 2 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWall->InitTransform(identity, { (float)col / 2 - 3.5f, 0, 2 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* WallRenderer = new Renderer();
 	rightWall->AddComponent(WallRenderer);
 	WallRenderer->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	WallRenderer->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* Wallboxcol = new BoxCollider(rightWall, false, { 10.5f,300,300 }, { -0.5f,-300,-300 });
+	BoxCollider* Wallboxcol = new BoxCollider(rightWall, false, { 15.5f,300,300 }, { -5.5f,-300,-300 });
 	rightWall->AddBoxCollider(Wallboxcol);
 
 	GameObject* rightWallCol = new GameObject();
 	rightWallCol->Init("RightWallCol");
 	basic->AddGameObject(rightWallCol);
-	rightWallCol->InitTransform(identity, { (float)col / 2 - 7.5f, -0.3f, 14.55f }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWallCol->InitTransform(identity, { (float)col / 2 - 3.5f, -0.3f, 14.55f }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* rightWallColRenderer = new Renderer();
 	rightWallCol->AddComponent(rightWallColRenderer);
 	rightWallColRenderer->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1032,7 +1033,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* rightWallCol2 = new GameObject();
 	rightWallCol2->Init("RightWallCol2");
 	basic->AddGameObject(rightWallCol2);
-	rightWallCol2->InitTransform(identity, { (float)col / 2 - 7.5f, -0.3f, -10.55f }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWallCol2->InitTransform(identity, { (float)col / 2 - 3.5f, -0.3f, -10.55f }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* rightWallColRenderer2 = new Renderer();
 	rightWallCol2->AddComponent(rightWallColRenderer2);
 	rightWallColRenderer2->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1041,7 +1042,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* rightWall2 = new GameObject();
 	rightWall2->Init("RightWall");
 	basic->AddGameObject(rightWall2);
-	rightWall2->InitTransform(identity, { (float)col / 2 - 7.5009f, 0, 27 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWall2->InitTransform(identity, { (float)col / 2 - 3.5009f, 0, 27 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* rWallRenderer2 = new Renderer();
 	rightWall2->AddComponent(rWallRenderer2);
 	rWallRenderer2->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1050,7 +1051,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* rightWall3 = new GameObject();
 	rightWall3->Init("RightWall3");
 	basic->AddGameObject(rightWall3);
-	rightWall3->InitTransform(identity, { (float)col / 2 - 7.5008f, 0, -23 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWall3->InitTransform(identity, { (float)col / 2 - 3.5008f, 0, -23 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* rWallRenderer3 = new Renderer();
 	rightWall3->AddComponent(rWallRenderer3);
 	rWallRenderer3->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1059,7 +1060,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* rightWall4 = new GameObject();
 	rightWall4->Init("RightWall4");
 	basic->AddGameObject(rightWall4);
-	rightWall4->InitTransform(identity, { (float)col / 2 - 7.5009f, 0, -48 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWall4->InitTransform(identity, { (float)col / 2 - 3.5009f, 0, -48 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* rWallRenderer4 = new Renderer();
 	rightWall4->AddComponent(rWallRenderer4);
 	rWallRenderer4->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1068,7 +1069,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* rightWall5 = new GameObject();
 	rightWall5->Init("RightWall");
 	basic->AddGameObject(rightWall5);
-	rightWall5->InitTransform(identity, { (float)col / 2 - 7.5008f, 0, 51 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	rightWall5->InitTransform(identity, { (float)col / 2 - 3.5008f, 0, 51 }, { 0, 3.14159f * -0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* rWallRenderer5 = new Renderer();
 	rightWall5->AddComponent(rWallRenderer5);
 	rWallRenderer5->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1079,18 +1080,18 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* leftWall = new GameObject();
 	leftWall->Init("LeftWall");
 	basic->AddGameObject(leftWall);
-	leftWall->InitTransform(identity, { (float)-col - col * 0.5f, 0, 2 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWall->InitTransform(identity, { (float)-col - col * 0.55f, 0, 2 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* lWallRenderer = new Renderer();
 	leftWall->AddComponent(lWallRenderer);
 	lWallRenderer->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	lWallRenderer->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* lWallboxcol = new BoxCollider(leftWall, false, { 0.5f,300,300 }, { -10.5f,-300,-300 });
+	BoxCollider* lWallboxcol = new BoxCollider(leftWall, false, { 4, 300, 300 }, { -10.5f, -300, -300 });
 	leftWall->AddBoxCollider(lWallboxcol);
 
 	GameObject* leftWallCol = new GameObject();
 	leftWallCol->Init("LeftWallCol");
 	basic->AddGameObject(leftWallCol);
-	leftWallCol->InitTransform(identity, { (float)-col - col * 0.5f, -0.3f, 14.55f }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWallCol->InitTransform(identity, { (float)-col - col * 0.55f, -0.3f, 14.55f }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* leftWallColRenderer = new Renderer();
 	leftWallCol->AddComponent(leftWallColRenderer);
 	leftWallColRenderer->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1099,7 +1100,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* leftWallCol2 = new GameObject();
 	leftWallCol2->Init("leftWallCol2");
 	basic->AddGameObject(leftWallCol2);
-	leftWallCol2->InitTransform(identity, { (float)-col - col * 0.5f, -0.3f, -10.55f }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWallCol2->InitTransform(identity, { (float)-col - col * 0.55f, -0.3f, -10.55f }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* leftWallColRenderer2 = new Renderer();
 	leftWallCol2->AddComponent(leftWallColRenderer2);
 	leftWallColRenderer2->Init("ArenaPillar", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1108,7 +1109,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* leftWall2 = new GameObject();
 	leftWall2->Init("LeftWall2");
 	basic->AddGameObject(leftWall2);
-	leftWall2->InitTransform(identity, { (float)-col - col * 0.5009f, 0, 27 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWall2->InitTransform(identity, { (float)-col - col * 0.55009f, 0, 27 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* lWallRenderer2 = new Renderer();
 	leftWall2->AddComponent(lWallRenderer2);
 	lWallRenderer2->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1117,7 +1118,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* leftWall3 = new GameObject();
 	leftWall3->Init("LeftWall3");
 	basic->AddGameObject(leftWall3);
-	leftWall3->InitTransform(identity, { (float)-col - col * 0.5008f, 0, -23 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWall3->InitTransform(identity, { (float)-col - col * 0.55008f, 0, -23 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* lWallRenderer3 = new Renderer();
 	leftWall3->AddComponent(lWallRenderer3);
 	lWallRenderer3->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1126,7 +1127,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* leftWall4 = new GameObject();
 	leftWall4->Init("LeftWall4");
 	basic->AddGameObject(leftWall4);
-	leftWall4->InitTransform(identity, { (float)-col - col * 0.5008f, 0, -48 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWall4->InitTransform(identity, { (float)-col - col * 0.55008f, 0, -48 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* lWallRenderer4 = new Renderer();
 	leftWall4->AddComponent(lWallRenderer4);
 	lWallRenderer4->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -1135,7 +1136,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	GameObject* leftWall5 = new GameObject();
 	leftWall5->Init("LeftWall5");
 	basic->AddGameObject(leftWall5);
-	leftWall5->InitTransform(identity, { (float)-col - col * 0.5009f, 0, 51 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
+	leftWall5->InitTransform(identity, { (float)-col - col * 0.55009f, 0, 51 }, { 0, 3.14159f * 0.5f, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 	Renderer* lWallRenderer5 = new Renderer();
 	leftWall5->AddComponent(lWallRenderer5);
 	lWallRenderer5->Init("ArenaWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
@@ -2355,7 +2356,14 @@ void Game::UpdateClientObjects()
 					{
 						Shield* shield = gameObject->GetComponent<Shield>();
 						shield->SetID(client.getRemovedPlayerID(i));
+
 						// set shield render stuff here
+						if (client.getRemovedPlayerID(i))
+						{
+							PlayerController* player = gameObject->FindGameObject("Mage" + to_string(client.getRemovedPlayerID(i)))->GetComponent<PlayerController>();
+							shield->SetPlayer(player);
+							shield->Activate();
+						}
 					}
 
 
@@ -2619,5 +2627,6 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		Scoreboard * scoreBoard2 = scoreBoard->GetComponent<Scoreboard>();
 		toggle = !scoreBoard2->isActive();
 		scoreBoard2->Toggle(toggle);
+		scoreBoard2->SetEnabled(toggle);
 	}
 }

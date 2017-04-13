@@ -20,6 +20,34 @@ bool Collider::isColliding(Collider* c)
 	return false;
 }
 
+void Collider::IgnoreGameObject(GameObject* object)
+{
+	bool placed = false;
+	for (int i = 0; i < ignore.size(); ++i)
+	{
+		if (ignore[i] == nullptr)
+		{
+			ignore[i] = object;
+			placed = true;
+		}
+	}
+	if (!placed)
+	{
+		size_t size = ignore.size();
+		ignore.resize(size + 4);
+		ignore[size] = object;
+	}
+}
+
+void Collider::UnIgnoreGameObject(GameObject* object)
+{
+	for (int i = 0; i < ignore.size(); ++i)
+	{
+		if (ignore[i] == object)
+			ignore[i] = nullptr;
+	}
+}
+
 
 //void OnCollisionEnter(Collider* c)
 //{
