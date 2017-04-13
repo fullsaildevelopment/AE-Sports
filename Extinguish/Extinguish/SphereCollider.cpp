@@ -51,7 +51,7 @@ void SphereCollider::FixedUpdate(float _dt)
 		if (c) continue;
 		///////////////////////////////////////Sphere vs AABB///////////////////////////////////////
 		BoxCollider* box = ob->GetComponent<BoxCollider>();
-		if (box)
+		if (box && !box->IgnoreSphere())
 		{
 			if (box->isTrigger() || isTrigger())
 			{
@@ -116,7 +116,7 @@ void SphereCollider::FixedUpdate(float _dt)
 		}
 		///////////////////////////////////////Sphere vs Capsule///////////////////////////////////////
 		CapsuleCollider* capsule = ob->GetComponent<CapsuleCollider>();
-		if (capsule)
+		if (capsule && !capsule->IgnoreSphere())
 		{
 			if (capsule->isTrigger() || isTrigger())
 			{
@@ -189,7 +189,7 @@ void SphereCollider::FixedUpdate(float _dt)
 		}
 		///////////////////////////////////////Sphere vs Sphere///////////////////////////////////////
 		SphereCollider* sphere = ob->GetComponent<SphereCollider>();
-		if (sphere)
+		if (sphere && !sphere->IgnoreSphere())
 		{
 			if (sphere->isEnabled())
 			{
