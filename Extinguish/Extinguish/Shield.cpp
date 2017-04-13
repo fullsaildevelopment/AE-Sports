@@ -6,6 +6,8 @@
 #include "ShieldRender.h"
 #include "DeviceResources.h"
 #include "Physics.h"
+#include "SoundEngine.h"
+#include "SoundEvent.h"
 
 //structors
 Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResources)
@@ -47,6 +49,12 @@ void Shield::Activate()
 	collider->SetEnabled(true);
 	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(true);
 	shieldBubble->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
+
+	//play shield bubble efect
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::PLAY_FORCEFIELD, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
 }
 
 void Shield::Deactivate()
@@ -60,6 +68,12 @@ void Shield::Deactivate()
 	collider->SetEnabled(false);
 	collider->UnIgnoreGameObject(GetPlayer()->GetGameObject());
 	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(false);
+
+	//stop shield bubble sound effect
+	SoundEvent* soundEvent = new SoundEvent();
+	soundEvent->Init(AK::EVENTS::STOP_FORCEFIELD, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+	delete soundEvent;
 }
 
 void Shield::Enable()

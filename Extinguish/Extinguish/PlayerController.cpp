@@ -471,6 +471,15 @@ void PlayerController::Jump()
 		{
 			animator->SetTrigger("Run");
 		}
+
+		//play super jump efect
+		if (jumpMultiplier > 1.0f)
+		{
+			SoundEvent* soundEvent = new SoundEvent();
+			soundEvent->Init(AK::EVENTS::PLAY_SUPER_JUMP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+			EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+			delete soundEvent;
+		}
 	}
 }
 
@@ -527,6 +536,12 @@ void PlayerController::Attack()
 
 					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 				}
+
+				//play attack sound effect
+				SoundEvent* soundEvent = new SoundEvent();
+				soundEvent->Init(AK::EVENTS::PLAY_ATTACK, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+				EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+				delete soundEvent;
 			}
 		}
 	}
