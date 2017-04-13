@@ -42,6 +42,7 @@ void Shield::Activate()
 
 	//attach shield buble to player
 	shieldBubble->GetTransform()->SetParent(GetPlayer()->GetGameObject()->GetTransform());
+	collider->IgnoreGameObject(GetPlayer()->GetGameObject());
 	collider->SetEnabled(true);
 	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(true);
 	shieldBubble->GetTransform()->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -56,6 +57,7 @@ void Shield::Deactivate()
 	//detach shield bubble from player
 	GetPlayer()->GetGameObject()->GetTransform()->RemoveChild(GetGameObject()->GetTransform());
 	collider->SetEnabled(false);
+	collider->UnIgnoreGameObject(GetPlayer()->GetGameObject());
 	shieldBubble->GetComponent<ShieldRender>()->SetEnabled(false);
 }
 

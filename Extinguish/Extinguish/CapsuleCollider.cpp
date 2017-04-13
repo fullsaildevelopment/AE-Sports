@@ -76,6 +76,11 @@ void CapsuleCollider::FixedUpdate(float _dt)
 			if (ob->GetComponent<Collider>() == checked[j])
 				c = true;
 		}
+		for (int j = 0; j < ignore.size(); ++j)
+		{
+			if (ignore[j] == ob)
+				c = true;
+		}
 		if (c) continue;
 
 		///////////////////////////////////////Capsule vs AABB///////////////////////////////////////

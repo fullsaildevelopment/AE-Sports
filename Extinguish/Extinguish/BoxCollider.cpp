@@ -53,6 +53,11 @@ void BoxCollider::FixedUpdate(float _dt)
 		{
 			if (objects[i]->GetComponent<Collider>() == checked[j]) c = true;
 		}
+		for (int j = 0; j < ignore.size(); ++j)
+		{
+			if (ignore[j] == objects[i])
+				c = true;
+		}
 		if (c) continue;
 		///////////////////////////////////////AABB vs AABB///////////////////////////////////////
 		BoxCollider* box = objects[i]->GetComponent<BoxCollider>();

@@ -1011,7 +1011,7 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 	return float3(0, 0, 0);
 }
 
-float3 CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
+float3 CapsuleToSphereReact(Capsule& capsule, Sphere& sphere, float3& vel)
 {
 	vec3f SE = capsule.m_Segment.m_End - capsule.m_Segment.m_Start;
 	float ratio = dot_product(SE, sphere.m_Center - capsule.m_Segment.m_Start) / dot_product(SE, SE);
@@ -1021,6 +1021,10 @@ float3 CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
 		return float3().make_zero();
 	float3 cs = sphere.m_Center - SE;
 	cs = cs.normalize();
+	float3 diff = cs.negate() * (sphere.m_Radius + capsule.m_Radius);
+	diff = sphere.m_Center + diff;
+	diff = diff - SE;
+	capsule.m_Segment.m_Start = capsule.m_Segment.m_Start + diff;
 	return cs;
 }
 

@@ -7,7 +7,7 @@ ShieldRender::ShieldRender(GameObject* o) : Component(o)
 
 }
 
-void ShieldRender::Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate1, float rate2)
+void ShieldRender::Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources* deviceResources, float rate1, float rate2, std::string noiseMap1, std::string noiseMap2)
 {
 	indexBuffer = ResourceManager::GetSingleton()->GetIndexBuffer(mesh);
 	vertexBuffer = ResourceManager::GetSingleton()->GetVertexBuffer(mesh);
@@ -16,8 +16,8 @@ void ShieldRender::Init(std::string mesh, XMFLOAT4X4 projection, DeviceResources
 	vertexShader = ResourceManager::GetSingleton()->GetVertexShader("ShieldBubble");
 	diffuseSRV = ResourceManager::GetSingleton()->GetShaderResourceView(mesh);
 
-	Noisemap1SRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_" + mesh);
-	Noisemap2SRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_" + mesh);
+	Noisemap1SRV = ResourceManager::GetSingleton()->GetShaderResourceView("NM_" + noiseMap1);
+	Noisemap2SRV = ResourceManager::GetSingleton()->GetShaderResourceView("Spec_" + noiseMap2);
 
 	vertexStride = ResourceManager::GetSingleton()->GetVertexStride(mesh);
 	numVerts = ResourceManager::GetSingleton()->GetNumVertices(mesh);
