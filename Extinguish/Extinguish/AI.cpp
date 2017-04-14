@@ -9,8 +9,10 @@
 #include "Trigger.h"
 #include "Map.h"
 
-#define     RunSpeed 0.7f //0.475f //10
-#define  AttackSpeed 0.7f //0.475f 
+#define     RunSpeed 10 //0.7f //0.475f //10
+#define  AttackSpeed 10 //0.7f //0.475f 
+
+Map *AI::aiPath = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -355,7 +357,10 @@ void AI::Update(float _dt)
 			// if the ball is too far from the goal
 			else if (dist.magnitude() > 34)
 			{
-				if (RunTo(myGoal, 20.0f))
+				float3 jik = myGoal->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+				float diist = dot_product(jik, jik);
+
+				if (RunTo(myGoal) || diist <= 20.0f)
 				{
 					TurnTo(enemyGoal);
 					Idle();
@@ -423,7 +428,10 @@ void AI::Update(float _dt)
 					if (mGuy)
 					{
 						//hover around Guy
-						if (RunTo(mGuy, 10.0f))
+						float3 jik = mGuy->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+						float dist = dot_product(jik, jik);
+
+						if (RunTo(mGuy) || dist <= 10.0f)
 							Idle();
 					}
 				}
@@ -436,6 +444,18 @@ void AI::Update(float _dt)
 			timer = 5.0f;
 			startTimer = false;
 		}
+	}
+}
+
+void AI::FixedUpdate(float dt)
+{
+	if (pathTarget)
+	{
+		float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + 10);
+		float dist = dot_product(jik, jik);
+
+		if (dist > 3.0f)
+			validPath = false;
 	}
 }
 
@@ -458,9 +478,38 @@ void AI::GetBall()
 	}
 
 	// if im right next to the ball
-	else if (RunTo(ball, 1.0f))
+	else
 	{
-		// running into the ball should pick it up
+		pathTarget = ball;
+
+		if (!validPath)
+		{
+			myNode = aiPath->FindClosest(me->GetTransform()->GetPosition());
+			tarNode = aiPath->FindBallNode(ball->GetTransform()->GetWorldPosition());
+			path = aiPath->CreatePath(myNode, tarNode);
+			pathIndex = path.size() - 1;
+			validPath = true;
+		}
+
+		if (path.size() > 0)
+		{
+			float3 jik = (*path[pathIndex]->pos + 10) - me->GetTransform()->GetPosition();
+			float Diist = dot_product(jik, jik);
+			float3 v = jik.normalize();
+			v.y = 0;
+
+			if (path[pathIndex] == tarNode) validPath = false;
+			if (Diist < 1.25f)
+			{
+				--pathIndex;
+				TurnTo(*path[pathIndex]->pos);
+			}
+
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+				anim->SetTrigger("Run");
+
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
+		}
 	}
 }
 
@@ -566,13 +615,13 @@ void AI::Paranoia()
 	}
 }
 
-bool AI::RunTo(GameObject *target, float dist)
+bool AI::RunTo(GameObject *target)
 {
 	if (canMove)
 	{
 		if (target)
 		{
-			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
+			/*if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
 				return true;
 
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
@@ -582,20 +631,42 @@ bool AI::RunTo(GameObject *target, float dist)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);*/
+			pathTarget = target;
+
+			if (!validPath)
+			{
+				myNode = aiPath->FindClosest(me->GetTransform()->GetPosition());
+				tarNode = aiPath->FindClosest(target->GetTransform()->GetPosition());
+				path = aiPath->CreatePath(myNode, tarNode);
+				pathIndex = path.size() - 1;
+				validPath = true;
+			}
+			
+			if (path.size() > 0)
+			{
+				float3 jik = (*path[pathIndex]->pos + 10) - me->GetTransform()->GetPosition();
+				float Diist = dot_product(jik, jik);
+				float3 v = jik.normalize();
+				v.y = 0;
+
+				if (path[pathIndex] == tarNode) return true;
+				if (Diist < 1.25f)
+				{
+					--pathIndex;
+					TurnTo(*path[pathIndex]->pos);
+				}
+
+				if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+					anim->SetTrigger("Run");
+
+				me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
+			}
 		}
 	}
 
 	return false;
 
-	/*std::vector<Map::Node *> path;
-
-	
-
-	for (int i = 0; i < 2; ++i)
-	{
-
-	}*/
 }
 
 bool AI::RunTo(float3 target, float dist)
@@ -649,8 +720,12 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	if (RunTo(enemyGoal, 28.0f))
+	float3 jik = enemyGoal->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+	float dist = dot_product(jik, jik);
+
+	if (RunTo(enemyGoal) || dist <= 28.0f)
 	{
+		TurnTo(enemyGoal);
 		camera->RotateX(-0.98f);
 		me->GetTransform()->AddVelocity(float3(0, 8, 0));
 		crosse->Throw();

@@ -172,5 +172,8 @@ std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 		}
 	}
 
+	que.clear();
+	visited.clear();
+
 	return path;
 }
