@@ -169,6 +169,8 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		UIRenderer* UI;
 
 		Renderer* R;
+		ShieldRender* SR;
+		TrailRender* TR;
 
 		D2D1_SIZE_F rect;
 		rect.height = h;
@@ -181,6 +183,14 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 			R = go[j]->GetComponent<Renderer>();
 			if (R)
 				R->SetProjection(projection);
+
+			SR = go[j]->GetComponent<ShieldRender>();
+			if (SR)
+				SR->SetProjection(projection);
+
+			TR = go[j]->GetComponent<TrailRender>();
+			if (TR)
+				TR->SetProjection(projection);
 
 			if (go[j]->GetName() == "PowerUpManager")
 			{
@@ -1216,7 +1226,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	goal->AddComponent(GoalRenderer);
 	GoalRenderer->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	GoalRenderer->SetEmissiveColor(float4(1, 0, 0, 1));
-	BoxCollider* Goal1col = new BoxCollider(goal, true, { 7,4,3 }, { -7,-4,-3 });
+	BoxCollider* Goal1col = new BoxCollider(goal, true, { 7,6,3 }, { -7,-6,-3 });
 	goal->AddBoxCollider(Goal1col);
 	Goal* g1 = new Goal(goal);
 	goal->AddComponent(g1);
@@ -1230,7 +1240,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	goal2->AddComponent(GoalRenderer2);
 	GoalRenderer2->Init("ArenaGoal", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	GoalRenderer2->SetEmissiveColor(float4(0, 0, 1, 1));
-	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 7,4,3 }, { -7,-4,-3 });
+	BoxCollider* Goal2col = new BoxCollider(goal2, true, { 7,6,3 }, { -7,-6,-3 });
 	goal2->AddBoxCollider(Goal2col);
 	Goal* g2 = new Goal(goal2);
 	goal2->AddComponent(g2);
