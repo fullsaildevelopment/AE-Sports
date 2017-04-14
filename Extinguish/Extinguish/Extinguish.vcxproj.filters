@@ -240,6 +240,9 @@
     <ClCompile Include="TrailRender.cpp">
       <Filter>Components\Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="ProfileMenu.cpp">
+      <Filter>Components\Scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="XTime.h">
@@ -438,6 +441,9 @@
       <Filter>Components\Scripts\PowerUps</Filter>
     </ClInclude>
     <ClInclude Include="TrailRender.h">
+      <Filter>Components\Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="ProfileMenu.h">
       <Filter>Components\Scripts</Filter>
     </ClInclude>
   </ItemGroup>
