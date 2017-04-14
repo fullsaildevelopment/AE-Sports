@@ -257,6 +257,10 @@ int  Server::update()
 		sendPackets();
 	}*/
 	npDec = false;
+
+	//if (shutdown)
+	//	result = 0;
+
 	return result;
 }
 
@@ -282,17 +286,18 @@ bool Server::Shutdown()
 	sendMessage("", ID_SERVER_CLOSURE, true);
 	if (numPlayers == 0)
 	{
-		//peer->CloseConnection(peer->GetMyGUID(), false, '\000', IMMEDIATE_PRIORITY);
+		peer->CloseConnection(peer->GetMyGUID(), false, '\000', IMMEDIATE_PRIORITY);
 		peer->Shutdown(100);
 		DataStructures::List<RakNetSocket2*> socs;
 		peer->GetSockets(socs);
 		peer->ReleaseSockets(socs);
-		//closesocket(serverSocket);
+		closesocket(serverSocket);
 		shutdown = true;
 		return true;
 	}
 
-	delete message;
+	if (message)
+		delete message;
 
 	return false;
 }
