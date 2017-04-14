@@ -31,11 +31,11 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
 		theButton->showFPS(false);
-		theButton->setPositionMultipliers(0.5f, 0.15f + (0.15f * (float)i));
+		theButton->setPositionMultipliers(0.5f, 0.18f + (0.15f * (float)i));
 		text->AddComponent(theButton);
 
 		UIRenderer * tRender = new UIRenderer();
-		tRender->Init(true, 35.0f, devResources, theButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 0.0f));
+		tRender->Init(true, 35.0f, devResources, theButton, L"Consolas", D2D1::ColorF(0.9f, 0.9f, 0.9f, 0.0f));
 		text->AddComponent(tRender);
 		tRender->MakeRTSize();
 		theButton->MakeRect();
@@ -54,11 +54,11 @@ void Credits::Init(DeviceResources * devResources)
 		theButton->SetGameObject(text);
 		theButton->setTimer(true);
 		theButton->showFPS(false);
-		theButton->setPositionMultipliers(0.5f, 0.10f + (0.15f * (float)i));
+		theButton->setPositionMultipliers(0.5f, 0.13f + (0.15f * (float)i));
 		text->AddComponent(theButton);
 
 		UIRenderer * tRender = new UIRenderer();
-		tRender->Init(true, 45.0f, devResources, theButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 0.0f));
+		tRender->Init(true, 45.0f, devResources, theButton, L"Consolas", D2D1::ColorF(0.9f, 0.9f, 0.9f, 0.0f));
 		text->AddComponent(tRender);
 		tRender->MakeRTSize();
 		theButton->MakeRect();
@@ -91,12 +91,14 @@ void Credits::Update(float _dt)
 	{
 		if (nextName == 5)
 			textRenderers[0]->setOpacity(textRenderers[0]->getOpacity() + _dt);
+		if (nextName == 11)
+			textRenderers[2]->setOpacity(textRenderers[2]->getOpacity() + _dt);
 		fadeInOut += _dt;
 		if (fadeInOut >= 1.0f)
 		{
 			fadeInOut = 1.0f;
 			waitForIt += _dt;
-			if (waitForIt >= 4.5f)
+			if ((waitForIt >= 4.5f && nextName == 1) || (waitForIt > 6.5f && nextName != 1))
 			{
 				waitForIt = 0.0f;
 				fadeIn = false;
@@ -106,7 +108,7 @@ void Credits::Update(float _dt)
 		{
 			for (unsigned int i = 0; i < 10; ++i)
 			{
-				textRenderers[i]->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, fadeInOut));
+				textRenderers[i]->SetColor(D2D1::ColorF(0.9f, 0.9f, 0.9f, fadeInOut));
 				textRenderers[i]->Update(_dt);
 			}
 		}
@@ -115,6 +117,9 @@ void Credits::Update(float _dt)
 	{
 		if (nextName == 5)
 			textRenderers[0]->setOpacity(textRenderers[0]->getOpacity() - _dt);
+		if (nextName == 11)
+			textRenderers[2]->setOpacity(textRenderers[2]->getOpacity() - _dt);
+
 		fadeInOut -= _dt;
 		if (fadeInOut <= 0.0f)
 		{
@@ -127,7 +132,7 @@ void Credits::Update(float _dt)
 		{
 			for (unsigned int i = 0; i < 10; ++i)
 			{
-				textRenderers[i]->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, fadeInOut));
+				textRenderers[i]->SetColor(D2D1::ColorF(0.9f, 0.9f, 0.9f, fadeInOut));
 				textRenderers[i]->Update(_dt);
 			}
 		}
@@ -195,7 +200,7 @@ void Credits::SetNames()
 
 void Credits::NextSet()
 {
-	if (nextName < names.size() - 1)
+	if (nextName < names.size() + 1)
 	{
 		if (nextName == 0)
 		{
@@ -219,7 +224,7 @@ void Credits::NextSet()
 			textRenderers[0]->DecodeBitmap(L"../Assets/UI/Logo.png");
 
 		}
-		else
+		else if (nextName == 5)
 		{
 			// assets
 			textRenderers[0]->RemoveBitmap();
@@ -233,6 +238,18 @@ void Credits::NextSet()
 				theText[i]->setText(names[nextName]);
 			}
 		}
+		else
+		{
+			for (unsigned int i = 0; i < theText.size(); ++i)
+				theText[i]->setText(L"");
+
+			theText[2]->setHeight(315.0f);
+			theText[2]->setWidth(600.0f);
+			theText[2]->MakeRect();
+			textRenderers[2]->DecodeBitmap(L"../Assets/UI/newTitle.png");
+			theText[4]->setText(L"THANK YOU FOR PLAYING");
+			++nextName;
+		}
 	}
 	else
 	{
@@ -245,6 +262,11 @@ void Credits::ReturnToMenu()
 	nextName = 0;
 	fadeInOut = 0.0f;
 	fadeIn = true;
+
+
+	textRenderers[0]->RemoveBitmap();
+
+	textRenderers[3]->RemoveBitmap();
 
 	//stop playing credits song
 	SoundEvent* soundEvent = new SoundEvent();
