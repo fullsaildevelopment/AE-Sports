@@ -1657,8 +1657,8 @@ void Game::CreateMenu(Scene * scene)
 
 void Game::ResetPlayers()
 {
-	const float3 positions[] = { {-22.0f, 0.0f, 1.8f}, {2.0f, 0.0f, -20.0f}, {-20.0f, 0.0f, -30.0f}, {-45.0f, 0.0f, -20.0f}, //red positions
-								{-18.0f, 0.0f, 1.8f}, {-45.0f, 0.0f, 20.0f}, {-20.0f, 0.0f, 30.0f}, {2.0f, 0.0f, 20.0f} }; //blue positions
+	const float3 positions[] = { {-24.0f, 0.0f, 1.8f}, {2.0f, 0.0f, -20.0f}, {-20.0f, 0.0f, -30.0f}, {-45.0f, 0.0f, -20.0f}, //red positions
+								{-16.0f, 0.0f, 1.8f}, {-45.0f, 0.0f, 20.0f}, {-20.0f, 0.0f, 30.0f}, {2.0f, 0.0f, 20.0f} }; //blue positions
 
 	const float rotations[] = { 270.0f, 145.0f, 180.0f, 225.0f,
 							   90.0f, 315.0f, 360.0f, 405.0f };
@@ -1711,8 +1711,10 @@ void Game::ResetPlayers()
 void Game::ResetBall()
 {
 	GameObject* ball = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject("GameBall");
-	ball->GetTransform()->SetPosition({ -20.0f, 15.0f, 1.8f });
+	//ball->GetTransform()->SetPosition({ -20.0f, 15.0f, 1.8f });
+	ball->GetTransform()->SetPosition({ -20.0f, 2.0f, 1.8f });
 	ball->GetTransform()->SetVelocity({ 0,0,0 });
+	ball->GetTransform()->AddVelocity({ 0, 15.0f, 0 });
 	ball->GetComponent<BallController>()->SetHolder(nullptr);
 }
 
