@@ -74,6 +74,32 @@ void UIRenderer::ReInit(float ratio)
 	if (ratio != 1.0f)
 		SetFontSize(getFontSize() * ratio);
 
+	if (theButton)
+	{
+		if (theButton->getText() != L"")
+		{
+
+			if (pTextFormat)
+			{
+
+				HRESULT res = pTextFormat->SetTextAlignment(alignmentText);
+				pTextFormat->SetParagraphAlignment(alignmentParagrah);
+
+				res = pDWriteFactory->CreateTextLayout(
+					theButton->getText().c_str(),
+					theButton->getLength(),
+					pTextFormat.Get(),
+					theButton->getWidth(),
+					theButton->getHeight(),
+					&pTextLayout
+				);
+
+				ZeroMemory(&textMetrics, sizeof(DWRITE_TEXT_METRICS));
+				pTextLayout->GetMetrics(&textMetrics);
+			}
+		}
+	}
+
 }
 
 void UIRenderer::Init(bool _isButton, float fontSize, DeviceResources* deviceResources, Button * button, wstring font, D2D1::ColorF fontColor)
