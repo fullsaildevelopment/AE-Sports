@@ -114,6 +114,7 @@ void Countdown::DoAnimation(int number)
 	{
 		//switch on number to choose right sound
 		SoundEvent* soundEvent = new SoundEvent();
+
 		if (number > 0)
 		{
 			soundEvent->Init(AK::EVENTS::PLAY_BEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
@@ -122,6 +123,7 @@ void Countdown::DoAnimation(int number)
 		{
 			soundEvent->Init(AK::EVENTS::PLAY_FINALBEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 		}
+
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 		delete soundEvent;
 
