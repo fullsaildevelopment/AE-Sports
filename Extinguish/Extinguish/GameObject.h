@@ -81,7 +81,7 @@ public:
 	vector<T*> GetComponents();
 	Component* GetComponent(unsigned int index) { return components[index]; }
 	Transform* GetTransform();
-	std::string GetName();
+	std::string& GetName();
 	std::string GetTag() { return tag; };
 	Scene* GetScene();
 

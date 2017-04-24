@@ -32,7 +32,7 @@ private:
 	float timeSinceThrown = 0;
 
 	//const members
-	const float PLAYER_SPEED_MULTIPLIER = 0.8f;
+	const float PLAYER_SPEED_MULTIPLIER = 0.7f;
 
 public:
 	BallController(GameObject* obj);

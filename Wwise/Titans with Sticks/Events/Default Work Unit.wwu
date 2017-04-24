@@ -278,6 +278,72 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_Attack" ID="{9676972E-4A5E-438A-A525-3E6C3B55F8B3}">
+					<ChildrenList>
+						<Action Name="Play" ID="{75FEAE8C-AE67-401D-A97B-A9648170A734}" ShortID="5484503" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{D1544DA1-F683-4F17-9E9E-6548C1CD1E01}" Global="false">
+									<ObjectRef Name="Attack" ID="{86D6346E-3C69-444F-97EF-D65FA8AF444C}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Forcefield" ID="{9F85DF17-30D7-456D-8139-D420B19FAB2A}">
+					<ChildrenList>
+						<Action Name="Play" ID="{DB8F17B6-4997-4FB7-A22A-C7278113F000}" ShortID="696556510" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{E9D3D84F-6562-45D2-8809-E3506C018563}" Global="false">
+									<ObjectRef Name="Forcefield" ID="{9870420A-8C43-44B5-A3A5-BE00F627931F}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Stop_Forcefield" ID="{0DCB1A48-3A64-473A-A78E-233877CC6050}">
+					<ChildrenList>
+						<Action Name="Stop" ID="{01C647AC-B327-4600-A91D-A769AEBF0C83}" ShortID="588245809" Type="Stop" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{51099AA1-F307-48B6-B1AA-F3122126C0EC}" Global="false">
+									<ObjectRef Name="Forcefield" ID="{9870420A-8C43-44B5-A3A5-BE00F627931F}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Super_Jump" ID="{3C2DC19A-7850-49D6-A272-994C2663134E}">
+					<ChildrenList>
+						<Action Name="Play" ID="{34EC3382-AA6B-408A-B3F7-6537B7FF342A}" ShortID="173951147" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{0A3DB8F0-E51E-49EF-B61F-5FA172147C02}" Global="false">
+									<ObjectRef Name="Super Jump" ID="{B77DB88D-BC1C-4607-BA5F-E75A8C87122B}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Button_Hover" ID="{F40E61B3-9D60-4B3F-A05B-8E6BBB746AD1}">
+					<ChildrenList>
+						<Action Name="Play" ID="{B64A3B69-85A8-431C-9C59-CFF2105C69E3}" ShortID="97692298" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{F0AF8FB2-94A0-4F50-BC1F-330788DE3782}" Global="false">
+									<ObjectRef Name="Button Hover" ID="{8BBCE260-8F8C-4910-B32C-D1B87D9161F9}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Button_Click" ID="{C62FFDB6-260C-499B-A568-64357BB10DDC}">
+					<ChildrenList>
+						<Action Name="Play" ID="{1FCC5CEE-5A45-4D5B-A6F2-C62BEE84F315}" ShortID="662180248" Type="Play" Scope="One" Global="false">
+							<ElementList>
+								<Element ID="{DDA2A113-9DEE-4E7D-B9C5-A13694E53BAE}" Global="false">
+									<ObjectRef Name="Button Click" ID="{8109B4F1-ED20-40B2-9D8F-E9EB7167105F}" WorkUnitID="{07306A2B-ED18-4D8F-B847-011299960EA4}"/>
+								</Element>
+							</ElementList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

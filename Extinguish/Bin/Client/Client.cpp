@@ -26,7 +26,6 @@ Client::Client()
 
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		pUp.positions[i] = { 0,0,0 };
 		pUp.elapsedTime[i] = 1.0f;
 	}
 
@@ -255,18 +254,6 @@ int Client::run()
 			scored = true;
 			break;
 		}
-		case ID_SPAWN_POWERUP:
-		{
-			receiveSPU();
-			spowerup = true;
-			break;
-		}
-		case ID_REMOVE_POWERUP:
-		{
-			receiveRPU();
-			rpowerup = true;
-			break;
-		}
 		case ID_POWERUP_TIME:
 		{
 			receiveEPU();
@@ -465,7 +452,6 @@ void Client::receivePackets()
 	{
 		BitStream bIn(packet->data, packet->length, false);
 		bIn.IgnoreBytes(sizeof(MessageID));
-		//bIn.Read(clientState->timeStamp);
 
 		bIn.Read(objects);
 
@@ -477,10 +463,7 @@ void Client::receivePackets()
 		for (unsigned int i = 0; i < (unsigned int)objects; ++i)
 		{
 			bIn.Read(clientStates[0][i].clientID);
-			//		bIn.Read(clientStates[i].nameLength);
-			//		bIn.Read(clientStates[i].animationName, (unsigned int)clientStates[i].nameLength);
 			bIn.Read(clientStates[0][i].hasBall);
-			//	bIn.Read(clientStates[i].world);
 			bIn.Read(clientStates[0][i].position);
 			bIn.Read(clientStates[0][i].rotation);
 			bIn.Read(clientStates[0][i].parentIndex);
@@ -489,6 +472,8 @@ void Client::receivePackets()
 			bIn.Read(clientStates[0][i].transitionIndex);
 			bIn.Read(clientStates[0][i].soundID);
 			bIn.Read(clientStates[0][i].hasSound);
+			bIn.Read(clientStates[0][i].enabled);
+			bIn.Read(clientStates[0][i].extraID);
 		}
 	}
 }
@@ -564,54 +549,6 @@ void Client::sendEmpty(bool empty)
 	bsOut.Write(empty);
 	peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, peer->GetSystemAddressFromIndex(0), false);
 }
-
-void Client::receiveRPU() 
-{
-
-	BitStream bIn(packet->data, packet->length, false);
-	bIn.IgnoreBytes(sizeof(MessageID));
-
-	UINT8 index, id;
-	bIn.Read(id);
-	bIn.Read(index);
-
-	pUp.id = id;
-	pUp.removeindices = index;
-	pUp.isactive[index] = false;
-	pUp.positions[index] = { 0,0,0 };
-}
-
-void Client::receiveSPU() 
-{
-	BitStream bIn(packet->data, packet->length, false);
-	bIn.IgnoreBytes(sizeof(MessageID));
-
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		UINT8 active;
-		XMFLOAT3 pos;
-		//float x, y, z;
-		bIn.Read(active);
-		if (active == 1)
-			bIn.Read(pos);
-
-		if (active == 1)
-			pUp.isactive[i] = true;
-		else
-			pUp.isactive[i] = false;
-
-		if (active == 1)
-			pUp.positions[i] = pos;
-		else
-		{
-			pUp.positions[i] = { 0,0,0 };
-		}
-	}
-
-	float temp = 0.0f;
-}
-
-
 
 void Client::receiveEPU()
 {

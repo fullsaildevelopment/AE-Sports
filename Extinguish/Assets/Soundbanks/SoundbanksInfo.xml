@@ -16,11 +16,14 @@
 			<ShortName>TitansWithSticks</ShortName>
 			<Path>TitansWithSticks.bnk</Path>
 			<IncludedEvents>
+				<Event Id="1519321238" Name="Play_Attack" ObjectPath="\Events\Default Work Unit\Play_Attack"/>
 				<Event Id="3057195544" Name="Play_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Play_Backboard_Bounce_Song"/>
 				<Event Id="3196207338" Name="Play_Background" ObjectPath="\Events\Default Work Unit\Play_Background"/>
 				<Event Id="2063165418" Name="Play_Beep" ObjectPath="\Events\Default Work Unit\Play_Beep"/>
 				<Event Id="4100023137" Name="Play_BGM_Renewed" ObjectPath="\Events\Default Work Unit\Play_BGM_Renewed"/>
 				<Event Id="3698997709" Name="Play_Boing" ObjectPath="\Events\Default Work Unit\Play_Boing"/>
+				<Event Id="1149159311" Name="Play_Button_Click" ObjectPath="\Events\Default Work Unit\Play_Button_Click"/>
+				<Event Id="4021863785" Name="Play_Button_Hover" ObjectPath="\Events\Default Work Unit\Play_Button_Hover"/>
 				<Event Id="3513145267" Name="Play_Catch" ObjectPath="\Events\Default Work Unit\Play_Catch"/>
 				<Event Id="2970769112" Name="Play_Credits" ObjectPath="\Events\Default Work Unit\Play_Credits"/>
 				<Event Id="3908868565" Name="Play_FasterLightning" ObjectPath="\Events\Default Work Unit\Play_FasterLightning"/>
@@ -28,9 +31,11 @@
 				<Event Id="3977125916" Name="Play_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Charge_"/>
 				<Event Id="734068952" Name="Play_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Sprint_"/>
 				<Event Id="1437361150" Name="Play_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Play_Footsteps__Walk____"/>
+				<Event Id="1403021813" Name="Play_Forcefield" ObjectPath="\Events\Default Work Unit\Play_Forcefield"/>
 				<Event Id="3738780720" Name="Play_MainMenu" ObjectPath="\Events\Default Work Unit\Play_MainMenu"/>
 				<Event Id="538781006" Name="Play_RunningPantShort" ObjectPath="\Events\Default Work Unit\Play_RunningPantShort"/>
 				<Event Id="3240049516" Name="Play_Score" ObjectPath="\Events\Default Work Unit\Play_Score"/>
+				<Event Id="2329824122" Name="Play_Super_Jump" ObjectPath="\Events\Default Work Unit\Play_Super_Jump"/>
 				<Event Id="1977644338" Name="Play_Throw" ObjectPath="\Events\Default Work Unit\Play_Throw"/>
 				<Event Id="6317442" Name="Stop_Backboard_Bounce_Song" ObjectPath="\Events\Default Work Unit\Stop_Backboard_Bounce_Song"/>
 				<Event Id="1244803444" Name="Stop_Background" ObjectPath="\Events\Default Work Unit\Stop_Background"/>
@@ -39,6 +44,7 @@
 				<Event Id="2096695406" Name="Stop_Footsteps__Charge_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Charge_"/>
 				<Event Id="2346218314" Name="Stop_Footsteps__Sprint_" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Sprint_"/>
 				<Event Id="2224425572" Name="Stop_Footsteps__Walk____" ObjectPath="\Events\Default Work Unit\Stop_Footsteps__Walk____"/>
+				<Event Id="2470693127" Name="Stop_Forcefield" ObjectPath="\Events\Default Work Unit\Stop_Forcefield"/>
 				<Event Id="890527358" Name="Stop_MainMenu" ObjectPath="\Events\Default Work Unit\Stop_MainMenu"/>
 				<Event Id="1896658016" Name="Stop_RunningPantShort" ObjectPath="\Events\Default Work Unit\Stop_RunningPantShort"/>
 			</IncludedEvents>
@@ -51,9 +57,21 @@
 					<ShortName>Footsteps (Sprint).wav</ShortName>
 					<Path>SFX\Footsteps (Sprint)_4B8CC0C5.wem</Path>
 				</File>
+				<File Id="305114766" Language="SFX">
+					<ShortName>Attack.wav</ShortName>
+					<Path>SFX\Attack_9E69E797.wem</Path>
+				</File>
 				<File Id="313137093" Language="SFX">
 					<ShortName>Audio\Backboard Bounce Song.wav</ShortName>
 					<Path>SFX\Audio\Backboard Bounce Song_9E69E797.wem</Path>
+				</File>
+				<File Id="335513371" Language="SFX">
+					<ShortName>Button Click.wav</ShortName>
+					<Path>SFX\Button Click_9E69E797.wem</Path>
+				</File>
+				<File Id="360398386" Language="SFX">
+					<ShortName>Forcefield.wav</ShortName>
+					<Path>SFX\Forcefield_9E69E797.wem</Path>
 				</File>
 				<File Id="448010096" Language="SFX">
 					<ShortName>Background.wav</ShortName>
@@ -75,6 +93,10 @@
 					<ShortName>Audio\Catch.wav</ShortName>
 					<Path>SFX\Audio\Catch_9E69E797.wem</Path>
 				</File>
+				<File Id="692161060" Language="SFX">
+					<ShortName>Button Hover.wav</ShortName>
+					<Path>SFX\Button Hover_9E69E797.wem</Path>
+				</File>
 				<File Id="694589771" Language="SFX">
 					<ShortName>Score.wav</ShortName>
 					<Path>SFX\Score_9E69E797.wem</Path>
@@ -82,6 +104,10 @@
 				<File Id="743215297" Language="SFX">
 					<ShortName>Footsteps (Charge).wav</ShortName>
 					<Path>SFX\Footsteps (Charge)_4B8CC0C5.wem</Path>
+				</File>
+				<File Id="763514605" Language="SFX">
+					<ShortName>Super Jump.wav</ShortName>
+					<Path>SFX\Super Jump_9E69E797.wem</Path>
 				</File>
 				<File Id="776638270" Language="SFX">
 					<ShortName>Audio\Footsteps (Walk...).wav</ShortName>

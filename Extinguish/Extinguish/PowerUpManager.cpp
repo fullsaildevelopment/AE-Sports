@@ -228,7 +228,10 @@ void PowerUpManager::ServerUpdate(float _dt)
 				powerUps[randPowIndex]->SetSpawnIndex(randPowIndex);
 				powerUps[randPowIndex]->SetPosIndex(randPosIndex);
 
-				//cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
+				//prevent powerup from being used again
+				isSpawned[randPowIndex] = true;
+
+				cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
 
 				//reset timer so it's every *blank* seconds til spawn for this position
 				roundTimer[randPosIndex] = 0.0f;
@@ -238,21 +241,6 @@ void PowerUpManager::ServerUpdate(float _dt)
 
 	if (ResourceManager::GetSingleton()->IsMultiplayer())
 	{
-		// send information to clients
-		// send index & position
-		if (positions.size() > 0) 
-		{
-			for (unsigned int j = 0; j < positions.size(); ++j)
-			{
-				// if it was spawned, update the information for the client
-				Game::server.SetPowerUp(indices[j], positions[j], true);
-
-			}
-
-			Game::server.SendPowerUps();
-			spawned = true;
-
-		}
 
 		for (unsigned int i = 0; i < powerUps.size(); ++i)
 		{
@@ -267,59 +255,6 @@ void PowerUpManager::ServerUpdate(float _dt)
 
 void PowerUpManager::ClientUpdate(float _dt)
 {
-	// grab powerup information from server
-	if (Game::client.SpawnedPowerUps())
-	{
-		int amount = 6;
-
-		for (int i = 0; i < amount; ++i)
-		{
-			bool active;
-			float3 position;
-
-			active = Game::client.getSpawnedPowerUpActive(i);
-			// set that powerup active
-			if (active)
-			{
-				position = Game::client.getSpawnedPowerUpPos(i);
-				powerUps[i]->GetGameObject()->GetTransform()->SetPosition(position);
-				powerUps[i]->Enable();
-
-				printf("SPAWNED: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
-				spawned = true;
-			}
-			else
-			{
-				powerUps[i]->Disable();
-				powerUps[i]->GetGameObject()->GetTransform()->SetPosition({ 0,0,0 });
-			}
-		}
-	}
-
-	if (Game::client.RemovedPowerUp())
-	{
-		int index, id;
-
-		index = Game::client.getRemovedPowerUpIndex();
-		id = Game::client.getRemovedPlayerID();
-
-		// set that powerup inactive
-		powerUps[index]->Disable();
-
-		// set that powerup's player
-		powerUps[index]->SetID(id);
-
-		if (id != Game::GetClientID())
-		{
-			powerUps[index]->SetID(0);
-		}
-		else
-		{
-			printf("CLIENT PICKED UP: %s\n", powerUps[index]->GetName().c_str());
-		}
-	}
-
-
 	// update ui
 	int uiIndex = 0;
 	bool sjump = false, shield = false, magnet = false;
@@ -362,6 +297,17 @@ void PowerUpManager::ClientUpdate(float _dt)
 			{
 				powerUpRenderers[uiIndex]->setOpacity(0.0f);
 			}
+		}
+
+
+		// shield activation
+		if (Game::client.powerUpTime(i) <= 0.0f && powerUps[i]->GetName() == "Shield")
+		{
+			powerUps[i]->Deactivate();
+		}
+	//	else if (Game::client.powerUpTime(i) > 0.0f && powerUps[i]->GetName() == "Shield"
+		{
+			// activation of shield here
 		}
 	}
 }
@@ -442,26 +388,7 @@ void PowerUpManager::HandleEvent(Event* e)
 		posUsed[powerEvent->GetPosIndex()] = false;
 		roundTimer[powerEvent->GetPosIndex()] = 0.0f;
 
-		//cout << powerEvent->GetName() << " picked up" << endl;
-
-		if (ResourceManager::GetSingleton()->IsMultiplayer())
-		{
-			std::string n = powerEvent->GetName();
-			int index = -1;
-			for (unsigned int i = 0; i < powerUps.size(); ++i)
-			{
-				if (n == powerUps[i]->GetGameObject()->GetName())
-				{
-					index = i;
-					break;
-				}
-			}
-			// sent to client to despawn powerup
-			if (index != -1) {
-				Game::server.RemovePowerUp(index, powerEvent->GetClientID());
-				Game::server.SendRemoved();
-			}
-		}
+		cout << powerEvent->GetName() << " picked up" << endl;
 
 		return;
 	}
@@ -469,12 +396,15 @@ void PowerUpManager::HandleEvent(Event* e)
 
 void PowerUpManager::Render()
 {
+	float temp = 0.0f;
+
 	for (unsigned int i = 0; i < powerUpRenderers.size(); ++i)
 	{
 		// to check positions
 		powerUpRenderers[i]->Render();
 	}
 
+#if _DEBUG
 	for (unsigned int i = 0; i < powerUps.size(); ++i)
 	{
 		if (powerUps[i]->isEnabled() && tempcooldown <= 0.0f && !ResourceManager::GetSingleton()->IsServer())
@@ -483,6 +413,7 @@ void PowerUpManager::Render()
 			printf("POSITION CHECK: %s at %f x %f y %f z\n", powerUps[i]->GetName().c_str(), position.x, position.y, position.z);
 		}
 	}
+#endif
 
 	if (tempcooldown < 0.0f)
 		tempcooldown = 2.0f;

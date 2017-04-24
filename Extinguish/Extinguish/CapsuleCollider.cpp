@@ -76,11 +76,16 @@ void CapsuleCollider::FixedUpdate(float _dt)
 			if (ob->GetComponent<Collider>() == checked[j])
 				c = true;
 		}
+		for (int j = 0; j < ignore.size(); ++j)
+		{
+			if (ignore[j] == ob)
+				c = true;
+		}
 		if (c) continue;
 
 		///////////////////////////////////////Capsule vs AABB///////////////////////////////////////
 		BoxCollider* box = ob->GetComponent<BoxCollider>();
-		if (box)
+		if (box && !box->IgnoreCapsule())
 		{
 			if (box->isTrigger() || isTrigger())
 			{
@@ -135,7 +140,7 @@ void CapsuleCollider::FixedUpdate(float _dt)
 		}
 		///////////////////////////////////////Capsule vs Capsule///////////////////////////////////////
 		CapsuleCollider* capsule = ob->GetComponent<CapsuleCollider>();
-		if (capsule)
+		if (capsule && !capsule->IgnoreCapsule())
 		{
 			if (isTrigger() || capsule->isTrigger())
 			{

@@ -67,7 +67,7 @@ void PlayerController::Update(float _dt)
 	this->_dt = _dt;
 	//chargeTimer += _dt;
 	//sprintAgainTimer += dt;
-	if (!DEBUG_GRAPHICS)
+	if (!DEBUG_GRAPHICS && !ResourceManager::GetSingleton()->IsPaused())
 		HandleSprintAndCharge();
 
 	PlayFootstepsSound();
@@ -471,6 +471,15 @@ void PlayerController::Jump()
 		{
 			animator->SetTrigger("Run");
 		}
+
+		//play super jump efect
+		if (jumpMultiplier > 1.0f)
+		{
+			SoundEvent* soundEvent = new SoundEvent();
+			soundEvent->Init(AK::EVENTS::PLAY_SUPER_JUMP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+			EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+			delete soundEvent;
+		}
 	}
 }
 
@@ -527,6 +536,12 @@ void PlayerController::Attack()
 
 					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
 				}
+
+				//play attack sound effect
+				SoundEvent* soundEvent = new SoundEvent();
+				soundEvent->Init(AK::EVENTS::PLAY_ATTACK, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+				EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+				delete soundEvent;
 			}
 		}
 	}
@@ -591,6 +606,11 @@ void PlayerController::HandleGamePad(GamePadEvent* gamePadEvent)
 	if (tracker.a == GamePad::ButtonStateTracker::PRESSED && movement->CanMove())
 	{
 		Jump();
+	}
+
+	if (padState->IsRightStickPressed())
+	{
+		Attack();
 	}
 
 	//this line will only happen once
