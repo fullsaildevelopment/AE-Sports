@@ -162,6 +162,7 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 
 	for (int i = 0; i < scenes.size(); ++i)
 	{
+
 		vector<GameObject*> go = *scenes[i]->GetGameObjects();
 		vector<GameObject*> uiGO = *scenes[i]->GetUIObjects();
 		Button* B;
@@ -200,7 +201,16 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 		for (int j = 0; j < UIsize; ++j)
 		{
 			float ratio = 1.0f;
-			if (uiGO[j]->GetName() != "Credits" || uiGO[j]->GetName() != "Scoreboard") {
+			if (uiGO[j]->GetName() == "Credits")
+			{
+				uiGO[j]->GetComponent<Credits>()->UpdateSize(rect);
+			}
+			if (uiGO[j]->GetName() == "Scoreboard") 
+			{
+				uiGO[j]->GetComponent<Scoreboard>()->UpdateSize(rect);
+			}
+			else 
+			{
 				B = uiGO[j]->GetComponent<Button>();
 				M = uiGO[j]->GetComponent<MeterBar>();
 				UI = uiGO[j]->GetComponent<UIRenderer>();
@@ -222,14 +232,6 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 				{
 					UI->ReInit(ratio);
 				}
-			}
-			else if (uiGO[j]->GetName() == "Scoreboard")
-			{
-				uiGO[j]->GetComponent<Scoreboard>()->UpdateSize(rect);
-			}
-			else
-			{
-				uiGO[j]->GetComponent<Credits>()->UpdateSize(rect);
 			}
 		}
 	}
@@ -805,6 +807,7 @@ void Game::CreateScenes(InputManager* input)
 		Credits * c = new Credits();
 		c->Init(devResources);
 		creds->AddComponent(c);
+		c->MakeHandler();
 
 		scenes.push_back(credits);
 		scenesNamesTable.Insert("Credits");
@@ -2631,3 +2634,5 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 		scoreBoard2->SetEnabled(toggle);
 	}
 }
+
+
