@@ -5,14 +5,19 @@ Event	ID	Name			Wwise Object Path	Notes
 	734068952	Play_Footsteps__Sprint_			\Default Work Unit\Play_Footsteps__Sprint_	
 	873807182	Stop_Credits			\Default Work Unit\Stop_Credits	
 	890527358	Stop_MainMenu			\Default Work Unit\Stop_MainMenu	
+	1149159311	Play_Button_Click			\Default Work Unit\Play_Button_Click	
 	1244803444	Stop_Background			\Default Work Unit\Stop_Background	
+	1403021813	Play_Forcefield			\Default Work Unit\Play_Forcefield	
 	1437361150	Play_Footsteps__Walk____			\Default Work Unit\Play_Footsteps__Walk____	
+	1519321238	Play_Attack			\Default Work Unit\Play_Attack	
 	1896658016	Stop_RunningPantShort			\Default Work Unit\Stop_RunningPantShort	
 	1977644338	Play_Throw			\Default Work Unit\Play_Throw	
 	2063165418	Play_Beep			\Default Work Unit\Play_Beep	
 	2096695406	Stop_Footsteps__Charge_			\Default Work Unit\Stop_Footsteps__Charge_	
 	2224425572	Stop_Footsteps__Walk____			\Default Work Unit\Stop_Footsteps__Walk____	
+	2329824122	Play_Super_Jump			\Default Work Unit\Play_Super_Jump	
 	2346218314	Stop_Footsteps__Sprint_			\Default Work Unit\Stop_Footsteps__Sprint_	
+	2470693127	Stop_Forcefield			\Default Work Unit\Stop_Forcefield	
 	2970769112	Play_Credits			\Default Work Unit\Play_Credits	
 	3057195544	Play_Backboard_Bounce_Song			\Default Work Unit\Play_Backboard_Bounce_Song	
 	3196207338	Play_Background			\Default Work Unit\Play_Background	
@@ -23,19 +28,25 @@ Event	ID	Name			Wwise Object Path	Notes
 	3738780720	Play_MainMenu			\Default Work Unit\Play_MainMenu	
 	3908868565	Play_FasterLightning			\Default Work Unit\Play_FasterLightning	
 	3977125916	Play_Footsteps__Charge_			\Default Work Unit\Play_Footsteps__Charge_	
+	4021863785	Play_Button_Hover			\Default Work Unit\Play_Button_Hover	
 	4100023137	Play_BGM_Renewed			\Default Work Unit\Play_BGM_Renewed	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	7247516	Beep	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Beep_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Beep		63552
 	42589970	Footsteps (Sprint)	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Footsteps (Sprint)_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Footsteps (Sprint)		3803884
+	305114766	Attack	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Attack_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Attack		104512
 	313137093	Backboard Bounce Song	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Backboard Bounce Song_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Backboard Bounce Song		25069632
+	335513371	Button Click	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Button Click_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Button Click		18496
+	360398386	Forcefield	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Forcefield_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Forcefield		3530816
 	448010096	Background	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Background_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Background		10421316
 	503386512	MainMenu	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\MainMenu_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\MainMenu		12701024
 	508058094	Throw	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Throw_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Throw		103828
 	523059377	RunningPantShort	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\RunningPantShort_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\RunningPantShort		598452
 	527908285	Catch	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Catch_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Catch		116476
+	692161060	Button Hover	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Button Hover_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Button Hover		4196
 	694589771	Score	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Score_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Score		160400
 	743215297	Footsteps (Charge)	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Footsteps (Charge)_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Footsteps (Charge)		2852928
+	763514605	Super Jump	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Super Jump_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Super Jump		110432
 	776638270	Footsteps (Walk___)	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Footsteps (Walk...)_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Footsteps (Walk___)		5705792
 	797913072	Boing	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Audio\Boing_9E69E797.wem		\Actor-Mixer Hierarchy\Default Work Unit\Audio\Boing		81140
 	846991583	Credits	E:\Documents\Full Sail\Classes\Month 17\Engine Architecture\AE-Sports\Wwise\Titans with Sticks\.cache\Windows\SFX\Credits_4B8CC0C5.wem		\Actor-Mixer Hierarchy\Default Work Unit\Credits		5644944

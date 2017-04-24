@@ -23,6 +23,8 @@ class Credits : public Component
 	float waitForIt = 0.0f;
 	unsigned int nextName = 0;
 
+	float cooldown = 1.0f;
+
 	void SetNames();
 	void NextSet();
 	void ReturnToMenu();
@@ -36,5 +38,6 @@ public:
 	void HandleEvent(Event* e);
 	void Render();
 	void UpdateSize(D2D1_SIZE_F rect);
+	void MakeHandler();
 };
 

@@ -36,15 +36,6 @@ public:
 	int run()
 	{
 		int result = newClient.run();
-		/*int a = 0, b = 0, c = 0;
-		if (newClient.hasPackets())
-			a = 1;
-		if (newClient.hasScored())
-			b = 1;
-		if (newClient.hasState())
-			c = 1;
-
-		printf("ClientWrapper | Packet %i | Scored %i | State %i | ID %i\n", a, b, c, id);*/
 		if (ResourceManager::GetSingleton()->IsPaused() != newClient.getPaused())
 			ResourceManager::GetSingleton()->SetPaused(newClient.getPaused());
 		return result;
@@ -215,16 +206,8 @@ public:
 	bool SpawnedPowerUps() { return newClient.SpawnedPowerUps(); }
 	bool RemovedPowerUp() { return newClient.RemovedPowerUp(); }
 
-
-	bool getSpawnedPowerUpActive(int i) { return newClient.getSpawnedPowerUpActive(i); }
-
-	float3 getSpawnedPowerUpPos(int i) {
-		XMFLOAT3 npos = newClient.GetSpawnedPowerUpPos(i);
-		return{ npos.x, npos.y, npos.z };
-	}
-
-
-	int getRemovedPowerUpIndex() { return (int)newClient.getRemovedPowerUpIndex(); }
-	int getRemovedPlayerID() { return (int)newClient.getRemovedPlayerID(); }
+	int getRemovedPlayerID(int i) { return (int)newClient.getPowerUpPlayerID(i); }
 	float powerUpTime(int i) { return newClient.getPowerUpTime(i); }
+
+	bool getObjectEnabled(int i) { return newClient.getObjectEnabled(i); }
 };

@@ -50,4 +50,5 @@ public:
 	void SetID(int _id) { id = _id; }
 	void ResetTimer() { timer = 0.0f; }
 	void SetActive(bool active) { isActivated = active; }
+	void SetPlayer(PlayerController* playerC);
 };

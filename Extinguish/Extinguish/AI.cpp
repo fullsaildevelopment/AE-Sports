@@ -8,6 +8,8 @@
 #include "Movement.h"
 #include "Trigger.h"
 #include "Map.h"
+#include "SoundEvent.h"
+#include "SoundEngine.h"
 
 #define     RunSpeed 10 //0.7f //0.475f //10
 #define  AttackSpeed 10 //0.7f //0.475f 
@@ -38,7 +40,7 @@ void AI::OnCollisionEnter(Collider *obj)
 
 			if (obj->GetGameObject() == realTarget && !obj->GetGameObject()->GetComponent<AnimatorController>()->GetTrigger("Stumble")->GetTrigger())
 			{
-				if (!realTarget->GetComponent<PlayerController>()->IsInvincible())
+				if (!realTarget->GetComponent<PlayerController>()->IsInvincible() && realTarget->GetComponent<Movement>()->CanMove())
 				{
 					startTimer = true;
 
@@ -67,6 +69,12 @@ void AI::OnCollisionEnter(Collider *obj)
 					realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 					ogTarget = realTarget;
 					realTarget = nullptr;
+
+					//play attack sound effect
+					SoundEvent* soundEvent = new SoundEvent();
+					soundEvent->Init(AK::EVENTS::PLAY_ATTACK, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+					EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
+					delete soundEvent;
 				}
 			}
 		}

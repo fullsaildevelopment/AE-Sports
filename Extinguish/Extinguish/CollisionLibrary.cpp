@@ -1011,7 +1011,7 @@ float3 AABBToCapsuleReact(const AABB& box, Capsule& cap, float3& vel, float3& po
 	return float3(0, 0, 0);
 }
 
-float3 CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
+float3 CapsuleToSphereReact(Capsule& capsule, Sphere& sphere, float3& vel)
 {
 	vec3f SE = capsule.m_Segment.m_End - capsule.m_Segment.m_Start;
 	float ratio = dot_product(SE, sphere.m_Center - capsule.m_Segment.m_Start) / dot_product(SE, SE);
@@ -1021,6 +1021,10 @@ float3 CapsuleToSphereReact(const Capsule& capsule, Sphere& sphere, float3& vel)
 		return float3().make_zero();
 	float3 cs = sphere.m_Center - SE;
 	cs = cs.normalize();
+	float3 diff = cs.negate() * (sphere.m_Radius + capsule.m_Radius);
+	diff = sphere.m_Center + diff;
+	diff = diff - SE;
+	capsule.m_Segment.m_Start = capsule.m_Segment.m_Start + diff;
 	return cs;
 }
 
@@ -1746,29 +1750,35 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	if (allInside)
 	{
 		float3 distFromTop = endPoint - planes[0].p;
+		if (distFromTop.y <= -0.199f)
+		{
+			float3 distFromCenter = distFromTop * float3(1, 0, 1);
+			if (dot_product(distFromCenter, distFromCenter) <= 1.55f)
+			{
+				endPoint = float3(planes[0].p.x, endPoint.y, planes[0].p.z);
+				float3 norm = distFromCenter.normalize() * 1.25f;
+				s.m_Center = (norm + endPoint);
+				return norm;
+			}
+			float3 revPos = startPoint - endPoint;
+			endPoint = startPoint + revPos * 1.15f;
+			s.m_Center = endPoint;
+			return revPos.normalize();
+		}
 		if (Sdirection.y <= 0)
 		{
-			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f) || ((distFromTop * float3(1,0,1)).magnitude() < 0.90f && distFromTop.y < 0))
+			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f)/* || ((distFromTop * float3(1,0,1)).magnitude() < 0.90f && distFromTop.y < 0)*/)
 			{
 				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
-				//pastPos = s.m_Center;
 				return planes[0].n;
 			}
 			if (planes[0].p.y < endPoint.y && distFromTop.y < 0.06f && Sdirection.y == 0)
 			{
 				s.m_Center.y = planes[0].p.y +  0.0018f;
 				Stime = 1;
-				//pastPos = s.m_Center;
 				return planes[0].n;
 			}
-		}
-		if (distFromTop.y <= -0.199f)
-		{
-			float3 revPos = startPoint - endPoint;
-			endPoint = startPoint + revPos * 1.15f;
-			s.m_Center = endPoint;
-			return revPos.normalize();
 		}
 	}
 

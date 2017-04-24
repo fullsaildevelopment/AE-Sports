@@ -10,3 +10,13 @@ float InvSqrt(float x)
 	x = x * (1.5f - xhalf * x * x); // Newton step, repeating increases accuracy
 	return x;
 }
+
+int int_floor(double x)
+{
+	return (int)x - (x < (int)x); // as dgobbi above, needs less than for floor
+}
+
+int int_ceil(double x)
+{
+	return (int)x + (x >(int) x);
+}
