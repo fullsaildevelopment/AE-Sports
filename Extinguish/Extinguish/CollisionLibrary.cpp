@@ -1750,9 +1750,24 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	if (allInside)
 	{
 		float3 distFromTop = endPoint - planes[0].p;
+		if (distFromTop.y <= -0.199f)
+		{
+			float3 distFromCenter = distFromTop * float3(1, 0, 1);
+			if (dot_product(distFromCenter, distFromCenter) <= 1.55f)
+			{
+				endPoint = float3(planes[0].p.x, endPoint.y, planes[0].p.z);
+				float3 norm = distFromCenter.normalize() * 1.25f;
+				s.m_Center = (norm + endPoint);
+				return norm;
+			}
+			float3 revPos = startPoint - endPoint;
+			endPoint = startPoint + revPos * 1.15f;
+			s.m_Center = endPoint;
+			return revPos.normalize();
+		}
 		if (Sdirection.y <= 0)
 		{
-			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f) || ((distFromTop * float3(1,0,1)).magnitude() < 0.90f && distFromTop.y < 0))
+			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f)/* || ((distFromTop * float3(1,0,1)).magnitude() < 0.90f && distFromTop.y < 0)*/)
 			{
 				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
@@ -1764,13 +1779,6 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 				Stime = 1;
 				return planes[0].n;
 			}
-		}
-		if (distFromTop.y <= -0.199f)
-		{
-			float3 revPos = startPoint - endPoint;
-			endPoint = startPoint + revPos * 1.15f;
-			s.m_Center = endPoint;
-			return revPos.normalize();
 		}
 	}
 
