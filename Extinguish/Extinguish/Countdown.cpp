@@ -117,11 +117,11 @@ void Countdown::DoAnimation(int number)
 
 		if (number > 0)
 		{
-			soundEvent->Init(AK::EVENTS::PLAY_BEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+			soundEvent->Init(AK::EVENTS::PLAY_BEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()), false);
 		}
 		else
 		{
-			soundEvent->Init(AK::EVENTS::PLAY_FINALBEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
+			soundEvent->Init(AK::EVENTS::PLAY_FINALBEEP, GetGameObject()->FindIndexOfGameObject(GetGameObject()), false);
 		}
 
 		EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
