@@ -752,17 +752,27 @@ void Scoreboard::UpdateSize(D2D1_SIZE_F rect)
 
 	for (unsigned int i = 0; i < 2; ++i)
 	{
-		labels[i]->GetComponent<Button>()->setRT(rect);
-		labels[i]->GetComponent<Button>()->AdjustSize();
-		labels[i]->GetComponent<Button>()->MakeRect();
-		labels[i]->GetComponent<Button>()->setOrigin();
-		labels[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+		if (labels[i])
+		{
+			labels[i]->GetComponent<Button>()->setRT(rect);
+			labels[i]->GetComponent<Button>()->AdjustSize();
+			labels[i]->GetComponent<Button>()->MakeRect();
+			labels[i]->GetComponent<Button>()->setOrigin();
+			labels[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+		}
 
-		teamScores[i]->GetComponent<Button>()->setRT(rect);
-		teamScores[i]->GetComponent<Button>()->AdjustSize();
-		teamScores[i]->GetComponent<Button>()->MakeRect();
-		teamScores[i]->GetComponent<Button>()->setOrigin();
-		teamScores[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+		if (teamScores[i])
+		{
+			Button * button = teamScores[i]->GetComponent<Button>();
+			if (button)
+			{
+				button->setRT(rect);
+				button->AdjustSize();
+				button->MakeRect();
+				button->setOrigin();
+				teamScores[i]->GetComponent<UIRenderer>()->ReInit(ratio);
+			}
+		}
 	}
 
 	for (unsigned int i = 0; i < playerNames.size(); ++i)

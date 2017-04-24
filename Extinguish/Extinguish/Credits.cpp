@@ -5,6 +5,7 @@
 #include "LoadSceneEvent.h"
 #include "SoundEngine.h"
 #include "SoundEvent.h"
+#include "Game.h"
 
 Credits::Credits()
 {
@@ -86,6 +87,13 @@ void Credits::Render()
 
 void Credits::Update(float _dt)
 {
+	cooldown -= _dt;
+	if (cooldown < 0.0f)
+		cooldown = 0.0f;
+
+	if (nextName == 0)
+		NextSet();
+
 	// timer
 	if (fadeIn)
 	{
@@ -149,12 +157,13 @@ void Credits::HandleEvent(Event* e)
 	// press space, enter, or click to go back to main menu
 	InputDownEvent* inputDownEvent = dynamic_cast<InputDownEvent*>(e);
 
-	if (inputDownEvent)
+	if (inputDownEvent && Game::currentScene == 3)
 	{
 		InputManager * input = inputDownEvent->GetInput();
 
-		if (input->GetKeyboardDown())
+		if (input->GetMouseButtonDown(0) && cooldown <= 0.0f)
 		{
+			cooldown = 1.0f;
 			ReturnToMenu();
 		}
 	}
@@ -263,10 +272,19 @@ void Credits::ReturnToMenu()
 	fadeInOut = 0.0f;
 	fadeIn = true;
 
+	unsigned int i;
+	for (i = 0; i < textRenderers.size(); ++i)
+	{
+		textRenderers[i]->RemoveBitmap();
+	}
+	for (i = 0; i < theText.size(); ++i)
+	{
+		theText[i]->setText(L"");
+		theText[i]->setHeight(100.0f);
+		theText[i]->setWidth(500.0f);
+		theText[i]->MakeRect();
+	}
 
-	textRenderers[0]->RemoveBitmap();
-
-	textRenderers[3]->RemoveBitmap();
 
 	//stop playing credits song
 	SoundEvent* soundEvent = new SoundEvent();
@@ -301,4 +319,10 @@ void Credits::UpdateSize(D2D1_SIZE_F rect)
 		theText[i]->setOrigin();
 		textRenderers[i]->ReInit(ratio);
 	}
+}
+
+void Credits::MakeHandler()
+{
+	GameObject* object = GetGameObject();
+	EventDispatcher::GetSingleton()->RegisterHandler(this, object->GetName());
 }
