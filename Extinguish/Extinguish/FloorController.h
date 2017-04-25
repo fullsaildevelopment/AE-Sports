@@ -45,6 +45,7 @@ class FloorController : public Component
 	unsigned int* originalColor;
 	float colortiming = 0;
 	int randStateIndex = -1;
+	int stateIndex = 0;
 	float resetableTimer = 0.0f;
 	bool cooldownDone = true;
 	bool stateRunning = false;

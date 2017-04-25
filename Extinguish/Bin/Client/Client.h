@@ -188,29 +188,17 @@ public:
 	// setters
 	void setLocation(XMFLOAT3 loc) { myState[0][0].position = loc; }
 	void setRotation(XMFLOAT3 rot) { myState[0][0].rotation = rot; }
+	void setIsServer(bool tf) { isServer = tf; }
 
 	// getters
 	int getFloorState(unsigned int i) { return clientStates[0][i].otherIndex; }
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }
 	float getTime() { return gameState[0][0].time; }
-	bool getMeterActive() { 
-		if (clientID == 0)
-			return false;
-		return gameState[0][clientID - 1].sprintA;
-	}
-	bool getMeterDrain() {
-		if (clientID == 0)
-			return false; 
-		return gameState[0][clientID - 1].sprintD; }
-	bool getMeterEmpty() {
-		if (clientID == 0)
-			return false; 
-		return gameState[0][clientID - 1].empty; }
-	bool getMeterDown() {
-		if (clientID == 0)
-			return false; 
-		return gameState[0][clientID - 1].down; }
+	bool getMeterActive() {  return gameState[0][0].sprintA; }
+	bool getMeterDrain() { return gameState[0][0].sprintD; }
+	bool getMeterEmpty() { return gameState[0][0].empty; }
+	bool getMeterDown() { return gameState[0][0].down; }
 	UINT8 getNumClients() { return curNumOfClients; }
 	XMFLOAT3 getLocation(unsigned int index) { return clientStates[0][index].position; }
 	XMFLOAT3 getRotation(unsigned int index) { return clientStates[0][index].rotation; }
@@ -262,6 +250,7 @@ public:
 
 private:
 	bool gameStart = false;
+	bool isServer = false;
 	void sendMessage(char * message, GameMessages ID);
 	void sendMessage(char * message, GameMessages ID, SystemAddress sAddress);
 	void sendMessage(UINT8 clientid, GameMessages ID, SystemAddress sAddress);

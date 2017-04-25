@@ -32,7 +32,9 @@ public:
 		isMultiplayer = true;
 		return newClient.init(address, port);
 	}
-	void setIsServer() { isServer = true; }
+	void setIsServer() { isServer = true;
+	newClient.setIsServer(true);
+	}
 	int run()
 	{
 		int result = newClient.run();
@@ -210,4 +212,6 @@ public:
 	float powerUpTime(int i) { return newClient.getPowerUpTime(i); }
 
 	bool getObjectEnabled(int i) { return newClient.getObjectEnabled(i); }
+
+
 };
