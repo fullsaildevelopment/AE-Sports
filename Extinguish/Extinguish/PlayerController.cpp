@@ -767,6 +767,15 @@ void PlayerController::PlayFootstepsSound()
 		delete soundEvent;
 		//cout << "play walk" << endl;
 
+		if (footstepsSound == 0)
+		{
+			cout << "Play Walk Sound" << endl;
+		}
+		else
+		{
+			cout << "Play Sprint Sound" << endl;
+		}
+
 		footstepsPlayed = true;
 	}
 }
@@ -779,10 +788,12 @@ void PlayerController::StopFootstepsSound()
 	{
 	case 0:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__WALK____;
+		cout << "Stop Walk Sound" << endl;
 
 		break;
 	case 1:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
+		cout << "Stop Sprint Sound" << endl;
 
 		break;
 		//case 2:
