@@ -625,8 +625,13 @@ void Game::HandleEvent(Event* e)
 	if (soundEvent && gameStates.size() > soundEvent->GetObjectID())
 	{
 		soundEngine->PostEvent(soundEvent->GetSoundID(), soundEvent->GetObjectID());
-		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
-		gameStates[soundEvent->GetObjectID()]->hasSound = true;
+
+		if (soundEvent->PlayNetworked())
+		{
+			//this will network the sound
+			gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
+			gameStates[soundEvent->GetObjectID()]->hasSound = true;
+		}
 
 		//cout << "sound event received by game" << endl;
 
