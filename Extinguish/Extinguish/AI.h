@@ -50,6 +50,8 @@ private:
 	Map::Node *myNode;
 	Map::Node *ballNode;
 	Map::Node *tarNode;
+	Map::Node *myGoalNode;
+	Map::Node *enemyGoalNode;
 
 	std::vector<Map::Node *> path;
 	std::vector<GameObject*> listOfEnemies; // list of AI's enemy team
