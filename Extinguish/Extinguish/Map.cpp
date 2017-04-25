@@ -73,13 +73,14 @@ Map::~Map()
 Map::Node *Map::FindClosest(float3 pos)
 {
 	float dist = FLT_MAX;
+	float3 h = float3(0, 10, 0);
 	Node *closest = nullptr;
 
 	for (int row = 0; row < numRows; ++row)
 	{
 		for (int col = 0; col < numCols; ++col)
 		{
-			float3 tmp = (*nodes[row][col]->pos - pos);
+			float3 tmp = ((*nodes[row][col]->pos + h) - pos);
 			float dot = dot_product(tmp, tmp);
 
 			if (dot < dist)
