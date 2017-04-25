@@ -216,9 +216,11 @@ int Client::run()
 			bIn.Read(temp);
 			if (temp == 11)
 			{
-				gameState[0][0].paused = true;
-				gameStart = true;
-				return 6;
+				if (!isServer) {
+					gameState[0][0].paused = true;
+					gameStart = true;
+					return 6;
+				}
 			}
 
 			break;
