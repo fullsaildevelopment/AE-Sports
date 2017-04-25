@@ -398,8 +398,8 @@ void FloorController::ControlMovement(float fullTime)
 			//Groups(dt);
 			break;
 		case GROUPS:
-			//Strips(dt);
-			Groups(dt);
+			Strips(dt);
+			//Groups(dt);
 			break;
 		case LEVEL:
 			LevelFloor(dt);

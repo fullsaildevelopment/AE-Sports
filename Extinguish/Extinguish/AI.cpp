@@ -11,8 +11,9 @@
 #include "SoundEvent.h"
 #include "SoundEngine.h"
 
-#define     RunSpeed 0.7f //0.475f //10
-#define  AttackSpeed 0.7f //0.475f 
+#define     RunSpeed 10 //0.7f //0.475f //10
+
+Map *AI::aiPath = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -247,6 +248,9 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 	ballClass = ball->GetComponent<BallController>();
 	anim = me->GetComponent<AnimatorController>();
 
+	myGoalNode = aiPath->FindClosest(myGoal->GetTransform()->GetPosition());
+	enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
+
 	Idle();
 }
 
@@ -363,7 +367,10 @@ void AI::Update(float _dt)
 			// if the ball is too far from the goal
 			else if (dist.magnitude() > 34)
 			{
-				if (RunTo(myGoal, 20.0f))
+				float3 jik = myGoal->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+				float diist = dot_product(jik, jik);
+				
+				if (RunTo(myGoal) || diist <= 370.0f)
 				{
 					TurnTo(enemyGoal);
 					Idle();
@@ -406,7 +413,7 @@ void AI::Update(float _dt)
 		}
 
 #pragma endregion
-		
+
 #pragma region Guy || Tank
 		else if (currState == guy || currState == tank)
 		{
@@ -431,7 +438,10 @@ void AI::Update(float _dt)
 					if (mGuy)
 					{
 						//hover around Guy
-						if (RunTo(mGuy, 10.0f))
+						float3 jik = mGuy->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+						float dist = dot_product(jik, jik);
+
+						if (RunTo(mGuy) || dist <= 300.0f)
 							Idle();
 					}
 				}
@@ -444,6 +454,19 @@ void AI::Update(float _dt)
 			timer = 5.0f;
 			startTimer = false;
 		}
+	}
+}
+
+void AI::FixedUpdate(float dt)
+{
+	if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
+	{
+		float3 h = float3(0, 10, 0);
+		float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
+		float dist = dot_product(jik, jik);
+
+		if (dist > 4.0f)
+			validPath = false;
 	}
 }
 
@@ -466,9 +489,46 @@ void AI::GetBall()
 	}
 
 	// if im right next to the ball
-	else if (RunTo(ball, 1.0f))
+	else
 	{
-		// running into the ball should pick it up
+		pathTarget = ball;
+		
+		// if it's not a valid path
+		if (!validPath)
+		{
+			myNode = aiPath->FindClosest(me->GetTransform()->GetWorldPosition());
+			tarNode = aiPath->FindBallNode(ball->GetTransform()->GetWorldPosition());
+			path = aiPath->CreatePath(myNode, tarNode);
+			pathIndex = path.size() - 2;
+			validPath = true;
+		}
+
+		// if path actually has something
+		if (path.size() > 1)
+		{
+			float3 h = float3(0, 10, 0);
+			float3 dist = (*path[pathIndex]->pos + h) - me->GetTransform()->GetWorldPosition();
+			float ballNodeToMe = dot_product(dist, dist);
+			float3 v = dist.normalize();
+			v.y = 0;
+
+			if (path[pathIndex] == tarNode)
+			{
+				validPath = false;
+				return;
+			}
+
+			if (ballNodeToMe < 1.25f)
+			{
+				--pathIndex;
+				TurnTo(*path[pathIndex]->pos);
+			}
+
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+				anim->SetTrigger("Run");
+
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
+		}
 	}
 }
 
@@ -513,15 +573,7 @@ void AI::Attack(GameObject *target)
 		{
 			realTarget = target;
 			isAttacking = true;
-
-			TurnTo(target);
-			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
-			v.y = 0;
-
-			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
-				anim->SetTrigger("Run");
-
-			me->GetTransform()->AddVelocity(v * AttackSpeed * moveSpeedMultiplier);
+			RunTo(target);
 			isAttacking = false;
 		}
 	}
@@ -574,13 +626,13 @@ void AI::Paranoia()
 	}
 }
 
-bool AI::RunTo(GameObject *target, float dist)
+bool AI::RunTo(GameObject *target)
 {
 	if (canMove)
 	{
 		if (target)
 		{
-			if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
+			/*if ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition()).magnitude() < dist)
 				return true;
 
 			float3 v = ((target->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition())).normalize();
@@ -590,20 +642,49 @@ bool AI::RunTo(GameObject *target, float dist)
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
 				anim->SetTrigger("Run");
 
-			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
+			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);*/
+			pathTarget = target;
+
+			// if it's not a valid path
+			if (!validPath)
+			{
+				myNode = aiPath->FindClosest(me->GetTransform()->GetWorldPosition());
+
+				if (pathTarget == myGoal) tarNode = myGoalNode;
+				else if (pathTarget == enemyGoal) tarNode = enemyGoalNode;
+				else tarNode = aiPath->FindClosest(target->GetTransform()->GetWorldPosition());
+
+				path = aiPath->CreatePath(myNode, tarNode);
+				pathIndex = path.size() - 2;
+				validPath = true;
+			}
+			
+			// if path actually has something
+			if (path.size() > 1)
+			{
+				float3 h = float3(0, 10, 0);
+				float3 dist = (*path[pathIndex]->pos + h) - me->GetTransform()->GetWorldPosition();
+				float nodeToMe = dot_product(dist, dist);
+				float3 v = dist.normalize();
+				v.y = 0;
+
+				if (path[pathIndex] == tarNode) return true;
+				if (nodeToMe < 1.25f) // if im on the node
+				{
+					--pathIndex;
+					TurnTo(*path[pathIndex]->pos);
+				}
+
+				if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
+					anim->SetTrigger("Run");
+
+				me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
+			}
 		}
 	}
 
 	return false;
 
-	/*std::vector<Map::Node *> path;
-
-	
-
-	for (int i = 0; i < 2; ++i)
-	{
-
-	}*/
 }
 
 bool AI::RunTo(float3 target, float dist)
@@ -657,8 +738,12 @@ void AI::TurnTo(GameObject *target)
 
 void AI::Score()
 {
-	if (RunTo(enemyGoal, 28.0f))
+	float3 jik = enemyGoal->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+	float dist = dot_product(jik, jik);
+
+	if (dist <= 650.0f || RunTo(enemyGoal)) // 28.0f
 	{
+		TurnTo(enemyGoal);
 		camera->RotateX(-0.98f);
 		me->GetTransform()->AddVelocity(float3(0, 8, 0));
 		crosse->Throw();
