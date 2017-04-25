@@ -1345,8 +1345,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	HexFloor->AddComponent(HexFLoorCol);
 	floorController->SetState(1 / 6.0f);
 
-	Map *aiMap = new Map(row, col, floor);
-	//vector<Map::Node *> shit = aiMap->CreatePath(aiMap->FindClosest(float3(0, 0, 0)), aiMap->FindClosest(float3(10, 0, 10)));
+	Map *map = new Map(row, col, floor);
+	AI::aiPath = map;
 
 	//GameObject* Hex = new GameObject();
 	//Hex->Init("Team2");
