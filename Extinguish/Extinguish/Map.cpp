@@ -98,8 +98,14 @@ Map::Node *Map::FindBallNode(float3 ballPos)
 {
 	if (!ballPos.isEqual(prevBallPos))
 	{
-		prevBallPos = ballPos;
-		ballNode = FindClosest(ballPos);
+		float3 dis = prevBallPos - ballPos;
+		float d = dot_product(dis, dis);
+
+		if (d > 4.0f)
+		{
+			prevBallPos = ballPos;
+			ballNode = FindClosest(ballPos);
+		}
 	}
 
 	return ballNode;
@@ -141,33 +147,52 @@ std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 		for (int i = 0; i < size; ++i)
 		{
 			Node *next = nodes[curr->path->neighbors[i].Row][curr->path->neighbors[i].Column];
-			float tmpCost = curr->givenCost + (*next->weight + 11.001f);
-			PlannerNode *node = visited[next];
+			float wid = curr->path->pos->y - next->pos->y;
 
-			if (node != nullptr)
+			if (wid >= -0.001f)
 			{
-				if (tmpCost < node->givenCost)
+				float hw = *next->weight + 11.001f;
+				float tmpCost = curr->givenCost + (hw);
+				PlannerNode *node = visited[next];
+
+				if (node != nullptr)
 				{
-					que.remove(node);
+					if (tmpCost < node->givenCost)
+					{
+						que.remove(node);
+						node->givenCost = tmpCost;
+						node->heuristicCost = distSquared(next, end);
+						node->finalCost = node->givenCost + node->heuristicCost * hWeight;
+						node->parent = curr;
+
+						que.push(node);
+					}
+				}
+
+				else
+				{
+					PlannerNode *node = new PlannerNode;
+					node->path = next;
 					node->givenCost = tmpCost;
 					node->heuristicCost = distSquared(next, end);
 					node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 					node->parent = curr;
 
+					visited[next] = node;
 					que.push(node);
 				}
 			}
 
-			else
+			else if (next == end)
 			{
 				PlannerNode *node = new PlannerNode;
 				node->path = next;
-				node->givenCost = tmpCost;
+				node->givenCost = 1;
 				node->heuristicCost = distSquared(next, end);
 				node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 				node->parent = curr;
 
-				visited[next] = node;
+				que.clear();
 				que.push(node);
 			}
 		}
