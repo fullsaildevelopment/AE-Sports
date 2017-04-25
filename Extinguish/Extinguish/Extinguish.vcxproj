@@ -168,6 +168,7 @@
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="PowerUpManager.cpp" />
+    <ClCompile Include="ProfileMenu.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="AI.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="PowerUpManager.h" />
     <ClInclude Include="PriorityQueue.h" />
+    <ClInclude Include="ProfileMenu.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="AI.h" />
