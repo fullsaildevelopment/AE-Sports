@@ -19,6 +19,7 @@ FloorController::FloorController(float3* f, int rows, int cols, float _maxHeight
 	direction = 1;
 	timeing = 0;
 	pulses.resize(4);
+	randStateIndex = -1;
 
 	for (int i = 0; i < 4; ++i)
 	{
@@ -358,7 +359,13 @@ void FloorController::ControlMovement(float fullTime)
 		if (resetableTimer > TIME_TIL_STATE && !stateRunning)
 		{
 			stateRunning = true;
-			randStateIndex = rand() % NUM_OF_STATES;
+			//randStateIndex += 2;
+			randStateIndex = stateIndex++;
+			stateIndex %= NUM_OF_STATES;
+
+			//cout << randStateIndex << endl;
+
+			//randStateIndex = rand() % NUM_OF_STATES;
 			resetableTimer = 0.0f;
 			ratios = 0.0f;
 			positionsGenerated = false;
@@ -379,6 +386,8 @@ void FloorController::ControlMovement(float fullTime)
 			cooldownDone = true;
 		}
 	}
+
+
 
 	if (randStateIndex != -1)
 	{
