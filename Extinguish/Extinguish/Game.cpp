@@ -355,7 +355,7 @@ int Game::Update(float dt)
 						ReceiveClientMessage();
 					}
 
-					cout << clientState << endl;
+					//cout << clientState << endl;
 
 					// if client gets server's game states, get the state's location from the client
 					// so that it can be included in update
@@ -2427,6 +2427,15 @@ void Game::UpdateClientObjects()
 					{
 						INT32 soundID = client.GetSoundID(i);
 						soundEngine->PostEvent(soundID, i);
+
+						if (soundID == AK::EVENTS::STOP_FOOTSTEPS__WALK____)
+						{
+							cout << "Stop walk" <<  i << endl;
+						}
+						else if (soundID == AK::EVENTS::PLAY_FOOTSTEPS__WALK____)
+						{
+							cout << "Play walk" << i << endl;
+						}
 
 						gameStates[i]->soundID = -1;
 						gameStates[i]->hasSound = false;
