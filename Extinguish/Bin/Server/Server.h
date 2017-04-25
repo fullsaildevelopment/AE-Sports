@@ -233,7 +233,10 @@ public:
 		UINT8 tempScene = gameState[0][0].scene;
 		gameState[0][0].scene = scene;
 		if (tempScene == 2 && scene == 1)
+		{
+			gameState[0][0].countdown = true;
 			sendState();
+		}
 	}
 
 	void setCountdown(bool down) {gameState[0][0].countdown = down; }
