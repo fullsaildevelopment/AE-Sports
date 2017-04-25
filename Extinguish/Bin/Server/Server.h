@@ -229,7 +229,12 @@ public:
 		strcpy(gameState[0][index].name, name);
 	}
 	void gamePaused(bool tf) { gameState[0][0].paused = tf; }
-	void setCurScene(int scene) { gameState[0][0].scene = scene; }
+	void setCurScene(int scene) { 
+		UINT8 tempScene = gameState[0][0].scene;
+		gameState[0][0].scene = scene;
+		if (tempScene == 2 && scene == 1)
+			sendState();
+	}
 
 	void setCountdown(bool down) {gameState[0][0].countdown = down; }
 	void setPulse(int pulse) { gameState[0][0].floorPulse = pulse; }
