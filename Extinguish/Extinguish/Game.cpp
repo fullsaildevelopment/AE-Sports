@@ -2068,7 +2068,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	nButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	nButton->SetGameObject(newGame);
 	nButton->showFPS(false);
-	nButton->setPositionMultipliers(0.1f, 0.30f);
+	nButton->setPositionMultipliers(0.12f, 0.30f);
 	newGame->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
 	nRender->Init(true, 25.0f, devResources, nButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2503,7 +2503,6 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
-
 		ResourceManager::GetSingleton()->SetPaused(true);
 
 		endTimer = 0.0f;
