@@ -39,8 +39,13 @@
 #include "..\Bin\imgui\imgui_impl_dx11.h"
 
 //defines
-#define CLIENT_WIDTH 1000
-#define CLIENT_HEIGHT 800
+#ifndef CLIENTRECT
+
+#define CLIENTRECT
+static int CLIENT_WIDTH = 1000;
+static int CLIENT_HEIGHT = 800;
+
+#endif
 #define DEBUG_GRAPHICS 0
 
 //enums
