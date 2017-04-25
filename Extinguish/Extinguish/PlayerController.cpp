@@ -573,14 +573,30 @@ void PlayerController::HandleInput()
 		Attack();
 	}
 
+	if (GetGameObject()->GetName() == "Mage2")
+	{
+		int breakPoint = 69;
+		breakPoint++;
+
+		if (input->GetKeyUp(16))
+		{
+			breakPoint++;
+		}
+	}
+
 	//this line will only happen once
 	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{
 		Sprint();
 
+		//if (GetGameObject()->GetName() == "Mage2")
+		{
+			cout << "sprint" << endl;
+		}
+
 		//cout << "Sprint" << endl;
 	}
-	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
+	else if ((!input->GetKey(16) || !input->GetKey('W')) && isSprinting) //used to be getkeyup but wasn't working network
 	{
 		isSprinting = false;
 		//isCharging = false;
@@ -589,7 +605,10 @@ void PlayerController::HandleInput()
 		physics->SetMaxSpeed(originalMaxSpeed);
 		//physics->SetHasMaxSpeed(true);
 
-		//cout << "Stop Sprint" << endl;
+		//if (GetGameObject()->GetName() == "Mage2")
+		{
+			cout << "Stop Sprint" << endl;
+		}
 
 		//revert back to walk footsteps
 		SetFootstepsSound(0);
