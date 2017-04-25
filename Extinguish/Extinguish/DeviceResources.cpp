@@ -17,7 +17,7 @@ void DeviceResources::Init(HWND hwnd)
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
+	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	//create swapchain and device
 	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
@@ -43,6 +43,15 @@ void DeviceResources::Init(HWND hwnd)
 
 	HRESULT swapResult = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &swapChainDesc, swapChain.GetAddressOf(), device.GetAddressOf(), &m_featureLevel, deviceContext.GetAddressOf());
 
+
+#if !_DEBUG
+	//swapChain->ResizeBuffers(0, 1920, 1080, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+	//swapChain->SetFullscreenState(true, NULL);
+	//RECT screen;
+	//GetClientRect(hwnd, &screen);
+	//CLIENT_WIDTH = (int)(screen.right - screen.left);
+	//CLIENT_HEIGHT = (int)(screen.bottom - screen.top);
+#endif
 	/*IDXGIFactory1 *pFactory = NULL;
 
 	swapChain->GetParent(__uuidof (IDXGIFactory1), (void **)&pFactory);
@@ -158,6 +167,8 @@ void DeviceResources::Init(HWND hwnd)
 
 void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 {
+	CLIENT_WIDTH = w;
+	CLIENT_HEIGHT = h;
 	if (!DEBUG_GRAPHICS) {
 		ImGui_ImplDX11_InvalidateDeviceObjects();
 	}
