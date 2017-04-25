@@ -499,12 +499,12 @@ void AI::GetBall()
 			myNode = aiPath->FindClosest(me->GetTransform()->GetWorldPosition());
 			tarNode = aiPath->FindBallNode(ball->GetTransform()->GetWorldPosition());
 			path = aiPath->CreatePath(myNode, tarNode);
-			pathIndex = path.size() - 1;
+			pathIndex = path.size() - 2;
 			validPath = true;
 		}
 
 		// if path actually has something
-		if (path.size() > 0)
+		if (path.size() > 1)
 		{
 			float3 h = float3(0, 10, 0);
 			float3 dist = (*path[pathIndex]->pos + h) - me->GetTransform()->GetWorldPosition();
@@ -655,12 +655,12 @@ bool AI::RunTo(GameObject *target)
 				else tarNode = aiPath->FindClosest(target->GetTransform()->GetWorldPosition());
 
 				path = aiPath->CreatePath(myNode, tarNode);
-				pathIndex = path.size() - 1;
+				pathIndex = path.size() - 2;
 				validPath = true;
 			}
 			
 			// if path actually has something
-			if (path.size() > 0)
+			if (path.size() > 1)
 			{
 				float3 h = float3(0, 10, 0);
 				float3 dist = (*path[pathIndex]->pos + h) - me->GetTransform()->GetWorldPosition();
