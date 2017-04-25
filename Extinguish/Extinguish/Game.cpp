@@ -355,7 +355,7 @@ int Game::Update(float dt)
 						ReceiveClientMessage();
 					}
 
-					cout << clientState << endl;
+					//cout << clientState << endl;
 
 					// if client gets server's game states, get the state's location from the client
 					// so that it can be included in update
@@ -1170,7 +1170,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	topWall->AddComponent(tWallRenderer);
 	tWallRenderer->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	tWallRenderer->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* tWallboxcol = new BoxCollider(topWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	BoxCollider* tWallboxcol = new BoxCollider(topWall, false, { 300,300, 1 }, { -300,-300,1 });
 	topWall->AddBoxCollider(tWallboxcol);
 
 	GameObject* topWall2 = new GameObject();
@@ -1201,7 +1201,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	bottomWall->AddComponent(bWallRenderer);
 	bWallRenderer->Init("ArenaGoalWall", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	bWallRenderer->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	BoxCollider* bWallboxcol = new BoxCollider(bottomWall, false, { 300,300, 0.5f }, { -300,-300,-0.5f });
+	BoxCollider* bWallboxcol = new BoxCollider(bottomWall, false, { 300,300, 1 }, { -300,-300,1 });
 	bottomWall->AddBoxCollider(bWallboxcol);
 
 	GameObject* bottomWall2 = new GameObject();
@@ -2068,7 +2068,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	nButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	nButton->SetGameObject(newGame);
 	nButton->showFPS(false);
-	nButton->setPositionMultipliers(0.12f, 0.30f);
+	nButton->setPositionMultipliers(0.14f, 0.30f);
 	newGame->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
 	nRender->Init(true, 25.0f, devResources, nButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2427,6 +2427,15 @@ void Game::UpdateClientObjects()
 					{
 						INT32 soundID = client.GetSoundID(i);
 						soundEngine->PostEvent(soundID, i);
+
+						if (soundID == AK::EVENTS::STOP_FOOTSTEPS__WALK____)
+						{
+							cout << "Stop walk" <<  i << endl;
+						}
+						else if (soundID == AK::EVENTS::PLAY_FOOTSTEPS__WALK____)
+						{
+							cout << "Play walk" << i << endl;
+						}
 
 						gameStates[i]->soundID = -1;
 						gameStates[i]->hasSound = false;

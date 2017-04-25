@@ -767,6 +767,16 @@ void PlayerController::PlayFootstepsSound()
 		delete soundEvent;
 		//cout << "play walk" << endl;
 
+		if (footstepsSound == 0)
+		{
+			cout << "Play Walk Sound\t";
+		}
+		else
+		{
+			cout << "Play Sprint Sound\t";
+		}
+
+			cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
 		footstepsPlayed = true;
 	}
 }
@@ -779,10 +789,12 @@ void PlayerController::StopFootstepsSound()
 	{
 	case 0:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__WALK____;
+		cout << "Stop Walk Sound\t";
 
 		break;
 	case 1:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
+		cout << "Stop Sprint Sound\t";
 
 		break;
 		//case 2:
@@ -795,6 +807,8 @@ void PlayerController::StopFootstepsSound()
 	soundEvent->Init(stopID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 	delete soundEvent;
+
+	cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
 
 	//cout << "stop walk" << endl;
 	footstepsPlayed = false;
