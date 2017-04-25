@@ -355,7 +355,7 @@ int Game::Update(float dt)
 						ReceiveClientMessage();
 					}
 
-					cout << clientState << endl;
+					//cout << clientState << endl;
 
 					// if client gets server's game states, get the state's location from the client
 					// so that it can be included in update
@@ -625,8 +625,13 @@ void Game::HandleEvent(Event* e)
 	if (soundEvent && gameStates.size() > soundEvent->GetObjectID())
 	{
 		soundEngine->PostEvent(soundEvent->GetSoundID(), soundEvent->GetObjectID());
-		gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
-		gameStates[soundEvent->GetObjectID()]->hasSound = true;
+
+		if (soundEvent->PlayNetworked())
+		{
+			//this will network the sound
+			gameStates[soundEvent->GetObjectID()]->soundID = soundEvent->GetSoundID();
+			gameStates[soundEvent->GetObjectID()]->hasSound = true;
+		}
 
 		//cout << "sound event received by game" << endl;
 
@@ -2063,7 +2068,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	nButton->setSceneIndex((unsigned int)scenes.size() - 1);
 	nButton->SetGameObject(newGame);
 	nButton->showFPS(false);
-	nButton->setPositionMultipliers(0.1f, 0.30f);
+	nButton->setPositionMultipliers(0.14f, 0.30f);
 	newGame->AddComponent(nButton);
 	UIRenderer * nRender = new UIRenderer();
 	nRender->Init(true, 25.0f, devResources, nButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
@@ -2423,6 +2428,15 @@ void Game::UpdateClientObjects()
 						INT32 soundID = client.GetSoundID(i);
 						soundEngine->PostEvent(soundID, i);
 
+						if (soundID == AK::EVENTS::STOP_FOOTSTEPS__WALK____)
+						{
+							cout << "Stop walk" <<  i << endl;
+						}
+						else if (soundID == AK::EVENTS::PLAY_FOOTSTEPS__WALK____)
+						{
+							cout << "Play walk" << i << endl;
+						}
+
 						gameStates[i]->soundID = -1;
 						gameStates[i]->hasSound = false;
 
@@ -2489,7 +2503,6 @@ void Game::LoadScene(std::string name)
 	}
 	else if (currentScene == 2)
 	{
-
 		ResourceManager::GetSingleton()->SetPaused(true);
 
 		endTimer = 0.0f;

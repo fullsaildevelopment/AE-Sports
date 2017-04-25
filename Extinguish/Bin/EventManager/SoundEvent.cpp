@@ -6,10 +6,11 @@ void SoundEvent::Init()
 
 }
 
-void SoundEvent::Init(unsigned int soundID, unsigned int objectID)
+void SoundEvent::Init(unsigned int soundID, unsigned int objectID, bool playNetworked)
 {
 	this->soundID = soundID;
 	this->objectID = objectID;
+	this->playNetworked = playNetworked;
 }
 
 //getters//
@@ -21,4 +22,9 @@ unsigned int SoundEvent::GetSoundID()
 unsigned int SoundEvent::GetObjectID()
 {
 	return objectID;
+}
+
+bool SoundEvent::PlayNetworked()
+{
+	return playNetworked;
 }

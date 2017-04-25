@@ -573,14 +573,30 @@ void PlayerController::HandleInput()
 		Attack();
 	}
 
+	if (GetGameObject()->GetName() == "Mage2")
+	{
+		int breakPoint = 69;
+		breakPoint++;
+
+		if (input->GetKeyUp(16))
+		{
+			breakPoint++;
+		}
+	}
+
 	//this line will only happen once
 	if (input->GetKey(16) && input->GetKey('W') && !isSprinting && canSprint && movement->CanMove()) //16 == Left Shift
 	{
 		Sprint();
 
+		//if (GetGameObject()->GetName() == "Mage2")
+		{
+			cout << "sprint" << endl;
+		}
+
 		//cout << "Sprint" << endl;
 	}
-	else if ((input->GetKeyUp(16) || input->GetKeyUp('W')) && isSprinting)
+	else if ((!input->GetKey(16) || !input->GetKey('W')) && isSprinting) //used to be getkeyup but wasn't working network
 	{
 		isSprinting = false;
 		//isCharging = false;
@@ -589,7 +605,10 @@ void PlayerController::HandleInput()
 		physics->SetMaxSpeed(originalMaxSpeed);
 		//physics->SetHasMaxSpeed(true);
 
-		//cout << "Stop Sprint" << endl;
+		//if (GetGameObject()->GetName() == "Mage2")
+		{
+			cout << "Stop Sprint" << endl;
+		}
 
 		//revert back to walk footsteps
 		SetFootstepsSound(0);
@@ -748,6 +767,16 @@ void PlayerController::PlayFootstepsSound()
 		delete soundEvent;
 		//cout << "play walk" << endl;
 
+		if (footstepsSound == 0)
+		{
+			cout << "Play Walk Sound\t";
+		}
+		else
+		{
+			cout << "Play Sprint Sound\t";
+		}
+
+			cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
 		footstepsPlayed = true;
 	}
 }
@@ -760,10 +789,12 @@ void PlayerController::StopFootstepsSound()
 	{
 	case 0:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__WALK____;
+		cout << "Stop Walk Sound\t";
 
 		break;
 	case 1:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
+		cout << "Stop Sprint Sound\t";
 
 		break;
 		//case 2:
@@ -776,6 +807,8 @@ void PlayerController::StopFootstepsSound()
 	soundEvent->Init(stopID, GetGameObject()->FindIndexOfGameObject(GetGameObject()));
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 	delete soundEvent;
+
+	cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
 
 	//cout << "stop walk" << endl;
 	footstepsPlayed = false;
