@@ -499,7 +499,7 @@ void AI::GetBall()
 			myNode = aiPath->FindClosest(me->GetTransform()->GetWorldPosition());
 			tarNode = aiPath->FindBallNode(ball->GetTransform()->GetWorldPosition());
 			path = aiPath->CreatePath(myNode, tarNode);
-			pathIndex = path.size() - 2;
+			pathIndex = (int)(path.size() - 2);
 			validPath = true;
 		}
 
@@ -573,7 +573,10 @@ void AI::Attack(GameObject *target)
 		{
 			realTarget = target;
 			isAttacking = true;
-			RunTo(target);
+
+			if (RunTo(target)) 
+				RunTo(target->GetTransform()->GetWorldPosition(), 0.5f);
+
 			isAttacking = false;
 		}
 	}
@@ -655,7 +658,7 @@ bool AI::RunTo(GameObject *target)
 				else tarNode = aiPath->FindClosest(target->GetTransform()->GetWorldPosition());
 
 				path = aiPath->CreatePath(myNode, tarNode);
-				pathIndex = path.size() - 2;
+				pathIndex = (int)(path.size() - 2);
 				validPath = true;
 			}
 			

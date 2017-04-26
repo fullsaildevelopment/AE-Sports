@@ -45,12 +45,12 @@ void DeviceResources::Init(HWND hwnd)
 
 
 #if !_DEBUG
-	//swapChain->ResizeBuffers(0, 1920, 1080, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
-	//swapChain->SetFullscreenState(true, NULL);
-	//RECT screen;
-	//GetClientRect(hwnd, &screen);
-	//CLIENT_WIDTH = (int)(screen.right - screen.left);
-	//CLIENT_HEIGHT = (int)(screen.bottom - screen.top);
+	swapChain->ResizeBuffers(0, 1920, 1080, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+	swapChain->SetFullscreenState(true, NULL);
+	RECT screen;
+	GetClientRect(hwnd, &screen);
+	CLIENT_WIDTH = (int)(screen.right - screen.left);
+	CLIENT_HEIGHT = (int)(screen.bottom - screen.top);
 #endif
 	/*IDXGIFactory1 *pFactory = NULL;
 
@@ -136,8 +136,8 @@ void DeviceResources::Init(HWND hwnd)
 
 	viewPort.TopLeftX = 0;
 	viewPort.TopLeftY = 0;
-	viewPort.Width = CLIENT_WIDTH;
-	viewPort.Height = CLIENT_HEIGHT;
+	viewPort.Width = (float)CLIENT_WIDTH;
+	viewPort.Height = (float)CLIENT_HEIGHT;
 	viewPort.MinDepth = 0.0f;
 	viewPort.MaxDepth = 1.0f;
 
@@ -184,7 +184,8 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 
 	if (!DEBUG_GRAPHICS)
 	{
-		pRT.Get()->Release();
+		if(pRT)
+			pRT.Get()->Release();
 		p2DDeviceContext->SetTarget(nullptr);
 	}
 
@@ -196,7 +197,7 @@ void DeviceResources::ResizeWindow(uint16_t w, uint16_t h, bool fullScreen)
 	res = swapChain->ResizeBuffers(0, w, h, DXGI_FORMAT_UNKNOWN, 0);
 	if (res == DXGI_ERROR_DEVICE_REMOVED || res == DXGI_ERROR_DEVICE_RESET || res == DXGI_ERROR_UNSUPPORTED)
 	{
-		throw runtime_error("SwapChain resize not work, go home and dont come back");
+		throw runtime_error("SwapChain resize failure");
 	}
 
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf());
