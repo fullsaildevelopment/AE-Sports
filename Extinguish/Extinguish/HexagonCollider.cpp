@@ -129,7 +129,7 @@ bool HexagonCollider::CheckFloor2Capsule(CapsuleCollider* cap, int f, float dt)
 			//TopBottomTop
 			if (CheckCapsuleAABB(int_floor(row * 0.621) * col, int_ceil(row * 0.759) * col + col - 1, c))
 			{
-				if (CheckCapsule(tg, ob, floor(row * 0.621), int_ceil(row * 0.759), cap, c, pastPos, f, dt, smallestT))
+				if (CheckCapsule(tg, ob, int_floor(row * 0.621), int_ceil(row * 0.759), cap, c, pastPos, f, dt, smallestT))
 					collided = true;
 			}
 			//TopBottomBottom
@@ -270,7 +270,7 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 		}
 	}
 	//Bottom
-	if (CheckSphereAABB(0, ceil(row * 0.5f) * col + col - 1, s))
+	if (CheckSphereAABB(0, int_ceil(row * 0.5f) * col + col - 1, s))
 	{
 		//BottomTop
 		if (CheckSphereAABB(int_floor(row * 0.241f) * col, int_ceil(row * 0.59f) * col + col - 1, s))
@@ -279,9 +279,9 @@ bool HexagonCollider::CheckFloor2Sphere(SphereCollider* sphere, int f, float dt)
 				collided = true;
 		}
 		//BottomBottom
-		if (CheckSphereAABB(0, ceil(row * 0.259f) * col + col - 1, s))
+		if (CheckSphereAABB(0, int_ceil(row * 0.259f) * col + col - 1, s))
 		{
-			if (CheckSphere(tg, ob, 0, ceil(row * 0.259f), sphere, s, pastPos, f, dt, smallestT))
+			if (CheckSphere(tg, ob, 0, int_ceil(row * 0.259f), sphere, s, pastPos, f, dt, smallestT))
 				collided = true;
 		}
 	}
