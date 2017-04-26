@@ -118,6 +118,7 @@ private:
 	// all the results
 	UINT8 clientID;
 	bool states = false, scored = false, packets = false, spowerup = false, rpowerup = false;
+	bool connected = false;
 
 #pragma pack(push, 1)
 	struct PowerUps
@@ -191,6 +192,7 @@ public:
 	void setIsServer(bool tf) { isServer = tf; }
 
 	// getters
+	bool getConnectionStatus() { return connected; }
 	int getFloorState(unsigned int i) { return clientStates[0][i].otherIndex; }
 	UINT8 getScoreA() { return gameState[0][0].scoreA; }
 	UINT8 getScoreB() { return gameState[0][0].scoreB; }

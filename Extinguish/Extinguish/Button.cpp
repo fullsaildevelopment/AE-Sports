@@ -52,8 +52,8 @@ void StartServer()
 		ResourceManager::GetSingleton()->SetMultiplayer(true);
 		ResourceManager::GetSingleton()->SetServer(true);
 
-		Game::client.init("127.0.0.1", 60001);
 		Game::client.setIsServer();
+		Game::client.init("127.0.0.1", 60001);
 
 		Game::server.setObjIDs(Game::objIDs[0],
 			Game::objIDs[1],
@@ -109,19 +109,30 @@ void ReturnToMenu()
 		{
 			Game::server.stop();
 			while (Game::server.run() != 0) {
-				if (Game::client.run() == 0)
-					break;
+				if (Game::client.getConnectionStatus())
+					Game::client.Stop();
 			}
 
+			Game::server.stop();
 			ResourceManager::GetSingleton()->SetMultiplayer(false);
+			Game::returnResult = 0;
 		}
 		else
 		{
-			Game::client.sendStop();
+			if (Game::client.getConnectionStatus())
+			{
+				Game::client.sendStop();
 
-			while (Game::client.run() != 0) {}
-			ResourceManager::GetSingleton()->SetMultiplayer(false);
-			ResourceManager::GetSingleton()->SetServer(true);
+				while (Game::client.run() != 0) {}
+				ResourceManager::GetSingleton()->SetMultiplayer(false);
+				ResourceManager::GetSingleton()->SetServer(true);
+			}
+			else
+			{
+				Game::client.Stop();
+				ResourceManager::GetSingleton()->SetMultiplayer(false);
+				ResourceManager::GetSingleton()->SetServer(true);
+			}
 		}
 	}
 
