@@ -199,6 +199,13 @@ void Renderer::Update(float _dt)
 	devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
 	devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
 
+	if (GetGameObject()->GetName() == "TestTitanPlayer")
+	{
+		int breakPoint = 69;
+
+		breakPoint++;
+	}
+
 	if (boneOffsets.size())
 	{
 		//std::vector<DirectX::XMFLOAT4X4> boneOffsets = blender->GetBoneOffsets();
