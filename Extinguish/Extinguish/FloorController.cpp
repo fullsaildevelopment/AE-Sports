@@ -370,6 +370,7 @@ void FloorController::ControlMovement(float fullTime)
 			ratios = 0.0f;
 			positionsGenerated = false;
 		}
+
 		else if (resetableTimer > TIME_TO_RUN_STATE && stateRunning)
 		{
 			cooldownDone = false;
@@ -379,6 +380,7 @@ void FloorController::ControlMovement(float fullTime)
 			ratios = 0.0f;
 		}
 	}
+
 	else
 	{
 		if (resetableTimer > TIME_TIL_COOLDOWN)
@@ -386,8 +388,6 @@ void FloorController::ControlMovement(float fullTime)
 			cooldownDone = true;
 		}
 	}
-
-
 
 	if (randStateIndex != -1)
 	{
