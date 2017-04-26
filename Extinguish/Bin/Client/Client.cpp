@@ -52,6 +52,7 @@ Client::~Client()
 
 int Client::init(char* _address, UINT16 port)
 {
+	connected = false;
 	int resi = printf("CLIENT: Test\n");
 	OutputDebugString("CLIENT: Test\n");
 	SocketDescriptor sd(port, 0);
@@ -85,8 +86,10 @@ int Client::run()
 {
 	states = packets = scored = spowerup = rpowerup = false;
 	int result = 1;
+
 	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 	{
+		connected = true;
 		switch (packet->data[0])
 		{
 		case ID_UNCONNECTED_PONG:
@@ -263,6 +266,13 @@ int Client::run()
 		}
 
 		}
+	}
+
+	if (!connected)
+	{
+		peer->Ping("255.255.255.255", 60000, true);
+
+		printf("Pinging\n");
 	}
 
 	return result;
