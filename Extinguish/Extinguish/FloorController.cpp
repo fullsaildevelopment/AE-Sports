@@ -370,6 +370,7 @@ void FloorController::ControlMovement(float fullTime)
 			ratios = 0.0f;
 			positionsGenerated = false;
 		}
+
 		else if (resetableTimer > TIME_TO_RUN_STATE && stateRunning)
 		{
 			cooldownDone = false;
@@ -379,6 +380,7 @@ void FloorController::ControlMovement(float fullTime)
 			ratios = 0.0f;
 		}
 	}
+
 	else
 	{
 		if (resetableTimer > TIME_TIL_COOLDOWN)
@@ -387,24 +389,22 @@ void FloorController::ControlMovement(float fullTime)
 		}
 	}
 
-
-
 	if (randStateIndex != -1)
 	{
-		//switch (randStateIndex)
-		//{
-		//case STRIPS:
-		//	Strips(dt);
-		//	//Groups(dt);
-		//	break;
-		//case GROUPS:
-		//	//Strips(dt);
-		//	Groups(dt);
-		//	break;
-		//case LEVEL:
-		//	LevelFloor(dt);
-		//	break;
-		//}
+		switch (randStateIndex)
+		{
+		case STRIPS:
+			Strips(dt);
+			//Groups(dt);
+			break;
+		case GROUPS:
+			//Strips(dt);
+			Groups(dt);
+			break;
+		case LEVEL:
+			LevelFloor(dt);
+			break;
+		}
 	}
 
 	//if (timeing < 10 && currPattern != 1)
