@@ -573,7 +573,10 @@ void AI::Attack(GameObject *target)
 		{
 			realTarget = target;
 			isAttacking = true;
-			RunTo(target);
+
+			if (RunTo(target)) 
+				RunTo(target->GetTransform()->GetWorldPosition(), 0.5f);
+
 			isAttacking = false;
 		}
 	}

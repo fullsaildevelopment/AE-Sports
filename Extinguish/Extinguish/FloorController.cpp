@@ -391,20 +391,20 @@ void FloorController::ControlMovement(float fullTime)
 
 	if (randStateIndex != -1)
 	{
-		switch (randStateIndex)
-		{
-		case STRIPS:
-			Strips(dt);
-			//Groups(dt);
-			break;
-		case GROUPS:
-			//Strips(dt);
-			Groups(dt);
-			break;
-		case LEVEL:
-			LevelFloor(dt);
-			break;
-		}
+		//switch (randStateIndex)
+		//{
+		//case STRIPS:
+		//	Strips(dt);
+		//	//Groups(dt);
+		//	break;
+		//case GROUPS:
+		//	//Strips(dt);
+		//	Groups(dt);
+		//	break;
+		//case LEVEL:
+		//	LevelFloor(dt);
+		//	break;
+		//}
 	}
 
 	//if (timeing < 10 && currPattern != 1)
