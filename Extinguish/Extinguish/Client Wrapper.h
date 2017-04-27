@@ -213,5 +213,9 @@ public:
 
 	bool getObjectEnabled(int i) { return newClient.getObjectEnabled(i); }
 
+	bool getConnectionStatus() { return newClient.getConnectionStatus(); }
 
+	void Stop() {
+		newClient.stop();
+	}
 };

@@ -42,8 +42,16 @@
 #ifndef CLIENTRECT
 
 #define CLIENTRECT
+
+#if !_DEBUG
+static int CLIENT_WIDTH = 1920;
+static int CLIENT_HEIGHT = 1080;
+#endif
+
+#if _DEBUG
 static int CLIENT_WIDTH = 1000;
 static int CLIENT_HEIGHT = 800;
+#endif
 
 #endif
 #define DEBUG_GRAPHICS 0
