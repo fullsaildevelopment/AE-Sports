@@ -993,7 +993,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		jumpToFall->Init(mageJump, mageFall, 0, 0.1f);
 		Transition* fallToLand = new Transition();
 		mageFall->AddTransition(fallToLand);
-		fallToLand->Init(mageFall, mageLand, -1, 0.1f);
+		fallToLand->Init(mageFall, mageLand, -1, 0.05f);
 		fallToLand->AddCondition(landTrigger);
 		Transition* landToIdle = new Transition();
 		mageLand->AddTransition(landToIdle);
