@@ -93,8 +93,6 @@ void AI::HandleEvent(Event* e)
 
 void AI::Init(GameObject *goal1, GameObject *goal2)
 {
-	if (isActive)
-	{
 		listOfEnemies.reserve(4);
 		listOfMates.reserve(3);
 		AIbuddies.reserve(3);
@@ -254,13 +252,11 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
 
 		Idle();
-	}
+
 }
 
 void AI::Update(float _dt)
 {
-	if (isActive)
-	{
 		if (!ResourceManager::GetSingleton()->IsPaused())
 		{
 
@@ -460,22 +456,18 @@ void AI::Update(float _dt)
 				startTimer = false;
 			}
 		}
-	}
 }
 
 void AI::FixedUpdate(float dt)
 {
-	if (isActive)
+	if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
 	{
-		if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
-		{
-			float3 h = float3(0, 10, 0);
-			float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
-			float dist = dot_product(jik, jik);
+		float3 h = float3(0, 10, 0);
+		float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
+		float dist = dot_product(jik, jik);
 
-			if (dist > 4.0f)
-				validPath = false;
-		}
+		if (dist > 4.0f)
+			validPath = false;
 	}
 }
 

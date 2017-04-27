@@ -406,4 +406,10 @@ void UIRenderer::RemoveBitmap()
 		pBitmap.Reset();
 		pBitmap = nullptr;
 	}
+
+	if (pBitmapHovered)
+	{
+		pBitmapHovered.Reset();
+		pBitmapHovered = nullptr;
+	}
 }

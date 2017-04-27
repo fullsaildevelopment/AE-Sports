@@ -338,12 +338,11 @@ int Game::Update(float dt)
 
 
 				//run client
-
 				if (!ResourceManager::GetSingleton()->IsServer())
 				{
 					int clientState = client.run();
-					clientID = client.getID();
 
+						clientID = client.getID();
 
 					if (clientState == 0)
 					{
@@ -546,6 +545,20 @@ void Game::HandleEvent(Event* e)
 			server.setScores(Team1Score, Team2Score);
 			server.SendScorer(SEvent->GetPlayerName(), (UINT8)SEvent->GetPlayerName().length());
 			//	server.sendGameState();
+
+			Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+
+			string sname = SEvent->GetPlayerName();
+
+			wstring name(sname.size(), L' ');
+			copy(sname.begin(), sname.end(), name.begin());
+			scorerButton->setText(name + L"\nscored!");
+			scorerButton->MakeRect();
+			scorerButton->setOrigin();
+			scorerButton->SetActive(true);
+
+			justScored = true;
+			scorerTimer = 0.0f;
 		}
 		UpdateScoreUI();
 
@@ -582,7 +595,7 @@ void Game::HandleEvent(Event* e)
 			ResetBall();
 			if (ResourceManager::GetSingleton()->IsMultiplayer())
 				server.setCountdown(true);
-			else
+		//	else
 				ResetCountdown();
 		}
 
@@ -604,13 +617,13 @@ void Game::HandleEvent(Event* e)
 				if (loadSceneEvent->GetName() == "Menu" && currentScene == 2)
 				{
 					TogglePauseMenu(false, true);
-					CreateGameWrapper();
+					CreateGameWrapper(false);
 					ResourceManager::GetSingleton()->SetPaused(false);
 				}
 				else if (loadSceneEvent->GetName() == "Lobby" && currentScene == 2)
 				{
 					TogglePauseMenu(true, true);
-					CreateGameWrapper();
+					CreateGameWrapper(false);
 					ResourceManager::GetSingleton()->SetPaused(false);
 				}
 				LoadScene(loadSceneEvent->GetName());
@@ -812,37 +825,45 @@ void Game::CreateScenes(InputManager* input)
 		scenes.push_back(credits);
 		scenesNamesTable.Insert("Credits");
 	}
+
+
+	AssignPlayers(true);
+	CreateGameWrapper(true);
 }
 
-void Game::CreateGameWrapper()
+void Game::CreateGameWrapper(bool firsttime)
 {
-	for (unsigned int i = (unsigned int)scenes.size() - 1; i <= 0; --i)
+	for (unsigned int i = (unsigned int)scenes.size() - 1; i > 0; --i)
 	{
 		unsigned int obj = scenes[i]->GetNumObjects();
 
-		for (unsigned int j = 0; j < obj; ++j)
-		{
-			AI * ai = scenes[i]->GetGameObjects(j)->GetComponent<AI>();
-			if (ai)
+		if (obj > 0) {
+			for (int j = obj - 1; j >= 0; --j)
 			{
-				EventDispatcher::GetSingleton()->RemoveHandler(scenes[i]->GetGameObjects(j)->GetName() + "AI");
-				bool success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+				AI * ai = scenes[i]->GetGameObjects(j)->GetComponent<AI>();
+				bool success;
+				if (ai)
+				{
+					EventDispatcher::GetSingleton()->RemoveHandler(scenes[i]->GetGameObjects(j)->GetName() + "AI");
+					success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+				}
+				// if false -> no ai attached
 			}
-
-
-			// if false -> no ai attached
 		}
 	}
 
-	ResetBall();
-	ResetPlayers();
-	ResetCountdown();
+	if (!firsttime)
+	{
+		ResetBall();
+		ResetPlayers();
+		ResetCountdown();
 
-	Team1Score = Team2Score = 0;
-	UpdateScoreUI();
-	Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
-	time->resetTime();
-	Time = 300.0f;
+		Team1Score = Team2Score = 0;
+		UpdateScoreUI();
+		Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
+		time->resetTime();
+		Time = 300.0f;
+	}
 }
 
 void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
@@ -1390,6 +1411,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	if (!DEBUG_GRAPHICS) {
 		CreateUI(basic);
 	}
+
+
 }
 
 void Game::CreateUI(Scene * basic)
@@ -1404,12 +1427,10 @@ void Game::CreateUI(Scene * basic)
 	theSButton->showFPS(false);
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	scoreA->AddComponent(theSButton);
-
 	gameTime = theSButton->GetTime();
-
 	UIRenderer * scoreRender = new UIRenderer();
 	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
-	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png"); // change this
 	scoreA->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
 	theSButton->MakeRect();
@@ -1420,7 +1441,12 @@ void Game::CreateUI(Scene * basic)
 	GameObject * scoreB = new GameObject();
 	scoreB->Init("gameScoreA");
 	basic->AddUIObject(scoreB);
-	Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	Button * theSButtonB;
+#if _DEBUG
+	theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+#else
+	theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 120.0f, 120.0f, devResources, 0);
+#endif
 	theSButtonB->SetGameObject(scoreB);
 	theSButtonB->showFPS(false);
 	theSButtonB->setPositionMultipliers(0.40f, 0.11f);
@@ -1438,7 +1464,12 @@ void Game::CreateUI(Scene * basic)
 	GameObject * scoreC = new GameObject();
 	scoreC->Init("gameScoreB");
 	basic->AddUIObject(scoreC);
-	Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	Button * theSButtonC;
+#if _DEBUG
+	theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+#else
+	theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 120.0f, 120.0f, devResources, 0);
+#endif
 	theSButtonC->SetGameObject(scoreC);
 	theSButtonC->showFPS(false);
 	theSButtonC->setPositionMultipliers(0.6f, 0.11f);
@@ -1517,10 +1548,10 @@ void Game::CreateMenu(Scene * scene)
 	GameObject * bg = new GameObject();
 	bg->Init("background");
 	scene->AddUIObject(bg);
-	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 959.0f, devResources, 0);
+	Button * bgButton = new Button(true, false, L"", 0, 1200.0f, 1151.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
-	bgButton->setPositionMultipliers(0.5f, 0.5f);
+	bgButton->setPositionMultipliers(0.3f, 0.5f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
 	bgRender->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
@@ -1789,10 +1820,10 @@ void Game::CreateLobby(Scene * scene)
 	GameObject * bg = new GameObject();
 	bg->Init("background");
 	scene->AddUIObject(bg);
-	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 959.0f, devResources, 0);
+	Button * bgButton = new Button(true, false, L"", 0, 1200.0f, 1151.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
-	bgButton->setPositionMultipliers(0.5f, 0.5f);
+	bgButton->setPositionMultipliers(0.3f, 0.5f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
 	bgRender->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
@@ -1934,9 +1965,27 @@ void Game::CreateLobby(Scene * scene)
 	changeTeam->AddComponent(ctRender);
 	ctRender->MakeRTSize();
 	ctButton->MakeRect();
-	//ctButton->setGameObject(changeTeam);
-	//ctButton->MakeHandler();
 	ctRender->InitMetrics();
+
+	// searching for host
+
+	GameObject * search = new GameObject();
+	search->Init("search");
+	scene->AddUIObject(search);
+	Button * searchButton = new Button(true, true, L"", (unsigned int)strlen(""), 360.0f, 150.0f, devResources, 0);
+	searchButton->setSceneIndex((unsigned int)scenes.size());
+	searchButton->SetGameObject(search);
+	searchButton->showFPS(false);
+	searchButton->setPositionMultipliers(0.76f, 0.8f);
+	search->AddComponent(searchButton);
+	UIRenderer * searchRender = new UIRenderer();
+	searchRender->Init(true, 25.0f, devResources, searchButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	searchRender->DecodeBitmap(L"../Assets/UI/searchHost.png");
+	search->AddComponent(searchRender);
+	searchRender->MakeRTSize();
+	searchButton->MakeRect();
+	searchRender->InitMetrics();
+	searchButton->SetActive(false);
 }
 
 void Game::CreatePauseMenu(Scene * scene)
@@ -2088,7 +2137,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	rButton->setHelper(scene->GetNumUIObjects());
 }
 
-void Game::AssignPlayers()
+void Game::AssignPlayers(bool firsttime)
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
@@ -2159,34 +2208,63 @@ void Game::AssignPlayers()
 		for (unsigned int i = 0; i < 8; ++i)
 		{
 			// set mage 1 to player if red team
-			if (team == TEAM_A && i != 0)
+			if (!firsttime)
 			{
-				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-				AI *mageAI = new AI(mage1);
-				mage1->AddComponent(mageAI);
-				ai.push_back(mageAI);
+				if (team == TEAM_A && i != 0)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
 
-				PlayerController* player = mage1->GetComponent<PlayerController>();
-				player->ReadInStats(aiNames[i]);
-				player->SetTeamID(TEAM_A);
-			}
-			// set mage 5 to player if blue team
-			else if (team == TEAM_B && i != 4)
-			{
-				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-				AI *mageAI = new AI(mage1);
-				mage1->AddComponent(mageAI);
-				ai.push_back(mageAI);
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_A);
+				}
+				// set mage 5 to player if blue team
+				else if (team == TEAM_B && i != 4)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
 
-				PlayerController* player = mage1->GetComponent<PlayerController>();
-				player->ReadInStats(aiNames[i]);
-				player->SetTeamID(TEAM_B);
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_B);
+				}
+				else
+				{
+					PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
+					player->ReadInStats("Tom");
+					player->SetTeamID(team);
+				}
 			}
 			else
 			{
-				PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
-				player->ReadInStats("Tom");
-				player->SetTeamID(team);
+				if (team == TEAM_A)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
+
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_A);
+				}
+				// set mage 5 to player if blue team
+				else if (team == TEAM_B)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
+
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_B);
+				}
 			}
 		}
 		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
@@ -2491,9 +2569,19 @@ void Game::LoadScene(std::string name)
 		if (ResourceManager::GetSingleton()->IsMultiplayer())
 		{
 			if (ResourceManager::GetSingleton()->IsServer())
+			{
 				EnableButton("Start", true);
+				GameObject * ret = scenes[currentScene]->GetUIByName("Exit");
+				UIRenderer * retRender = ret->GetComponent<UIRenderer>();
+				retRender->RemoveBitmap();
+				retRender->DecodeBitmap(L"../Assets/UI/quitButton.png");
+				retRender->DecodeBitmap(L"../Assets/UI/quitButton2.png");
+			}
 			else
+			{
 				EnableButton("Start", false);
+				EnableButton("search", true);
+			}
 		}
 		else
 		{
@@ -2507,7 +2595,7 @@ void Game::LoadScene(std::string name)
 
 		endTimer = 0.0f;
 		ShowCursor(false);
-		AssignPlayers();
+		AssignPlayers(false);
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
 	}
@@ -2550,6 +2638,12 @@ int Game::UpdateLobby()
 		
 		//run client
 		int clientState = client.run();
+
+		if (client.getConnectionStatus())
+		{
+			EnableButton("search", false);
+		}
+
 		currentScene = client.getScene();
 
 		if (clientState == 5)
