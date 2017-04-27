@@ -14,6 +14,7 @@ float distSquared(Map::Node *start, Map::Node *end)
 Map::Map(int rows, int cols, float3 *positions) : que(isGreater)
 {
 	nodes.resize(rows);
+	usedPlanners.reserve((rows * cols) * 4);
 	numRows = rows;
 	numCols = cols;
 
@@ -67,7 +68,20 @@ Map::Map(int rows, int cols, float3 *positions) : que(isGreater)
 
 Map::~Map()
 {
+	int size = (int)usedPlanners.size();
 
+	for (int i = 0; i < usedPlanners.size(); ++i)
+	{
+		delete usedPlanners[i];
+	}
+
+	for (int r = 0; r < numRows; ++r)
+	{
+		for (int c = 0; c < numCols; ++c)
+		{
+			delete nodes[r][c];
+		}
+	}
 }
 
 Map::Node *Map::FindClosest(float3 pos)
@@ -116,6 +130,7 @@ std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 	std::vector<Node *> path;
 	PlannerNode *begin = new PlannerNode;
 	begin->path = start;
+	usedPlanners.push_back(begin);
 
 	que.push(begin);
 	visited[begin->path] = que.front();
@@ -177,6 +192,7 @@ std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 					node->heuristicCost = distSquared(next, end);
 					node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 					node->parent = curr;
+					usedPlanners.push_back(node);
 
 					visited[next] = node;
 					que.push(node);
@@ -191,6 +207,7 @@ std::vector<Map::Node *> Map::CreatePath(Node * start, Node *end)
 				node->heuristicCost = distSquared(next, end);
 				node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 				node->parent = curr;
+				usedPlanners.push_back(node);
 
 				que.clear();
 				que.push(node);

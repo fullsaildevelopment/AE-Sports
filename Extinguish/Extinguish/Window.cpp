@@ -147,8 +147,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		return 0;
 		break;
 	case WM_SIZE:
-		windowWidth = lParam;
-		windowHeight = lParam >> 16;
+		windowWidth = (uint16_t)lParam;
+		windowHeight = (uint16_t)(lParam >> 16);
 		resizing = true;
 		if (wParam == SIZE_MAXIMIZED && !fullScreen)
 		{

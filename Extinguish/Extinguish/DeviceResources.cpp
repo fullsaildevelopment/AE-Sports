@@ -52,14 +52,6 @@ void DeviceResources::Init(HWND hwnd)
 	CLIENT_WIDTH = (int)(screen.right - screen.left);
 	CLIENT_HEIGHT = (int)(screen.bottom - screen.top);
 #endif
-	/*IDXGIFactory1 *pFactory = NULL;
-
-	swapChain->GetParent(__uuidof (IDXGIFactory1), (void **)&pFactory);
-	if (pFactory)
-	{
-		pFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER);
-		pFactory->Release();
-	}*/
 
 	HRESULT scBufferResult = swapChain.Get()->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)swapChainBuffer.GetAddressOf()); //this returns address of back buffer in swapChain
 
