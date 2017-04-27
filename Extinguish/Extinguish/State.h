@@ -32,7 +32,7 @@ public:
 	Transition* GetTransition(unsigned int index);
 	bool DoesItLoop();
 	float GetSpeed();
-	std::string& const GetName();
+	std::string const& GetName();
 	int GetTransitionIndex();
 	unsigned int GetTransitionsCount();
 

@@ -93,380 +93,389 @@ void AI::HandleEvent(Event* e)
 
 void AI::Init(GameObject *goal1, GameObject *goal2)
 {
-	listOfEnemies.reserve(4);
-	listOfMates.reserve(3);
-	AIbuddies.reserve(3);
+	if (isActive)
+	{
+		listOfEnemies.reserve(4);
+		listOfMates.reserve(3);
+		AIbuddies.reserve(3);
 
-	// grabbing all of the game objects
-	std::vector<GameObject*> tmp = *me->GetGameObjects();
+		// grabbing all of the game objects
+		std::vector<GameObject*> tmp = *me->GetGameObjects();
 
 #pragma region Objects
-	// for each game object
-	for (int i = 0; i < tmp.size(); ++i)
-	{
-		if (tmp[i] != me)
+		// for each game object
+		for (int i = 0; i < tmp.size(); ++i)
 		{
-			// if it's the ball, do the thing
-			if (tmp[i]->GetTag() == "Ball")
-				ball = tmp[i];
-
-			// if i'm team1 -> goal1 is mine
-			else if (me->GetTag() == "Team1")
+			if (tmp[i] != me)
 			{
-				myGoal = goal1;
-				enemyGoal = goal2;
+				// if it's the ball, do the thing
+				if (tmp[i]->GetTag() == "Ball")
+					ball = tmp[i];
 
-				// if they're on my team
-				if (tmp[i]->GetTag() == "Team1")
+				// if i'm team1 -> goal1 is mine
+				else if (me->GetTag() == "Team1")
 				{
-					listOfMates.push_back(tmp[i]);
+					myGoal = goal1;
+					enemyGoal = goal2;
 
-					if (tmp[i]->GetComponent<AI>())
+					// if they're on my team
+					if (tmp[i]->GetTag() == "Team1")
 					{
-						++fakeTeam;
-						AIbuddies.push_back(tmp[i]);
+						listOfMates.push_back(tmp[i]);
+
+						if (tmp[i]->GetComponent<AI>())
+						{
+							++fakeTeam;
+							AIbuddies.push_back(tmp[i]);
+						}
 					}
+
+					// if they're on the enemy team
+					else if (tmp[i]->GetTag() == "Team2")
+						listOfEnemies.push_back(tmp[i]);
 				}
 
-				// if they're on the enemy team
-				else if (tmp[i]->GetTag() == "Team2")
-					listOfEnemies.push_back(tmp[i]);
-			}
-
-			// if i'm team2 -> goal2 is mine
-			else if (me->GetTag() == "Team2")
-			{
-				myGoal = goal2;
-				enemyGoal = goal1;
-
-				// if they're on my team
-				if (tmp[i]->GetTag() == "Team2")
+				// if i'm team2 -> goal2 is mine
+				else if (me->GetTag() == "Team2")
 				{
-					listOfMates.push_back(tmp[i]);
+					myGoal = goal2;
+					enemyGoal = goal1;
 
-					if (tmp[i]->GetComponent<AI>())
+					// if they're on my team
+					if (tmp[i]->GetTag() == "Team2")
 					{
-						++fakeTeam;
-						AIbuddies.push_back(tmp[i]);
-					}
-				}
+						listOfMates.push_back(tmp[i]);
 
-				// if they're on the enemy team
-				else if (tmp[i]->GetTag() == "Team1")
-					listOfEnemies.push_back(tmp[i]);
+						if (tmp[i]->GetComponent<AI>())
+						{
+							++fakeTeam;
+							AIbuddies.push_back(tmp[i]);
+						}
+					}
+
+					// if they're on the enemy team
+					else if (tmp[i]->GetTag() == "Team1")
+						listOfEnemies.push_back(tmp[i]);
+				}
 			}
 		}
-	}
 #pragma endregion
 
 #pragma region Switch
-	switch (fakeTeam)
-	{
-	case 0: // if I'm the only AI
-	{
-		currState = tank;
-
-		break;
-	}
-
-	case 1: // if there is one other AI
-	{
-		bool bgoalie = false;
-		bool btank = false;
-
-		if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
-			btank = true;
-
-		else if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == goalie)
-			bgoalie = true;
-
-		if (!bgoalie) currState = goalie;
-		else if (!btank) currState = tank;
-
-		break;
-	}
-
-	case 2: // if there are two other AI
-	{
-		bool bgoalie = false;
-		bool bplayboy = false;
-		bool btank = false;
-
-		for (int i = 0; i < AIbuddies.size(); ++i)
+		switch (fakeTeam)
 		{
-			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
-				bgoalie = true;
+		case 0: // if I'm the only AI
+		{
+			currState = tank;
 
-			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
-				bplayboy = true;
-
-			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
-				btank = true;
+			break;
 		}
 
-		if (!bgoalie) currState = goalie;
-		else if (!bplayboy) currState = playboy;
-		else if (!btank) currState = tank;
-
-		break;
-	}
-
-	case 3: // if there are three other AI
-	{
-		bool bgoalie = false;
-		bool bplayboy = false;
-		bool bguy = false;
-		bool btank = false;
-
-		for (int i = 0; i < AIbuddies.size(); ++i)
+		case 1: // if there is one other AI
 		{
-			if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
+			bool bgoalie = false;
+			bool btank = false;
+
+			if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == tank)
+				btank = true;
+
+			else if (AIbuddies[0]->GetComponent<AI>()->GetCurrState() == goalie)
 				bgoalie = true;
 
-			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
-				bplayboy = true;
+			if (!bgoalie) currState = goalie;
+			else if (!btank) currState = tank;
 
-			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
-				bguy = true;
-
-			else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
-				btank = true;
+			break;
 		}
 
-		if (!bgoalie) currState = goalie;
-		else if (!bplayboy) currState = playboy;
-		else if (!bguy) currState = guy;
-		else if (!btank) currState = tank;
+		case 2: // if there are two other AI
+		{
+			bool bgoalie = false;
+			bool bplayboy = false;
+			bool btank = false;
 
-		break;
-	}
+			for (int i = 0; i < AIbuddies.size(); ++i)
+			{
+				if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
+					bgoalie = true;
 
-	default: break;
-	}
+				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
+					bplayboy = true;
+
+				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
+					btank = true;
+			}
+
+			if (!bgoalie) currState = goalie;
+			else if (!bplayboy) currState = playboy;
+			else if (!btank) currState = tank;
+
+			break;
+		}
+
+		case 3: // if there are three other AI
+		{
+			bool bgoalie = false;
+			bool bplayboy = false;
+			bool bguy = false;
+			bool btank = false;
+
+			for (int i = 0; i < AIbuddies.size(); ++i)
+			{
+				if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == goalie)
+					bgoalie = true;
+
+				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == playboy)
+					bplayboy = true;
+
+				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == guy)
+					bguy = true;
+
+				else if (AIbuddies[i]->GetComponent<AI>()->GetCurrState() == tank)
+					btank = true;
+			}
+
+			if (!bgoalie) currState = goalie;
+			else if (!bplayboy) currState = playboy;
+			else if (!bguy) currState = guy;
+			else if (!btank) currState = tank;
+
+			break;
+		}
+
+		default: break;
+		}
 #pragma endregion
 
-	ballClass = ball->GetComponent<BallController>();
-	anim = me->GetComponent<AnimatorController>();
+		ballClass = ball->GetComponent<BallController>();
+		anim = me->GetComponent<AnimatorController>();
 
-	myGoalNode = aiPath->FindClosest(myGoal->GetTransform()->GetPosition());
-	enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
+		myGoalNode = aiPath->FindClosest(myGoal->GetTransform()->GetPosition());
+		enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
 
-	Idle();
+		Idle();
+	}
 }
 
 void AI::Update(float _dt)
 {
-	if (!ResourceManager::GetSingleton()->IsPaused())
+	if (isActive)
 	{
+		if (!ResourceManager::GetSingleton()->IsPaused())
+		{
 
 #pragma region Setting Objects
-		if (ogTarget)
-		{
-			AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
-			Param::Trigger *p = animator->GetTrigger("Stumble");
-			bool a = animator->GetTrigger("Stumble")->GetTrigger();
-
-			// if your current anim isn't stumble AND ???the the trigger isn't stumble???
-			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
+			if (ogTarget)
 			{
-				bool setCanMove = false;
+				AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
+				Param::Trigger *p = animator->GetTrigger("Stumble");
+				bool a = animator->GetTrigger("Stumble")->GetTrigger();
 
-				// if you have an anim queued
-				if (animator->GetState(animator->GetNextStateIndex()))
+				// if your current anim isn't stumble AND ???the the trigger isn't stumble???
+				if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
 				{
-					// and it's not stumble
-					if (animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
-						setCanMove = true;
-				}
+					bool setCanMove = false;
 
-				else //no animation queued at all
-					setCanMove = true;
-
-				if (setCanMove)
-				{
-					if (ogTarget->GetComponent<AI>())
-						ogTarget->GetComponent<AI>()->SetCanMove(true);
-
-					else
+					// if you have an anim queued
+					if (animator->GetState(animator->GetNextStateIndex()))
 					{
-						Movement* otherMovement = ogTarget->GetComponent<Movement>();
-						otherMovement->SetCanMove(true);
-
-						//move the player's camera to match getting up
-						Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
-						float3 translation = otherCamera->GetForwardf3();
-						translation.x = translation.x;
-						translation.y = 3.0f;
-						translation.z = translation.z * 3.0f;
-
-						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+						// and it's not stumble
+						if (animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
+							setCanMove = true;
 					}
 
-					ogTarget = nullptr;
+					else //no animation queued at all
+						setCanMove = true;
+
+					if (setCanMove)
+					{
+						if (ogTarget->GetComponent<AI>())
+							ogTarget->GetComponent<AI>()->SetCanMove(true);
+
+						else
+						{
+							Movement* otherMovement = ogTarget->GetComponent<Movement>();
+							otherMovement->SetCanMove(true);
+
+							//move the player's camera to match getting up
+							Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
+							float3 translation = otherCamera->GetForwardf3();
+							translation.x = translation.x;
+							translation.y = 3.0f;
+							translation.z = translation.z * 3.0f;
+
+							otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+						}
+
+						ogTarget = nullptr;
+					}
 				}
 			}
-		}
 
-		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Idle" && !anim->GetState(anim->GetNextStateIndex())) anim->SetTrigger("Idle");
-		if (!canMove) Idle();
-		if (!isAttacking) realTarget = nullptr;
-		if (startTimer) timer -= _dt;
-		if (!crosse) crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
-		if (!camera) camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Idle" && !anim->GetState(anim->GetNextStateIndex())) anim->SetTrigger("Idle");
+			if (!canMove) Idle();
+			if (!isAttacking) realTarget = nullptr;
+			if (startTimer) timer -= _dt;
+			if (!crosse) crosse = me->GetTransform()->GetChild(0)->GetChild(0)->GetGameObject()->GetComponent<Crosse>();
+			if (!camera) camera = me->GetTransform()->GetChild(0)->GetGameObject()->GetTransform();
 
-		if (!eTank || !mGuy || !mGo2)
-		{
-			for (int i = 0; i < listOfEnemies.size(); ++i)
+			if (!eTank || !mGuy || !mGo2)
 			{
-				if (listOfEnemies[i]->GetComponent<AI>() && listOfEnemies[i]->GetComponent<AI>()->GetCurrState() == tank)
-					eTank = listOfEnemies[i];
-			}
-
-			for (int i = 0; i < listOfMates.size(); ++i)
-			{
-				if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
-					mGo2 = listOfMates[i];
-
-				else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
-					mGuy = listOfMates[i];
-
-				else if (!mGuy && !listOfMates[i]->GetComponent<AI>())
-					mGuy = listOfMates[i];
-			}
-		}
-
-#pragma endregion
-
-		if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
-		{
-			// if it's me
-			if (currState != goalie)
-				Score();
-
-			else
-			{
-				camera->RotateX(-0.4f);
-				crosse->Throw();
-				camera->RotateX(0.4f);
-			}
-		}
-		
-#pragma region Goalie
-		if (currState == goalie)
-		{
-			float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
-
-			// if the ball gets close
-			if (dist.magnitude() < 34)
-			{
-				// if no one is holding it or the enemies have it
-				if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
-					GetBall();
-			}
-
-			// if the ball is too far from the goal
-			else if (dist.magnitude() > 34)
-			{
-				float3 jik = myGoal->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
-				float diist = dot_product(jik, jik);
-				
-				if (RunTo(myGoal) || diist <= 370.0f)
+				for (int i = 0; i < listOfEnemies.size(); ++i)
 				{
-					TurnTo(enemyGoal);
-					Idle();
+					if (listOfEnemies[i]->GetComponent<AI>() && listOfEnemies[i]->GetComponent<AI>()->GetCurrState() == tank)
+						eTank = listOfEnemies[i];
+				}
+
+				for (int i = 0; i < listOfMates.size(); ++i)
+				{
+					if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
+						mGo2 = listOfMates[i];
+
+					else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+						mGuy = listOfMates[i];
+
+					else if (!mGuy && !listOfMates[i]->GetComponent<AI>())
+						mGuy = listOfMates[i];
 				}
 			}
-		}
+
 #pragma endregion
-		
-#pragma region Goalie2
-		else if (currState == playboy)
-		{
-			float3 pos1 = float3(-9, 0.5, -25);
-			float3 pos2 = float3(-30, 0.5, -25);
 
-			if (me->GetTag() == "Team2")
+			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 			{
-				pos1.z *= -1;
-				pos2.z *= -1;
+				// if it's me
+				if (currState != goalie)
+					Score();
+
+				else
+				{
+					camera->RotateX(-0.4f);
+					crosse->Throw();
+					camera->RotateX(0.4f);
+				}
 			}
 
-			// if the enemy has the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder()->GetTag() != me->GetTag())
+#pragma region Goalie
+			if (currState == goalie)
 			{
-				if (eTank) Attack(eTank);
-			}
+				float3 dist = ball->GetTransform()->GetWorldPosition() - myGoal->GetTransform()->GetPosition();
 
-			else
-			{
 				// if the ball gets close
-				if (!ballClass->GetIsHeld() && (ball->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).magnitude() < 15)
-					GetBall();
+				if (dist.magnitude() < 34)
+				{
+					// if no one is holding it or the enemies have it
+					if (!ballClass->GetIsThrown() && (!ballClass->GetIsHeld() || ballClass->GetHolder()->GetTag() != me->GetTag()))
+						GetBall();
+				}
 
-				// run around enemys side
-				else if (!at1 && RunTo(pos1, 1.5f))
-					at1 = true;
+				// if the ball is too far from the goal
+				else if (dist.magnitude() > 34)
+				{
+					float3 jik = myGoal->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+					float diist = dot_product(jik, jik);
 
-				else if (at1 && RunTo(pos2, 1.5f))
-					at1 = false;
+					if (RunTo(myGoal) || diist <= 370.0f)
+					{
+						TurnTo(enemyGoal);
+						Idle();
+					}
+				}
 			}
-		}
+#pragma endregion
+
+#pragma region Goalie2
+			else if (currState == playboy)
+			{
+				float3 pos1 = float3(-9, 0.5, -25);
+				float3 pos2 = float3(-30, 0.5, -25);
+
+				if (me->GetTag() == "Team2")
+				{
+					pos1.z *= -1;
+					pos2.z *= -1;
+				}
+
+				// if the enemy has the ball
+				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder()->GetTag() != me->GetTag())
+				{
+					if (eTank) Attack(eTank);
+				}
+
+				else
+				{
+					// if the ball gets close
+					if (!ballClass->GetIsHeld() && (ball->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition()).magnitude() < 15)
+						GetBall();
+
+					// run around enemys side
+					else if (!at1 && RunTo(pos1, 1.5f))
+						at1 = true;
+
+					else if (at1 && RunTo(pos2, 1.5f))
+						at1 = false;
+				}
+			}
 
 #pragma endregion
 
 #pragma region Guy || Tank
-		else if (currState == guy || currState == tank)
-		{
-			// if i have the ball or one of my teammates have the ball
-			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
+			else if (currState == guy || currState == tank)
 			{
-				// if it's my teammate
-				if (ballClass->GetHolder()->GetTag() == me->GetTag())
-					DefendTeammate();
+				// if i have the ball or one of my teammates have the ball
+				if (ballClass->GetIsHeld() && !ballClass->GetIsThrown())
+				{
+					// if it's my teammate
+					if (ballClass->GetHolder()->GetTag() == me->GetTag())
+						DefendTeammate();
 
-				// if it's enemy
-				else Attack(ballClass->GetHolder());
-			}
-
-			else
-			{
-				if (currState == guy)
-					GetBall();
+					// if it's enemy
+					else Attack(ballClass->GetHolder());
+				}
 
 				else
 				{
-					if (mGuy)
-					{
-						//hover around Guy
-						float3 jik = mGuy->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
-						float dist = dot_product(jik, jik);
+					if (currState == guy)
+						GetBall();
 
-						if (RunTo(mGuy) || dist <= 300.0f)
-							Idle();
+					else
+					{
+						if (mGuy)
+						{
+							//hover around Guy
+							float3 jik = mGuy->GetTransform()->GetWorldPosition() - me->GetTransform()->GetPosition();
+							float dist = dot_product(jik, jik);
+
+							if (RunTo(mGuy) || dist <= 300.0f)
+								Idle();
+						}
 					}
 				}
 			}
-		}
 #pragma endregion
 
-		if (timer <= 0)
-		{
-			timer = 5.0f;
-			startTimer = false;
+			if (timer <= 0)
+			{
+				timer = 5.0f;
+				startTimer = false;
+			}
 		}
 	}
 }
 
 void AI::FixedUpdate(float dt)
 {
-	if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
+	if (isActive)
 	{
-		float3 h = float3(0, 10, 0);
-		float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
-		float dist = dot_product(jik, jik);
+		if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
+		{
+			float3 h = float3(0, 10, 0);
+			float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
+			float dist = dot_product(jik, jik);
 
-		if (dist > 4.0f)
-			validPath = false;
+			if (dist > 4.0f)
+				validPath = false;
+		}
 	}
 }
 
