@@ -69,10 +69,12 @@ Map::Map(int rows, int cols, float3 *positions) : que(isGreater)
 Map::~Map()
 {
 	int size = (int)usedPlanners.size();
+
 	for (int i = 0; i < usedPlanners.size(); ++i)
 	{
 		delete usedPlanners[i];
 	}
+
 	for (int r = 0; r < numRows; ++r)
 	{
 		for (int c = 0; c < numCols; ++c)
