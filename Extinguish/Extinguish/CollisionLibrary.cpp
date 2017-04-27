@@ -1750,7 +1750,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	if (allInside)
 	{
 		float3 distFromTop = endPoint - planes[0].p;
-		if (distFromTop.y <= -0.199f)
+		if (distFromTop.y <= -0.356f)
 		{
 			float3 distFromCenter = distFromTop * float3(1, 0, 1);
 			if (dot_product(distFromCenter, distFromCenter) <= 1.55f)
@@ -1767,7 +1767,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 		}
 		if (Sdirection.y <= 0)
 		{
-			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.35f)/* || ((distFromTop * float3(1,0,1)).magnitude() < 0.90f && distFromTop.y < 0)*/)
+			if ((planes[0].p.y > endPoint.y && distFromTop.y >= -0.355f))
 			{
 				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
