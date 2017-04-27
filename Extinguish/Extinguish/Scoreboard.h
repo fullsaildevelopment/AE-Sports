@@ -35,6 +35,9 @@ private:
 	const float yPos = 0.23f;
 	const float yPosLabel = 0.18f;
 
+	// for resize
+	float x, y;
+
 	//private helper functions
 	bool IsBeingUsed(int index);
 	float Clamp(float num);

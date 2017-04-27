@@ -62,7 +62,7 @@ private:
 
 public:
 
-	bool isActive = false;
+	//bool isActive = false;
 	static Map *aiPath;
 
 	AI(GameObject *obj);
