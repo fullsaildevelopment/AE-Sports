@@ -106,9 +106,8 @@ void PlayerController::Update(float _dt)
 				AI* otherAI = ogPlayer->GetComponent<AI>();
 
 				if (otherAI)
-				{
 					otherAI->SetCanMove(true);
-				}
+
 				else
 				{
 					Movement* otherMovement = ogPlayer->GetComponent<Movement>();
@@ -568,7 +567,7 @@ void PlayerController::HandleInput()
 		Jump();
 	}
 
-	if (input->GetKeyDown('F'))
+	if (input->GetMouseButton(0) /*input->GetKeyDown('F')*/)
 	{
 		Attack();
 	}
