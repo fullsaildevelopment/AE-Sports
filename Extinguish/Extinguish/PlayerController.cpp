@@ -567,7 +567,7 @@ void PlayerController::HandleInput()
 		Jump();
 	}
 
-	if (input->GetKeyDown('F'))
+	if (input->GetMouseButton(0) /*input->GetKeyDown('F')*/)
 	{
 		Attack();
 	}
