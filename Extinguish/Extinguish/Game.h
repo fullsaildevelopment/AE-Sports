@@ -90,7 +90,7 @@ private:
 	void CreateLobby(Scene * scene);
 	void CreatePauseMenu(Scene * scene);
 	void CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection);
-	void AssignPlayers();
+	void AssignPlayers(bool firsttime);
 
 	void UpdateServerStates();
 	void UpdateClientObjects();
@@ -103,7 +103,7 @@ private:
 	void TogglePauseMenu(bool endGame, bool scoreboard);
 
 public:
-	void CreateGameWrapper();
+	void CreateGameWrapper(bool firsttime);
 	~Game();
 	//basic
 	void Init(DeviceResources* _devResources, InputManager* inputManager);
