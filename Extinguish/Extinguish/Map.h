@@ -52,7 +52,7 @@ private:
 	std::vector<std::vector<Node *>> nodes; // all the nodes in the map
 	std::map<Node *, PlannerNode *> visited; // map of tiles we've already seen
 
-
+	std::vector<PlannerNode *> usedPlanners; // used to delete when game is done
 
 public:
 	
