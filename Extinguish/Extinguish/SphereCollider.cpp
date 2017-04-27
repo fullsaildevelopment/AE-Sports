@@ -69,7 +69,7 @@ void SphereCollider::FixedUpdate(float _dt)
 				Sphere s = GetWorldSphere();
 				float3 vel = tgt->GetVelocity() * _dt;
 				float3 c = SweptSpheretoAABB(s, box->GetWorldAABB(), vel);
-				if (c.x == 1 || c.y == 1)
+				if (!c.isEqual(float3(0, 0, 0)))
 				{
 					collisionNormal = c;
 					Physics* op = tg->GetComponent<Physics>();
