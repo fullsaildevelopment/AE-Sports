@@ -47,3 +47,8 @@ FriendlyIOTransformNode* Skeleton::GetBone(std::string name)
 
 	return result;
 }
+
+FriendlyIOTransformNode* Skeleton::GetBone(unsigned int index)
+{
+	return &bones[index];
+}

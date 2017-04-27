@@ -55,6 +55,8 @@ void AnimatorController::FixedUpdate(float _dt)
 	{
 		int breakPoint = 69;
 		breakPoint++;
+
+		cout << states[curStateIndex]->GetName() << '\t';
 	}
 
 	//check states' transitions

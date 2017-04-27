@@ -303,9 +303,24 @@ void Transform::SetWorld(DirectX::XMFLOAT4X4 matrix)
 
 void Transform::SetLocal(DirectX::XMFLOAT4X4 matrix)
 {
-	local = matrix;
+	//local = matrix;
 
-	//BDirty();
+	//SetPosition({ matrix._41, matrix._42, matrix._43 });
+	//
+	//XMVECTOR col1 = XMVectorSet(matrix._11, matrix._12, matrix._13, 0);
+	//XMVECTOR col2 = XMVectorSet(matrix._21, matrix._22, matrix._23, 0);
+	//XMVECTOR col3 = XMVectorSet(matrix._31, matrix._32, matrix._33, 0);
+	//XMFLOAT4 length1;
+	//XMStoreFloat4(&length1, XMVector4Length(col1));
+	//XMFLOAT4 length2;
+	//XMStoreFloat4(&length2, XMVector4Length(col2));
+	//XMFLOAT4 length3;
+	//XMStoreFloat4(&length3, XMVector4Length(col3));
+
+	//SetScale({ length1.x, length2.x, length3.x });
+	//SetRotation();
+
+	BDirty();
 }
 
 void Transform::SetParent(Transform* pParent)
@@ -342,25 +357,33 @@ DirectX::XMFLOAT4X4 Transform::GetWorld()
 		XMMATRIX tempTranslation = XMMatrixMultiply(identity, XMMatrixTranslation(position.x, position.y, position.z));
 		XMMATRIX tempScale = XMMatrixMultiply(identity, XMMatrixScaling(scale.x, scale.y, scale.z));
 
-		XMMATRIX tempWorld = XMMatrixMultiply(tempScale, tempRotation);
-		tempWorld = XMMatrixMultiply(tempWorld, tempTranslation);
+		XMMATRIX tempLocal = XMMatrixMultiply(tempScale, tempRotation);
+		tempLocal = XMMatrixMultiply(tempLocal, tempTranslation);
+
+		XMStoreFloat4x4(&local, tempLocal);
+
+		XMMATRIX tempWorld;
 
 		if (parent)
 		{
-			tempWorld = XMMatrixMultiply(tempWorld, XMLoadFloat4x4(&parent->GetWorld()));
+			tempWorld = XMMatrixMultiply(tempLocal, XMLoadFloat4x4(&parent->GetWorld()));
 			//tempWorld = XMMatrixMultiply(XMLoadFloat4x4(&parent->GetWorld()), tempWorld);
 		}
+		else
+		{
+			tempWorld = tempLocal;
+		}
 		
-		XMStoreFloat4x4(&local, tempWorld);
+		//world = local;
 
-		world = local;
+		XMStoreFloat4x4(&world, tempWorld);
 
 		bDirty = false;
 	}
-	else
-	{
-		world = local;
-	}
+	//else
+	//{
+	//	world = local;
+	//}
 
 	return world;
 }

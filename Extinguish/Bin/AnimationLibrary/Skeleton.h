@@ -19,4 +19,5 @@ public:
 	DirectX::XMFLOAT4X4 GetInverseBindPose(unsigned int index) { return inverseBindPoses[index]; }
 	std::vector<std::string> GetNames() { return names; }
 	FriendlyIOTransformNode* GetBone(std::string name);
+	FriendlyIOTransformNode* GetBone(unsigned int index);
 };
