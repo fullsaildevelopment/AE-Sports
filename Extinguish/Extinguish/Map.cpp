@@ -73,6 +73,13 @@ Map::~Map()
 	{
 		delete usedPlanners[i];
 	}
+	for (int r = 0; r < numRows; ++r)
+	{
+		for (int c = 0; c < numCols; ++c)
+		{
+			delete nodes[r][c];
+		}
+	}
 }
 
 Map::Node *Map::FindClosest(float3 pos)
