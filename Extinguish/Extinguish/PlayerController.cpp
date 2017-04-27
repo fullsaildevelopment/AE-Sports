@@ -56,6 +56,7 @@ void PlayerController::Init()
 	footstepsSound = 0;
 	footstepsPlayed = false;
 	isInvincible = false;
+	goBackToRun = false;
 
 	//other initialization
 	canSprint = true;
@@ -229,30 +230,29 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		}
 	}
 
-	if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-	{
-		BoxCollider* boxCollider = (BoxCollider*)collider;
-		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
-		{
-			if (boxCollider->collisionNormal.isEqual(UP))
-			{
-				if (justJumped)
-				{
-					justJumped = false;
+	//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+	//{
+	//	BoxCollider* boxCollider = (BoxCollider*)collider;
+	//	if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
+	//	{
+	//		if (boxCollider->collisionNormal.isEqual(UP))
+	//		{
+	//			if (justJumped)
+	//			{
+	//				justJumped = false;
 
-					//do animation
-					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+	//				//do animation
+ //					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-					animator->SetTrigger("Land");
+	//				animator->SetTrigger("Land");
+	//			}
 
-				}
+	//			floor = boxCollider->GetGameObject();
+	//		}
 
-				floor = boxCollider->GetGameObject();
-			}
-
-			return;
-		}
-	}
+	//		return;
+	//	}
+	//}
 
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
@@ -266,6 +266,12 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 				animator->SetTrigger("Land");
+
+				if (goBackToRun) //what about jog though? Maybe just go back to idle for simplicity sake
+				{
+					goBackToRun = false;
+					animator->SetTrigger("Run");
+				}
 			}
 
 			floor = hexCollider->GetGameObject();
@@ -278,30 +284,30 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 void PlayerController::OnCollisionStay(Collider* collider)
 {
 
-	if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-	{
-		BoxCollider* boxCollider = (BoxCollider*)collider;
-		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
-		{
-			if (boxCollider->collisionNormal.isEqual(UP))
-			{
-				if (justJumped)
-				{
-					justJumped = false;
+	//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+	//{
+	//	BoxCollider* boxCollider = (BoxCollider*)collider;
+	//	if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
+	//	{
+	//		if (boxCollider->collisionNormal.isEqual(UP))
+	//		{
+	//			if (justJumped)
+	//			{
+	//				justJumped = false;
 
-					//do animation
-					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+	//				//do animation
+	//				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-					animator->SetTrigger("Land");
-				}
+	//				animator->SetTrigger("Land");
+	//			}
 
-				floor = boxCollider->GetGameObject();
-			}
+	//			floor = boxCollider->GetGameObject();
+	//		}
 
-			return;
-		}
-		return;
-	}
+	//		return;
+	//	}
+	//	return;
+	//}
 
 
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
@@ -343,18 +349,18 @@ void PlayerController::OnCollisionExit(Collider* collider)
 
 	if (floor)
 	{
-		if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-		{
-			BoxCollider* boxCollider = (BoxCollider*)collider;
-			if (boxCollider->GetGameObject() == floor)
-			{
-				//cout << "floor exit" << endl;
+		//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+		//{
+		//	BoxCollider* boxCollider = (BoxCollider*)collider;
+		//	if (boxCollider->GetGameObject() == floor)
+		//	{
+		//		//cout << "floor exit" << endl;
 
-				floor = nullptr;
-				justJumped = false;
-				return;
-			}
-		}
+		//		floor = nullptr;
+		//		//justJumped = false;
+		//		return;
+		//	}
+		//}
 
 		if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 		{
@@ -362,7 +368,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 			if (hexCollider->GetGameObject() == floor)
 			{
 				floor = nullptr;
-				justJumped = false;
+				//justJumped = false;
 			}
 		}
 	}
@@ -469,7 +475,8 @@ void PlayerController::Jump()
 
 		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
 		{
-			animator->SetTrigger("Run");
+			goBackToRun = true;
+			//animator->SetTrigger("Run");
 		}
 
 		//play super jump efect

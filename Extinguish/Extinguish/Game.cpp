@@ -932,22 +932,22 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mage1->AddComponent(mageAnim1);
 		mageAnim1->Init("Titan", 0, "Idle"); //init animator
 		State* mageIdle = new State();
-		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 0.5f, "Idle");
+		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
 		mageAnim1->AddState(mageIdle);
 		State* mageRun = new State();
-		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 0.75f, "Run");
+		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
 		mageAnim1->AddState(mageRun);
 		State* mageStumble = new State();
-		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Stumble"), false, 0.75f, "Stumble");
+		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Stumble"), false, 1.0f, "Stumble");
 		mageAnim1->AddState(mageStumble);
 		State* mageJump = new State();
-		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 2.0f, "Jump");
+		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 1.5f, "Jump");
 		mageAnim1->AddState(mageJump);
 		State* mageFall = new State();
-		mageFall->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), false, 2.0f, "Fall");
+		mageFall->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
 		mageAnim1->AddState(mageFall);
 		State* mageLand = new State();
-		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 2.0f, "Land");
+		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
 		mageAnim1->AddState(mageLand);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
@@ -992,11 +992,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageJump->AddTransition(jumpToFall);
 		jumpToFall->Init(mageJump, mageFall, 0, 0.1f);
 		Transition* fallToLand = new Transition();
-		mageJump->AddTransition(fallToLand);
+		mageFall->AddTransition(fallToLand);
 		fallToLand->Init(mageFall, mageLand, -1, 0.1f);
-		Transition* jumpToIdle = new Transition();
-		mageJump->AddTransition(jumpToIdle);
-		jumpToIdle->Init(mageJump, mageIdle, 0, 0.1f);
+		fallToLand->AddCondition(landTrigger);
+		Transition* landToIdle = new Transition();
+		mageLand->AddTransition(landToIdle);
+		landToIdle->Init(mageLand, mageIdle, 0, 0.1f);
 		Transition* runToJump = new Transition();
 		mageRun->AddTransition(runToJump);
 		runToJump->Init(mageRun, mageJump, -1, 0.001f);
