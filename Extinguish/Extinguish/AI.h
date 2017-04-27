@@ -12,6 +12,7 @@ class AnimatorController;
 class AI : public Component
 {
 private:
+
 	enum State
 	{
 		goalie, // stays at teams goal
