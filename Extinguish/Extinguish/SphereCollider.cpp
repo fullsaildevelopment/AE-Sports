@@ -75,7 +75,7 @@ void SphereCollider::FixedUpdate(float _dt)
 					Physics* op = tg->GetComponent<Physics>();
 					if (op)
 					{
-						op->HandlePhysics(tgt, vel * c / _dt, s.m_Center - offset, true);
+						op->HandlePhysics(tgt, vel / _dt, s.m_Center - offset, true, c);
 						if (!CollidingWith[i])
 						{
 							objects[i]->OnCollisionEnter(this);

@@ -527,8 +527,9 @@ float SweptAABBtoAABB(const AABB& boxl, const AABB& boxr, float3 vel, float& nor
 	return entryT;
 }
 
-float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
+float3 SweptSpheretoAABB(Sphere& s, const AABB& box, float3& vel)
 {
+	/*
 	float3 centerb = (b.max + b.min) * 0.5f;
 	float3 move = (s.m_Center - centerb).normalize();
 	AABB offset;
@@ -686,7 +687,81 @@ float3 SweptSpheretoAABB(Sphere& s, const AABB& b, float3& vel)
 	}
 
 
-	return float3().make_zero();
+	return float3().make_zero();*/
+	float3 cp = s.m_Center;
+	vec3f cpb = cp;
+	if (cp.x < box.min.x)
+		cpb.x = box.min.x;
+	if (cp.y < box.min.y)
+		cpb.y = box.min.y;
+	if (cp.z < box.min.z)
+		cpb.z = box.min.z;
+	if (cp.x > box.max.x)
+		cpb.x = box.max.x;
+	if (cp.y > box.max.y)
+		cpb.y = box.max.y;
+	if (cp.z > box.max.z)
+		cpb.z = box.max.z;
+	if (dot_product(cp - cpb, cp - cpb) < powf(s.m_Radius, 2))
+	{
+		float3 v1(box.min.x, box.max.y, box.max.z);
+		float3 v7(box.max.x, box.min.y, box.min.z);
+		cpb = cp;
+		float3 y(0, 1, 0);
+		float3 ny(0, -1, 0);
+		float3 x(1, 0, 0);
+		float3 nx(-1, 0, 0);
+		float3 z(0, 0, 1);
+		float3 nz(0, 0, -1);
+
+		float3 testyznx = v1 - cp;
+		float3 testnynzx = v7 - cp;
+
+		float dx = dot_product(testnynzx, x);
+		float dnx = dot_product(testyznx, nx);
+		float dy = dot_product(testyznx, y);
+		float dny = dot_product(testnynzx, ny);
+		float dz = dot_product(testyznx, z);
+		float dnz = dot_product(testnynzx, nz);
+		float3 ref;
+		if (dx < dnx && dx < dy && dx < dny && dx < dz && dx < dnz)
+		{
+			cp.x = box.max.x + s.m_Radius - 0.000001f;
+			ref = x;
+		}
+		else if (dnx < dx && dnx < dy && dnx < dny && dnx < dz && dnx < dnz)
+		{
+			cp.x = box.min.x - s.m_Radius + 0.000001f;
+			ref = nx;
+		}
+		else if (dy < dnx && dy < dx && dy < dny && dy < dz && dy < dnz)
+		{
+			cp.y = box.max.y + s.m_Radius - 0.000001f;
+			ref = y;
+		}
+		else if (dny < dnx && dny < dy && dny < dx && dny < dz && dny < dnz)
+		{
+			cp.y = box.min.y - s.m_Radius + 0.000001f;
+			ref = ny;
+		}
+		else if (dz < dnx && dz < dy && dz < dny && dz < dx && dz < dnz)
+		{
+			cp.z = box.max.z + s.m_Radius - 0.000001f;
+			ref = z;
+		}
+		else if (dnz < dnx && dnz < dy && dnz < dny && dnz < dz && dnz < dx)
+		{
+			cp.z = box.min.z - s.m_Radius + 0.000001f;
+			ref = nz;
+		}
+		else
+		{
+			s.m_Center.y = box.max.y;
+		}
+		s.m_Center = cp;
+		return ref;
+	}
+	return float3(0, 0, 0);
 }
 
 float3 SweptSpheretoSphere(Sphere& sp, const Sphere& ss, float3& vel)
@@ -1508,18 +1583,18 @@ void BuildTris(const Hexagon& hex)
 	//Triangle 11 topP5 -> bootomP5 -> bottomP0
 	//Triangle 12 topP0 -> bootomP0 -> topP5
 
-	
-	tris[0].SetTriangle( &topP0, &bottomP0, &bottomP1, &tpln );
-	tris[1].SetTriangle( &topP1, &bottomP1, &topP0, &tpln );
-	tris[2].SetTriangle( &topP1, &bottomP1, &bottomP2, &rpln );
-	tris[3].SetTriangle( &topP2, &bottomP2, &topP1, &rpln );
-	tris[4].SetTriangle( &topP2, &bottomP2, &bottomP3, &tplnnz );
-	tris[5].SetTriangle( &topP3, &bottomP3, &topP2, &tplnnz );
-	tris[6].SetTriangle( &topP3, &bottomP3, &bottomP4, &tplnnznx );
-	tris[7].SetTriangle( &topP4, &bottomP4, &topP3, &tplnnznx );
-	tris[8].SetTriangle( &topP4, &bottomP4, &bottomP5, &rplnnx );
-	tris[9].SetTriangle( &topP5, &bottomP5, &topP4, &rplnnx );
-	tris[10].SetTriangle( &topP5, &bottomP5, &bottomP0, &tplnnx );
+
+	tris[0].SetTriangle(&topP0, &bottomP0, &bottomP1, &tpln);
+	tris[1].SetTriangle(&topP1, &bottomP1, &topP0, &tpln);
+	tris[2].SetTriangle(&topP1, &bottomP1, &bottomP2, &rpln);
+	tris[3].SetTriangle(&topP2, &bottomP2, &topP1, &rpln);
+	tris[4].SetTriangle(&topP2, &bottomP2, &bottomP3, &tplnnz);
+	tris[5].SetTriangle(&topP3, &bottomP3, &topP2, &tplnnz);
+	tris[6].SetTriangle(&topP3, &bottomP3, &bottomP4, &tplnnznx);
+	tris[7].SetTriangle(&topP4, &bottomP4, &topP3, &tplnnznx);
+	tris[8].SetTriangle(&topP4, &bottomP4, &bottomP5, &rplnnx);
+	tris[9].SetTriangle(&topP5, &bottomP5, &topP4, &rplnnx);
+	tris[10].SetTriangle(&topP5, &bottomP5, &bottomP0, &tplnnx);
 	tris[11].SetTriangle(&topP0, &topP0, &topP5, &tplnnx);
 	tris[12].SetTriangle(&topP0, &topP1, &top, &topn);
 	tris[13].SetTriangle(&topP1, &topP2, &top, &topn);
@@ -1553,31 +1628,31 @@ void BuildPlanes(const Hexagon& hex, float r)
 	planes[4].p = hex.seg.m_End;
 	planes[5].p = hex.seg.m_End;
 	planes[6].p = hex.seg.m_End;
-	
+
 	planes[0].p.x += 0;
 	planes[0].p.y += r;
 	planes[0].p.z += 0;
-				  
+
 	planes[1].p.x += hex.h * 0.5f + tpln.x * r;
 	planes[1].p.y += -0.013f + tpln.y * r;
 	planes[1].p.z += hex.s * 0.5f + tpln.z * r;
-				  
+
 	planes[2].p.x += hex.h * 0.5f + rpln.x * r;
 	planes[2].p.y += -0.013f + rpln.y * r;
 	planes[2].p.z += hex.s * 0.5f + rpln.z * r;
-				  
+
 	planes[3].p.x += hex.h * 0.5f + tplnnz.x * r;
 	planes[3].p.y += -0.013f + tplnnz.y * r;
 	planes[3].p.z += -hex.s * 0.5f + tplnnz.z * r;
-				  
+
 	planes[4].p.x += -hex.h * 0.5f + tplnnznx.x * r;
 	planes[4].p.y += -0.013f + tplnnznx.y * r;
 	planes[4].p.z += -hex.s * 0.5f + tplnnznx.z * r;
-				  
+
 	planes[5].p.x += -hex.h * 0.5f + rplnnx.x * r;
 	planes[5].p.y += -0.013f + rplnnx.y * r;
 	planes[5].p.z += hex.s * 0.5f + rplnnx.z * r;
-				  
+
 	planes[6].p.x += -hex.h * 0.5f + tplnnx.x * r;
 	planes[6].p.y += -0.013f + tplnnx.y * r;
 	planes[6].p.z += hex.s * 0.5f + tplnnx.z * r;
@@ -1672,8 +1747,8 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 	return zeroF;*/
 
 	float3 Sdirection = s.m_Center - pastPos;
-	
-	
+
+
 	/*
 	if (mesh)
 	{
@@ -1775,7 +1850,7 @@ float3 HexagonToSphere(const Hexagon& hex, Sphere& s, float3& pastPos, float& St
 			}
 			if (planes[0].p.y < endPoint.y && distFromTop.y < 0.06f && Sdirection.y == 0)
 			{
-				s.m_Center.y = planes[0].p.y +  0.0018f;
+				s.m_Center.y = planes[0].p.y + 0.0018f;
 				Stime = 1;
 				return planes[0].n;
 			}
