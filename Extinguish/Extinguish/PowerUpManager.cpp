@@ -231,7 +231,7 @@ void PowerUpManager::ServerUpdate(float _dt)
 				//prevent powerup from being used again
 				isSpawned[randPowIndex] = true;
 
-				cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
+				//cout << powerUps[randPowIndex]->GetGameObject()->GetName() << " spawned" << endl;
 
 				//reset timer so it's every *blank* seconds til spawn for this position
 				roundTimer[randPosIndex] = 0.0f;

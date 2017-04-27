@@ -17,7 +17,7 @@ class GameObject;
 class Renderer : public Component
 {
 private:
-	Blender* blender;
+	//Blender* blender;
 
 	float4 EmissiveColor = { 1,1,1,1 };
 
@@ -65,18 +65,18 @@ public:
 
 	//getters
 	std::vector<DirectX::XMFLOAT4X4> GetBoneOffsets();
-	std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds();
-	Blender* GetBlender();
+	//std::vector<DirectX::XMFLOAT4X4> GetBonesWorlds();
+	//Blender* GetBlender();
 	bool GetTransparent();
 	//setters
-	void SetCurAnimation(int animIndex);
-	void SetNextAnimation(std::string animName);
-	void SetNextAnimation(int animIndex);
+	//void SetCurAnimation(int animIndex);
+	//void SetNextAnimation(std::string animName);
+	//void SetNextAnimation(int animIndex);
 	void SetModel(XMMATRIX& model);
 	void SetModel(XMFLOAT4X4& model);
 	void SetView(XMFLOAT4X4 view);
 	void SetProjection(XMFLOAT4X4 projection);
-	void SetBlendInfo(BlendInfo info);
+	//void SetBlendInfo(BlendInfo info);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
 	void SetEmissiveColor(float4 c);
 	void SetCatch(float c);
