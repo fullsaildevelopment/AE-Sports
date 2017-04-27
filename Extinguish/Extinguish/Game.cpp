@@ -338,12 +338,11 @@ int Game::Update(float dt)
 
 
 				//run client
-
 				if (!ResourceManager::GetSingleton()->IsServer())
 				{
 					int clientState = client.run();
-					clientID = client.getID();
 
+						clientID = client.getID();
 
 					if (clientState == 0)
 					{
@@ -546,6 +545,20 @@ void Game::HandleEvent(Event* e)
 			server.setScores(Team1Score, Team2Score);
 			server.SendScorer(SEvent->GetPlayerName(), (UINT8)SEvent->GetPlayerName().length());
 			//	server.sendGameState();
+
+			Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+
+			string sname = SEvent->GetPlayerName();
+
+			wstring name(sname.size(), L' ');
+			copy(sname.begin(), sname.end(), name.begin());
+			scorerButton->setText(name + L"\nscored!");
+			scorerButton->MakeRect();
+			scorerButton->setOrigin();
+			scorerButton->SetActive(true);
+
+			justScored = true;
+			scorerTimer = 0.0f;
 		}
 		UpdateScoreUI();
 
@@ -582,7 +595,7 @@ void Game::HandleEvent(Event* e)
 			ResetBall();
 			if (ResourceManager::GetSingleton()->IsMultiplayer())
 				server.setCountdown(true);
-			else
+		//	else
 				ResetCountdown();
 		}
 
@@ -1404,12 +1417,10 @@ void Game::CreateUI(Scene * basic)
 	theSButton->showFPS(false);
 	theSButton->setPositionMultipliers(0.5f, 0.0f);
 	scoreA->AddComponent(theSButton);
-
 	gameTime = theSButton->GetTime();
-
 	UIRenderer * scoreRender = new UIRenderer();
 	scoreRender->Init(true, 35.0f, devResources, theSButton, L"Consolas", D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
-	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png");
+	scoreRender->DecodeBitmap(L"../Assets/UI/trapezoid.png"); // change this
 	scoreA->AddComponent(scoreRender);
 	scoreRender->MakeRTSize();
 	theSButton->MakeRect();
@@ -1420,7 +1431,12 @@ void Game::CreateUI(Scene * basic)
 	GameObject * scoreB = new GameObject();
 	scoreB->Init("gameScoreA");
 	basic->AddUIObject(scoreB);
-	Button * theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	Button * theSButtonB;
+#if _DEBUG
+	theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+#else
+	theSButtonB = new Button(true, true, L"0", (unsigned int)strlen("0"), 120.0f, 120.0f, devResources, 0);
+#endif
 	theSButtonB->SetGameObject(scoreB);
 	theSButtonB->showFPS(false);
 	theSButtonB->setPositionMultipliers(0.40f, 0.11f);
@@ -1438,7 +1454,12 @@ void Game::CreateUI(Scene * basic)
 	GameObject * scoreC = new GameObject();
 	scoreC->Init("gameScoreB");
 	basic->AddUIObject(scoreC);
-	Button * theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+	Button * theSButtonC;
+#if _DEBUG
+	theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 60.0f, 60.0f, devResources, 0);
+#else
+	theSButtonC = new Button(true, true, L"0", (unsigned int)strlen("0"), 120.0f, 120.0f, devResources, 0);
+#endif
 	theSButtonC->SetGameObject(scoreC);
 	theSButtonC->showFPS(false);
 	theSButtonC->setPositionMultipliers(0.6f, 0.11f);
@@ -1517,10 +1538,10 @@ void Game::CreateMenu(Scene * scene)
 	GameObject * bg = new GameObject();
 	bg->Init("background");
 	scene->AddUIObject(bg);
-	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 959.0f, devResources, 0);
+	Button * bgButton = new Button(true, false, L"", 0, 1200.0f, 1151.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
-	bgButton->setPositionMultipliers(0.5f, 0.5f);
+	bgButton->setPositionMultipliers(0.3f, 0.5f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
 	bgRender->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
@@ -1789,10 +1810,10 @@ void Game::CreateLobby(Scene * scene)
 	GameObject * bg = new GameObject();
 	bg->Init("background");
 	scene->AddUIObject(bg);
-	Button * bgButton = new Button(true, false, L"", 0, 1000.0f, 959.0f, devResources, 0);
+	Button * bgButton = new Button(true, false, L"", 0, 1200.0f, 1151.0f, devResources, 0);
 	bgButton->SetGameObject(bg);
 	bgButton->showFPS(false);
-	bgButton->setPositionMultipliers(0.5f, 0.5f);
+	bgButton->setPositionMultipliers(0.3f, 0.5f);
 	bg->AddComponent(bgButton);
 	UIRenderer * bgRender = new UIRenderer();
 	bgRender->Init(true, 35.0f, devResources, bgButton, L"", D2D1::ColorF::Black);
@@ -1934,9 +1955,27 @@ void Game::CreateLobby(Scene * scene)
 	changeTeam->AddComponent(ctRender);
 	ctRender->MakeRTSize();
 	ctButton->MakeRect();
-	//ctButton->setGameObject(changeTeam);
-	//ctButton->MakeHandler();
 	ctRender->InitMetrics();
+
+	// searching for host
+
+	GameObject * search = new GameObject();
+	search->Init("search");
+	scene->AddUIObject(search);
+	Button * searchButton = new Button(true, true, L"", (unsigned int)strlen(""), 360.0f, 150.0f, devResources, 0);
+	searchButton->setSceneIndex((unsigned int)scenes.size());
+	searchButton->SetGameObject(search);
+	searchButton->showFPS(false);
+	searchButton->setPositionMultipliers(0.76f, 0.8f);
+	search->AddComponent(searchButton);
+	UIRenderer * searchRender = new UIRenderer();
+	searchRender->Init(true, 25.0f, devResources, searchButton, L"Brush Script MT", D2D1::ColorF(0.196f, 0.804f, 0.196f, 1.0f));
+	searchRender->DecodeBitmap(L"../Assets/UI/searchHost.png");
+	search->AddComponent(searchRender);
+	searchRender->MakeRTSize();
+	searchButton->MakeRect();
+	searchRender->InitMetrics();
+	searchButton->SetActive(false);
 }
 
 void Game::CreatePauseMenu(Scene * scene)
@@ -2491,9 +2530,19 @@ void Game::LoadScene(std::string name)
 		if (ResourceManager::GetSingleton()->IsMultiplayer())
 		{
 			if (ResourceManager::GetSingleton()->IsServer())
+			{
 				EnableButton("Start", true);
+				GameObject * ret = scenes[currentScene]->GetUIByName("Exit");
+				UIRenderer * retRender = ret->GetComponent<UIRenderer>();
+				retRender->RemoveBitmap();
+				retRender->DecodeBitmap(L"../Assets/UI/quitButton.png");
+				retRender->DecodeBitmap(L"../Assets/UI/quitButton2.png");
+			}
 			else
+			{
 				EnableButton("Start", false);
+				EnableButton("search", true);
+			}
 		}
 		else
 		{
@@ -2550,6 +2599,12 @@ int Game::UpdateLobby()
 		
 		//run client
 		int clientState = client.run();
+
+		if (client.getConnectionStatus())
+		{
+			EnableButton("search", false);
+		}
+
 		currentScene = client.getScene();
 
 		if (clientState == 5)

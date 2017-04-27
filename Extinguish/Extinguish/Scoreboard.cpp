@@ -61,11 +61,25 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 	string teamNames[] = { "Red", "Blue" };
 	PCWSTR scoreBarPath[] = { L"../Assets/UI/scorebarRed.png", L"../Assets/UI/scorebarBlue.png" };
 
+
+	D2D1_SIZE_F rect = devResources->Get2DContext()->GetSize();
+	x = rect.width;
+	y = rect.height;
+
 	//create scoreboard background
 	scoreboardBackground->Init("Scoreboard Background");
 	scene->AddUIObject(scoreboardBackground);
 	{
-		Button * button = new Button(true, true, L"", (unsigned int)strlen(""), 700.0f, 500.0f, devResources, 0);
+		Button * button;
+
+#if _DEBUG
+		button = new Button(true, true, L"", (unsigned int)strlen(""), 700.0f, 500.0f, devResources, 0);
+#else
+		button = new Button(true, true, L"", (unsigned int)strlen(""), x * 0.7f, y * 0.65f, devResources, 0);
+#endif
+
+		//D2D1_SIZE_F * r = devResources->getRT
+
 		button->setSceneIndex(sceneID);
 		button->SetGameObject(scoreboardBackground);
 		button->showFPS(false);
@@ -99,7 +113,13 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 		playerBars[i]->Init(teamNames[teamID] + " Player Bar" + to_string(i % 4));
 		scene->AddUIObject(playerBars[i]);
 		{
-			Button * button = new Button(true, true, L"", 0, 500.0f, 40.0f, devResources, 0);
+			Button * button;// = new Button(true, true, L"", 0, 500.0f, 40.0f, devResources, 0);
+
+#if _DEBUG
+			button = new Button(true, true, L"", (unsigned int)strlen(""), 500.0f, 40.0f, devResources, 0);
+#else
+			button = new Button(true, true, L"", (unsigned int)strlen(""), x * 0.5f, y * 0.05f, devResources, 0);
+#endif
 			button->setSceneIndex(sceneID);
 			button->SetGameObject(playerBars[i]);
 			button->showFPS(false);
@@ -128,10 +148,16 @@ Scoreboard::Scoreboard(Scene* scene, DeviceResources* devResources)
 			copy(playerName.begin(), playerName.end(), name.begin());
 
 			Button * textbutton = new Button(true, true, (wchar_t*)name.c_str(), (unsigned int)name.size(), 100.0f, 50.0f, devResources, 0);
+
+#if _DEBUG
+			textbutton->setPositionMultipliers(0.40f, yPos + ySpacing * (i + yOffset));
+#else
+			textbutton->setPositionMultipliers(0.4f, yPos + ySpacing * (i + yOffset));
+#endif
 			textbutton->setSceneIndex(sceneID);
 			textbutton->SetGameObject(playerNames[i]);
 			textbutton->showFPS(false);
-			textbutton->setPositionMultipliers(0.40f, yPos + ySpacing * (i + yOffset));
+			//textbutton->setPositionMultipliers(0.40f, yPos + ySpacing * (i + yOffset));
 			playerNames[i]->AddComponent(textbutton);
 			UIRenderer * textrender = new UIRenderer();
 			textrender->Init(true, 18.0f, devResources, textbutton, L"Consolas", D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
@@ -406,7 +432,7 @@ void Scoreboard::Init(int numRedPlayers, int numBluePlayers)
 	PCWSTR scoreBarPath[] = { L"../Assets/UI/scorebarRed.png", L"../Assets/UI/scorebarBlue.png" };
 
 	//100 for height of labels (50 each). 40 for player bar height. 80 for total amount of space between everything. max height of 500 total
-	float heightOfBackground = 100.0f + 40.0f * totalNumPlayers + 80.0f * (totalNumPlayers / 8.0f);
+	float heightOfBackground = y * 0.65f;
 
 	//resize scoreboard background
 	Button* backgroundButton = scoreboardBackground->GetComponent<Button>();
