@@ -617,13 +617,13 @@ void Game::HandleEvent(Event* e)
 				if (loadSceneEvent->GetName() == "Menu" && currentScene == 2)
 				{
 					TogglePauseMenu(false, true);
-					CreateGameWrapper();
+					CreateGameWrapper(false);
 					ResourceManager::GetSingleton()->SetPaused(false);
 				}
 				else if (loadSceneEvent->GetName() == "Lobby" && currentScene == 2)
 				{
 					TogglePauseMenu(true, true);
-					CreateGameWrapper();
+					CreateGameWrapper(false);
 					ResourceManager::GetSingleton()->SetPaused(false);
 				}
 				LoadScene(loadSceneEvent->GetName());
@@ -825,37 +825,45 @@ void Game::CreateScenes(InputManager* input)
 		scenes.push_back(credits);
 		scenesNamesTable.Insert("Credits");
 	}
+
+
+	AssignPlayers(true);
+	CreateGameWrapper(true);
 }
 
-void Game::CreateGameWrapper()
+void Game::CreateGameWrapper(bool firsttime)
 {
-	for (unsigned int i = (unsigned int)scenes.size() - 1; i <= 0; --i)
+	for (unsigned int i = (unsigned int)scenes.size() - 1; i > 0; --i)
 	{
 		unsigned int obj = scenes[i]->GetNumObjects();
 
-		for (unsigned int j = 0; j < obj; ++j)
-		{
-			AI * ai = scenes[i]->GetGameObjects(j)->GetComponent<AI>();
-			if (ai)
+		if (obj > 0) {
+			for (int j = obj - 1; j >= 0; --j)
 			{
-				EventDispatcher::GetSingleton()->RemoveHandler(scenes[i]->GetGameObjects(j)->GetName() + "AI");
-				bool success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+				AI * ai = scenes[i]->GetGameObjects(j)->GetComponent<AI>();
+				bool success;
+				if (ai)
+				{
+					EventDispatcher::GetSingleton()->RemoveHandler(scenes[i]->GetGameObjects(j)->GetName() + "AI");
+					success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
+				}
+				// if false -> no ai attached
 			}
-
-
-			// if false -> no ai attached
 		}
 	}
 
-	ResetBall();
-	ResetPlayers();
-	ResetCountdown();
+	if (!firsttime)
+	{
+		ResetBall();
+		ResetPlayers();
+		ResetCountdown();
 
-	Team1Score = Team2Score = 0;
-	UpdateScoreUI();
-	Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
-	time->resetTime();
-	Time = 300.0f;
+		Team1Score = Team2Score = 0;
+		UpdateScoreUI();
+		Button * time = scenes[2]->GetUIByName("gameScoreBase")->GetComponent<Button>();
+		time->resetTime();
+		Time = 300.0f;
+	}
 }
 
 void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
@@ -1403,6 +1411,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	if (!DEBUG_GRAPHICS) {
 		CreateUI(basic);
 	}
+
+
 }
 
 void Game::CreateUI(Scene * basic)
@@ -2127,7 +2137,7 @@ void Game::CreatePauseMenu(Scene * scene)
 	rButton->setHelper(scene->GetNumUIObjects());
 }
 
-void Game::AssignPlayers()
+void Game::AssignPlayers(bool firsttime)
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
@@ -2198,34 +2208,63 @@ void Game::AssignPlayers()
 		for (unsigned int i = 0; i < 8; ++i)
 		{
 			// set mage 1 to player if red team
-			if (team == TEAM_A && i != 0)
+			if (!firsttime)
 			{
-				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-				AI *mageAI = new AI(mage1);
-				mage1->AddComponent(mageAI);
-				ai.push_back(mageAI);
+				if (team == TEAM_A && i != 0)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
 
-				PlayerController* player = mage1->GetComponent<PlayerController>();
-				player->ReadInStats(aiNames[i]);
-				player->SetTeamID(TEAM_A);
-			}
-			// set mage 5 to player if blue team
-			else if (team == TEAM_B && i != 4)
-			{
-				GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-				AI *mageAI = new AI(mage1);
-				mage1->AddComponent(mageAI);
-				ai.push_back(mageAI);
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_A);
+				}
+				// set mage 5 to player if blue team
+				else if (team == TEAM_B && i != 4)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
 
-				PlayerController* player = mage1->GetComponent<PlayerController>();
-				player->ReadInStats(aiNames[i]);
-				player->SetTeamID(TEAM_B);
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_B);
+				}
+				else
+				{
+					PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
+					player->ReadInStats("Tom");
+					player->SetTeamID(team);
+				}
 			}
 			else
 			{
-				PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
-				player->ReadInStats("Tom");
-				player->SetTeamID(team);
+				if (team == TEAM_A)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
+
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_A);
+				}
+				// set mage 5 to player if blue team
+				else if (team == TEAM_B)
+				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = new AI(mage1);
+					mage1->AddComponent(mageAI);
+					ai.push_back(mageAI);
+
+					PlayerController* player = mage1->GetComponent<PlayerController>();
+					player->ReadInStats(aiNames[i]);
+					player->SetTeamID(TEAM_B);
+				}
 			}
 		}
 		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
@@ -2556,7 +2595,7 @@ void Game::LoadScene(std::string name)
 
 		endTimer = 0.0f;
 		ShowCursor(false);
-		AssignPlayers();
+		AssignPlayers(false);
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
 	}
