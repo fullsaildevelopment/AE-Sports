@@ -115,8 +115,11 @@ int  Server::update()
 			if (!npDec)
 				--numPlayers;
 
-			if (numPlayers == 1)
+			if (numPlayers <= 1)
+			{
+				peer->Shutdown(100);
 				return 0;
+			}
 			break;
 		}
 		case ID_CONNECTION_LOST:

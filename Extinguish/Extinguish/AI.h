@@ -12,6 +12,7 @@ class AnimatorController;
 class AI : public Component
 {
 private:
+
 	enum State
 	{
 		goalie, // stays at teams goal
@@ -61,6 +62,7 @@ private:
 
 public:
 
+	bool isActive = false;
 	static Map *aiPath;
 
 	AI(GameObject *obj);
