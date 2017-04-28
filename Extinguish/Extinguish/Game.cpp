@@ -697,7 +697,7 @@ int Game::GetClientID()
 
 int Game::GetPlayerObjectID()
 {
-	return (clientID - 1) * 4 + 2;
+	return (clientID - 1) * 5 + 2;
 }
 
 //setters//
