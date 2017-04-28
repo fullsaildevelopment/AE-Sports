@@ -15,6 +15,7 @@
 #include "GamePad.h"
 #include "Movement.h"
 #include "AnimatorController.h"
+#include "State.h"
 
 using namespace std;
 
@@ -104,7 +105,10 @@ void Crosse::Throw()
 		// do animation on crosse
 		AnimatorController* animator = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AnimatorController>();
 
-		animator->SetTrigger("Throw");
+		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Throw" && !animator->GetState(animator->GetNextStateIndex()))
+		{
+			animator->SetTrigger("Throw");
+		}
 
 		//transform->RotateX(XMConvertToRadians(45));
 
