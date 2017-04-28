@@ -896,6 +896,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	ballTrail->SetProjection(projection);
 	gameBall->AddComponent(ballTrail);
 
+	std::vector<GameObject*> hands;
 
 	GameObject* goal = new GameObject();
 	GameObject* goal2 = new GameObject();
@@ -1160,7 +1161,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		GameObject* titanHand = new GameObject();
 		titanHand->Init(titanHandName);
-		basic->AddGameObject(titanHand);
+		hands.push_back(titanHand);
 		titanHand->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Renderer* axisRenderer = new Renderer();
 		titanHand->AddComponent(axisRenderer);
@@ -1170,7 +1171,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		GameObject* camera1 = new GameObject();
 		camera1->Init(cameraName);
 		basic->AddGameObject(camera1);
-		camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 1.6f, -0.3f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
@@ -1179,7 +1180,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosseName += to_string(i);
 
 		crosse->Init(crosseName);		/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
-		crosse->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanHand->GetTransform(), nullptr, nullptr);
+		crosse->InitTransform(identity, { 0, 0.755f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanHand->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
@@ -1195,6 +1196,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	}
 
 	ballController->LateInit();
+
+	for (int h = 0; h < hands.size(); ++h)
+	{
+		basic->AddGameObject(hands[h]);
+	}
 
 	//create walls
 	////////////////////////////////////////////////////////

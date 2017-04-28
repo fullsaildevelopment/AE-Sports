@@ -315,7 +315,7 @@ void Transform::SetLocal(DirectX::XMFLOAT4X4 matrix)
 	XMFLOAT4 qu;
 	XMStoreFloat4(&qu, qua);
 	float4 q;
-	q = float4(qu.w, qu.x, qu.y, qu.z);
+	q = float4(qu.x, qu.y, qu.z, qu.w);
 
 	double ysqr = q.y * q.y;
 

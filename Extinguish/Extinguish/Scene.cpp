@@ -631,7 +631,7 @@ void Scene::FixedUpdate(float _dt)
 			animator->FixedUpdate(_dt);
 		}
 
-		/*if (gameObjects[i]->GetName().find("TitanHand") != string::npos)
+		if (gameObjects[i]->GetName().find("TitanHand") != string::npos)
 		{
 			std::string mageName = "Mage";
 			mageName += gameObjects[i]->GetName()[9];
@@ -639,7 +639,7 @@ void Scene::FixedUpdate(float _dt)
 			XMFLOAT4X4 hands = GetGameObject(mageName)->GetComponent<AnimatorController>()->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Attach")->local;
 			gameObjects[i]->GetTransform()->SetLocal(hands);
 
-		}*/
+		}
 
 		/*if (gameObjects[i]->GetName().find("Camera") != string::npos)
 		{
