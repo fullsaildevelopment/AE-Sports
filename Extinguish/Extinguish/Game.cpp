@@ -1184,6 +1184,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		GameObject* titanHand = new GameObject();
 		titanHand->Init(titanHandName);
+		basic->AddGameObject(titanHand);
 		hands.push_back(titanHand);
 		titanHand->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Renderer* axisRenderer = new Renderer();
@@ -1220,10 +1221,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	ballController->LateInit();
 
-	for (int h = 0; h < hands.size(); ++h)
-	{
-		basic->AddGameObject(hands[h]);
-	}
+	//for (int h = 0; h < hands.size(); ++h)
+	//{
+	//	basic->AddGameObject(hands[h]);
+	//}
 
 	//create walls
 	////////////////////////////////////////////////////////
@@ -1471,29 +1472,29 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//testPlayer->AddComponent(testPlayerRenderer);
 	//testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
-	GameObject* testTitanPlayer = new GameObject();
-	testTitanPlayer->Init("TestTitanPlayer");
-	basic->AddGameObject(testTitanPlayer);
-	testTitanPlayer->InitTransform(identity, { 2, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
-	Renderer* testTitanPlayerRenderer = new Renderer();
-	testTitanPlayer->AddComponent(testTitanPlayerRenderer);
-	testTitanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
-	testTitanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
+	//GameObject* testTitanPlayer = new GameObject();
+	//testTitanPlayer->Init("TestTitanPlayer");
+	//basic->AddGameObject(testTitanPlayer);
+	//testTitanPlayer->InitTransform(identity, { 2, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
+	//Renderer* testTitanPlayerRenderer = new Renderer();
+	//testTitanPlayer->AddComponent(testTitanPlayerRenderer);
+	//testTitanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	//testTitanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
 
-	GameObject* titanPlayer = new GameObject();
-	titanPlayer->Init("TitanPlayer");
-	basic->AddGameObject(titanPlayer);
-	titanPlayer->InitTransform(identity, { 0, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
-	Renderer* titanPlayerRenderer = new Renderer();
-	titanPlayer->AddComponent(titanPlayerRenderer);
-	titanPlayerRenderer->Init("Titan", "NormalMapped", "Bind", "", "", projection, devResources, false);
-	titanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
-	AnimatorController* titanAnimator = new AnimatorController();
-	titanPlayer->AddComponent(titanAnimator);
-	titanAnimator->Init("Titan", 0, "Idle");
-	State* testState = new State();
-	titanAnimator->AddState(testState);
-	testState->Init(titanAnimator, titanAnimator->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
+	//GameObject* titanPlayer = new GameObject();
+	//titanPlayer->Init("TitanPlayer");
+	//basic->AddGameObject(titanPlayer);
+	//titanPlayer->InitTransform(identity, { 0, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
+	//Renderer* titanPlayerRenderer = new Renderer();
+	//titanPlayer->AddComponent(titanPlayerRenderer);
+	//titanPlayerRenderer->Init("Titan", "NormalMapped", "Bind", "", "", projection, devResources, false);
+	//titanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
+	//AnimatorController* titanAnimator = new AnimatorController();
+	//titanPlayer->AddComponent(titanAnimator);
+	//titanAnimator->Init("Titan", 0, "Idle");
+	//State* testState = new State();
+	//titanAnimator->AddState(testState);
+	//testState->Init(titanAnimator, titanAnimator->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
 
 	//for (int j = 0; j < 11; ++j)
 	//{
