@@ -113,6 +113,7 @@ public:
 	float GetJumpMultiplier();
 	unsigned int GetPlayerID();
 	bool IsInvincible();
+	bool IsSprinting();
 
 	//setters//
 	void SetName(std::string name);

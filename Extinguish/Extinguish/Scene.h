@@ -93,7 +93,7 @@ private:
 	void CreateDevResources(DeviceResources const * devResources);
 	void CreateLights();
 	void UpdateCamera(float _dt, const float moveSpeed, const float rotateSpeed);
-	void CreateModels();
+	//void CreateModels();
 	void HandleInput();
 
 public:
