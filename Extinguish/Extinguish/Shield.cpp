@@ -20,7 +20,7 @@ Shield::Shield(Scene* scene, XMFLOAT4X4 projection, DeviceResources* devResource
 	//create an object that will look like a bubble around the player
 	shieldBubble = new GameObject();
 	shieldBubble->Init("ShieldBubble");
-	shieldBubble->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 9, 9, 9 }, nullptr, nullptr, nullptr);
+	shieldBubble->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 4, 4, 4 }, nullptr, nullptr, nullptr);
 	scene->AddGameObject(shieldBubble);
 	ShieldRender* renderer = new ShieldRender(shieldBubble);
 	shieldBubble->AddComponent(renderer);
