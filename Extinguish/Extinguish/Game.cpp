@@ -1193,7 +1193,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		GameObject* camera1 = new GameObject();
 		camera1->Init(cameraName);
 		basic->AddGameObject(camera1);
-		camera1->InitTransform(identity, { 0, 1.6f, -0.3f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 1.3f, -0.5f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
@@ -1205,9 +1205,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		titanHands->Init(titanHandsName);
 		basic->AddGameObject(titanHands);
 		titanHands->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
-		Renderer* titanHandsRenderer = new Renderer();
+		/*Renderer* titanHandsRenderer = new Renderer();
+		titanHandsRenderer->SetEnabled(false);
 		titanHands->AddComponent(titanHandsRenderer);
-		titanHandsRenderer->Init("TitanHands", "NormalMapped", "TempStatic", "", "Idle", projection, devResources, false);
+		titanHandsRenderer->Init("TitanHands", "NormalMapped", "TempStatic", "", "Idle", projection, devResources, false);*/
 
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
