@@ -1179,15 +1179,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 
-		string titanHandName = "TitanHand";
-		titanHandName += to_string(i);
+		string titanAttachName = "TitanAttach";
+		titanAttachName += to_string(i);
 
-		GameObject* titanHand = new GameObject();
-		titanHand->Init(titanHandName);
+		GameObject* titanAttach = new GameObject();
+		titanAttach->Init(titanAttachName);
 		//hands.push_back(titanHand);
-		basic->AddGameObject(titanHand);
-		titanHand->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		basic->AddGameObject(titanAttach);
+		titanAttach->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
+
 
 		GameObject* camera1 = new GameObject();
 		camera1->Init(cameraName);
@@ -1197,11 +1198,22 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
 
+		string titanHandsName = "TitanHands";
+		titanHandsName += to_string(i);
+
+		GameObject* titanHands = new GameObject();
+		titanHands->Init(titanHandsName);
+		basic->AddGameObject(titanHands);
+		titanHands->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
+		Renderer* titanHandsRenderer = new Renderer();
+		titanHands->AddComponent(titanHandsRenderer);
+		titanHandsRenderer->Init("TitanHands", "NormalMapped", "TempStatic", "", "Idle", projection, devResources, false);
+
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
 
 		crosse->Init(crosseName);		/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
-		crosse->InitTransform(identity, { 0, 0.755f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanHand->GetTransform(), nullptr, nullptr);
+		crosse->InitTransform(identity, { 0, 0.755f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanAttach->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosseNetCollider->SetOffset({ 0,0.4f,-0.5f });
 		crosse->AddSphereCollider(crosseNetCollider);

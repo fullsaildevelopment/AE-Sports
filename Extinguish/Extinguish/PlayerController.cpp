@@ -109,21 +109,21 @@ void PlayerController::Update(float _dt)
 				if (otherAI)
 					otherAI->SetCanMove(true);
 
-				else
-				{
-					Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+				//else
+				//{
+				//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
 
-					otherMovement->SetCanMove(true);
+				//	otherMovement->SetCanMove(true);
 
-					//move the player's camera to match getting up
-					Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
-					float3 translation = otherCamera->GetForwardf3();
-					translation.x = translation.x;
-					translation.y = 1.0f;
-					translation.z = translation.z * 3.0f;
+				//	//move the player's camera to match getting up
+				//	Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+				//	float3 translation = otherCamera->GetForwardf3();
+				//	translation.x = translation.x;
+				//	translation.y = 1.0f;
+				//	translation.z = translation.z * 3.0f;
 
-					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-				}
+				//	otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				//}
 
 				ogPlayer = nullptr;
 			}
@@ -472,11 +472,11 @@ void PlayerController::Jump()
 
 		animator->SetTrigger("Jump");
 
-		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
-		{
-			goBackToRun = true;
-			//animator->SetTrigger("Run");
-		}
+		//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
+		//{
+		//	goBackToRun = true;
+		//	//animator->SetTrigger("Run");
+		//}
 
 		//play super jump efect
 		if (jumpMultiplier > 1.0f)
@@ -541,21 +541,21 @@ void PlayerController::Attack()
 				{
 					otherAI->SetCanMove(false);
 				}
-				else
-				{
-					Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+				//else
+				//{
+				//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
 
-					otherMovement->SetCanMove(false);
+				//	otherMovement->SetCanMove(false);
 
-					//move the player's camera to match getting up
-					Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
-					float3 translation = otherCamera->GetForwardf3();
-					translation.x = -translation.x;
-					translation.y = -1.0f;
-					translation.z = -translation.z * 3.0f;
+				//	//move the player's camera to match getting up
+				//	Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+				//	float3 translation = otherCamera->GetForwardf3();
+				//	translation.x = -translation.x;
+				//	translation.y = -1.0f;
+				//	translation.z = -translation.z * 3.0f;
 
-					otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-				}
+				//	otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				//}
 
 				//play attack sound effect
 				SoundEvent* soundEvent = new SoundEvent();
