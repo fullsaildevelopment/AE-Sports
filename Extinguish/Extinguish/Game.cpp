@@ -1832,6 +1832,22 @@ void Game::CreateLobby(Scene * scene)
 	bgRender->MakeRTSize();
 	bgButton->MakeRect();
 
+	//controls
+	GameObject * controls = new GameObject();
+	controls->Init("controls");
+	scene->AddUIObject(controls);
+	Button * controlsButton = new Button(true, false, L"", 0, 600.0f, 550.0f, devResources, 0);
+	controlsButton->SetGameObject(controls);
+	controlsButton->showFPS(false);
+	controlsButton->setPositionMultipliers(0.3f, 0.5f);
+	controls->AddComponent(controlsButton);
+	UIRenderer * controlsRender = new UIRenderer();
+	controlsRender->Init(true, 35.0f, devResources, controlsButton, L"", D2D1::ColorF::Black);
+	controlsRender->DecodeBitmap(L"../Assets/UI/controls.png");
+	controls->AddComponent(controlsRender);
+	controlsRender->MakeRTSize();
+	controlsButton->MakeRect();
+
 	// start game, will only show if isServer
 	GameObject * startGame = new GameObject();
 	startGame->Init("Start");
