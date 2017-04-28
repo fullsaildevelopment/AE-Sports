@@ -422,7 +422,7 @@ void Scene::Update(float _dt)
 			//don't render yourself
 			if (i != Game::GetPlayerObjectID())
 			{
-				if (renderer->isEnabled())
+				if (renderer->isEnabled() || i == Game::GetPlayerObjectID() + 3)
 				{
 					float3 inBetween = gameObjects[i]->GetTransform()->GetWorldPosition() - camPosition;
 					float dist = dot_product(inBetween, inBetween);
@@ -634,7 +634,7 @@ void Scene::FixedUpdate(float _dt)
 		if (gameObjName.find("TitanAttach") != string::npos && ResourceManager::GetSingleton()->IsServer())
 		{
 			std::string mageName = "Mage";
-			mageName += gameObjName[9];
+			mageName += gameObjName[11];
 			GameObject* mage = GetGameObject(mageName);
 			if (mage)
 			{
