@@ -14,6 +14,7 @@
 #include "GamePadEvent.h"
 #include "GamePad.h"
 #include "Movement.h"
+#include "AnimatorController.h"
 
 using namespace std;
 
@@ -36,10 +37,10 @@ void Crosse::Init()
 	minY = transform->GetPosition().y;
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 	ballC = ballTransform->GetGameObject()->GetComponent<BallController>();
-	//player = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject();
-	string mageName = "Mage";
-	mageName += GetGameObject()->GetName()[6];
-	player = GetGameObject()->FindGameObject(mageName);
+	player = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	//string mageName = "Mage";
+	//mageName += GetGameObject()->GetName()[6];
+	//player = GetGameObject()->FindGameObject(mageName);
 	movement = player->GetComponent<Movement>();
 
 	//register crosse event handler
@@ -101,6 +102,10 @@ void Crosse::Throw()
 		//cout << ballTransform->GetVelocity().x << " " << ballTransform->GetVelocity().y << " " << ballTransform->GetVelocity().z << endl;
 
 		// do animation on crosse
+		AnimatorController* animator = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AnimatorController>();
+
+		animator->SetTrigger("Throw");
+
 		//transform->RotateX(XMConvertToRadians(45));
 
 		//play sound
@@ -268,7 +273,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 		//		}
 
 		//		transform->SetPosition({ xPos * 0.001f * 1.8f, yPos * -0.001f + minY, transform->GetPosition().z }); // * 1.8 because * 2 is too much. And it was only travelling half
-		//		transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (yRatio * yRadians) });
+		//		transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * radians) + (yRatio * yRadians) });`
 		//		//transform->SetRotation({ transform->GetRotation().x, transform->GetRotation().y, (ratio * degrees) + (yRatio * 45.0f) });
 		//	}
 		//}
