@@ -874,6 +874,18 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Stumble.fbx", "Titan", "Titan_Stumble");
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Push.fbx", "Titan", "Titan_Push");
 	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Throw.fbx", "Titan", "Titan_Throw");
+
+	//titan hands
+	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\TitanHands\\Player_Arms_Idle.fbx", "TitanHands", "Hands_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Idle.fbx", "TitanHands", "Hands_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_FallLoop.fbx", "TitanHands", "Hands_Fall");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Jog.fbx", "TitanHands", "Hands_Jog");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Land.fbx", "TitanHands", "Hands_Land");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Push.fbx", "TitanHands", "Hands_Push");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Run.fbx", "TitanHands", "Hands_Run");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Stumble.fbx", "TitanHands", "Hands_Stumble");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\TitanHands\\Player_Arms_Throw.fbx", "TitanHands", "Hands_Throw");
+
 #endif
 }
 
