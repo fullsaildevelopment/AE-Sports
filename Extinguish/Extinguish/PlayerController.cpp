@@ -500,6 +500,9 @@ void PlayerController::Attack()
 	if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Push" && !animator->GetState(animator->GetNextStateIndex()))
 	{
 		animator->SetTrigger("Push");
+
+		//set the trigger for the current animation so when push is done it goes back to previous
+		animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
 	}
 
 	if (otherPlayer)
@@ -512,6 +515,9 @@ void PlayerController::Attack()
 				AnimatorController* otherAnimator = otherPlayer->GetComponent<AnimatorController>();
 
 				otherAnimator->SetTrigger("Stumble");
+
+				//set the trigger for the current animation so when push is done it goes back to previous
+				animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
 
 				cout << "Attack" << endl;
 
