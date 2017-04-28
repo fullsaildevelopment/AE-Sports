@@ -52,20 +52,11 @@ void AI::OnCollisionEnter(Collider *obj)
 						realTarget->GetComponent<AI>()->SetCanMove(false);
 
 					else
-					{
 						realTarget->GetComponent<Movement>()->SetCanMove(false);
-
-						//move the player's camera to match stumble
-						Transform* otherCamera = realTarget->GetTransform()->GetChild(0);
-						float3 translation = otherCamera->GetForwardf3();
-						translation.x = -translation.x;
-						translation.y = -3.0f;
-						translation.z = -translation.z * 3.0f;
-						otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-					}
 
 					// triggering the animation
 					realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
+					realTarget->GetComponent<AnimatorController>()->SetTrigger(realTarget->GetComponent<AnimatorController>()->GetState(realTarget->GetComponent<AnimatorController>()->GetCurrentStateIndex())->GetName());
 					ogTarget = realTarget;
 					realTarget = nullptr;
 
@@ -525,8 +516,8 @@ void AI::GetBall()
 				TurnTo(*path[pathIndex]->pos);
 			}
 
-			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
-				anim->SetTrigger("Run");
+			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Jog Forward" && !anim->GetState(anim->GetNextStateIndex()))
+				anim->SetTrigger("Jog Forward");
 
 			me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 		}
@@ -575,8 +566,16 @@ void AI::Attack(GameObject *target)
 			realTarget = target;
 			isAttacking = true;
 
-			if (RunTo(target)) 
+			if (RunTo(target))
+			{
 				RunTo(target->GetTransform()->GetWorldPosition(), 0.5f);
+
+				if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Push" && !anim->GetState(anim->GetNextStateIndex()))
+				{
+					anim->SetTrigger("Push");
+					anim->SetTrigger(anim->GetState(anim->GetCurrentStateIndex())->GetName());
+				}
+			}
 
 			isAttacking = false;
 		}
@@ -679,8 +678,8 @@ bool AI::RunTo(GameObject *target)
 					TurnTo(*path[pathIndex]->pos);
 				}
 
-				if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
-					anim->SetTrigger("Run");
+				if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Jog Forward" && !anim->GetState(anim->GetNextStateIndex()))
+					anim->SetTrigger("Jog Forward");
 
 				me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 			}
@@ -701,8 +700,8 @@ bool AI::RunTo(float3 target, float dist)
 		v.y = 0;
 		TurnTo(target);
 
-		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Run" && !anim->GetState(anim->GetNextStateIndex()))
-			anim->SetTrigger("Run");
+		if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Jog Forward" && !anim->GetState(anim->GetNextStateIndex()))
+			anim->SetTrigger("Jog Forward");
 
 		me->GetTransform()->AddVelocity(v * RunSpeed * moveSpeedMultiplier);
 	}
@@ -713,7 +712,7 @@ bool AI::RunTo(float3 target, float dist)
 void AI::TurnTo(float3 target)
 {
 	//u - forward vector
-	float3 u = (me->GetTransform()->GetRightf3() /** (-1)*/).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3 u = (me->GetTransform()->GetRightf3() /** (-1)*/).normalize();
 	//float3 u = me->GetTransform()->GetForwardf3();
 
 	//v - vector between me and destination
@@ -730,7 +729,7 @@ void AI::TurnTo(GameObject *target)
 {
 	if (target)
 	{
-		float3 u = (me->GetTransform()->GetRightf3() /** (-1)*/).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 u = (me->GetTransform()->GetRightf3() /** (-1)*/).normalize();
 		//float3 u = me->GetTransform()->GetForwardf3();
 		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition())).normalize();
 		u.y = 0;
