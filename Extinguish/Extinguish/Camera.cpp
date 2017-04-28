@@ -34,7 +34,7 @@ void Camera::Init(XMVECTORF32 eye, XMVECTORF32 at, XMVECTORF32 up, float moveVel
 
 	//set camera initial position
 	XMStoreFloat4x4(&view, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
-	transform->SetLocal(view);
+	//transform->SetLocal(view);
 
 	moveSpeed = moveVel;
 	rotateSpeed = rotateVel;

@@ -4,6 +4,7 @@
 #include <vector>
 #include "Component.h"
 #include "vec3.h"
+#include "vec4.h"
 
 class Transform : public Component
 {
