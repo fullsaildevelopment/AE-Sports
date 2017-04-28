@@ -724,7 +724,7 @@ void PlayerController::HandleSprintAndCharge()
 		}
 
 		//set velocity to respective velocity every frame
-		transform->AddVelocity(transform->GetForwardf3() * -speedMultiplier * 10.0f);
+		transform->AddVelocity(transform->GetForwardf3() * speedMultiplier * 10.0f);
 	}
 	else if (!canSprint) //if you can't sprint, look for reasons to sprint
 	{
