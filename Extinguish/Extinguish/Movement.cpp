@@ -45,6 +45,9 @@ void Movement::Update(float _dt)
 {
 	this->_dt = _dt;
 	//animation feedback
+	//string handsName = "TitanHands";
+
+	//AnimatorController* animator = GetGameObject()->FindGameObject(
 	//if (isMoving)
 	if (isMoving)
 	{
