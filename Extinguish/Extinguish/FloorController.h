@@ -54,8 +54,8 @@ class FloorController : public Component
 	std::vector<int*> dontRaise;
 
 	//const members
-	const float TIME_TIL_COOLDOWN = 10.0f; //how long til after the state is finished til it starts another state
-	const float TIME_TIL_STATE = 10.0f; //how long til the state runs
+	const float TIME_TIL_COOLDOWN = 20.0f; //how long til after the state is finished til it starts another state
+	const float TIME_TIL_STATE = 15.0f; //how long til the state runs
 	const float TIME_TO_RUN_STATE = 15.0f; //how long to run the state
 	const int NUM_OF_GROUPS = 27;
 

@@ -38,6 +38,7 @@ private:
 	int footstepsSound;
 	unsigned int teamID;
 	bool isInvincible;
+	bool goBackToRun;
 
 	//powerup members
 	float jumpMultiplier;

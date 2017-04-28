@@ -97,6 +97,8 @@ void Blender::Update(float time, unsigned int frameIndex) // i just use frameInd
 		DirectX::XMStoreFloat4x4(&boneOffset, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(inverseBindPose, boneWorld)));
 		DirectX::XMStoreFloat4x4(&boneWorldFloat, boneWorld);
 
+		animationSet->GetSkeleton()->GetBone(i)->local = boneWorldFloat;
+
 		boneOffsets.push_back(boneOffset);
 		bonesWorlds.push_back(boneWorldFloat);
 	}

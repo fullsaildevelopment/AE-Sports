@@ -848,7 +848,6 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\TestPlayer\\TestPlayer.fbx", "TestPlayer");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\HighDetalBall\\HighDetalBall.fbx", "HighDetalBall");
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\WallGoal\\WallGoal.fbx", "WallGoal");
-	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\Titan\\Titan.fbx", "Titan");
 	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Titan\\TestAnim.fbx", "Titan", "Titan_Test");
 
 	//FBXLoader::Functions::FBXLoadExportFileBasic("..\\Assets\\PowerUp\\Icon test.fbx", "PowerUp");
@@ -859,6 +858,22 @@ void ResourceManager::DoFBXExporting()
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaWall\\ArenaWallNew2.fbx", "ArenaWall");
 	//FBXLoader::Functions::FBXLoadExportMesh("..\\Assets\\ArenaPillar\\ArenaPillarNew.fbx", "ArenaPillar");
 
+	//titan and animations
+	//FBXLoader::Functions::FBXLoadExportFileBind("..\\Assets\\Titan\\Player_Idle_basic.fbx", "Titan", "Titan_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Idle_basic.fbx", "Titan", "Titan_Idle");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jog_Backward.fbx", "Titan", "Titan_Jog_Backward");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jog_Forward.fbx", "Titan", "Titan_Jog_Forward");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jog_Left.fbx", "Titan", "Titan_Jog_Left");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jog_Right.fbx", "Titan", "Titan_Jog_Right");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jump_FallLoop.fbx", "Titan", "Titan_Fall");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jump_Land.fbx", "Titan", "Titan_Land");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Jump_TakeOff.fbx", "Titan", "Titan_Jump");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Lose.fbx", "Titan", "Titan_Lose");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Win.fbx", "Titan", "Titan_Win");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Run.fbx", "Titan", "Titan_Run");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Stumble.fbx", "Titan", "Titan_Stumble");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Push.fbx", "Titan", "Titan_Push");
+	//FBXLoader::Functions::FBXLoadExportAnimation("..\\Assets\\Titan\\Player_Throw.fbx", "Titan", "Titan_Throw");
 #endif
 }
 

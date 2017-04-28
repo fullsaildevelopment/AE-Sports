@@ -924,11 +924,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			mage1->SetTag("Team2");
 		}
 
-		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, XM_PI, 0 }, { 0.33f, 0.33f, 0.33f }, nullptr, nullptr, nullptr);
+		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 
 		Renderer* mageRenderer1 = new Renderer();
 		mage1->AddComponent(mageRenderer1);
-		mageRenderer1->Init("Mage", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
+		mageRenderer1->Init("Titan", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
 
 		if (i <= 4)
 			mageRenderer1->SetEmissiveColor({ 1,0,0,0 });
@@ -942,7 +942,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		PlayerController* bplayerController = new PlayerController();
 		mage1->AddComponent(bplayerController);
 		bplayerController->Init();
-		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.2f, { 0, 0.2f, 0 }, { 0, 1.8f - 0.2f, 0 }, mage1, false);
+		CapsuleCollider* mageCollider1 = new CapsuleCollider(0.23f, { 0, 0.23f, 0 }, { 0, 1.8f - 0.23f, 0 }, mage1, false);
 		mage1->AddCapsuleCollider(mageCollider1);
 		mageCollider1->Init(mage1);
 		Physics* physics = new Physics(0.01f, 5.5f, 0.04f, 7.3f, -10.8f);
@@ -951,23 +951,35 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		AnimatorController* mageAnim1 = new AnimatorController();
 		mage1->AddComponent(mageAnim1);
-		mageAnim1->Init("Mage", 0, "Idle"); //init animator
+		mageAnim1->Init("Titan", 0, "Idle"); //init animator
 		State* mageIdle = new State();
-		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 0.5f, "Idle");
+		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
 		mageAnim1->AddState(mageIdle);
 		State* mageRun = new State();
-		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 0.75f, "Run");
+		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
 		mageAnim1->AddState(mageRun);
+		State* magePush = new State();
+		magePush->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Push"), false, 1.0f, "Push");
+		mageAnim1->AddState(magePush);
 		State* mageStumble = new State();
-		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("StumbleBackwards3"), false, 0.75f, "Stumble");
+		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Stumble"), false, 1.0f, "Stumble");
 		mageAnim1->AddState(mageStumble);
 		State* mageJump = new State();
-		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 2.0f, "Jump");
+		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 1.5f, "Jump");
 		mageAnim1->AddState(mageJump);
+		State* mageFall = new State();
+		mageFall->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
+		mageAnim1->AddState(mageFall);
+		State* mageLand = new State();
+		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
+		mageAnim1->AddState(mageLand);
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
 		mageAnim1->AddParameter(runTrigger);
+		Param::Trigger* pushTrigger = new Param::Trigger();
+		pushTrigger->Init("Push", false);
+		mageAnim1->AddParameter(pushTrigger);
 		Param::Trigger* stumbleTrigger = new Param::Trigger();
 		stumbleTrigger->Init("Stumble", false);
 		mageAnim1->AddParameter(stumbleTrigger);
@@ -977,6 +989,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Param::Trigger* jumpTrigger = new Param::Trigger();
 		jumpTrigger->Init("Jump", false);
 		mageAnim1->AddParameter(jumpTrigger);
+		Param::Trigger* landTrigger = new Param::Trigger();
+		landTrigger->Init("Land", false);
+		mageAnim1->AddParameter(landTrigger);
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
 		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
@@ -989,6 +1004,13 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageRun->AddTransition(runToIdle);
 		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
 		runToStumble->AddCondition(stumbleTrigger);
+		Transition* idleToPush = new Transition();
+		mageIdle->AddTransition(idleToPush);
+		idleToPush->Init(mageIdle, magePush, -1, 0.1f);
+		idleToPush->AddCondition(pushTrigger);
+		Transition* pushToIdle = new Transition();
+		magePush->AddTransition(pushToIdle);
+		pushToIdle->Init(magePush, mageIdle, 0, 0.1f);
 		Transition* idleToStumble = new Transition();
 		mageIdle->AddTransition(idleToStumble);
 		idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
@@ -1000,13 +1022,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageIdle->AddTransition(idleToJump);
 		idleToJump->Init(mageIdle, mageJump, -1, 0.1f);
 		idleToJump->AddCondition(jumpTrigger);
-		Transition* jumpToRun = new Transition();
-		mageJump->AddTransition(jumpToRun);
-		jumpToRun->Init(mageJump, mageRun, -1, 0.1f);
-		jumpToRun->AddCondition(runTrigger);
-		Transition* jumpToIdle = new Transition();
-		mageJump->AddTransition(jumpToIdle);
-		jumpToIdle->Init(mageJump, mageIdle, 0, 0.1f);
+		Transition* jumpToFall = new Transition();
+		mageJump->AddTransition(jumpToFall);
+		jumpToFall->Init(mageJump, mageFall, 0, 0.1f);
+		Transition* fallToLand = new Transition();
+		mageFall->AddTransition(fallToLand);
+		fallToLand->Init(mageFall, mageLand, -1, 0.05f);
+		fallToLand->AddCondition(landTrigger);
+		Transition* landToIdle = new Transition();
+		mageLand->AddTransition(landToIdle);
+		landToIdle->Init(mageLand, mageIdle, 0, 0.1f);
 		Transition* runToJump = new Transition();
 		mageRun->AddTransition(runToJump);
 		runToJump->Init(mageRun, mageJump, -1, 0.001f);
@@ -1015,13 +1040,20 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		string cameraName = "Camera";
 		cameraName += to_string(i);
 
-		//Transform* mageHead = new Transform();
-		//mageRenderer1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->
+		string titanHandName = "TitanHand";
+		titanHandName += to_string(i);
+
+		GameObject* titanHand = new GameObject();
+		titanHand->Init(titanHandName);
+		basic->AddGameObject(titanHand);
+		titanHand->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+
+		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
 
 		GameObject* camera1 = new GameObject();
 		camera1->Init(cameraName);
 		basic->AddGameObject(camera1);
-		camera1->InitTransform(identity, { 0, 5.0f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
@@ -1030,7 +1062,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosseName += to_string(i);
 
 		crosse->Init(crosseName);
-		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
+		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, titanHand->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();
@@ -1293,7 +1325,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	//testPlayer->AddComponent(testPlayerRenderer);
 	//testPlayerRenderer->Init("TestPlayer", "Static", "Static", "", "", projection, devResources);
 
-	/*GameObject* titanPlayer = new GameObject();
+	GameObject* testTitanPlayer = new GameObject();
+	testTitanPlayer->Init("TestTitanPlayer");
+	basic->AddGameObject(testTitanPlayer);
+	testTitanPlayer->InitTransform(identity, { 2, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
+	Renderer* testTitanPlayerRenderer = new Renderer();
+	testTitanPlayer->AddComponent(testTitanPlayerRenderer);
+	testTitanPlayerRenderer->Init("Titan", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
+	testTitanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
+
+	GameObject* titanPlayer = new GameObject();
 	titanPlayer->Init("TitanPlayer");
 	basic->AddGameObject(titanPlayer);
 	titanPlayer->InitTransform(identity, { 0, 0.0f, -3 }, { 0, 0, 0 }, { 1.0f, 1.0f, 1.0f }, nullptr, nullptr, nullptr);
@@ -1303,11 +1344,11 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	titanPlayerRenderer->SetEmissiveColor(float4(1, 1, 1, 1));
 	AnimatorController* titanAnimator = new AnimatorController();
 	titanPlayer->AddComponent(titanAnimator);
-	titanAnimator->Init("Titan", 0, "Test");
+	titanAnimator->Init("Titan", 0, "Idle");
 	State* testState = new State();
 	titanAnimator->AddState(testState);
-	testState->Init(titanAnimator, titanAnimator->GetBlender()->GetAnimationSet()->GetAnimation("Test"), true, 1.0f, "Test");
-*/
+	testState->Init(titanAnimator, titanAnimator->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
+
 	//for (int j = 0; j < 11; ++j)
 	//{
 	//	for (int i = 0; i < 11; ++i)
@@ -2522,15 +2563,16 @@ void Game::UpdateClientObjects()
 						INT32 soundID = client.GetSoundID(i);
 						soundEngine->PostEvent(soundID, i);
 
-						if (soundID == AK::EVENTS::STOP_FOOTSTEPS__WALK____)
-						{
-							cout << "Stop walk" <<  i << endl;
-						}
-						else if (soundID == AK::EVENTS::PLAY_FOOTSTEPS__WALK____)
-						{
-							cout << "Play walk" << i << endl;
-						}
+						//if (soundID == AK::EVENTS::STOP_FOOTSTEPS__WALK____)
+						//{
+						//	cout << "Stop walk" <<  i << endl;
+						//}
+						//else if (soundID == AK::EVENTS::PLAY_FOOTSTEPS__WALK____)
+						//{
+						//	cout << "Play walk" << i << endl;
+						//}
 
+// from jason:sdawdas
 						gameStates[i]->soundID = -1;
 						gameStates[i]->hasSound = false;
 

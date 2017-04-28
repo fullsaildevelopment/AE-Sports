@@ -481,6 +481,15 @@ void Scene::Update(float _dt)
 
 			Transform* transform = gameObjects[i]->GetTransform();
 
+			if (gameObjects[i]->GetName().find("Crosse") != string::npos)
+			{
+				//int breakPoint = 69;
+				//breakPoint++;
+
+				transform->BDirty();
+				transform->GetParent()->BDirty();
+			}
+
 			if (gameObjects[i]->GetName() == "Mage1")
 			{
 				//cout << transform->GetRotationDeg().x << " " << transform->GetRotationDeg().y << " " << transform->GetRotationDeg().z << endl;
@@ -576,6 +585,12 @@ void Scene::Update(float _dt)
 			if (animator && i != (id - 1) * 3 + 2 && id != 1)
 			{
 				animator->Update(_dt);
+			}
+
+			if (gameObjects[i]->GetName() == "Mage2")
+			{
+				Transform* mageHead = new Transform();
+				mageHead->SetLocal(animator->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_L_Attach")->world);
 			}
 		}
 		TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
@@ -698,6 +713,18 @@ void Scene::FixedUpdate(float _dt)
 		if (animator && i != (id - 1) * 3 + 2 && !ResourceManager::GetSingleton()->IsServer())
 		{
 			animator->FixedUpdate(_dt);
+		}
+
+		if (gameObjects[i]->GetName().find("TitanHand") != string::npos)
+		{
+			std::string mageName = "Mage";
+			mageName += gameObjects[i]->GetName()[9];
+
+			//gameObjects[i]->GetTransform()->SetWorld(GetGameObject(mageName)->GetComponent<AnimatorController>()->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Attach")->local);
+			XMFLOAT4X4 hands = GetGameObject(mageName)->GetComponent<AnimatorController>()->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Attach")->local;
+			//gameObjects[i]->GetTransform()->SetPosition({ hands._41, hands._42, hands._43 });
+			//gameObjects[i]->GetTransform()->SetRotation(XMMATRIX;
+
 		}
 	}
 }
