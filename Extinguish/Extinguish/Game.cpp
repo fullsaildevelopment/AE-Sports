@@ -951,13 +951,30 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		AnimatorController* mageAnim1 = new AnimatorController();
 		mage1->AddComponent(mageAnim1);
-		mageAnim1->Init("Titan", 0, "Idle"); //init animator
+		mageAnim1->Init("Titan", 0, "Idle");
+		
+		//states
 		State* mageIdle = new State();
 		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
 		mageAnim1->AddState(mageIdle);
+		State* mageJogRight = new State();
+		mageJogRight->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Right"), true, 1.0f, "Jog Right");
+		mageAnim1->AddState(mageJogRight);
+		State* mageJogLeft = new State();
+		mageJogLeft->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Left"), true, 1.0f, "Jog Left");
+		mageAnim1->AddState(mageJogLeft);
+		State* mageJogForward = new State();
+		mageJogForward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Forward"), true, 1.0f, "Jog Forward");
+		mageAnim1->AddState(mageJogForward);
+		State* mageJogBackward = new State();
+		mageJogBackward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Backward"), true, 1.0f, "Jog Backward");
+		mageAnim1->AddState(mageJogBackward);
 		State* mageRun = new State();
 		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
 		mageAnim1->AddState(mageRun);
+		State* mageThrow = new State();
+		mageThrow->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Throw"), false, 1.0f, "Throw");
+		mageAnim1->AddState(mageThrow);
 		State* magePush = new State();
 		magePush->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Push"), false, 1.0f, "Push");
 		mageAnim1->AddState(magePush);
@@ -973,10 +990,28 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		State* mageLand = new State();
 		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
 		mageAnim1->AddState(mageLand);
+
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
+
+		//triggers
+		Param::Trigger* jogRightTrigger = new Param::Trigger();
+		jogRightTrigger->Init("Jog Right", false);
+		mageAnim1->AddParameter(jogRightTrigger);
+		Param::Trigger* jogLeftTrigger = new Param::Trigger();
+		jogLeftTrigger->Init("Jog Left", false);
+		mageAnim1->AddParameter(jogLeftTrigger);
+		Param::Trigger* jogBackwardTrigger = new Param::Trigger();
+		jogBackwardTrigger->Init("Jog Backward", false);
+		mageAnim1->AddParameter(jogBackwardTrigger);
+		Param::Trigger* jogForwardTrigger = new Param::Trigger();
+		jogForwardTrigger->Init("Jog Forward", false);
+		mageAnim1->AddParameter(jogForwardTrigger);
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
 		mageAnim1->AddParameter(runTrigger);
+		Param::Trigger* throwTrigger = new Param::Trigger();
+		throwTrigger->Init("Throw", false);
+		mageAnim1->AddParameter(throwTrigger);
 		Param::Trigger* pushTrigger = new Param::Trigger();
 		pushTrigger->Init("Push", false);
 		mageAnim1->AddParameter(pushTrigger);
@@ -992,18 +1027,75 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Param::Trigger* landTrigger = new Param::Trigger();
 		landTrigger->Init("Land", false);
 		mageAnim1->AddParameter(landTrigger);
+
+		//transitions
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
-		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
+		idleToRun->Init(mageIdle, mageRun, -1, 0.2f);
 		idleToRun->AddCondition(runTrigger);
 		Transition* runToIdle = new Transition();
 		mageRun->AddTransition(runToIdle);
-		runToIdle->Init(mageRun, mageIdle, -1, 0.5f);
+		runToIdle->Init(mageRun, mageIdle, -1, 0.2f);
 		runToIdle->AddCondition(idleTrigger);
-		Transition* runToStumble = new Transition();
-		mageRun->AddTransition(runToIdle);
-		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
-		runToStumble->AddCondition(stumbleTrigger);
+
+		//jog transitions
+		//Transition* idleToJogLeft = new Transition();
+		//mageIdle->AddTransition(idleToJogLeft);
+		//idleToJogLeft->Init(mageIdle, mageJogLeft, -1, 0.1f);
+		//idleToJogLeft->AddCondition(jogLeftTrigger);
+		//Transition* jogLeftToIdle = new Transition();
+		//mageJogLeft->AddTransition(jogLeftToIdle);
+		//jogLeftToIdle->Init(mageJogLeft, mageIdle, -1, 0.1f);
+		//jogLeftToIdle->AddCondition(idleTrigger);
+		//Transition* idleToJogRight = new Transition();
+		//mageIdle->AddTransition(idleToJogRight);
+		//idleToJogRight->Init(mageIdle, mageJogRight, -1, 0.1f);
+		//idleToJogRight->AddCondition(jogRightTrigger);
+		//Transition* jogRightToIdle = new Transition();
+		//mageJogRight->AddTransition(jogRightToIdle);
+		//jogRightToIdle->Init(mageJogRight, mageIdle, -1, 0.1f);
+		//jogRightToIdle->AddCondition(idleTrigger);
+		Transition* idleToJogForward = new Transition();
+		mageIdle->AddTransition(idleToJogForward);
+		idleToJogForward->Init(mageIdle, mageJogForward, -1, 0.1f);
+		idleToJogForward->AddCondition(jogForwardTrigger);
+		Transition* jogForwardToIdle = new Transition();
+		mageJogForward->AddTransition(jogForwardToIdle);
+		jogForwardToIdle->Init(mageJogForward, mageIdle, -1, 0.1f);
+		jogForwardToIdle->AddCondition(idleTrigger);
+		//Transition* idleToJogBackward = new Transition();
+		//mageIdle->AddTransition(idleToJogBackward);
+		//idleToJogBackward->Init(mageIdle, mageJogBackward, -1, 0.1f);
+		//idleToJogBackward->AddCondition(jogBackwardTrigger);
+		//Transition* jogBackwardToIdle = new Transition();
+		//mageJogBackward->AddTransition(jogBackwardToIdle);
+		//jogBackwardToIdle->Init(mageJogBackward, mageIdle, -1, 0.1f);
+		//jogBackwardToIdle->AddCondition(idleTrigger);
+
+		//throw transitions
+		Transition* idleToThrow = new Transition();
+		mageIdle->AddTransition(idleToThrow);
+		idleToThrow->Init(mageIdle, mageThrow, -1, 0.1f);
+		idleToThrow->AddCondition(throwTrigger);
+		Transition* throwToIdle = new Transition();
+		mageThrow->AddTransition(throwToIdle);
+		throwToIdle->Init(mageThrow, mageIdle, 0, 0.1f);
+		Transition* runToThrow = new Transition();
+		mageRun->AddTransition(runToThrow);
+		runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
+		runToThrow->AddCondition(throwTrigger);
+		Transition* throwToRun = new Transition();
+		mageThrow->AddTransition(throwToRun);
+		throwToRun->Init(mageThrow, mageRun, 0, 0.1f);
+		Transition* jogForwardToThrow = new Transition();
+		mageJogForward->AddTransition(jogForwardToThrow);
+		jogForwardToThrow->Init(mageJogForward, mageThrow, -1, 0.1f);
+		jogForwardToThrow->AddCondition(throwTrigger);
+		Transition* throwToJogForward = new Transition();
+		mageThrow->AddTransition(throwToJogForward);
+		throwToJogForward->Init(mageThrow, mageJogForward, 0, 0.1f);
+
+		//push transitions
 		Transition* idleToPush = new Transition();
 		mageIdle->AddTransition(idleToPush);
 		idleToPush->Init(mageIdle, magePush, -1, 0.1f);
@@ -1011,6 +1103,26 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Transition* pushToIdle = new Transition();
 		magePush->AddTransition(pushToIdle);
 		pushToIdle->Init(magePush, mageIdle, 0, 0.1f);
+		Transition* runToPush = new Transition();
+		mageRun->AddTransition(runToPush);
+		runToPush->Init(mageRun, magePush, -1, 0.1f);
+		runToPush->AddCondition(pushTrigger);
+		Transition* pushToRun = new Transition();
+		magePush->AddTransition(pushToRun);
+		pushToRun->Init(magePush, mageRun, 0, 0.1f);
+		Transition* jogForwardToPush = new Transition();
+		mageJogForward->AddTransition(jogForwardToPush);
+		jogForwardToPush->Init(mageJogForward, magePush, -1, 0.1f);
+		jogForwardToPush->AddCondition(pushTrigger);
+		Transition* pushToJogForward = new Transition();
+		magePush->AddTransition(pushToJogForward);
+		pushToJogForward->Init(magePush, mageJogForward, 0, 0.1f);
+
+		//stumble transitions
+		Transition* runToStumble = new Transition();
+		mageRun->AddTransition(runToIdle);
+		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
+		runToStumble->AddCondition(stumbleTrigger);
 		Transition* idleToStumble = new Transition();
 		mageIdle->AddTransition(idleToStumble);
 		idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
@@ -1018,6 +1130,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Transition* stumbleToIdle = new Transition();
 		mageStumble->AddTransition(stumbleToIdle);
 		stumbleToIdle->Init(mageStumble, mageIdle, 0, 0.01f); //exit time of 0 will make transition happen right when cur animation is done
+		
 		Transition* idleToJump = new Transition();
 		mageIdle->AddTransition(idleToJump);
 		idleToJump->Init(mageIdle, mageJump, -1, 0.1f);
@@ -1032,6 +1145,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Transition* landToIdle = new Transition();
 		mageLand->AddTransition(landToIdle);
 		landToIdle->Init(mageLand, mageIdle, 0, 0.1f);
+
+		//jump transitions
 		Transition* runToJump = new Transition();
 		mageRun->AddTransition(runToJump);
 		runToJump->Init(mageRun, mageJump, -1, 0.001f);
@@ -1055,7 +1170,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		GameObject* camera1 = new GameObject();
 		camera1->Init(cameraName);
 		basic->AddGameObject(camera1);
-		camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, XM_PI, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 1.6f, 0.6f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
@@ -1780,10 +1895,10 @@ void Game::ResetPlayers()
 		cameraName += to_string(i);
 		GameObject* camera = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObject(cameraName);
 
-		camera->GetTransform()->SetRotation({ 0, XM_PI, 0 });
+		camera->GetTransform()->SetRotation({ 0, 0, 0 });
 
 		player->GetTransform()->MoveTo(positions[randIndex], 1.0f);
-		player->GetTransform()->RotateTo({ 0.0f, rotations[randIndex] / 180.0f * XM_PI, 0.0f }, 1.0f);
+		player->GetTransform()->RotateTo({ 0.0f, 0.0f, 0.0f }, 1.0f);
 
 		//reset player's velocity
 		player->GetTransform()->SetVelocity({ 0.0f, 0.0f, 0.0f });
@@ -1874,6 +1989,22 @@ void Game::CreateLobby(Scene * scene)
 	bg->AddComponent(bgRender);
 	bgRender->MakeRTSize();
 	bgButton->MakeRect();
+
+	//controls
+	GameObject * controls = new GameObject();
+	controls->Init("controls");
+	scene->AddUIObject(controls);
+	Button * controlsButton = new Button(true, false, L"", 0, 600.0f, 550.0f, devResources, 0);
+	controlsButton->SetGameObject(controls);
+	controlsButton->showFPS(false);
+	controlsButton->setPositionMultipliers(0.3f, 0.5f);
+	controls->AddComponent(controlsButton);
+	UIRenderer * controlsRender = new UIRenderer();
+	controlsRender->Init(true, 35.0f, devResources, controlsButton, L"", D2D1::ColorF::Black);
+	controlsRender->DecodeBitmap(L"../Assets/UI/controls.png");
+	controls->AddComponent(controlsRender);
+	controlsRender->MakeRTSize();
+	controlsButton->MakeRect();
 
 	// start game, will only show if isServer
 	GameObject * startGame = new GameObject();

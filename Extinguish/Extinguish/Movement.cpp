@@ -45,6 +45,7 @@ void Movement::Update(float _dt)
 {
 	this->_dt = _dt;
 	//animation feedback
+	//if (isMoving)
 	if (isMoving)
 	{
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
@@ -53,10 +54,14 @@ void Movement::Update(float _dt)
 		{
 			int nextStateIndex = animator->GetNextStateIndex();
 
-			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Run" && !animator->GetState(animator->GetNextStateIndex()))
+			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Run" && !animator->GetState(animator->GetNextStateIndex()) && GetGameObject()->GetComponent<PlayerController>()->IsSprinting())
 			{
 				animator->SetTrigger("Run");
 				//cout << "Run" << endl;
+			}
+			else if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Forward" && !animator->GetState(animator->GetNextStateIndex()))
+			{
+				animator->SetTrigger("Jog Forward");
 			}
 		}
 	}
@@ -172,16 +177,25 @@ void Movement::HandleInput(InputDownEvent* e)
 	Physics* phys = GetGameObject()->GetComponent<Physics>();
 	bool af = true;
 
+	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+
 	if (canMove)
 	{
 		if (input->GetKey(forward))
 		{
 			XMFLOAT3 forward = transform->GetForward();
-			forward = { -forward.x, -forward.y, -forward.z };
+			//forward = { forward.x, forward.y, forward.z };
+
 			transform->AddVelocity({ forward.x * moveSpeed * _dt, forward.y * moveSpeed * _dt,  forward.z * moveSpeed * _dt });
+
 			//transform->Translate({ forward.x * moveSpeed * dt, forward.y * moveSpeed * dt,  forward.z * moveSpeed * dt });
 			isMoving = true;
 			af = false;
+
+			//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Forward" && !animator->GetState(animator->GetNextStateIndex()))
+			//{
+			//	animator->SetTrigger("Jog Forward");
+			//}
 		}
 
 		if (input->GetKey(back))
@@ -189,31 +203,49 @@ void Movement::HandleInput(InputDownEvent* e)
 			//transform->Translate({ 0.0f, 0.0f, -moveSpeed * dt });
 			XMFLOAT3 forward = transform->GetForward();
 			forward = { -forward.x, -forward.y, -forward.z };
-			transform->AddVelocity({ forward.x * -moveSpeed* _dt, forward.y * -moveSpeed* _dt,  forward.z * -moveSpeed * _dt });
+
+			transform->AddVelocity({ forward.x * moveSpeed* _dt, forward.y * moveSpeed* _dt,  forward.z * moveSpeed * _dt });
 			//transform->Translate({ forward.x * -moveSpeed * dt, forward.y * -moveSpeed * dt,  forward.z * -moveSpeed * dt });
 			isMoving = true;
 			af = false;
+
+			//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Backward" && !animator->GetState(animator->GetNextStateIndex()))
+			//{
+			//	animator->SetTrigger("Jog Backward");
+			//}
 		}
 
 		if (input->GetKey(left))
 		{
 			XMFLOAT3 right = transform->GetRight();
-			right = { -right.x, -right.y, -right.z };
-			transform->AddVelocity({ right.x * -moveSpeed* _dt, right.y * -moveSpeed* _dt,  right.z * -moveSpeed * _dt });
+			XMFLOAT3 left = { -right.x, -right.y, -right.z };
+
+			transform->AddVelocity({ left.x * moveSpeed* _dt, left.y * moveSpeed* _dt,  left.z * moveSpeed * _dt });
 			//transform->Translate({ right.x * -moveSpeed * dt, right.y * -moveSpeed * dt,  right.z * -moveSpeed * dt });
 			isMoving = true;
 			af = false;
+
+			//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Left" && !animator->GetState(animator->GetNextStateIndex()))
+			//{
+			//	animator->SetTrigger("Jog Left");
+			//}
 		}
 
 		if (input->GetKey(right))
 		{
 			XMFLOAT3 right = transform->GetRight();
-			right = { -right.x, -right.y, -right.z };
+			//right = { -right.x, -right.y, -right.z };
+
 			transform->AddVelocity({ right.x * moveSpeed* _dt, right.y * moveSpeed* _dt,  right.z * moveSpeed * _dt });
 			//transform->Translate({ right.x * moveSpeed * dt, right.y * moveSpeed * dt,  right.z * moveSpeed * dt });
 			//transform->AddVelocity({ moveSpeed, 0.0f, 0.0f });
 			isMoving = true;
 			af = false;
+
+			//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Right" && !animator->GetState(animator->GetNextStateIndex()))
+			//{
+			//	animator->SetTrigger("Jog Right");
+			//}
 		}
 	}
 

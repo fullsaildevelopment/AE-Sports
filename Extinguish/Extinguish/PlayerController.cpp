@@ -496,7 +496,11 @@ void PlayerController::Attack()
 
 	//give current player push animation
 	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
-	animator->SetTrigger("Push");
+
+	if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Push" && !animator->GetState(animator->GetNextStateIndex()))
+	{
+		animator->SetTrigger("Push");
+	}
 
 	if (otherPlayer)
 	{
@@ -906,6 +910,12 @@ bool PlayerController::IsInvincible()
 {
 	return isInvincible;
 }
+
+bool PlayerController::IsSprinting()
+{
+	return isSprinting;
+}
+
 
 //setters//
 void PlayerController::SetName(std::string name)

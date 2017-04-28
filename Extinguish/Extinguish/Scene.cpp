@@ -42,7 +42,7 @@ void Scene::Init(DeviceResources * devResources, InputManager* inputRef)
 	CreateLights();
 
 	//create models in scene
-	CreateModels();
+	//CreateModels();
 
 	D3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.FillMode = D3D11_FILL_SOLID;
@@ -332,90 +332,6 @@ void Scene::CreateLights()
 
 		devContext->PSSetConstantBuffers(2, 1, spotLightConstantBuffer.GetAddressOf());
 	}
-}
-
-void Scene::CreateModels()
-{
-#if 0
-	////ground plane
-	//Model groundPlane;
-
-	//vector<VS_BasicInput> basicVertices =
-	//{
-	//	{ XMFLOAT3(-5.5f, 0, -5.5f), XMFLOAT3(0, 1.0f, 0), XMFLOAT2(0.0f, 1.0f) }, //left bottom
-	//	{ XMFLOAT3(5.5f, 0, -5.5f), XMFLOAT3(0, 1.0f, 0), XMFLOAT2(1.0f, 1.0f) }, //right bottom
-	//	{ XMFLOAT3(-5.5f,  0, 5.5f), XMFLOAT3(0, 1.0f, 0), XMFLOAT2(0.0f, 0.0f) }, //left top
-	//	{ XMFLOAT3(5.5f,  0,  5.5f), XMFLOAT3(0, 1.0f, 0), XMFLOAT2(1.0f, 0.0f) } //right top
-	//};
-
-	////clockwise
-	//vector<unsigned int> indices =
-	//{
-	//	2, 1, 0,
-	//	2, 3, 1
-	//};
-	//groundPlane.SetBasicVerts(basicVertices);
-	//groundPlane.SetIndices(indices);
-
-	//groundPlane.Init(VertexShaderTypes::vsBASIC, vertexShaders[VertexShaderTypes::vsBASIC].Get(), vertexShaders[VertexShaderTypes::vsDEPTHPREPASS].Get(), pixelShaders[PixelShaderTypes::psBASIC].Get(), inputLayouts[VertexShaderTypes::vsBASIC].Get(), "../Assets/Textures/DDS/FloorTexture.dds", XMMatrixIdentity(), camera, projection, L"");
-	//groundPlane.CreateDevResources(deviceResources);
-	//models.push_back(groundPlane);
-
-	////test model for fbx loading 
-	//Model testModel;
-	//XMFLOAT4X4 identity;
-	//XMStoreFloat4x4(&identity, XMMatrixIdentity());
-	//XMFLOAT4X4 identities[4] = { identity, identity, identity, identity };
-
-	//testModel.Init(VertexShaderTypes::vsBIND, vertexShaders[VertexShaderTypes::vsBIND].Get(), pixelShaders[PixelShaderTypes::psNORMALMAPPED].Get(), inputLayouts[VertexShaderTypes::vsBIND].Get(), "../Assets/Textures/DDS/TestCube.dds", "", XMMatrixIdentity(), camera, projection, identities, L"Box");
-	//testModel.CreateDevResources(deviceResources);
-	//models.push_back(testModel);
-
-	////add bear
-	//XMFLOAT4X4 lightView;
-
-	//XMFLOAT4 lightPosition = pointLights[0].GetLight().pointLightPosition;
-
-	//static const XMVECTORF32 eye = { lightPosition.x , lightPosition.y, lightPosition.z, lightPosition.w };
-	//static const XMVECTORF32 at = { 0.0f, 0.0f, 0.0f, 0.0f };
-	//static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-	//XMStoreFloat4x4(&lightView, XMMatrixInverse(nullptr, XMMatrixLookAtLH(eye, at, up)));
-
-	//Model monokuma;
-	////monokuma.Init(VertexShaderTypes::vsBIND, vertexShaders[VertexShaderTypes::vsBIND].Get(), pixelShaders[PixelShaderTypes::psNORMALMAPPED].Get(), inputLayouts[VertexShaderTypes::vsBIND].Get(), "../Assets/Textures/DDS/Teddy.dds", "", XMMatrixTranspose(XMMatrixMultiply(XMMatrixScaling(0.01f, 0.01f, 0.01f), XMMatrixTranslation(-3, 0, 3))), camera, projection, identities, L"Teddy");
-	//monokuma.Init(VertexShaderTypes::vsBIND, vertexShaders[VertexShaderTypes::vsSHADOW].Get(), pixelShaders[PixelShaderTypes::psSHADOW].Get(), inputLayouts[VertexShaderTypes::vsBIND].Get(), "../Assets/Textures/DDS/Teddy.dds", "", XMMatrixTranspose(XMMatrixMultiply(XMMatrixScaling(0.01f, 0.01f, 0.01f), XMMatrixTranslation(-3, 0, 3))), camera, projection, identities, L"Teddy");
-	//monokuma.SetShadowData(vertexShaders[VertexShaderTypes::vsDEPTHSHADOW].Get(), pixelShaders[PixelShaderTypes::psDEPTHSHADOW].Get(), XMMatrixTranspose(XMMatrixMultiply(XMMatrixScaling(0.01f, 0.01f, 0.01f), XMMatrixTranslation(-3, 0, 3))), lightView, projection);
-	//monokuma.CreateDevResources(deviceResources);
-
-	//models.push_back(monokuma);
-
-	////add test box but with attack animation
-	//Model testModelAttack;
-	//testModelAttack.Init(VertexShaderTypes::vsBIND, vertexShaders[VertexShaderTypes::vsBIND].Get(), pixelShaders[PixelShaderTypes::psNORMALMAPPED].Get(), inputLayouts[VertexShaderTypes::vsBIND].Get(), "../Assets/Textures/DDS/TestCube.dds", "", XMMatrixTranspose(XMMatrixTranslation(3, 0, 0)), camera, projection, identities, L"Box");
-	//testModelAttack.CreateDevResources(deviceResources);
-	//models.push_back(testModelAttack);
-
-
-	////add magician
-	//Model mage;
-
-	//mage.Init(VertexShaderTypes::vsBIND, vertexShaders[VertexShaderTypes::vsBIND].Get(), pixelShaders[PixelShaderTypes::psNORMALMAPPED].Get(), inputLayouts[VertexShaderTypes::vsBIND].Get(), "../Assets/Textures/DDS/Mage.dds", "../Assets/Textures/DDS/Mage_NM.dds", XMMatrixTranspose(XMMatrixTranslation(-3, 0, -3)), camera, projection, identities, L"Mage");
-	//mage.SetSpecMap("../Assets/Textures/DDS/Mage_Spec.dds");
-	//mage.CreateDevResources(deviceResources);
-
-	//models.push_back(mage);
-
-	////add four spheres. set postions at position in boneMats
-	//for (int i = 0; i < 4; ++i)
-	//{
-	//	Model sphereModel;
-
-	//	sphereModel.Init(VertexShaderTypes::vsBASIC, vertexShaders[VertexShaderTypes::vsBASIC].Get(), vertexShaders[VertexShaderTypes::vsDEPTHPREPASS].Get(), pixelShaders[PixelShaderTypes::psBASIC].Get(), inputLayouts[VertexShaderTypes::vsBASIC].Get(), "", XMMatrixIdentity(), camera, projection, L"Sphere");
-	//	sphereModel.CreateDevResources(deviceResources);
-	//	models.push_back(sphereModel);
-	//}
-#endif
 }
 
 //void Scene::Update(InputManager input, float dt)
