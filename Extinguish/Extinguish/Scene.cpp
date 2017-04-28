@@ -503,11 +503,11 @@ void Scene::Update(float _dt)
 				animator->Update(_dt);
 			}
 
-			if (gameObjects[i]->GetName() == "Mage2")
-			{
-				Transform* mageHead = new Transform();
-				mageHead->SetLocal(animator->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_L_Attach")->world);
-			}
+			//if (gameObjects[i]->GetName() == "Mage2")
+			//{
+			//	Transform* mageHead = new Transform();
+			//	mageHead->SetLocal(animator->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_L_Attach")->world);
+			//}
 		}
 		TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
 		if (trender)
@@ -626,7 +626,7 @@ void Scene::FixedUpdate(float _dt)
 		AnimatorController* animator = gameObjects[i]->GetComponent<AnimatorController>();
 
 		//don't animate yourself or animate server which has already been animated
-		if (animator && i != (id - 1) * 3 + 2 && !ResourceManager::GetSingleton()->IsServer())
+		if (animator && i != (id - 1) * 4 + 2 && !ResourceManager::GetSingleton()->IsServer())
 		{
 			animator->FixedUpdate(_dt);
 		}
@@ -636,7 +636,7 @@ void Scene::FixedUpdate(float _dt)
 			std::string mageName = "Mage";
 			mageName += gameObjects[i]->GetName()[9];
 
-			XMFLOAT4X4 hands = GetGameObject(mageName)->GetComponent<AnimatorController>()->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Attach")->local;
+			XMFLOAT4X4 hands = GetGameObject(mageName)->GetComponent<AnimatorController>()->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Wrist")->local;
 			gameObjects[i]->GetTransform()->SetLocal(hands);
 
 		}
