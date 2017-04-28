@@ -951,13 +951,17 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		AnimatorController* mageAnim1 = new AnimatorController();
 		mage1->AddComponent(mageAnim1);
-		mageAnim1->Init("Titan", 0, "Idle"); //init animator
+		mageAnim1->Init("Titan", 0, "Idle");
+
 		State* mageIdle = new State();
 		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
 		mageAnim1->AddState(mageIdle);
 		State* mageRun = new State();
 		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
 		mageAnim1->AddState(mageRun);
+		State* mageThrow = new State();
+		mageThrow->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Throw"), false, 1.0f, "Throw");
+		mageAnim1->AddState(mageThrow);
 		State* magePush = new State();
 		magePush->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Push"), false, 1.0f, "Push");
 		mageAnim1->AddState(magePush);
@@ -973,10 +977,15 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		State* mageLand = new State();
 		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
 		mageAnim1->AddState(mageLand);
+
 		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
+
 		Param::Trigger* runTrigger = new Param::Trigger();
 		runTrigger->Init("Run", false); //must init trigger before adding to animator
 		mageAnim1->AddParameter(runTrigger);
+		Param::Trigger* throwTrigger = new Param::Trigger();
+		throwTrigger->Init("Throw", false);
+		mageAnim1->AddParameter(throwTrigger);
 		Param::Trigger* pushTrigger = new Param::Trigger();
 		pushTrigger->Init("Push", false);
 		mageAnim1->AddParameter(pushTrigger);
@@ -992,6 +1001,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		Param::Trigger* landTrigger = new Param::Trigger();
 		landTrigger->Init("Land", false);
 		mageAnim1->AddParameter(landTrigger);
+
 		Transition* idleToRun = new Transition();
 		mageIdle->AddTransition(idleToRun);
 		idleToRun->Init(mageIdle, mageRun, -1, 0.5f);
@@ -1000,6 +1010,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mageRun->AddTransition(runToIdle);
 		runToIdle->Init(mageRun, mageIdle, -1, 0.5f);
 		runToIdle->AddCondition(idleTrigger);
+
+		//throw transitions
+		Transition* idleToThrow = new Transition();
+		mageIdle->AddTransition(idleToThrow);
+		idleToThrow->Init(mageIdle, mageThrow, -1, 0.1f);
+		idleToThrow->AddCondition(throwTrigger);
+		Transition* throwToIdle = new Transition();
+		mageThrow->AddTransition(throwToIdle);
+		throwToIdle->Init(mageThrow, mageIdle, 0, 0.1f);
+
 		Transition* runToStumble = new Transition();
 		mageRun->AddTransition(runToIdle);
 		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
