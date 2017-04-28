@@ -1047,7 +1047,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		titanHand->Init(titanHandName);
 		basic->AddGameObject(titanHand);
 		titanHand->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-
+		Renderer* axisRenderer = new Renderer();
+		titanHand->AddComponent(axisRenderer);
+		axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
 		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
 
 		GameObject* camera1 = new GameObject();
@@ -1061,8 +1063,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
 
-		crosse->Init(crosseName);
-		crosse->InitTransform(identity, { 0, 0.25f, 1.2f }, { 0, 0, 0 }, { 1, 1, 1 }, titanHand->GetTransform(), nullptr, nullptr);
+		crosse->Init(crosseName);		/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
+		crosse->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanHand->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosse->AddSphereCollider(crosseNetCollider);
 		Renderer* crosseRenderer = new Renderer();

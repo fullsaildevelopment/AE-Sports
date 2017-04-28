@@ -303,22 +303,34 @@ void Transform::SetWorld(DirectX::XMFLOAT4X4 matrix)
 
 void Transform::SetLocal(DirectX::XMFLOAT4X4 matrix)
 {
-	//local = matrix;
+	SetPosition({ matrix._41, matrix._42, matrix._43 });
+	XMVECTOR qua;
+	XMVECTOR s;
+	XMVECTOR t;
+	XMMATRIX m = XMLoadFloat4x4(&matrix);
+	XMMatrixDecompose(&s, &qua, &t, m);
+	XMFLOAT4 scale;
+	XMStoreFloat4(&scale, s);
+	SetScale({ scale.x,scale.y,scale.z });
+	XMFLOAT4 qu;
+	XMStoreFloat4(&qu, qua);
+	float4 q;
+	q = float4(qu.w, qu.x, qu.y, qu.z);
 
-	//SetPosition({ matrix._41, matrix._42, matrix._43 });
-	//
-	//XMVECTOR col1 = XMVectorSet(matrix._11, matrix._12, matrix._13, 0);
-	//XMVECTOR col2 = XMVectorSet(matrix._21, matrix._22, matrix._23, 0);
-	//XMVECTOR col3 = XMVectorSet(matrix._31, matrix._32, matrix._33, 0);
-	//XMFLOAT4 length1;
-	//XMStoreFloat4(&length1, XMVector4Length(col1));
-	//XMFLOAT4 length2;
-	//XMStoreFloat4(&length2, XMVector4Length(col2));
-	//XMFLOAT4 length3;
-	//XMStoreFloat4(&length3, XMVector4Length(col3));
+	double ysqr = q.y * q.y;
 
-	//SetScale({ length1.x, length2.x, length3.x });
-	//SetRotation();
+	double t0 = 2.0 * (q.w * q.x + q.y * q.z);
+	double t1 = 1.0 - 2.0 * (q.x *q.x + ysqr);
+	rotation.x = std::atan2(t0, t1);
+
+	double t2 = 2.0 * (q.w * q.y - q.z * q.x);
+	t2 = t2 > 1.0 ? 1.0 : t2;
+	t2 = t2 < -1.0 ? -1.0 : t2;
+	rotation.y = std::asin(t2);
+
+	double t3 = 2.0 * (q.w * q.z + q.x * q.y);
+	double t4 = 1.0 - 2.0 * (ysqr + q.z * q.z);
+	rotation.z = atan2(t3, t4);
 
 	BDirty();
 }
