@@ -108,6 +108,9 @@ void Crosse::Throw()
 		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Throw" && !animator->GetState(animator->GetNextStateIndex()))
 		{
 			animator->SetTrigger("Throw");
+
+			//set the trigger for the current animation so when throw is done it goes back to previous
+			animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
 		}
 
 		//transform->RotateX(XMConvertToRadians(45));
