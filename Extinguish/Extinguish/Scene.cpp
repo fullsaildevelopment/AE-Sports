@@ -503,11 +503,11 @@ void Scene::Update(float _dt)
 				animator->Update(_dt);
 			}
 
-			if (gameObjects[i]->GetName() == "Mage2")
-			{
-				Transform* mageHead = new Transform();
-				mageHead->SetLocal(animator->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_L_Attach")->world);
-			}
+			//if (gameObjects[i]->GetName() == "Mage2")
+			//{
+			//	Transform* mageHead = new Transform();
+			//	mageHead->SetLocal(animator->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_L_Attach")->world);
+			//}
 		}
 		TrailRender* trender = gameObjects[i]->GetComponent<TrailRender>();
 		if (trender)
