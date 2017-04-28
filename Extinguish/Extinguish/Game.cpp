@@ -205,11 +205,11 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 			{
 				uiGO[j]->GetComponent<Credits>()->UpdateSize(rect);
 			}
-			if (uiGO[j]->GetName() == "Scoreboard") 
+			if (uiGO[j]->GetName() == "Scoreboard")
 			{
 				uiGO[j]->GetComponent<Scoreboard>()->UpdateSize(rect);
 			}
-			else 
+			else
 			{
 				B = uiGO[j]->GetComponent<Button>();
 				M = uiGO[j]->GetComponent<MeterBar>();
@@ -285,177 +285,177 @@ int Game::Update(float dt)
 			}
 
 		}
-		}
+	}
 
-		if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
+	if (currentScene == 2 && ResourceManager::GetSingleton()->IsServer())
+	{
+		if (!ResourceManager::GetSingleton()->IsPaused())
+			Time -= dt;
+
+		if (Time < 0)
 		{
-			if (!ResourceManager::GetSingleton()->IsPaused())
-				Time -= dt;
-
-			if (Time < 0)
+			Time = 0.0f;
+		}
+	}
+	if (ResourceManager::GetSingleton()->IsMultiplayer())
+	{
+		if (currentScene >= 2) {
+			if (ResourceManager::GetSingleton()->IsServer())
 			{
-				Time = 0.0f;
+				server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
+
+				if (server.getObjCount() == 0)
+					server.setObjCount(scenes[currentScene]->GetNumObjects());
+
+				GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+				Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+				scoreboard->SendScoreboard();
+				server.sendGameState();
+				server.setCountdown(false);
 			}
-		}
-		if (ResourceManager::GetSingleton()->IsMultiplayer())
-		{
-			if (currentScene >= 2) {
-				if (ResourceManager::GetSingleton()->IsServer())
-				{
-					server.setTime(Time, scenes[currentScene]->GetGameObject("HexFloor")->GetComponent<FloorController>()->GetState());
-
-					if (server.getObjCount() == 0)
-						server.setObjCount(scenes[currentScene]->GetNumObjects());
-
-					GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
-					Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-					scoreboard->SendScoreboard();
-					server.sendGameState();
-					server.setCountdown(false);
-				}
-				//set client id
-				if (!ResourceManager::GetSingleton()->IsServer())
+			//set client id
+			if (!ResourceManager::GetSingleton()->IsServer())
 				clientID = client.getID();
 
-				// if server, set game states
-				if (ResourceManager::GetSingleton()->IsServer())
+			// if server, set game states
+			if (ResourceManager::GetSingleton()->IsServer())
+			{
+				UpdateServerStates();
+				//SendFloor();
+			}
+
+			//run server
+			if (ResourceManager::GetSingleton()->IsServer())
+			{
+				int serverState = server.run();
+
+				//to receive the message server sent
+				if (serverState == 4)
 				{
-					UpdateServerStates();
-					//SendFloor();
+					ReceiveServerMessage();
+				}
+			}
+
+
+			//run client
+			if (!ResourceManager::GetSingleton()->IsServer())
+			{
+				int clientState = client.run();
+
+				clientID = client.getID();
+
+				if (clientState == 0)
+				{
+					returnResult = 0;
 				}
 
-				//run server
-				if (ResourceManager::GetSingleton()->IsServer())
+				if (clientState == 69)
 				{
-					int serverState = server.run();
-
-					//to receive the message server sent
-					if (serverState == 4)
-					{
-						ReceiveServerMessage();
-					}
+					ReceiveClientMessage();
 				}
 
+				//cout << clientState << endl;
 
-				//run client
-				if (!ResourceManager::GetSingleton()->IsServer())
+				// if client gets server's game states, get the state's location from the client
+				// so that it can be included in update
+				if ((client.hasPackets() || client.hasState() || client.hasScored()) && clientID > 0)
 				{
-					int clientState = client.run();
+					UpdateClientObjects();
 
-						clientID = client.getID();
-
-					if (clientState == 0)
+					if (client.hasState())
 					{
-						returnResult = 0;
-					}
+						GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
+						Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
+						scoreboard->ReceiveScoreboard();
 
-					if (clientState == 69)
-					{
-						ReceiveClientMessage();
-					}
-
-					//cout << clientState << endl;
-
-					// if client gets server's game states, get the state's location from the client
-					// so that it can be included in update
-					if ((client.hasPackets() || client.hasState() || client.hasScored()) && clientID > 0)
-					{
-						UpdateClientObjects();
-
-						if (client.hasState())
+						if (!ResourceManager::GetSingleton()->IsServer())
+							Time = client.getTime();
+						Team1Score = client.getScoreA();
+						Team2Score = client.getScoreB();
+						UpdateScoreUI();
+						currentScene = client.getScene();
+						if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
 						{
-							GameObject * sb = scenes[currentScene]->GetUIByName("Scoreboard");
-							Scoreboard * scoreboard = sb->GetComponent<Scoreboard>();
-							scoreboard->ReceiveScoreboard();
-
-							if (!ResourceManager::GetSingleton()->IsServer())
-								Time = client.getTime();
-							Team1Score = client.getScoreA();
-							Team2Score = client.getScoreB();
-							UpdateScoreUI();
-							currentScene = client.getScene();
-							if (currentScene == 1 && !ResourceManager::GetSingleton()->IsServer())
-							{
-								TogglePauseMenu(true, true);
-							}
-						}
-
-						if (client.hasScored())
-						{
-							Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
-
-							string sname = client.getScorer();
-
-							wstring name(sname.size(), L' ');
-							copy(sname.begin(), sname.end(), name.begin());
-							scorerButton->setText(name + L"\nscored!");
-							scorerButton->MakeRect();
-							scorerButton->setOrigin();
-							scorerButton->SetActive(true);
-
-							justScored = true;
-							scorerTimer = 0.0f;
+							TogglePauseMenu(true, true);
 						}
 					}
+
+					if (client.hasScored())
+					{
+						Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+
+						string sname = client.getScorer();
+
+						wstring name(sname.size(), L' ');
+						copy(sname.begin(), sname.end(), name.begin());
+						scorerButton->setText(name + L"\nscored!");
+						scorerButton->MakeRect();
+						scorerButton->setOrigin();
+						scorerButton->SetActive(true);
+
+						justScored = true;
+						scorerTimer = 0.0f;
+					}
 				}
 			}
-			else
+		}
+		else
+		{
+			int result = UpdateLobby();
+			if (result == 0)
 			{
-				int result = UpdateLobby();
-				if (result == 0)
-				{
-					LoadScene("Menu");
-					ResourceManager::GetSingleton()->SetMultiplayer(false);
-					ResourceManager::GetSingleton()->SetServer(true);
-				}
+				LoadScene("Menu");
+				ResourceManager::GetSingleton()->SetMultiplayer(false);
+				ResourceManager::GetSingleton()->SetServer(true);
 			}
 		}
+	}
 
-		//handle scorer HUD
-		if (justScored)
+	//handle scorer HUD
+	if (justScored)
+	{
+		scorerTimer += dt;
+
+		if (scorerTimer >= 1.0f)
 		{
-			scorerTimer += dt;
+			//disable scorer text
+			Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
+			scorerButton->SetActive(false);
 
-			if (scorerTimer >= 1.0f)
-			{
-				//disable scorer text
-				Button* scorerButton = scenes[currentScene]->GetUIByName("Scorer")->GetComponent<Button>();
-				scorerButton->SetActive(false);
-
-				justScored = false;
-			}
+			justScored = false;
 		}
+	}
 
-		//update current scene
-		scenes[currentScene]->Update(dt);
+	//update current scene
+	scenes[currentScene]->Update(dt);
 
-		//render audio
-		if (clientID == 0)
-		{
-			clientID = 1;
-		}
+	//render audio
+	if (clientID == 0)
+	{
+		clientID = 1;
+	}
 
-		vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
-		vector<XMFLOAT3> objectsPos, forwards;
-		objectsPos.resize(objects->size());
-		forwards.resize(objects->size());
+	vector<GameObject*>* objects = scenes[scenesNamesTable.GetKey("FirstLevel")]->GetGameObjects();
+	vector<XMFLOAT3> objectsPos, forwards;
+	objectsPos.resize(objects->size());
+	forwards.resize(objects->size());
 
-		for (int i = 0; i < objects->size(); ++i)
-		{
-			objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
-			objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
-			objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
+	for (int i = 0; i < objects->size(); ++i)
+	{
+		objectsPos[i].x = (*objects)[i]->GetTransform()->GetPosition().x;
+		objectsPos[i].y = (*objects)[i]->GetTransform()->GetPosition().y;
+		objectsPos[i].z = (*objects)[i]->GetTransform()->GetPosition().z;
 
-			forwards[i] = (*objects)[i]->GetTransform()->GetForward();
-		}
+		forwards[i] = (*objects)[i]->GetTransform()->GetForward();
+	}
 
-		int index = (clientID - 1) * 3 + 2;
+	int index = GetPlayerObjectID();
 
-		soundEngine->UpdateListener(objectsPos[index], forwards[index]);
-		soundEngine->UpdatePositions(objectsPos, forwards);
-		soundEngine->ProcessAudio();
+	soundEngine->UpdateListener(objectsPos[index], forwards[index]);
+	soundEngine->UpdatePositions(objectsPos, forwards);
+	soundEngine->ProcessAudio();
 
-		return returnResult;
+	return returnResult;
 }
 
 void Game::FixedUpdate(float dt)
@@ -595,8 +595,8 @@ void Game::HandleEvent(Event* e)
 			ResetBall();
 			if (ResourceManager::GetSingleton()->IsMultiplayer())
 				server.setCountdown(true);
-		//	else
-				ResetCountdown();
+			//	else
+			ResetCountdown();
 		}
 
 		return;
@@ -813,7 +813,7 @@ void Game::CreateScenes(InputManager* input)
 		credits->Init(devResources, input);
 
 		credits->set2DRenderTarget(devResources->GetRenderTarget());
-		
+
 		GameObject * creds = new GameObject();
 		creds->Init("Credits");
 		credits->AddUIObject(creds);
@@ -950,231 +950,233 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		mage1->AddComponent(physics);
 		physics->Init();
 
-		AnimatorController* mageAnim1 = new AnimatorController();
-		mage1->AddComponent(mageAnim1);
-		mageAnim1->Init("Titan", 0, "Idle");
-		
-		//states
-		State* mageIdle = new State();
-		mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
-		mageAnim1->AddState(mageIdle);
-		State* mageJogRight = new State();
-		mageJogRight->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Right"), true, 1.0f, "Jog Right");
-		mageAnim1->AddState(mageJogRight);
-		State* mageJogLeft = new State();
-		mageJogLeft->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Left"), true, 1.0f, "Jog Left");
-		mageAnim1->AddState(mageJogLeft);
-		State* mageJogForward = new State();
-		mageJogForward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Forward"), true, 1.0f, "Jog Forward");
-		mageAnim1->AddState(mageJogForward);
-		State* mageJogBackward = new State();
-		mageJogBackward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Backward"), true, 1.0f, "Jog Backward");
-		mageAnim1->AddState(mageJogBackward);
-		State* mageRun = new State();
-		mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
-		mageAnim1->AddState(mageRun);
-		State* mageThrow = new State();
-		mageThrow->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Throw"), false, 1.0f, "Throw");
-		mageAnim1->AddState(mageThrow);
-		State* magePush = new State();
-		magePush->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Push"), false, 1.0f, "Push");
-		mageAnim1->AddState(magePush);
-		State* mageStumble = new State();
-		mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Stumble"), false, 1.0f, "Stumble");
-		mageAnim1->AddState(mageStumble);
-		State* mageJump = new State();
-		mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 1.5f, "Jump");
-		mageAnim1->AddState(mageJump);
-		State* mageFall = new State();
-		mageFall->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
-		mageAnim1->AddState(mageFall);
-		State* mageLand = new State();
-		mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
-		mageAnim1->AddState(mageLand);
+		{
+			AnimatorController* mageAnim1 = new AnimatorController();
+			mage1->AddComponent(mageAnim1);
+			mageAnim1->Init("Titan", 0, "Idle");
 
-		mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
+			//states
+			State* mageIdle = new State();
+			mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
+			mageAnim1->AddState(mageIdle);
+			State* mageJogRight = new State();
+			mageJogRight->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Right"), true, 1.0f, "Jog Right");
+			mageAnim1->AddState(mageJogRight);
+			State* mageJogLeft = new State();
+			mageJogLeft->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Left"), true, 1.0f, "Jog Left");
+			mageAnim1->AddState(mageJogLeft);
+			State* mageJogForward = new State();
+			mageJogForward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Forward"), true, 1.0f, "Jog Forward");
+			mageAnim1->AddState(mageJogForward);
+			State* mageJogBackward = new State();
+			mageJogBackward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog_Backward"), true, 1.0f, "Jog Backward");
+			mageAnim1->AddState(mageJogBackward);
+			State* mageRun = new State();
+			mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
+			mageAnim1->AddState(mageRun);
+			State* mageThrow = new State();
+			mageThrow->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Throw"), false, 1.0f, "Throw");
+			mageAnim1->AddState(mageThrow);
+			State* magePush = new State();
+			magePush->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Push"), false, 1.0f, "Push");
+			mageAnim1->AddState(magePush);
+			State* mageStumble = new State();
+			mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Stumble"), false, 1.0f, "Stumble");
+			mageAnim1->AddState(mageStumble);
+			State* mageJump = new State();
+			mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 1.5f, "Jump");
+			mageAnim1->AddState(mageJump);
+			State* mageFall = new State();
+			mageFall->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
+			mageAnim1->AddState(mageFall);
+			State* mageLand = new State();
+			mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
+			mageAnim1->AddState(mageLand);
 
-		//triggers
-		Param::Trigger* jogRightTrigger = new Param::Trigger();
-		jogRightTrigger->Init("Jog Right", false);
-		mageAnim1->AddParameter(jogRightTrigger);
-		Param::Trigger* jogLeftTrigger = new Param::Trigger();
-		jogLeftTrigger->Init("Jog Left", false);
-		mageAnim1->AddParameter(jogLeftTrigger);
-		Param::Trigger* jogBackwardTrigger = new Param::Trigger();
-		jogBackwardTrigger->Init("Jog Backward", false);
-		mageAnim1->AddParameter(jogBackwardTrigger);
-		Param::Trigger* jogForwardTrigger = new Param::Trigger();
-		jogForwardTrigger->Init("Jog Forward", false);
-		mageAnim1->AddParameter(jogForwardTrigger);
-		Param::Trigger* runTrigger = new Param::Trigger();
-		runTrigger->Init("Run", false); //must init trigger before adding to animator
-		mageAnim1->AddParameter(runTrigger);
-		Param::Trigger* throwTrigger = new Param::Trigger();
-		throwTrigger->Init("Throw", false);
-		mageAnim1->AddParameter(throwTrigger);
-		Param::Trigger* pushTrigger = new Param::Trigger();
-		pushTrigger->Init("Push", false);
-		mageAnim1->AddParameter(pushTrigger);
-		Param::Trigger* stumbleTrigger = new Param::Trigger();
-		stumbleTrigger->Init("Stumble", false);
-		mageAnim1->AddParameter(stumbleTrigger);
-		Param::Trigger* idleTrigger = new Param::Trigger();
-		idleTrigger->Init("Idle", false);
-		mageAnim1->AddParameter(idleTrigger);
-		Param::Trigger* jumpTrigger = new Param::Trigger();
-		jumpTrigger->Init("Jump", false);
-		mageAnim1->AddParameter(jumpTrigger);
-		Param::Trigger* landTrigger = new Param::Trigger();
-		landTrigger->Init("Land", false);
-		mageAnim1->AddParameter(landTrigger);
+			mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 
-		//transitions
-		Transition* idleToRun = new Transition();
-		mageIdle->AddTransition(idleToRun);
-		idleToRun->Init(mageIdle, mageRun, -1, 0.2f);
-		idleToRun->AddCondition(runTrigger);
-		Transition* runToIdle = new Transition();
-		mageRun->AddTransition(runToIdle);
-		runToIdle->Init(mageRun, mageIdle, -1, 0.2f);
-		runToIdle->AddCondition(idleTrigger);
+			//triggers
+			Param::Trigger* jogRightTrigger = new Param::Trigger();
+			jogRightTrigger->Init("Jog Right", false);
+			mageAnim1->AddParameter(jogRightTrigger);
+			Param::Trigger* jogLeftTrigger = new Param::Trigger();
+			jogLeftTrigger->Init("Jog Left", false);
+			mageAnim1->AddParameter(jogLeftTrigger);
+			Param::Trigger* jogBackwardTrigger = new Param::Trigger();
+			jogBackwardTrigger->Init("Jog Backward", false);
+			mageAnim1->AddParameter(jogBackwardTrigger);
+			Param::Trigger* jogForwardTrigger = new Param::Trigger();
+			jogForwardTrigger->Init("Jog Forward", false);
+			mageAnim1->AddParameter(jogForwardTrigger);
+			Param::Trigger* runTrigger = new Param::Trigger();
+			runTrigger->Init("Run", false); //must init trigger before adding to animator
+			mageAnim1->AddParameter(runTrigger);
+			Param::Trigger* throwTrigger = new Param::Trigger();
+			throwTrigger->Init("Throw", false);
+			mageAnim1->AddParameter(throwTrigger);
+			Param::Trigger* pushTrigger = new Param::Trigger();
+			pushTrigger->Init("Push", false);
+			mageAnim1->AddParameter(pushTrigger);
+			Param::Trigger* stumbleTrigger = new Param::Trigger();
+			stumbleTrigger->Init("Stumble", false);
+			mageAnim1->AddParameter(stumbleTrigger);
+			Param::Trigger* idleTrigger = new Param::Trigger();
+			idleTrigger->Init("Idle", false);
+			mageAnim1->AddParameter(idleTrigger);
+			Param::Trigger* jumpTrigger = new Param::Trigger();
+			jumpTrigger->Init("Jump", false);
+			mageAnim1->AddParameter(jumpTrigger);
+			Param::Trigger* landTrigger = new Param::Trigger();
+			landTrigger->Init("Land", false);
+			mageAnim1->AddParameter(landTrigger);
 
-		//jog transitions
-		//Transition* idleToJogLeft = new Transition();
-		//mageIdle->AddTransition(idleToJogLeft);
-		//idleToJogLeft->Init(mageIdle, mageJogLeft, -1, 0.1f);
-		//idleToJogLeft->AddCondition(jogLeftTrigger);
-		//Transition* jogLeftToIdle = new Transition();
-		//mageJogLeft->AddTransition(jogLeftToIdle);
-		//jogLeftToIdle->Init(mageJogLeft, mageIdle, -1, 0.1f);
-		//jogLeftToIdle->AddCondition(idleTrigger);
-		//Transition* idleToJogRight = new Transition();
-		//mageIdle->AddTransition(idleToJogRight);
-		//idleToJogRight->Init(mageIdle, mageJogRight, -1, 0.1f);
-		//idleToJogRight->AddCondition(jogRightTrigger);
-		//Transition* jogRightToIdle = new Transition();
-		//mageJogRight->AddTransition(jogRightToIdle);
-		//jogRightToIdle->Init(mageJogRight, mageIdle, -1, 0.1f);
-		//jogRightToIdle->AddCondition(idleTrigger);
-		Transition* idleToJogForward = new Transition();
-		mageIdle->AddTransition(idleToJogForward);
-		idleToJogForward->Init(mageIdle, mageJogForward, -1, 0.1f);
-		idleToJogForward->AddCondition(jogForwardTrigger);
-		Transition* jogForwardToIdle = new Transition();
-		mageJogForward->AddTransition(jogForwardToIdle);
-		jogForwardToIdle->Init(mageJogForward, mageIdle, -1, 0.1f);
-		jogForwardToIdle->AddCondition(idleTrigger);
-		//Transition* idleToJogBackward = new Transition();
-		//mageIdle->AddTransition(idleToJogBackward);
-		//idleToJogBackward->Init(mageIdle, mageJogBackward, -1, 0.1f);
-		//idleToJogBackward->AddCondition(jogBackwardTrigger);
-		//Transition* jogBackwardToIdle = new Transition();
-		//mageJogBackward->AddTransition(jogBackwardToIdle);
-		//jogBackwardToIdle->Init(mageJogBackward, mageIdle, -1, 0.1f);
-		//jogBackwardToIdle->AddCondition(idleTrigger);1
+			//transitions
+			Transition* idleToRun = new Transition();
+			mageIdle->AddTransition(idleToRun);
+			idleToRun->Init(mageIdle, mageRun, -1, 0.2f);
+			idleToRun->AddCondition(runTrigger);
+			Transition* runToIdle = new Transition();
+			mageRun->AddTransition(runToIdle);
+			runToIdle->Init(mageRun, mageIdle, -1, 0.2f);
+			runToIdle->AddCondition(idleTrigger);
 
-		//throw transitions
-		Transition* idleToThrow = new Transition();
-		mageIdle->AddTransition(idleToThrow);
-		idleToThrow->Init(mageIdle, mageThrow, -1, 0.1f);
-		idleToThrow->AddCondition(throwTrigger);
-		Transition* throwToIdle = new Transition();
-		mageThrow->AddTransition(throwToIdle);
-		throwToIdle->Init(mageThrow, mageIdle, -1, 0.1f);
-		throwToIdle->AddCondition(idleTrigger);
-		Transition* runToThrow = new Transition();
-		mageRun->AddTransition(runToThrow);
-		runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
-		runToThrow->AddCondition(throwTrigger);
-		Transition* throwToRun = new Transition();
-		mageThrow->AddTransition(throwToRun);
-		throwToRun->Init(mageThrow, mageRun, -1, 0.1f);
-		throwToRun->AddCondition(runTrigger);
-		Transition* jogForwardToThrow = new Transition();
-		mageJogForward->AddTransition(jogForwardToThrow);
-		jogForwardToThrow->Init(mageJogForward, mageThrow, -1, 0.1f);
-		jogForwardToThrow->AddCondition(throwTrigger);
-		Transition* throwToJogForward = new Transition();
-		mageThrow->AddTransition(throwToJogForward);
-		throwToJogForward->Init(mageThrow, mageJogForward, -1, 0.1f);
-		throwToJogForward->AddCondition(jogForwardTrigger);
+			//jog transitions
+			//Transition* idleToJogLeft = new Transition();
+			//mageIdle->AddTransition(idleToJogLeft);
+			//idleToJogLeft->Init(mageIdle, mageJogLeft, -1, 0.1f);
+			//idleToJogLeft->AddCondition(jogLeftTrigger);
+			//Transition* jogLeftToIdle = new Transition();
+			//mageJogLeft->AddTransition(jogLeftToIdle);
+			//jogLeftToIdle->Init(mageJogLeft, mageIdle, -1, 0.1f);
+			//jogLeftToIdle->AddCondition(idleTrigger);
+			//Transition* idleToJogRight = new Transition();
+			//mageIdle->AddTransition(idleToJogRight);
+			//idleToJogRight->Init(mageIdle, mageJogRight, -1, 0.1f);
+			//idleToJogRight->AddCondition(jogRightTrigger);
+			//Transition* jogRightToIdle = new Transition();
+			//mageJogRight->AddTransition(jogRightToIdle);
+			//jogRightToIdle->Init(mageJogRight, mageIdle, -1, 0.1f);
+			//jogRightToIdle->AddCondition(idleTrigger);
+			Transition* idleToJogForward = new Transition();
+			mageIdle->AddTransition(idleToJogForward);
+			idleToJogForward->Init(mageIdle, mageJogForward, -1, 0.1f);
+			idleToJogForward->AddCondition(jogForwardTrigger);
+			Transition* jogForwardToIdle = new Transition();
+			mageJogForward->AddTransition(jogForwardToIdle);
+			jogForwardToIdle->Init(mageJogForward, mageIdle, -1, 0.1f);
+			jogForwardToIdle->AddCondition(idleTrigger);
+			//Transition* idleToJogBackward = new Transition();
+			//mageIdle->AddTransition(idleToJogBackward);
+			//idleToJogBackward->Init(mageIdle, mageJogBackward, -1, 0.1f);
+			//idleToJogBackward->AddCondition(jogBackwardTrigger);
+			//Transition* jogBackwardToIdle = new Transition();
+			//mageJogBackward->AddTransition(jogBackwardToIdle);
+			//jogBackwardToIdle->Init(mageJogBackward, mageIdle, -1, 0.1f);
+			//jogBackwardToIdle->AddCondition(idleTrigger);1
 
-		//push transitions
-		Transition* idleToPush = new Transition();
-		mageIdle->AddTransition(idleToPush);
-		idleToPush->Init(mageIdle, magePush, -1, 0.1f);
-		idleToPush->AddCondition(pushTrigger);
-		Transition* pushToIdle = new Transition();
-		magePush->AddTransition(pushToIdle);
-		pushToIdle->Init(magePush, mageIdle, -1, 0.1f);
-		pushToIdle->AddCondition(idleTrigger);
-		Transition* runToPush = new Transition();
-		mageRun->AddTransition(runToPush);
-		runToPush->Init(mageRun, magePush, -1, 0.1f);
-		runToPush->AddCondition(pushTrigger);
-		Transition* pushToRun = new Transition();
-		magePush->AddTransition(pushToRun);
-		pushToRun->Init(magePush, mageRun, -1, 0.1f);
-		pushToRun->AddCondition(runTrigger);
-		Transition* jogForwardToPush = new Transition();
-		mageJogForward->AddTransition(jogForwardToPush);
-		jogForwardToPush->Init(mageJogForward, magePush, -1, 0.1f);
-		jogForwardToPush->AddCondition(pushTrigger);
-		Transition* pushToJogForward = new Transition();
-		magePush->AddTransition(pushToJogForward);
-		pushToJogForward->Init(magePush, mageJogForward, -1, 0.1f);
-		pushToJogForward->AddCondition(jogForwardTrigger);
+			//throw transitions
+			Transition* idleToThrow = new Transition();
+			mageIdle->AddTransition(idleToThrow);
+			idleToThrow->Init(mageIdle, mageThrow, -1, 0.1f);
+			idleToThrow->AddCondition(throwTrigger);
+			Transition* throwToIdle = new Transition();
+			mageThrow->AddTransition(throwToIdle);
+			throwToIdle->Init(mageThrow, mageIdle, -1, 0.1f);
+			throwToIdle->AddCondition(idleTrigger);
+			Transition* runToThrow = new Transition();
+			mageRun->AddTransition(runToThrow);
+			runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
+			runToThrow->AddCondition(throwTrigger);
+			Transition* throwToRun = new Transition();
+			mageThrow->AddTransition(throwToRun);
+			throwToRun->Init(mageThrow, mageRun, -1, 0.1f);
+			throwToRun->AddCondition(runTrigger);
+			Transition* jogForwardToThrow = new Transition();
+			mageJogForward->AddTransition(jogForwardToThrow);
+			jogForwardToThrow->Init(mageJogForward, mageThrow, -1, 0.1f);
+			jogForwardToThrow->AddCondition(throwTrigger);
+			Transition* throwToJogForward = new Transition();
+			mageThrow->AddTransition(throwToJogForward);
+			throwToJogForward->Init(mageThrow, mageJogForward, -1, 0.1f);
+			throwToJogForward->AddCondition(jogForwardTrigger);
 
-		//stumble transitions
-		Transition* runToStumble = new Transition();
-		mageRun->AddTransition(runToIdle);
-		runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
-		runToStumble->AddCondition(stumbleTrigger);
-		Transition* stumbleToRun = new Transition();
-		mageStumble->AddTransition(stumbleToRun);
-		stumbleToRun->Init(mageStumble, mageRun, -1, 0.01f);
-		stumbleToRun->AddCondition(runTrigger);
-		Transition* idleToStumble = new Transition();
-		mageIdle->AddTransition(idleToStumble);
-		idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
-		idleToStumble->AddCondition(stumbleTrigger);
-		Transition* stumbleToIdle = new Transition();
-		mageStumble->AddTransition(stumbleToIdle);
-		stumbleToIdle->Init(mageStumble, mageIdle, -1, 0.01f);
-		stumbleToIdle->AddCondition(idleTrigger);
+			//push transitions
+			Transition* idleToPush = new Transition();
+			mageIdle->AddTransition(idleToPush);
+			idleToPush->Init(mageIdle, magePush, -1, 0.1f);
+			idleToPush->AddCondition(pushTrigger);
+			Transition* pushToIdle = new Transition();
+			magePush->AddTransition(pushToIdle);
+			pushToIdle->Init(magePush, mageIdle, -1, 0.1f);
+			pushToIdle->AddCondition(idleTrigger);
+			Transition* runToPush = new Transition();
+			mageRun->AddTransition(runToPush);
+			runToPush->Init(mageRun, magePush, -1, 0.1f);
+			runToPush->AddCondition(pushTrigger);
+			Transition* pushToRun = new Transition();
+			magePush->AddTransition(pushToRun);
+			pushToRun->Init(magePush, mageRun, -1, 0.1f);
+			pushToRun->AddCondition(runTrigger);
+			Transition* jogForwardToPush = new Transition();
+			mageJogForward->AddTransition(jogForwardToPush);
+			jogForwardToPush->Init(mageJogForward, magePush, -1, 0.1f);
+			jogForwardToPush->AddCondition(pushTrigger);
+			Transition* pushToJogForward = new Transition();
+			magePush->AddTransition(pushToJogForward);
+			pushToJogForward->Init(magePush, mageJogForward, -1, 0.1f);
+			pushToJogForward->AddCondition(jogForwardTrigger);
 
-		//jump transitions
-		Transition* idleToJump = new Transition();
-		mageIdle->AddTransition(idleToJump);
-		idleToJump->Init(mageIdle, mageJump, -1, 0.1f);
-		idleToJump->AddCondition(jumpTrigger);
-		Transition* jogForwardToJump = new Transition();
-		mageJogForward->AddTransition(jogForwardToJump);
-		jogForwardToJump->Init(mageJogForward, mageJump, -1, 0.1f);
-		jogForwardToJump->AddCondition(jumpTrigger);
-		Transition* runToJump = new Transition();
-		mageRun->AddTransition(runToJump);
-		runToJump->Init(mageRun, mageJump, -1, 0.1f);
-		runToJump->AddCondition(jumpTrigger);
-		Transition* jumpToFall = new Transition();
-		mageJump->AddTransition(jumpToFall);
-		jumpToFall->Init(mageJump, mageFall, 0, 0.1f);
-		Transition* fallToLand = new Transition();
-		mageFall->AddTransition(fallToLand);
-		fallToLand->Init(mageFall, mageLand, -1, 0.05f);
-		fallToLand->AddCondition(landTrigger);
-		Transition* landToIdle = new Transition();
-		mageLand->AddTransition(landToIdle);
-		landToIdle->Init(mageLand, mageIdle, -1, 0.1f);
-		landToIdle->AddCondition(idleTrigger);
-		Transition* landToJogForward = new Transition();
-		mageLand->AddTransition(landToJogForward);
-		landToJogForward->Init(mageLand, mageJogForward, -1, 0.1f);
-		landToJogForward->AddCondition(jogForwardTrigger);
-		Transition* landToRun = new Transition();
-		mageLand->AddTransition(landToRun);
-		landToRun->Init(mageLand, mageRun, -1, 0.1f);
-		landToRun->AddCondition(runTrigger);
+			//stumble transitions
+			Transition* runToStumble = new Transition();
+			mageRun->AddTransition(runToIdle);
+			runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
+			runToStumble->AddCondition(stumbleTrigger);
+			Transition* stumbleToRun = new Transition();
+			mageStumble->AddTransition(stumbleToRun);
+			stumbleToRun->Init(mageStumble, mageRun, -1, 0.01f);
+			stumbleToRun->AddCondition(runTrigger);
+			Transition* idleToStumble = new Transition();
+			mageIdle->AddTransition(idleToStumble);
+			idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
+			idleToStumble->AddCondition(stumbleTrigger);
+			Transition* stumbleToIdle = new Transition();
+			mageStumble->AddTransition(stumbleToIdle);
+			stumbleToIdle->Init(mageStumble, mageIdle, -1, 0.01f);
+			stumbleToIdle->AddCondition(idleTrigger);
+
+			//jump transitions
+			Transition* idleToJump = new Transition();
+			mageIdle->AddTransition(idleToJump);
+			idleToJump->Init(mageIdle, mageJump, -1, 0.1f);
+			idleToJump->AddCondition(jumpTrigger);
+			Transition* jogForwardToJump = new Transition();
+			mageJogForward->AddTransition(jogForwardToJump);
+			jogForwardToJump->Init(mageJogForward, mageJump, -1, 0.1f);
+			jogForwardToJump->AddCondition(jumpTrigger);
+			Transition* runToJump = new Transition();
+			mageRun->AddTransition(runToJump);
+			runToJump->Init(mageRun, mageJump, -1, 0.1f);
+			runToJump->AddCondition(jumpTrigger);
+			Transition* jumpToFall = new Transition();
+			mageJump->AddTransition(jumpToFall);
+			jumpToFall->Init(mageJump, mageFall, 0, 0.1f);
+			Transition* fallToLand = new Transition();
+			mageFall->AddTransition(fallToLand);
+			fallToLand->Init(mageFall, mageLand, -1, 0.05f);
+			fallToLand->AddCondition(landTrigger);
+			Transition* landToIdle = new Transition();
+			mageLand->AddTransition(landToIdle);
+			landToIdle->Init(mageLand, mageIdle, -1, 0.1f);
+			landToIdle->AddCondition(idleTrigger);
+			Transition* landToJogForward = new Transition();
+			mageLand->AddTransition(landToJogForward);
+			landToJogForward->Init(mageLand, mageJogForward, -1, 0.1f);
+			landToJogForward->AddCondition(jogForwardTrigger);
+			Transition* landToRun = new Transition();
+			mageLand->AddTransition(landToRun);
+			landToRun->Init(mageLand, mageRun, -1, 0.1f);
+			landToRun->AddCondition(runTrigger);
+		}
 
 		string cameraName = "Camera";
 		cameraName += to_string(i);
@@ -1186,7 +1188,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		titanAttach->Init(titanAttachName);
 		//hands.push_back(titanHand);
 		basic->AddGameObject(titanAttach);
-		titanAttach->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		titanAttach->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
 
 
@@ -1209,6 +1211,202 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		titanHandsRenderer->SetEnabled(false);
 		titanHands->AddComponent(titanHandsRenderer);
 		titanHandsRenderer->Init("TitanHands", "NormalMapped", "TempStatic", "", "Idle", projection, devResources, false);*/
+
+
+		//states
+		{
+			AnimatorController* mageAnim1 = new AnimatorController();
+			titanHands->AddComponent(mageAnim1);
+			mageAnim1->Init("TitanHands", 0, "Idle");
+
+			State* mageIdle = new State();
+			mageIdle->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Idle"), true, 1.0f, "Idle");
+			mageAnim1->AddState(mageIdle);
+			State* mageJogForward = new State();
+			mageJogForward->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jog"), true, 1.0f, "Jog Forward");
+			mageAnim1->AddState(mageJogForward);
+			State* mageRun = new State();
+			mageRun->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Run"), true, 1.0f, "Run");
+			mageAnim1->AddState(mageRun);
+			State* mageThrow = new State();
+			mageThrow->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Throw"), false, 1.0f, "Throw");
+			mageAnim1->AddState(mageThrow);
+			State* magePush = new State();
+			magePush->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Push"), false, 1.0f, "Push");
+			mageAnim1->AddState(magePush);
+			State* mageStumble = new State();
+			mageStumble->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Stumble"), false, 1.0f, "Stumble");
+			mageAnim1->AddState(mageStumble);
+			State* mageJump = new State();
+			mageJump->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Jump"), false, 1.5f, "Jump");
+			mageAnim1->AddState(mageJump);
+			State* mageFall = new State();
+			mageFall->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Fall"), true, 1.0f, "Fall");
+			mageAnim1->AddState(mageFall);
+			State* mageLand = new State();
+			mageLand->Init(mageAnim1, mageAnim1->GetBlender()->GetAnimationSet()->GetAnimation("Land"), false, 1.5f, "Land");
+			mageAnim1->AddState(mageLand);
+
+			mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
+
+														 //triggers
+			Param::Trigger* jogRightTrigger = new Param::Trigger();
+			jogRightTrigger->Init("Jog Right", false);
+			mageAnim1->AddParameter(jogRightTrigger);
+			Param::Trigger* jogLeftTrigger = new Param::Trigger();
+			jogLeftTrigger->Init("Jog Left", false);
+			mageAnim1->AddParameter(jogLeftTrigger);
+			Param::Trigger* jogBackwardTrigger = new Param::Trigger();
+			jogBackwardTrigger->Init("Jog Backward", false);
+			mageAnim1->AddParameter(jogBackwardTrigger);
+			Param::Trigger* jogForwardTrigger = new Param::Trigger();
+			jogForwardTrigger->Init("Jog Forward", false);
+			mageAnim1->AddParameter(jogForwardTrigger);
+			Param::Trigger* runTrigger = new Param::Trigger();
+			runTrigger->Init("Run", false); //must init trigger before adding to animator
+			mageAnim1->AddParameter(runTrigger);
+			Param::Trigger* throwTrigger = new Param::Trigger();
+			throwTrigger->Init("Throw", false);
+			mageAnim1->AddParameter(throwTrigger);
+			Param::Trigger* pushTrigger = new Param::Trigger();
+			pushTrigger->Init("Push", false);
+			mageAnim1->AddParameter(pushTrigger);
+			Param::Trigger* stumbleTrigger = new Param::Trigger();
+			stumbleTrigger->Init("Stumble", false);
+			mageAnim1->AddParameter(stumbleTrigger);
+			Param::Trigger* idleTrigger = new Param::Trigger();
+			idleTrigger->Init("Idle", false);
+			mageAnim1->AddParameter(idleTrigger);
+			Param::Trigger* jumpTrigger = new Param::Trigger();
+			jumpTrigger->Init("Jump", false);
+			mageAnim1->AddParameter(jumpTrigger);
+			Param::Trigger* landTrigger = new Param::Trigger();
+			landTrigger->Init("Land", false);
+			mageAnim1->AddParameter(landTrigger);
+
+			//transitions
+			Transition* idleToRun = new Transition();
+			mageIdle->AddTransition(idleToRun);
+			idleToRun->Init(mageIdle, mageRun, -1, 0.2f);
+			idleToRun->AddCondition(runTrigger);
+			Transition* runToIdle = new Transition();
+			mageRun->AddTransition(runToIdle);
+			runToIdle->Init(mageRun, mageIdle, -1, 0.2f);
+			runToIdle->AddCondition(idleTrigger);
+
+			//jog transitions
+			Transition* idleToJogForward = new Transition();
+			mageIdle->AddTransition(idleToJogForward);
+			idleToJogForward->Init(mageIdle, mageJogForward, -1, 0.1f);
+			idleToJogForward->AddCondition(jogForwardTrigger);
+			Transition* jogForwardToIdle = new Transition();
+			mageJogForward->AddTransition(jogForwardToIdle);
+			jogForwardToIdle->Init(mageJogForward, mageIdle, -1, 0.1f);
+			jogForwardToIdle->AddCondition(idleTrigger);
+
+			//throw transitions
+			Transition* idleToThrow = new Transition();
+			mageIdle->AddTransition(idleToThrow);
+			idleToThrow->Init(mageIdle, mageThrow, -1, 0.1f);
+			idleToThrow->AddCondition(throwTrigger);
+			Transition* throwToIdle = new Transition();
+			mageThrow->AddTransition(throwToIdle);
+			throwToIdle->Init(mageThrow, mageIdle, -1, 0.1f);
+			throwToIdle->AddCondition(idleTrigger);
+			Transition* runToThrow = new Transition();
+			mageRun->AddTransition(runToThrow);
+			runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
+			runToThrow->AddCondition(throwTrigger);
+			Transition* throwToRun = new Transition();
+			mageThrow->AddTransition(throwToRun);
+			throwToRun->Init(mageThrow, mageRun, -1, 0.1f);
+			throwToRun->AddCondition(runTrigger);
+			Transition* jogForwardToThrow = new Transition();
+			mageJogForward->AddTransition(jogForwardToThrow);
+			jogForwardToThrow->Init(mageJogForward, mageThrow, -1, 0.1f);
+			jogForwardToThrow->AddCondition(throwTrigger);
+			Transition* throwToJogForward = new Transition();
+			mageThrow->AddTransition(throwToJogForward);
+			throwToJogForward->Init(mageThrow, mageJogForward, -1, 0.1f);
+			throwToJogForward->AddCondition(jogForwardTrigger);
+
+			//push transitions
+			Transition* idleToPush = new Transition();
+			mageIdle->AddTransition(idleToPush);
+			idleToPush->Init(mageIdle, magePush, -1, 0.1f);
+			idleToPush->AddCondition(pushTrigger);
+			Transition* pushToIdle = new Transition();
+			magePush->AddTransition(pushToIdle);
+			pushToIdle->Init(magePush, mageIdle, -1, 0.1f);
+			pushToIdle->AddCondition(idleTrigger);
+			Transition* runToPush = new Transition();
+			mageRun->AddTransition(runToPush);
+			runToPush->Init(mageRun, magePush, -1, 0.1f);
+			runToPush->AddCondition(pushTrigger);
+			Transition* pushToRun = new Transition();
+			magePush->AddTransition(pushToRun);
+			pushToRun->Init(magePush, mageRun, -1, 0.1f);
+			pushToRun->AddCondition(runTrigger);
+			Transition* jogForwardToPush = new Transition();
+			mageJogForward->AddTransition(jogForwardToPush);
+			jogForwardToPush->Init(mageJogForward, magePush, -1, 0.1f);
+			jogForwardToPush->AddCondition(pushTrigger);
+			Transition* pushToJogForward = new Transition();
+			magePush->AddTransition(pushToJogForward);
+			pushToJogForward->Init(magePush, mageJogForward, -1, 0.1f);
+			pushToJogForward->AddCondition(jogForwardTrigger);
+
+			//stumble transitions
+			Transition* runToStumble = new Transition();
+			mageRun->AddTransition(runToIdle);
+			runToStumble->Init(mageRun, mageStumble, -1, 0.01f);
+			runToStumble->AddCondition(stumbleTrigger);
+			Transition* stumbleToRun = new Transition();
+			mageStumble->AddTransition(stumbleToRun);
+			stumbleToRun->Init(mageStumble, mageRun, -1, 0.01f);
+			stumbleToRun->AddCondition(runTrigger);
+			Transition* idleToStumble = new Transition();
+			mageIdle->AddTransition(idleToStumble);
+			idleToStumble->Init(mageIdle, mageStumble, -1, 0.01f);
+			idleToStumble->AddCondition(stumbleTrigger);
+			Transition* stumbleToIdle = new Transition();
+			mageStumble->AddTransition(stumbleToIdle);
+			stumbleToIdle->Init(mageStumble, mageIdle, -1, 0.01f);
+			stumbleToIdle->AddCondition(idleTrigger);
+
+			//jump transitions
+			Transition* idleToJump = new Transition();
+			mageIdle->AddTransition(idleToJump);
+			idleToJump->Init(mageIdle, mageJump, -1, 0.1f);
+			idleToJump->AddCondition(jumpTrigger);
+			Transition* jogForwardToJump = new Transition();
+			mageJogForward->AddTransition(jogForwardToJump);
+			jogForwardToJump->Init(mageJogForward, mageJump, -1, 0.1f);
+			jogForwardToJump->AddCondition(jumpTrigger);
+			Transition* runToJump = new Transition();
+			mageRun->AddTransition(runToJump);
+			runToJump->Init(mageRun, mageJump, -1, 0.1f);
+			runToJump->AddCondition(jumpTrigger);
+			Transition* jumpToFall = new Transition();
+			mageJump->AddTransition(jumpToFall);
+			jumpToFall->Init(mageJump, mageFall, 0, 0.1f);
+			Transition* fallToLand = new Transition();
+			mageFall->AddTransition(fallToLand);
+			fallToLand->Init(mageFall, mageLand, -1, 0.05f);
+			fallToLand->AddCondition(landTrigger);
+			Transition* landToIdle = new Transition();
+			mageLand->AddTransition(landToIdle);
+			landToIdle->Init(mageLand, mageIdle, -1, 0.1f);
+			landToIdle->AddCondition(idleTrigger);
+			Transition* landToJogForward = new Transition();
+			mageLand->AddTransition(landToJogForward);
+			landToJogForward->Init(mageLand, mageJogForward, -1, 0.1f);
+			landToJogForward->AddCondition(jogForwardTrigger);
+			Transition* landToRun = new Transition();
+			mageLand->AddTransition(landToRun);
+			landToRun->Init(mageLand, mageRun, -1, 0.1f);
+			landToRun->AddCondition(runTrigger);
+		}
 
 		string crosseName = "Crosse";
 		crosseName += to_string(i);
@@ -1432,7 +1630,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	bottomWall3->AddComponent(bWallRenderer3);
 	bWallRenderer3->Init("ArenaGoalWall02", "NormalMapped", "TempStatic", "", "", projection, devResources, false);
 	bWallRenderer3->SetEmissiveColor(float4(0.6f, 0.6f, 0.6f, 0.6f));
-	
+
 	////////////////////////////////////////////////////////
 	//create goals
 
@@ -1982,8 +2180,8 @@ void Game::ReceiveServerMessage()
 		delete gamePadEvent;
 		break;
 	}
-		//case sizeof(bool) :
-		//	break;
+								//case sizeof(bool) :
+								//	break;
 	}
 
 }
@@ -1997,19 +2195,19 @@ void Game::ReceiveClientMessage()
 	//filter based on stride
 	switch (messageID)
 	{
-		case MessageId::SCORERNAME:
-		{
-			std::string name;
-			name.resize(stride);
-			memcpy(&name[0], message, stride);
+	case MessageId::SCORERNAME:
+	{
+		std::string name;
+		name.resize(stride);
+		memcpy(&name[0], message, stride);
 
-			ScoreEvent* score = new ScoreEvent();
-			score->SetPlayerName(name);
-			score->SetTeam(69);
-			HandleEvent(score);
-			delete score;
-			break;
-		}
+		ScoreEvent* score = new ScoreEvent();
+		score->SetPlayerName(name);
+		score->SetTeam(69);
+		HandleEvent(score);
+		delete score;
+		break;
+	}
 	}
 }
 
@@ -2519,12 +2717,12 @@ void Game::UpdateServerStates()
 
 		if (gameObject->GetName() == "Shield0" || gameObject->GetName() == "Shield1")
 		{
-		Shield* shield = gameObject->GetComponent<Shield>();
+			Shield* shield = gameObject->GetComponent<Shield>();
 			state->extraID = shield->GetID();
 		}
 		else if (gameObject->GetName() == "Magnet0" || gameObject->GetName() == "Magnet1")
 		{
-		Magnet* magnet = gameObject->GetComponent<Magnet>();
+			Magnet* magnet = gameObject->GetComponent<Magnet>();
 			state->extraID = magnet->GetID();
 		}
 		else if (gameObject->GetName() == "Super Jump0" || gameObject->GetName() == "Super Jump1")
@@ -2546,7 +2744,7 @@ void Game::UpdateServerStates()
 		int parentIndex = -1;
 		Transform* parent = gameObject->GetTransform()->GetParent();
 
-		
+
 
 		if (parent)
 		{
@@ -2636,7 +2834,7 @@ void Game::UpdateClientObjects()
 					Renderer* rend = gameObject->GetComponent<Renderer>();
 
 					if (rend)
-					rend->SetEnabled(client.getObjectEnabled(i));
+						rend->SetEnabled(client.getObjectEnabled(i));
 
 
 					if (gameObject->GetName() == "Super Jump0" || gameObject->GetName() == "Super Jump1")
@@ -2851,7 +3049,7 @@ int Game::UpdateLobby()
 		{
 			int serverState = server.run();
 		}
-		
+
 		//run client
 		int clientState = client.run();
 
@@ -2872,7 +3070,7 @@ int Game::UpdateLobby()
 			clientID = client.getID();
 		}
 
-		
+
 
 		return clientState;
 	}
