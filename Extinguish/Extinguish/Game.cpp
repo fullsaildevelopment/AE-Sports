@@ -697,7 +697,7 @@ int Game::GetClientID()
 
 int Game::GetPlayerObjectID()
 {
-	return (clientID - 1) * 3 + 2;
+	return (clientID - 1) * 4 + 2;
 }
 
 //setters//
@@ -1184,11 +1184,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 		GameObject* titanHand = new GameObject();
 		titanHand->Init(titanHandName);
-		hands.push_back(titanHand);
+		//hands.push_back(titanHand);
+		basic->AddGameObject(titanHand);
 		titanHand->InitTransform(identity, { 0, 0, 0}, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
-		Renderer* axisRenderer = new Renderer();
-		titanHand->AddComponent(axisRenderer);
-		axisRenderer->Init("Axis", "Static", "Static", "", "", projection, devResources);
 		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
 
 		GameObject* camera1 = new GameObject();
