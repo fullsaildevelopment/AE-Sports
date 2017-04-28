@@ -688,7 +688,6 @@ bool AI::RunTo(GameObject *target)
 	}
 
 	return false;
-
 }
 
 bool AI::RunTo(float3 target, float dist)
@@ -714,7 +713,8 @@ bool AI::RunTo(float3 target, float dist)
 void AI::TurnTo(float3 target)
 {
 	//u - forward vector
-	float3 u = (me->GetTransform()->GetRightf3() * (-1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+	float3 u = (me->GetTransform()->GetRightf3() /** (-1)*/).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+	//float3 u = me->GetTransform()->GetForwardf3();
 
 	//v - vector between me and destination
 	float3 v = ((target - me->GetTransform()->GetPosition())).normalize();
@@ -730,7 +730,8 @@ void AI::TurnTo(GameObject *target)
 {
 	if (target)
 	{
-		float3 u = (me->GetTransform()->GetRightf3() * (-1)).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		float3 u = (me->GetTransform()->GetRightf3() /** (-1)*/).normalize(); //////////////////////////////////////////////////////////////////////////////////////////////////////
+		//float3 u = me->GetTransform()->GetForwardf3();
 		float3 v = ((target->GetTransform()->GetPosition() - me->GetTransform()->GetPosition())).normalize();
 		u.y = 0;
 		v.y = 0;
