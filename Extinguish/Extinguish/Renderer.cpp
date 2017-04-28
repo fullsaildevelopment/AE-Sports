@@ -4,13 +4,13 @@
 //structors
 Renderer::Renderer() : Component(nullptr)
 {
-	blender = nullptr;
+	//blender = nullptr;
 }
 
 Renderer::~Renderer()
 {
-	delete blender;
-	blender = nullptr;
+	//delete blender;
+	//blender = nullptr;
 }
 
 
@@ -51,12 +51,12 @@ void Renderer::Init(std::string mesh, std::string psName, std::string vsName, st
 	numIns = 0;
 	SetProjection(projection);
 
-	if (!curAnimName.empty())
-	{
-		blender = new Blender();
-		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
-		blender->Init(curAnimName, "");
-	}
+	//if (!curAnimName.empty())
+	//{
+	//	blender = new Blender();
+	//	blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
+	//	blender->Init(curAnimName, "");
+	//}
 
 	if (alpha)
 	{
@@ -133,12 +133,12 @@ void Renderer::Init(int numInstences, float3* instanced, unsigned int* color, st
 
 	SetProjection(projection);
 
-	if (!curAnimName.empty())
-	{
-		blender = new Blender();
-		blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
-		blender->Init(curAnimName, "");
-	}
+	//if (!curAnimName.empty())
+	//{
+	//	blender = new Blender();
+	//	blender->SetAnimationSet(ResourceManager::GetSingleton()->GetAnimationSet(mesh));
+	//	blender->Init(curAnimName, "");
+	//}
 
 	if (alpha)
 	{
@@ -198,6 +198,13 @@ void Renderer::Update(float _dt)
 	ID3D11Buffer* mvpConstantBuffer = devResources->GetMVPConstantBuffer();
 	devContext->UpdateSubresource(mvpConstantBuffer, NULL, NULL, &mvpData, NULL, NULL);
 	devContext->VSSetConstantBuffers(0, 1, &mvpConstantBuffer);
+
+	if (GetGameObject()->GetName() == "TestTitanPlayer")
+	{
+		int breakPoint = 69;
+
+		breakPoint++;
+	}
 
 	if (boneOffsets.size())
 	{
@@ -298,28 +305,30 @@ void Renderer::Render()
 
 std::vector<DirectX::XMFLOAT4X4> Renderer::GetBoneOffsets()
 {
-	if (blender)
+	//if (blender)
 	{
-		return blender->GetBoneOffsets();
+		//return blender->GetBoneOffsets();
+		return boneOffsets;
 	}
 	vector<DirectX::XMFLOAT4X4> b;
 	return b;
 }
 
-std::vector<DirectX::XMFLOAT4X4> Renderer::GetBonesWorlds()
-{
-	if (blender)
-	{
-		return blender->GetBonesWorlds();
-	}
-	vector<DirectX::XMFLOAT4X4> b;
-	return b;
-}
+//std::vector<DirectX::XMFLOAT4X4> Renderer::GetBonesWorlds()
+//{
+//	//if (blender)
+//	{
+//		//return blender->GetBonesWorlds();
+//		return 
+//	}
+//	vector<DirectX::XMFLOAT4X4> b;
+//	return b;
+//}
 
-Blender* Renderer::GetBlender()
-{
-	return blender;
-}
+//Blender* Renderer::GetBlender()
+//{
+//	return blender;
+//}
 
 //setters//
 void Renderer::SetEmissiveColor(float4 c) 
@@ -363,25 +372,25 @@ void Renderer::SetProjection(XMFLOAT4X4 projection)
 	mvpData.projection = projection;
 }
 
-void Renderer::SetCurAnimation(int animIndex)
-{
-	blender->SetCurAnimation(animIndex);
-}
-
-void Renderer::SetNextAnimation(std::string animName)
-{
-	blender->SetNextAnimation(animName);
-}
-
-void Renderer::SetNextAnimation(int animIndex)
-{
-	blender->SetNextAnimation(animIndex);
-}
-
-void Renderer::SetBlendInfo(BlendInfo info)
-{
-	blender->SetBlendInfo(info);
-}
+//void Renderer::SetCurAnimation(int animIndex)
+//{
+//	blender->SetCurAnimation(animIndex);
+//}
+//
+//void Renderer::SetNextAnimation(std::string animName)
+//{
+//	blender->SetNextAnimation(animName);
+//}
+//
+//void Renderer::SetNextAnimation(int animIndex)
+//{
+//	blender->SetNextAnimation(animIndex);
+//}
+//
+//void Renderer::SetBlendInfo(BlendInfo info)
+//{
+//	blender->SetBlendInfo(info);
+//}
 
 void Renderer::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets)
 {

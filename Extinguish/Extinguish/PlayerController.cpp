@@ -56,6 +56,7 @@ void PlayerController::Init()
 	footstepsSound = 0;
 	footstepsPlayed = false;
 	isInvincible = false;
+	goBackToRun = false;
 
 	//other initialization
 	canSprint = true;
@@ -228,30 +229,29 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 		}
 	}
 
-	if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-	{
-		BoxCollider* boxCollider = (BoxCollider*)collider;
-		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
-		{
-			if (boxCollider->collisionNormal.isEqual(UP))
-			{
-				if (justJumped)
-				{
-					justJumped = false;
+	//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+	//{
+	//	BoxCollider* boxCollider = (BoxCollider*)collider;
+	//	if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
+	//	{
+	//		if (boxCollider->collisionNormal.isEqual(UP))
+	//		{
+	//			if (justJumped)
+	//			{
+	//				justJumped = false;
 
-					//do animation
-					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+	//				//do animation
+ //					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-					animator->SetTrigger("Land");
+	//				animator->SetTrigger("Land");
+	//			}
 
-				}
+	//			floor = boxCollider->GetGameObject();
+	//		}
 
-				floor = boxCollider->GetGameObject();
-			}
-
-			return;
-		}
-	}
+	//		return;
+	//	}
+	//}
 
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
@@ -265,6 +265,12 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 				animator->SetTrigger("Land");
+
+				//if (goBackToRun) //what about jog though? Maybe just go back to idle for simplicity sake
+				//{
+				//	goBackToRun = false;
+				//	animator->SetTrigger("Run");
+				//}
 			}
 
 			floor = hexCollider->GetGameObject();
@@ -277,30 +283,30 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 void PlayerController::OnCollisionStay(Collider* collider)
 {
 
-	if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-	{
-		BoxCollider* boxCollider = (BoxCollider*)collider;
-		if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
-		{
-			if (boxCollider->collisionNormal.isEqual(UP))
-			{
-				if (justJumped)
-				{
-					justJumped = false;
+	//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+	//{
+	//	BoxCollider* boxCollider = (BoxCollider*)collider;
+	//	if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
+	//	{
+	//		if (boxCollider->collisionNormal.isEqual(UP))
+	//		{
+	//			if (justJumped)
+	//			{
+	//				justJumped = false;
 
-					//do animation
-					AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+	//				//do animation
+	//				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
-					animator->SetTrigger("Land");
-				}
+	//				animator->SetTrigger("Land");
+	//			}
 
-				floor = boxCollider->GetGameObject();
-			}
+	//			floor = boxCollider->GetGameObject();
+	//		}
 
-			return;
-		}
-		return;
-	}
+	//		return;
+	//	}
+	//	return;
+	//}
 
 
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
@@ -342,18 +348,18 @@ void PlayerController::OnCollisionExit(Collider* collider)
 
 	if (floor)
 	{
-		if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-		{
-			BoxCollider* boxCollider = (BoxCollider*)collider;
-			if (boxCollider->GetGameObject() == floor)
-			{
-				//cout << "floor exit" << endl;
+		//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
+		//{
+		//	BoxCollider* boxCollider = (BoxCollider*)collider;
+		//	if (boxCollider->GetGameObject() == floor)
+		//	{
+		//		//cout << "floor exit" << endl;
 
-				floor = nullptr;
-				justJumped = false;
-				return;
-			}
-		}
+		//		floor = nullptr;
+		//		//justJumped = false;
+		//		return;
+		//	}
+		//}
 
 		if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 		{
@@ -361,7 +367,7 @@ void PlayerController::OnCollisionExit(Collider* collider)
 			if (hexCollider->GetGameObject() == floor)
 			{
 				floor = nullptr;
-				justJumped = false;
+				//justJumped = false;
 			}
 		}
 	}
@@ -468,7 +474,8 @@ void PlayerController::Jump()
 
 		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
 		{
-			animator->SetTrigger("Run");
+			goBackToRun = true;
+			//animator->SetTrigger("Run");
 		}
 
 		//play super jump efect
@@ -487,6 +494,10 @@ void PlayerController::Attack()
 	//if (isCharging)
 	MeterBar* meterBar = GetGameObject()->FindUIObject("sprintBar")->GetComponent<MeterBar>();
 
+	//give current player push animation
+	AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
+	animator->SetTrigger("Push");
+
 	if (otherPlayer)
 	{
 		if (!otherPlayer->GetComponent<PlayerController>()->IsInvincible())
@@ -494,9 +505,9 @@ void PlayerController::Attack()
 			if (meterBar->GetPercentage() >= attackCost)
 			{
 				//do animation
-				AnimatorController* animator = otherPlayer->GetComponent<AnimatorController>();
+				AnimatorController* otherAnimator = otherPlayer->GetComponent<AnimatorController>();
 
-				animator->SetTrigger("Stumble");
+				otherAnimator->SetTrigger("Stumble");
 
 				cout << "Attack" << endl;
 
@@ -590,7 +601,7 @@ void PlayerController::HandleInput()
 
 		//if (GetGameObject()->GetName() == "Mage2")
 		{
-			cout << "sprint" << endl;
+			//cout << "sprint" << endl;
 		}
 
 		//cout << "Sprint" << endl;
@@ -606,7 +617,7 @@ void PlayerController::HandleInput()
 
 		//if (GetGameObject()->GetName() == "Mage2")
 		{
-			cout << "Stop Sprint" << endl;
+			//cout << "Stop Sprint" << endl;
 		}
 
 		//revert back to walk footsteps
@@ -766,16 +777,16 @@ void PlayerController::PlayFootstepsSound()
 		delete soundEvent;
 		//cout << "play walk" << endl;
 
-		if (footstepsSound == 0)
-		{
-			cout << "Play Walk Sound\t";
-		}
-		else
-		{
-			cout << "Play Sprint Sound\t";
-		}
+		//if (footstepsSound == 0)
+		//{
+		//	cout << "Play Walk Sound\t";
+		//}
+		//else
+		//{
+		//	cout << "Play Sprint Sound\t";
+		//}
 
-			cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
+			//cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
 		footstepsPlayed = true;
 	}
 }
@@ -788,12 +799,12 @@ void PlayerController::StopFootstepsSound()
 	{
 	case 0:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__WALK____;
-		cout << "Stop Walk Sound\t";
+		//cout << "Stop Walk Sound\t";
 
 		break;
 	case 1:
 		stopID = AK::EVENTS::STOP_FOOTSTEPS__SPRINT_;
-		cout << "Stop Sprint Sound\t";
+		//cout << "Stop Sprint Sound\t";
 
 		break;
 		//case 2:
@@ -807,7 +818,7 @@ void PlayerController::StopFootstepsSound()
 	EventDispatcher::GetSingleton()->DispatchTo(soundEvent, "Game");
 	delete soundEvent;
 
-	cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
+	//cout << GetGameObject()->FindIndexOfGameObject(GetGameObject()) << endl;
 
 	//cout << "stop walk" << endl;
 	footstepsPlayed = false;

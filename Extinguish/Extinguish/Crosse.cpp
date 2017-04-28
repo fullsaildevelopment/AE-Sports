@@ -36,7 +36,10 @@ void Crosse::Init()
 	minY = transform->GetPosition().y;
 	ballTransform = GetGameObject()->FindGameObject("GameBall")->GetTransform();
 	ballC = ballTransform->GetGameObject()->GetComponent<BallController>();
-	player = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	//player = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetGameObject();
+	string mageName = "Mage";
+	mageName += GetGameObject()->GetName()[6];
+	player = GetGameObject()->FindGameObject(mageName);
 	movement = player->GetComponent<Movement>();
 
 	//register crosse event handler
