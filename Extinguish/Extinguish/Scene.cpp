@@ -631,7 +631,7 @@ void Scene::FixedUpdate(float _dt)
 			animator->FixedUpdate(_dt);
 		}
 		string gameObjName = gameObjects[i]->GetName();
-		if (gameObjName.find("TitanHand") != string::npos)
+		if (gameObjName.find("TitanHand") != string::npos && ResourceManager::GetSingleton()->IsServer())
 		{
 			std::string mageName = "Mage";
 			mageName += gameObjName[9];
