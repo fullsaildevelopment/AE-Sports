@@ -60,11 +60,16 @@ void Movement::Update(float _dt)
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Run" && !animator->GetState(animator->GetNextStateIndex()) && GetGameObject()->GetComponent<PlayerController>()->IsSprinting())
 			{
 				animator->SetTrigger("Run");
-				//cout << "Run" << endl;
+
+				AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+				handsAnimator->SetTrigger("Run");
 			}
-			else if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Forward" && !animator->GetState(animator->GetNextStateIndex()))
+			else if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Jog Forward" && !animator->GetState(animator->GetNextStateIndex()) && !GetGameObject()->GetComponent<PlayerController>()->IsSprinting())
 			{
 				animator->SetTrigger("Jog Forward");
+
+				AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+				handsAnimator->SetTrigger("Jog Forward");
 			}
 		}
 	}
@@ -78,6 +83,9 @@ void Movement::Update(float _dt)
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle" && !animator->GetState(animator->GetNextStateIndex()))
 			{
 				animator->SetTrigger("Idle");
+
+				AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+				handsAnimator->SetTrigger("Idle");
 				//cout << "Idle" << endl;
 			}
 		}

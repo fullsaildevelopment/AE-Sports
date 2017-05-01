@@ -37,13 +37,31 @@ void Transition::Init(State* curState, State* nextState, float exitTime, float t
 
 bool Transition::Update(float _dt)
 {
-	bool result = true;
+	bool result = false;
+	bool checkConditions = false;
 	timer += _dt;
 
 	if (!doTransition)
 	{
+		if (hasExitTime)
+		{
+			if (timer > exitTime * from->GetAnimation()->GetTotalTime())
+			{
+				checkConditions = true;
+				//doTransition = true;
+				//timer = 0.0f;
+				//to->GetAnimationController()->TransitionTo(this);
+				//cout << to->GetName();
+			}
+		}
+		else
+		{
+			checkConditions = true;
+		}
+
 		//if there are more than 0 conditions
-		if (conditions.size())
+		//if (conditions.size())
+		if (checkConditions)
 		{
 			unsigned int conditionsCount = 0;
 
@@ -57,48 +75,49 @@ bool Transition::Update(float _dt)
 			}
 
 			//if all are met, do transition
+			//if (conditionsCount == conditions.size() && to->GetAnimationController()->GetBlender()->GetCurInterpolator()->IsFinished())
 			if (conditionsCount == conditions.size())
 			{
 				doTransition = true;
+				result = true;
 				timer = 0.0f; //reset timer because new timer will be used for transition duration
 				to->GetAnimationController()->TransitionTo(this);
 				//cout << to->GetName();
 			}
-			else
-			{
-				result = false;
-			}
 		}
-		else if (hasExitTime && to->GetAnimationController()->GetBlender()->GetCurInterpolator()->IsFinished())
-		{
-			if (timer > exitTime)
-			{
-				doTransition = true;
-				timer = 0.0f;
-				to->GetAnimationController()->TransitionTo(this);
-				//cout << to->GetName();
-			}
-		}
+
+		timer = fmodf(timer, from->GetAnimation()->GetTotalTime());
+
+		//if (hasExitTime && to->GetAnimationController()->GetBlender()->GetCurInterpolator()->IsFinished())
+		//{
+		//	if (timer > exitTime * from->GetAnimation()->GetTotalTime())
+		//	{
+		//		doTransition = true;
+		//		timer = 0.0f;
+		//		to->GetAnimationController()->TransitionTo(this);
+		//		//cout << to->GetName();
+		//	}
+		//}
 	}
 	else
 	{
 		//reset boolean and timer because the next frame this won't run given the state will have changed in animator controller
 		//when transition is done, animator controller state needs to be set
 		if (timer > transitionDuration)
-		{
+		{	
 			to->GetAnimationController()->SetCurrentState(to);
 			//cout << to->GetName() << endl;
 			doTransition = false;
+			result = true;
 			timer = 0.0f;
 		}
-
-		result = false;
 	}
 
 	//if (doTransition)
 	//{
 	//	cout << doTransition;
 	//}
+
 
 	return result;
 }
