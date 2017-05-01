@@ -31,7 +31,7 @@ AI::AI(GameObject* obj) : Component(obj)
 
 void AI::OnCollisionEnter(Collider *obj)
 {
-	if (!ResourceManager::GetSingleton()->IsPaused())
+	if (!ResourceManager::GetSingleton()->IsPaused() && isActive)
 	{
 		if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
@@ -248,7 +248,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float _dt)
 {
-		if (!ResourceManager::GetSingleton()->IsPaused())
+		if (!ResourceManager::GetSingleton()->IsPaused() && isActive)
 		{
 
 #pragma region Setting Objects
@@ -451,7 +451,7 @@ void AI::Update(float _dt)
 
 void AI::FixedUpdate(float dt)
 {
-	if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
+	if ((pathTarget && pathTarget != myGoal && pathTarget != enemyGoal) && isActive)
 	{
 		float3 h = float3(0, 10, 0);
 		float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
@@ -770,3 +770,8 @@ bool AI::GetCanMove() { return canMove; }
 void AI::SetCanMove(bool ans) { canMove = ans; }
 
 void AI::SetMoveSpeedMultiplier(float multiplier) { moveSpeedMultiplier = multiplier; }
+
+void AI::SetActive(bool active)
+{
+	isActive = active;
+}
