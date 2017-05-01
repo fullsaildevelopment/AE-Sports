@@ -26,6 +26,8 @@ Transition* State::Update(float _dt)
 	Transition* result = nullptr;
 	transitionIndex = -1;
 
+	//TODO: If a transition is already happening, I shouldn't even check anymore transitions
+
 	for (int i = 0; i < transitions.size(); ++i)
 	{
 		if (transitions[i]->Update(_dt))
