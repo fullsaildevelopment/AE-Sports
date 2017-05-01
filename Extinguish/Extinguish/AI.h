@@ -71,6 +71,7 @@ public:
 	void OnCollisionEnter(Collider *obj) override;
 	void HandleEvent(Event* e) override;
 	void Init(GameObject *goal1, GameObject *goal2);
+	void ReInit(vector<unsigned int> team1, vector<unsigned int> team2);
 	void Update(float _dt) override;
 	void FixedUpdate(float dt);
 
