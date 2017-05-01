@@ -59,6 +59,8 @@ private:
 	std::vector<GameObject*> listOfMates; // list of AI's teammates
 	std::vector<GameObject*> AIbuddies; // list of AI on my team
 
+	bool isActive = false;
+
 
 public:
 
@@ -96,4 +98,5 @@ public:
 	// Mutators
 	void SetCanMove(bool ans);
 	void SetMoveSpeedMultiplier(float multiplier);
+	void SetActive(bool active);
 };
