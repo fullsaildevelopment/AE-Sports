@@ -2554,7 +2554,7 @@ void Game::AssignPlayers(bool firsttime)
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
-	string ourNames[] = { "Tom", "Nick", "Sam", "Lynda" };
+	string ourNames[] = { "Tom", "Nick", "Sam", "Linda" };
 	vector<AI*> ai;
 	PLAYER_TEAM teamID = TEAM_A;
 
