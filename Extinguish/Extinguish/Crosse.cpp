@@ -88,7 +88,7 @@ void Crosse::Throw()
 	{
 		XMFLOAT4X4 ballworld = ballTransform->GetWorld();
 		//detach ball
-		XMFLOAT3 ballForward = transform->GetParent()->GetParent()->GetChild(1)->GetForward();
+		XMFLOAT3 ballForward = transform->GetParent()->GetParent()->GetChild(0)->GetForward();
 		ballTransform->SetPosition({ ballworld._41 + ballForward.x * 0.2f, ballworld._42 + ballForward.y * 0.2f, ballworld._43 + ballForward.z * 0.2f }); //set ball's position to real ball position
 
 		ballC->Throw();
@@ -285,7 +285,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 		//	}
 		//}
 
-		if (input->GetMouseButtonDown(1))
+		if (input->GetMouseButtonDown(2))
 		{
 			Throw();
 		}

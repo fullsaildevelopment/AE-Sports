@@ -533,6 +533,64 @@ void Scene::Update(float _dt)
 			srender = nullptr;
 		}
 	}
+
+	for (int i = 0; i < gameObjects.size(); ++i)
+	{
+		string gameObjName = gameObjects[i]->GetName();
+		if (gameObjName.find("TitanAttach") != string::npos)
+		{
+			Transform* transform = gameObjects[i]->GetTransform();
+
+			if (i != Game::GetPlayerObjectID() + 1)
+			{
+				std::string mageName = "Mage";
+				mageName += gameObjName[11];
+				GameObject* mage = GetGameObject(mageName);
+				if (mage)
+				{
+					AnimatorController* anim = mage->GetComponent<AnimatorController>();
+					if (anim)
+					{
+						XMFLOAT4X4 hands = anim->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Attach")->local;
+						transform->SetLocal(hands);
+					}
+				}
+			}
+
+			else
+			{
+				std::string HandsName = "TitanHands";
+				HandsName += gameObjName[11];
+				GameObject* hands = GetGameObject(HandsName);
+				if (hands)
+				{
+					transform->GetParent()->RemoveChild(transform);
+					transform->SetParent(hands->GetTransform());
+					AnimatorController* anim = hands->GetComponent<AnimatorController>();
+					if (anim)
+					{
+						XMFLOAT4X4 hands = anim->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_Arms_R_Attach")->local;
+						transform->SetLocal(hands);
+					}
+				}
+			}
+
+			if (transform)
+			{
+				std::string CrosseName = "Crosse";
+				CrosseName += gameObjName[11];
+				GameObject* crosse = GetGameObject(CrosseName);
+				XMFLOAT4X4 world;
+				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&crosse->GetTransform()->GetWorld())));
+				crosse->GetComponent<Renderer>()->SetModel(world);
+				GameObject* ball = gameObjects[0];
+				XMStoreFloat4x4(&world, XMMatrixTranspose(XMLoadFloat4x4(&ball->GetTransform()->GetWorld())));
+				ball->GetComponent<Renderer>()->SetModel(world);
+			}
+		}
+
+	}
+
 	devContext->PSSetConstantBuffers(0, 1, dirLightConstantBuffer.GetAddressOf());
 	devContext->PSSetConstantBuffers(1, 1, pointLightConstantBuffer.GetAddressOf());
 	///////////////Clear BackBuffer//////////////
@@ -562,6 +620,27 @@ void Scene::Update(float _dt)
 		devContext->RSSetState(RasterizerStateBackCull.Get());
 		transparentIter.current().rend->Render();
 	}
+
+	for (int i = 0; i < gameObjects.size(); ++i)
+	{
+		if (i == Game::GetPlayerObjectID() + 1)
+		{
+			string gameObjName = gameObjects[i]->GetName();
+			if (gameObjName.find("TitanAttach") != string::npos)
+			{
+				std::string mageName = "Mage";
+				mageName += gameObjName[11];
+				GameObject* mage = GetGameObject(mageName);
+				if (mage)
+				{
+					Transform* trans = gameObjects[i]->GetTransform();
+					trans->GetParent()->RemoveChild(trans);
+					trans->SetParent(mage->GetTransform());
+				}
+			}
+		}
+	}
+
 	////////////////////////////DO POST PROCESSING////////////////////////
 	PostProcessing.DoPostProcess();
 	//////////////////////////////////////////////////////////////////////
@@ -629,23 +708,6 @@ void Scene::FixedUpdate(float _dt)
 		if (animator && i != Game::GetPlayerObjectID() && !ResourceManager::GetSingleton()->IsServer())
 		{
 			animator->FixedUpdate(_dt);
-		}
-		string gameObjName = gameObjects[i]->GetName();
-		if (gameObjName.find("TitanAttach") != string::npos && ResourceManager::GetSingleton()->IsServer())
-		{
-			std::string mageName = "Mage";
-			mageName += gameObjName[11];
-			GameObject* mage = GetGameObject(mageName);
-			if (mage)
-			{
-				AnimatorController* anim = mage->GetComponent<AnimatorController>();
-				if (anim)
-				{
-					XMFLOAT4X4 hands = anim->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Player_R_Attach")->local;
-					gameObjects[i]->GetTransform()->SetLocal(hands);
-				}
-			}
-
 		}
 
 		/*if (gameObjects[i]->GetName().find("Camera") != string::npos)
