@@ -833,25 +833,6 @@ void Game::CreateScenes(InputManager* input)
 
 void Game::CreateGameWrapper(bool firsttime)
 {
-	for (unsigned int i = (unsigned int)scenes.size() - 1; i > 0; --i)
-	{
-		unsigned int obj = scenes[i]->GetNumObjects();
-
-		if (obj > 0) {
-			for (int j = obj - 1; j >= 0; --j)
-			{
-				AI * ai = scenes[i]->GetGameObjects(j)->GetComponent<AI>();
-				bool success;
-				if (ai)
-				{
-					EventDispatcher::GetSingleton()->RemoveHandler(scenes[i]->GetGameObjects(j)->GetName() + "AI");
-					success = scenes[i]->GetGameObjects(j)->RemoveComponent<AI>();
-				}
-				// if false -> no ai attached
-			}
-		}
-	}
-
 	if (!firsttime)
 	{
 		ResetBall();
@@ -897,6 +878,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 	gameBall->AddComponent(ballTrail);
 
 	std::vector<GameObject*> hands;
+	vector<AI*> ai;
 
 	GameObject* goal = new GameObject();
 	GameObject* goal2 = new GameObject();
@@ -927,6 +909,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			tempCol = -col + 14;
 			mage1->SetTag("Team2");
 		}
+
+		AI *mageAI = new AI(mage1);
+		mage1->AddComponent(mageAI);
+		ai.push_back(mageAI);
 
 		mage1->InitTransform(identity, { -12.0f + i * 4.0f, 0.0f, (float)tempCol }, { 0, XM_PI, 0 }, { 1, 1, 1 }, nullptr, nullptr, nullptr);
 
@@ -1044,22 +1030,6 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			runToIdle->AddCondition(idleTrigger);
 
 			//jog transitions
-			//Transition* idleToJogLeft = new Transition();
-			//mageIdle->AddTransition(idleToJogLeft);
-			//idleToJogLeft->Init(mageIdle, mageJogLeft, -1, 0.1f);
-			//idleToJogLeft->AddCondition(jogLeftTrigger);
-			//Transition* jogLeftToIdle = new Transition();
-			//mageJogLeft->AddTransition(jogLeftToIdle);
-			//jogLeftToIdle->Init(mageJogLeft, mageIdle, -1, 0.1f);
-			//jogLeftToIdle->AddCondition(idleTrigger);
-			//Transition* idleToJogRight = new Transition();
-			//mageIdle->AddTransition(idleToJogRight);
-			//idleToJogRight->Init(mageIdle, mageJogRight, -1, 0.1f);
-			//idleToJogRight->AddCondition(jogRightTrigger);
-			//Transition* jogRightToIdle = new Transition();
-			//mageJogRight->AddTransition(jogRightToIdle);
-			//jogRightToIdle->Init(mageJogRight, mageIdle, -1, 0.1f);
-			//jogRightToIdle->AddCondition(idleTrigger);
 			Transition* idleToJogForward = new Transition();
 			mageIdle->AddTransition(idleToJogForward);
 			idleToJogForward->Init(mageIdle, mageJogForward, -1, 0.1f);
@@ -1068,14 +1038,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			mageJogForward->AddTransition(jogForwardToIdle);
 			jogForwardToIdle->Init(mageJogForward, mageIdle, -1, 0.1f);
 			jogForwardToIdle->AddCondition(idleTrigger);
-			//Transition* idleToJogBackward = new Transition();
-			//mageIdle->AddTransition(idleToJogBackward);
-			//idleToJogBackward->Init(mageIdle, mageJogBackward, -1, 0.1f);
-			//idleToJogBackward->AddCondition(jogBackwardTrigger);
-			//Transition* jogBackwardToIdle = new Transition();
-			//mageJogBackward->AddTransition(jogBackwardToIdle);
-			//jogBackwardToIdle->Init(mageJogBackward, mageIdle, -1, 0.1f);
-			//jogBackwardToIdle->AddCondition(idleTrigger);1
+			Transition* jogForwardToRun = new Transition();
+			mageJogForward->AddTransition(jogForwardToRun);
+			jogForwardToRun->Init(mageJogForward, mageRun, -1, 0.2f);
+			jogForwardToRun->AddCondition(runTrigger);
+			Transition* runToJogForward = new Transition();
+			mageRun->AddTransition(runToJogForward);
+			runToJogForward->Init(mageRun, mageJogForward, -1, 0.2f);
+			runToJogForward->AddCondition(jogForwardTrigger);
 
 			//throw transitions
 			Transition* idleToThrow = new Transition();
@@ -1084,8 +1054,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToThrow->AddCondition(throwTrigger);
 			Transition* throwToIdle = new Transition();
 			mageThrow->AddTransition(throwToIdle);
-			throwToIdle->Init(mageThrow, mageIdle, -1, 0.1f);
-			throwToIdle->AddCondition(idleTrigger);
+			throwToIdle->Init(mageThrow, mageIdle, 1.0f, 0.1f);
+			//throwToIdle->AddCondition(idleTrigger);
 			Transition* runToThrow = new Transition();
 			mageRun->AddTransition(runToThrow);
 			runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
@@ -1110,8 +1080,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToPush->AddCondition(pushTrigger);
 			Transition* pushToIdle = new Transition();
 			magePush->AddTransition(pushToIdle);
-			pushToIdle->Init(magePush, mageIdle, -1, 0.1f);
-			pushToIdle->AddCondition(idleTrigger);
+			pushToIdle->Init(magePush, mageIdle, 1.0f, 0.1f);
+			//pushToIdle->AddCondition(idleTrigger);
 			Transition* runToPush = new Transition();
 			mageRun->AddTransition(runToPush);
 			runToPush->Init(mageRun, magePush, -1, 0.1f);
@@ -1144,8 +1114,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToStumble->AddCondition(stumbleTrigger);
 			Transition* stumbleToIdle = new Transition();
 			mageStumble->AddTransition(stumbleToIdle);
-			stumbleToIdle->Init(mageStumble, mageIdle, -1, 0.01f);
-			stumbleToIdle->AddCondition(idleTrigger);
+			stumbleToIdle->Init(mageStumble, mageIdle, 0.01f, 0.01f);
+			//stumbleToIdle->AddCondition(idleTrigger);
 
 			//jump transitions
 			Transition* idleToJump = new Transition();
@@ -1169,8 +1139,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			fallToLand->AddCondition(landTrigger);
 			Transition* landToIdle = new Transition();
 			mageLand->AddTransition(landToIdle);
-			landToIdle->Init(mageLand, mageIdle, -1, 0.1f);
-			landToIdle->AddCondition(idleTrigger);
+			landToIdle->Init(mageLand, mageIdle, 1.0f, 0.1f); //I have exit time on this so it auto goes to idle if no other animation
+															  //landToIdle->AddCondition(idleTrigger);
 			Transition* landToJogForward = new Transition();
 			mageLand->AddTransition(landToJogForward);
 			landToJogForward->Init(mageLand, mageJogForward, -1, 0.1f);
@@ -1252,16 +1222,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 			mageAnim1->UpdateCurAnimatorsLoopAndSpeed(); //needs to be done after states are created and added
 
-														 //triggers
-			Param::Trigger* jogRightTrigger = new Param::Trigger();
-			jogRightTrigger->Init("Jog Right", false);
-			mageAnim1->AddParameter(jogRightTrigger);
-			Param::Trigger* jogLeftTrigger = new Param::Trigger();
-			jogLeftTrigger->Init("Jog Left", false);
-			mageAnim1->AddParameter(jogLeftTrigger);
-			Param::Trigger* jogBackwardTrigger = new Param::Trigger();
-			jogBackwardTrigger->Init("Jog Backward", false);
-			mageAnim1->AddParameter(jogBackwardTrigger);
+			//triggers
 			Param::Trigger* jogForwardTrigger = new Param::Trigger();
 			jogForwardTrigger->Init("Jog Forward", false);
 			mageAnim1->AddParameter(jogForwardTrigger);
@@ -1306,6 +1267,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			mageJogForward->AddTransition(jogForwardToIdle);
 			jogForwardToIdle->Init(mageJogForward, mageIdle, -1, 0.1f);
 			jogForwardToIdle->AddCondition(idleTrigger);
+			Transition* jogForwardToRun = new Transition();
+			mageJogForward->AddTransition(jogForwardToRun);
+			jogForwardToRun->Init(mageJogForward, mageRun, -1, 0.2f);
+			jogForwardToRun->AddCondition(runTrigger);
+			Transition* runToJogForward = new Transition();
+			mageRun->AddTransition(runToJogForward);
+			runToJogForward->Init(mageRun, mageJogForward, -1, 0.2f);
+			runToJogForward->AddCondition(jogForwardTrigger);
 
 			//throw transitions
 			Transition* idleToThrow = new Transition();
@@ -1314,8 +1283,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToThrow->AddCondition(throwTrigger);
 			Transition* throwToIdle = new Transition();
 			mageThrow->AddTransition(throwToIdle);
-			throwToIdle->Init(mageThrow, mageIdle, -1, 0.1f);
-			throwToIdle->AddCondition(idleTrigger);
+			throwToIdle->Init(mageThrow, mageIdle, 1.0f, 0.1f);
+			//throwToIdle->AddCondition(idleTrigger);
 			Transition* runToThrow = new Transition();
 			mageRun->AddTransition(runToThrow);
 			runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
@@ -1340,8 +1309,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToPush->AddCondition(pushTrigger);
 			Transition* pushToIdle = new Transition();
 			magePush->AddTransition(pushToIdle);
-			pushToIdle->Init(magePush, mageIdle, -1, 0.1f);
-			pushToIdle->AddCondition(idleTrigger);
+			pushToIdle->Init(magePush, mageIdle, 1.0f, 0.1f);
+			//pushToIdle->AddCondition(idleTrigger);
 			Transition* runToPush = new Transition();
 			mageRun->AddTransition(runToPush);
 			runToPush->Init(mageRun, magePush, -1, 0.1f);
@@ -1374,8 +1343,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToStumble->AddCondition(stumbleTrigger);
 			Transition* stumbleToIdle = new Transition();
 			mageStumble->AddTransition(stumbleToIdle);
-			stumbleToIdle->Init(mageStumble, mageIdle, -1, 0.01f);
-			stumbleToIdle->AddCondition(idleTrigger);
+			stumbleToIdle->Init(mageStumble, mageIdle, 0.01f, 0.01f);
+			//stumbleToIdle->AddCondition(idleTrigger);
 
 			//jump transitions
 			Transition* idleToJump = new Transition();
@@ -1399,8 +1368,8 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			fallToLand->AddCondition(landTrigger);
 			Transition* landToIdle = new Transition();
 			mageLand->AddTransition(landToIdle);
-			landToIdle->Init(mageLand, mageIdle, -1, 0.1f);
-			landToIdle->AddCondition(idleTrigger);
+			landToIdle->Init(mageLand, mageIdle, 1.0f, 0.1f); //I have exit time on this so it auto goes to idle if no other animation
+			//landToIdle->AddCondition(idleTrigger);
 			Transition* landToJogForward = new Transition();
 			mageLand->AddTransition(landToJogForward);
 			landToJogForward->Init(mageLand, mageJogForward, -1, 0.1f);
@@ -1427,6 +1396,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		crosse->AddComponent(crosseController);
 		crosseController->Init();
 	}
+
 
 	ballController->LateInit();
 
@@ -1765,6 +1735,12 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 
 	Map *map = new Map(row, col, floor);
 	AI::aiPath = map;
+
+
+	for (int i = 0; i < ai.size(); ++i)
+	{
+		ai[i]->Init(goal2, goal);
+	}
 
 	//GameObject* Hex = new GameObject();
 	//Hex->Init("Team2");
@@ -2554,11 +2530,13 @@ void Game::AssignPlayers(bool firsttime)
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
-	string ourNames[] = { "Tom", "Nick", "Sam", "Lynda" };
 	vector<AI*> ai;
+	string ourNames[] = { "Tom", "Nick", "Sam", "Linda" };
 	PLAYER_TEAM teamID = TEAM_A;
 
 	int ourNameIndex = 0;
+	std::vector<unsigned int> teamA_AI;
+	std::vector<unsigned int> teamB_AI;
 
 	//TODO: disable/enable AI based on who is playing
 
@@ -2580,17 +2558,26 @@ void Game::AssignPlayers(bool firsttime)
 					teamID = TEAM_B;
 				}
 
+				AI *mageAI = mage1->GetComponent<AI>();
 				if (!server.isPlayer(i))
 				{
-					AI *mageAI = new AI(mage1);
-					mage1->AddComponent(mageAI);
+					//AI *mageAI = new AI(mage1);
+					//mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+
+					mageAI->SetActive(true);
+
+					if (teamID == TEAM_A)
+						teamA_AI.push_back(objIDs[i]);
+					else
+						teamB_AI.push_back(objIDs[i]);
 
 					name = aiNames[i];
 
 				}
 				else
 				{
+					mageAI->SetActive(false);
 					name = ourNames[ourNameIndex++];
 					//mage1->GetComponent<PlayerController>()->SetTeamID(teamID);
 				}
@@ -2600,13 +2587,13 @@ void Game::AssignPlayers(bool firsttime)
 				player->SetTeamID(teamID);
 			}
 
-			GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
+			/*GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
 			GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
 
 			for (int i = 0; i < ai.size(); ++i)
 			{
 				ai[i]->Init(goal2, goal);
-			}
+			}*/
 		}
 	}
 
@@ -2626,9 +2613,11 @@ void Game::AssignPlayers(bool firsttime)
 				if (team == TEAM_A && i != 0)
 				{
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-					AI *mageAI = new AI(mage1);
-					mage1->AddComponent(mageAI);
+					AI *mageAI = mage1->GetComponent<AI>();// = new AI(mage1);
+					//mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+					mageAI->SetActive(true);
+					teamA_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2638,9 +2627,11 @@ void Game::AssignPlayers(bool firsttime)
 				else if (team == TEAM_B && i != 4)
 				{
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-					AI *mageAI = new AI(mage1);
-					mage1->AddComponent(mageAI);
+					AI *mageAI = mage1->GetComponent<AI>();// = new AI(mage1);
+				//	mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+					mageAI->SetActive(true);
+					teamB_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2648,6 +2639,10 @@ void Game::AssignPlayers(bool firsttime)
 				}
 				else
 				{
+					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
+					AI *mageAI = mage1->GetComponent<AI>();
+					mageAI->SetActive(false);
+
 					PlayerController* player = scenes[2]->GetGameObjects(objIDs[i])->GetComponent<PlayerController>();
 					player->ReadInStats("Tom");
 					player->SetTeamID(team);
@@ -2658,9 +2653,11 @@ void Game::AssignPlayers(bool firsttime)
 				if (team == TEAM_A)
 				{
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-					AI *mageAI = new AI(mage1);
-					mage1->AddComponent(mageAI);
+					AI *mageAI = mage1->GetComponent<AI>();
+					mageAI->SetActive(true);
+					//mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+					teamA_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2670,9 +2667,11 @@ void Game::AssignPlayers(bool firsttime)
 				else if (team == TEAM_B)
 				{
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-					AI *mageAI = new AI(mage1);
-					mage1->AddComponent(mageAI);
+					AI *mageAI = mage1->GetComponent<AI>();
+					mageAI->SetActive(true);
+					//mage1->AddComponent(mageAI);
 					ai.push_back(mageAI);
+					teamB_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2680,13 +2679,12 @@ void Game::AssignPlayers(bool firsttime)
 				}
 			}
 		}
-		GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
-		GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
+	}
 
-		for (int i = 0; i < ai.size(); ++i)
-		{
-			ai[i]->Init(goal2, goal);
-		}
+
+	for (int i = 0; i < ai.size(); ++i)
+	{
+		//ai[i]->ReInit(teamA_AI, teamB_AI);
 	}
 #endif
 }

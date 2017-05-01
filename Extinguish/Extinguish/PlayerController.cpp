@@ -85,49 +85,49 @@ void PlayerController::Update(float _dt)
 	{
 		AnimatorController* animator = ogPlayer->GetComponent<AnimatorController>();
 
-		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
-		{
-			State* nextState = animator->GetState(animator->GetNextStateIndex());
-			bool setCanMove = false;
+		//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
+		//{
+		//	State* nextState = animator->GetState(animator->GetNextStateIndex());
+		//	bool setCanMove = false;
 
-			if (nextState)
-			{
-				if (nextState->GetName() != "Stumble")
-				{
-					setCanMove = true;
-				}
-			}
-			else
-			{
-				setCanMove = true;
-			}
+		//	if (nextState)
+		//	{
+		//		if (nextState->GetName() != "Stumble")
+		//		{
+		//			setCanMove = true;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		setCanMove = true;
+		//	}
 
-			if (setCanMove)
-			{
-				AI* otherAI = ogPlayer->GetComponent<AI>();
+		//	if (setCanMove)
+		//	{
+		//		AI* otherAI = ogPlayer->GetComponent<AI>();
 
-				if (otherAI)
-					otherAI->SetCanMove(true);
+		//		if (otherAI)
+		//			otherAI->SetCanMove(true);
 
-				//else
-				//{
-				//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+		//		//else
+		//		//{
+		//		//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
 
-				//	otherMovement->SetCanMove(true);
+		//		//	otherMovement->SetCanMove(true);
 
-				//	//move the player's camera to match getting up
-				//	Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
-				//	float3 translation = otherCamera->GetForwardf3();
-				//	translation.x = translation.x;
-				//	translation.y = 1.0f;
-				//	translation.z = translation.z * 3.0f;
+		//		//	//move the player's camera to match getting up
+		//		//	Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+		//		//	float3 translation = otherCamera->GetForwardf3();
+		//		//	translation.x = translation.x;
+		//		//	translation.y = 1.0f;
+		//		//	translation.z = translation.z * 3.0f;
 
-				//	otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-				//}
+		//		//	otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+		//		//}
 
-				ogPlayer = nullptr;
-			}
-		}
+		//		ogPlayer = nullptr;
+		//	}
+		//}
 	}
 }
 
@@ -266,11 +266,9 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 
 				animator->SetTrigger("Land");
 
-				//if (goBackToRun) //what about jog though? Maybe just go back to idle for simplicity sake
-				//{
-				//	goBackToRun = false;
-				//	animator->SetTrigger("Run");
-				//}
+				//do hands animation
+				AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+				handsAnimator->SetTrigger("Land");
 			}
 
 			floor = hexCollider->GetGameObject();
@@ -282,33 +280,6 @@ void PlayerController::OnCollisionEnter(Collider* collider)
 
 void PlayerController::OnCollisionStay(Collider* collider)
 {
-
-	//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-	//{
-	//	BoxCollider* boxCollider = (BoxCollider*)collider;
-	//	if (boxCollider->GetGameObject()->GetName() == "MeterBox6")
-	//	{
-	//		if (boxCollider->collisionNormal.isEqual(UP))
-	//		{
-	//			if (justJumped)
-	//			{
-	//				justJumped = false;
-
-	//				//do animation
-	//				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
-
-	//				animator->SetTrigger("Land");
-	//			}
-
-	//			floor = boxCollider->GetGameObject();
-	//		}
-
-	//		return;
-	//	}
-	//	return;
-	//}
-
-
 	if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 	{
 		HexagonCollider* hexCollider = (HexagonCollider*)collider;
@@ -321,6 +292,9 @@ void PlayerController::OnCollisionStay(Collider* collider)
 				AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 
 				animator->SetTrigger("Land");
+
+				AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+				handsAnimator->SetTrigger("Land");
 			}
 
 			floor = hexCollider->GetGameObject();
@@ -348,26 +322,12 @@ void PlayerController::OnCollisionExit(Collider* collider)
 
 	if (floor)
 	{
-		//if (collider->GetColliderType() == Collider::ColliderType::CTAABB)
-		//{
-		//	BoxCollider* boxCollider = (BoxCollider*)collider;
-		//	if (boxCollider->GetGameObject() == floor)
-		//	{
-		//		//cout << "floor exit" << endl;
-
-		//		floor = nullptr;
-		//		//justJumped = false;
-		//		return;
-		//	}
-		//}
-
 		if (collider->GetColliderType() == Collider::ColliderType::CTHex)
 		{
 			HexagonCollider* hexCollider = (HexagonCollider*)collider;
 			if (hexCollider->GetGameObject() == floor)
 			{
 				floor = nullptr;
-				//justJumped = false;
 			}
 		}
 	}
@@ -472,6 +432,9 @@ void PlayerController::Jump()
 
 		animator->SetTrigger("Jump");
 
+		AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+		handsAnimator->SetTrigger("Jump");
+
 		//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() == "Run")
 		//{
 		//	goBackToRun = true;
@@ -503,6 +466,12 @@ void PlayerController::Attack()
 
 		//set the trigger for the current animation so when push is done it goes back to previous
 		animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
+
+		//animation on hands
+		AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+
+		handsAnimator->SetTrigger("Push");
+		handsAnimator->SetTrigger(handsAnimator->GetState(handsAnimator->GetCurrentStateIndex())->GetName());
 	}
 
 	if (otherPlayer)
@@ -518,6 +487,13 @@ void PlayerController::Attack()
 
 				//set the trigger for the current animation so when push is done it goes back to previous
 				animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
+
+				//do animation on hands
+				AnimatorController* handsAnimator = otherPlayer->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+
+				handsAnimator->SetTrigger("Stumble");
+				handsAnimator->SetTrigger(handsAnimator->GetState(handsAnimator->GetCurrentStateIndex())->GetName());
+
 
 				cout << "Attack" << endl;
 
@@ -535,12 +511,12 @@ void PlayerController::Attack()
 
 				ogPlayer = otherPlayer;
 
-				AI* otherAI = ogPlayer->GetComponent<AI>();
+				//AI* otherAI = ogPlayer->GetComponent<AI>();
 
-				if (otherAI)
-				{
-					otherAI->SetCanMove(false);
-				}
+				//if (otherAI)
+				//{
+				//	otherAI->SetCanMove(false);
+				//}
 				//else
 				//{
 				//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();

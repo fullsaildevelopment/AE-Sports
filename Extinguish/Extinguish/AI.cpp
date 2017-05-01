@@ -31,7 +31,7 @@ AI::AI(GameObject* obj) : Component(obj)
 
 void AI::OnCollisionEnter(Collider *obj)
 {
-	if (!ResourceManager::GetSingleton()->IsPaused())
+	if (!ResourceManager::GetSingleton()->IsPaused() && isActive)
 	{
 		if (obj->GetColliderType() == Collider::ColliderType::CTCapsule)
 		{
@@ -48,11 +48,11 @@ void AI::OnCollisionEnter(Collider *obj)
 						ballClass->DropBall(realTarget);
 
 					// disabling movement
-					if (realTarget->GetComponent<AI>())
-						realTarget->GetComponent<AI>()->SetCanMove(false);
+					//if (realTarget->GetComponent<AI>())
+					//	realTarget->GetComponent<AI>()->SetCanMove(false);
 
-					else
-						realTarget->GetComponent<Movement>()->SetCanMove(false);
+					//else
+					//	realTarget->GetComponent<Movement>()->SetCanMove(false);
 
 					// triggering the animation
 					realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
@@ -248,7 +248,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 void AI::Update(float _dt)
 {
-		if (!ResourceManager::GetSingleton()->IsPaused())
+		if (!ResourceManager::GetSingleton()->IsPaused() && isActive)
 		{
 
 #pragma region Setting Objects
@@ -259,44 +259,44 @@ void AI::Update(float _dt)
 				bool a = animator->GetTrigger("Stumble")->GetTrigger();
 
 				// if your current anim isn't stumble AND ???the the trigger isn't stumble???
-				if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
-				{
-					bool setCanMove = false;
+				//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
+				//{
+				//	bool setCanMove = false;
 
-					// if you have an anim queued
-					if (animator->GetState(animator->GetNextStateIndex()))
-					{
-						// and it's not stumble
-						if (animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
-							setCanMove = true;
-					}
+				//	// if you have an anim queued
+				//	if (animator->GetState(animator->GetNextStateIndex()))
+				//	{
+				//		// and it's not stumble
+				//		if (animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
+				//			setCanMove = true;
+				//	}
 
-					else //no animation queued at all
-						setCanMove = true;
+				//	else //no animation queued at all
+				//		setCanMove = true;
 
-					if (setCanMove)
-					{
-						if (ogTarget->GetComponent<AI>())
-							ogTarget->GetComponent<AI>()->SetCanMove(true);
+				//	if (setCanMove)
+				//	{
+				//		if (ogTarget->GetComponent<AI>())
+				//			ogTarget->GetComponent<AI>()->SetCanMove(true);
 
-						else
-						{
-							Movement* otherMovement = ogTarget->GetComponent<Movement>();
-							otherMovement->SetCanMove(true);
+				//		else
+				//		{
+				//			Movement* otherMovement = ogTarget->GetComponent<Movement>();
+				//			otherMovement->SetCanMove(true);
 
-							//move the player's camera to match getting up
-							Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
-							float3 translation = otherCamera->GetForwardf3();
-							translation.x = translation.x;
-							translation.y = 3.0f;
-							translation.z = translation.z * 3.0f;
+				//			//move the player's camera to match getting up
+				//			Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
+				//			float3 translation = otherCamera->GetForwardf3();
+				//			translation.x = translation.x;
+				//			translation.y = 3.0f;
+				//			translation.z = translation.z * 3.0f;
 
-							otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-						}
+				//			otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+				//		}
 
-						ogTarget = nullptr;
-					}
-				}
+				//		ogTarget = nullptr;
+				//	}
+				//}
 			}
 
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Idle" && !anim->GetState(anim->GetNextStateIndex())) anim->SetTrigger("Idle");
@@ -451,7 +451,7 @@ void AI::Update(float _dt)
 
 void AI::FixedUpdate(float dt)
 {
-	if (pathTarget && pathTarget != myGoal && pathTarget != enemyGoal)
+	if ((pathTarget && pathTarget != myGoal && pathTarget != enemyGoal) && isActive)
 	{
 		float3 h = float3(0, 10, 0);
 		float3 jik = pathTarget->GetTransform()->GetWorldPosition() - (*tarNode->pos + h);
@@ -770,3 +770,8 @@ bool AI::GetCanMove() { return canMove; }
 void AI::SetCanMove(bool ans) { canMove = ans; }
 
 void AI::SetMoveSpeedMultiplier(float multiplier) { moveSpeedMultiplier = multiplier; }
+
+void AI::SetActive(bool active)
+{
+	isActive = active;
+}

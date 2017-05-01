@@ -285,7 +285,7 @@ void Crosse::HandleInput(InputDownEvent* e)
 		//	}
 		//}
 
-		if (input->GetMouseButtonDown(1))
+		if (input->GetMouseButtonDown(2))
 		{
 			Throw();
 		}
