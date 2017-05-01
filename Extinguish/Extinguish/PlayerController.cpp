@@ -519,6 +519,9 @@ void PlayerController::Attack()
 				//set the trigger for the current animation so when push is done it goes back to previous
 				animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
 
+
+				//do animation on hands
+
 				cout << "Attack" << endl;
 
 				//make them drop ball
