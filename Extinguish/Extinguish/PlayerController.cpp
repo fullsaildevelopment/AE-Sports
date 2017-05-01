@@ -85,49 +85,49 @@ void PlayerController::Update(float _dt)
 	{
 		AnimatorController* animator = ogPlayer->GetComponent<AnimatorController>();
 
-		if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
-		{
-			State* nextState = animator->GetState(animator->GetNextStateIndex());
-			bool setCanMove = false;
+		//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
+		//{
+		//	State* nextState = animator->GetState(animator->GetNextStateIndex());
+		//	bool setCanMove = false;
 
-			if (nextState)
-			{
-				if (nextState->GetName() != "Stumble")
-				{
-					setCanMove = true;
-				}
-			}
-			else
-			{
-				setCanMove = true;
-			}
+		//	if (nextState)
+		//	{
+		//		if (nextState->GetName() != "Stumble")
+		//		{
+		//			setCanMove = true;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		setCanMove = true;
+		//	}
 
-			if (setCanMove)
-			{
-				AI* otherAI = ogPlayer->GetComponent<AI>();
+		//	if (setCanMove)
+		//	{
+		//		AI* otherAI = ogPlayer->GetComponent<AI>();
 
-				if (otherAI)
-					otherAI->SetCanMove(true);
+		//		if (otherAI)
+		//			otherAI->SetCanMove(true);
 
-				//else
-				//{
-				//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
+		//		//else
+		//		//{
+		//		//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
 
-				//	otherMovement->SetCanMove(true);
+		//		//	otherMovement->SetCanMove(true);
 
-				//	//move the player's camera to match getting up
-				//	Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
-				//	float3 translation = otherCamera->GetForwardf3();
-				//	translation.x = translation.x;
-				//	translation.y = 1.0f;
-				//	translation.z = translation.z * 3.0f;
+		//		//	//move the player's camera to match getting up
+		//		//	Transform* otherCamera = ogPlayer->GetTransform()->GetChild(0);
+		//		//	float3 translation = otherCamera->GetForwardf3();
+		//		//	translation.x = translation.x;
+		//		//	translation.y = 1.0f;
+		//		//	translation.z = translation.z * 3.0f;
 
-				//	otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-				//}
+		//		//	otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
+		//		//}
 
-				ogPlayer = nullptr;
-			}
-		}
+		//		ogPlayer = nullptr;
+		//	}
+		//}
 	}
 }
 
@@ -519,6 +519,9 @@ void PlayerController::Attack()
 				//set the trigger for the current animation so when push is done it goes back to previous
 				animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
 
+
+				//do animation on hands
+
 				cout << "Attack" << endl;
 
 				//make them drop ball
@@ -535,12 +538,12 @@ void PlayerController::Attack()
 
 				ogPlayer = otherPlayer;
 
-				AI* otherAI = ogPlayer->GetComponent<AI>();
+				//AI* otherAI = ogPlayer->GetComponent<AI>();
 
-				if (otherAI)
-				{
-					otherAI->SetCanMove(false);
-				}
+				//if (otherAI)
+				//{
+				//	otherAI->SetCanMove(false);
+				//}
 				//else
 				//{
 				//	Movement* otherMovement = ogPlayer->GetComponent<Movement>();
