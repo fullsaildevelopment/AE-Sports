@@ -47,13 +47,6 @@ void AI::OnCollisionEnter(Collider *obj)
 					if (!ballClass->GetIsThrown() && ballClass->GetHolder() == realTarget)
 						ballClass->DropBall(realTarget);
 
-					// disabling movement
-					//if (realTarget->GetComponent<AI>())
-					//	realTarget->GetComponent<AI>()->SetCanMove(false);
-
-					//else
-					//	realTarget->GetComponent<Movement>()->SetCanMove(false);
-
 					// triggering the animation
 					realTarget->GetComponent<AnimatorController>()->SetTrigger("Stumble");
 					realTarget->GetComponent<AnimatorController>()->SetTrigger(realTarget->GetComponent<AnimatorController>()->GetState(realTarget->GetComponent<AnimatorController>()->GetCurrentStateIndex())->GetName());
@@ -243,6 +236,10 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
 
 		Idle();
+}
+
+void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
+{
 
 }
 
@@ -257,46 +254,6 @@ void AI::Update(float _dt)
 				AnimatorController* animator = ogTarget->GetComponent<AnimatorController>();
 				Param::Trigger *p = animator->GetTrigger("Stumble");
 				bool a = animator->GetTrigger("Stumble")->GetTrigger();
-
-				// if your current anim isn't stumble AND ???the the trigger isn't stumble???
-				//if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Stumble" && !animator->GetTrigger("Stumble")->GetTrigger())
-				//{
-				//	bool setCanMove = false;
-
-				//	// if you have an anim queued
-				//	if (animator->GetState(animator->GetNextStateIndex()))
-				//	{
-				//		// and it's not stumble
-				//		if (animator->GetState(animator->GetNextStateIndex())->GetName() != "Stumble")
-				//			setCanMove = true;
-				//	}
-
-				//	else //no animation queued at all
-				//		setCanMove = true;
-
-				//	if (setCanMove)
-				//	{
-				//		if (ogTarget->GetComponent<AI>())
-				//			ogTarget->GetComponent<AI>()->SetCanMove(true);
-
-				//		else
-				//		{
-				//			Movement* otherMovement = ogTarget->GetComponent<Movement>();
-				//			otherMovement->SetCanMove(true);
-
-				//			//move the player's camera to match getting up
-				//			Transform* otherCamera = ogTarget->GetTransform()->GetChild(0);
-				//			float3 translation = otherCamera->GetForwardf3();
-				//			translation.x = translation.x;
-				//			translation.y = 3.0f;
-				//			translation.z = translation.z * 3.0f;
-
-				//			otherCamera->MoveTo(otherCamera->GetPosition() + translation, 0.75f);
-				//		}
-
-				//		ogTarget = nullptr;
-				//	}
-				//}
 			}
 
 			if (anim->GetState(anim->GetCurrentStateIndex())->GetName() != "Idle" && !anim->GetState(anim->GetNextStateIndex())) anim->SetTrigger("Idle");
