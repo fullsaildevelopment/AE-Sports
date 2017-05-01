@@ -2547,11 +2547,13 @@ void Game::AssignPlayers(bool firsttime)
 {
 #if AI_ON
 	string aiNames[] = { "NotRobot", "Wall-E", "Monokuma", "I.Human", "Claptrap", "Slackbot", "Awesome-O", "GLaDOS" };
-	//vector<AI*> ai;
+	vector<AI*> ai;
 	string ourNames[] = { "Tom", "Nick", "Sam", "Linda" };
 	PLAYER_TEAM teamID = TEAM_A;
 
 	int ourNameIndex = 0;
+	std::vector<unsigned int> teamA_AI;
+	std::vector<unsigned int> teamB_AI;
 
 	//TODO: disable/enable AI based on who is playing
 
@@ -2578,9 +2580,14 @@ void Game::AssignPlayers(bool firsttime)
 				{
 					//AI *mageAI = new AI(mage1);
 					//mage1->AddComponent(mageAI);
-					//ai.push_back(mageAI);
+					ai.push_back(mageAI);
 
 					mageAI->SetActive(true);
+
+					if (teamID == TEAM_A)
+						teamA_AI.push_back(objIDs[i]);
+					else
+						teamB_AI.push_back(objIDs[i]);
 
 					name = aiNames[i];
 
@@ -2625,8 +2632,9 @@ void Game::AssignPlayers(bool firsttime)
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 					AI *mageAI = mage1->GetComponent<AI>();// = new AI(mage1);
 					//mage1->AddComponent(mageAI);
-					//ai.push_back(mageAI);
+					ai.push_back(mageAI);
 					mageAI->SetActive(true);
+					teamA_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2638,8 +2646,9 @@ void Game::AssignPlayers(bool firsttime)
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 					AI *mageAI = mage1->GetComponent<AI>();// = new AI(mage1);
 				//	mage1->AddComponent(mageAI);
-				//	ai.push_back(mageAI);
+					ai.push_back(mageAI);
 					mageAI->SetActive(true);
+					teamB_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2664,7 +2673,8 @@ void Game::AssignPlayers(bool firsttime)
 					AI *mageAI = mage1->GetComponent<AI>();
 					mageAI->SetActive(true);
 					//mage1->AddComponent(mageAI);
-					//ai.push_back(mageAI);
+					ai.push_back(mageAI);
+					teamA_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2677,7 +2687,8 @@ void Game::AssignPlayers(bool firsttime)
 					AI *mageAI = mage1->GetComponent<AI>();
 					mageAI->SetActive(true);
 					//mage1->AddComponent(mageAI);
-					//ai.push_back(mageAI);
+					ai.push_back(mageAI);
+					teamB_AI.push_back(objIDs[i]);
 
 					PlayerController* player = mage1->GetComponent<PlayerController>();
 					player->ReadInStats(aiNames[i]);
@@ -2685,13 +2696,12 @@ void Game::AssignPlayers(bool firsttime)
 				}
 			}
 		}
-		/*GameObject * goal = scenes[2]->GetGameObjects(objIDs[8]);
-		GameObject * goal2 = scenes[2]->GetGameObjects(objIDs[9]);
+	}
 
-		for (int i = 0; i < ai.size(); ++i)
-		{
-			ai[i]->Init(goal2, goal);
-		}*/
+
+	for (int i = 0; i < ai.size(); ++i)
+	{
+		//ai[i]->ReInit(teamA_AI, teamB_AI);
 	}
 #endif
 }
