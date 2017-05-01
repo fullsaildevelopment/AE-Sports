@@ -13,7 +13,7 @@ private:
 	State* to;
 	std::vector<Parameter*> conditions;
 
-	//exit time will make transition happen regardless of conditions
+	//exit time refers to how much of the animation needs to be done before a transition can happen
 	bool hasExitTime;
 	float exitTime;
 
