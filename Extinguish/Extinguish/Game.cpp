@@ -1051,7 +1051,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToThrow->AddCondition(throwTrigger);
 			Transition* throwToIdle = new Transition();
 			mageThrow->AddTransition(throwToIdle);
-			throwToIdle->Init(mageThrow, mageIdle, 0.01f, 0.1f);
+			throwToIdle->Init(mageThrow, mageIdle, 1.0f, 0.1f);
 			//throwToIdle->AddCondition(idleTrigger);
 			Transition* runToThrow = new Transition();
 			mageRun->AddTransition(runToThrow);
@@ -1136,7 +1136,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			fallToLand->AddCondition(landTrigger);
 			Transition* landToIdle = new Transition();
 			mageLand->AddTransition(landToIdle);
-			landToIdle->Init(mageLand, mageIdle, 0.01, 0.1f); //I have exit time on this so it auto goes to idle if no other animation
+			landToIdle->Init(mageLand, mageIdle, 1.0f, 0.1f); //I have exit time on this so it auto goes to idle if no other animation
 															  //landToIdle->AddCondition(idleTrigger);
 			Transition* landToJogForward = new Transition();
 			mageLand->AddTransition(landToJogForward);
