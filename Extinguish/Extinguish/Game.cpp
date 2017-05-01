@@ -909,6 +909,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		playerName += to_string(i);
 
 		GameObject* crosse = new GameObject();
+		string crosseName = "Crosse";
+		crosseName += to_string(i);
+		crosse->Init(crosseName);
 		basic->AddGameObject(crosse);
 		objIDs[i - 1] = (UINT8)basic->GetNumObjects();
 
@@ -1195,7 +1198,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		GameObject* camera1 = new GameObject();
 		camera1->Init(cameraName);
 		basic->AddGameObject(camera1);
-		camera1->InitTransform(identity, { 0, 1.3f, -0.5f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		camera1->InitTransform(identity, { 0, 1.45f, -0.05f }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
 		Camera* cameraController1 = new Camera();
 		camera1->AddComponent(cameraController1);
 		cameraController1->Init({ 0.0f, 0.7f, 1.5f, 0.0f }, { 0.0f, 0.1f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, 5.0f, 0.75f, true);
@@ -1206,7 +1209,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		GameObject* titanHands = new GameObject();
 		titanHands->Init(titanHandsName);
 		basic->AddGameObject(titanHands);
-		titanHands->InitTransform(identity, { 0, -0.05f, 0.25f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
+		titanHands->InitTransform(identity, { 0, -0.25f, 0.32f }, { 0, 0, 0 }, { 1, 1, 1 }, camera1->GetTransform(), nullptr, nullptr);
 		Renderer* titanHandsRenderer = new Renderer();
 		titanHandsRenderer->SetEnabled(false);
 		titanHands->AddComponent(titanHandsRenderer);
@@ -1408,10 +1411,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			landToRun->AddCondition(runTrigger);
 		}
 
-		string crosseName = "Crosse";
-		crosseName += to_string(i);
-
-		crosse->Init(crosseName);		/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
+				/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
 		crosse->InitTransform(identity, { 0, 0.755f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanAttach->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosseNetCollider->SetOffset({ 0,0.4f,-0.5f });

@@ -187,7 +187,7 @@ void BallController::Throw()
 	holder->GetTransform()->RemoveChild(me->GetTransform());
 	Transform* hand = holder->GetTransform()->GetParent();
 	Transform* person = hand->GetParent();
-	Transform* cam = person->GetChild(1);
+	Transform* cam = person->GetChild(0);
 	me->GetTransform()->SetPosition(cam->GetWorldPosition() + cam->GetForwardf3() * 1.3f);
 	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
