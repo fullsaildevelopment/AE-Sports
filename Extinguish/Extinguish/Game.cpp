@@ -3006,7 +3006,7 @@ void Game::LoadScene(std::string name)
 		ResourceManager::GetSingleton()->SetPaused(true);
 
 		endTimer = 0.0f;
-		ShowCursor(false);
+		while (ShowCursor(false) >= 0);
 		AssignPlayers(false);
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
@@ -3096,7 +3096,11 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			menuButton->SetActive(toggle);
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
-			ShowCursor(toggle);
+			if (toggle)
+				ShowCursor(toggle);
+			else
+				while (ShowCursor(false) >= 0);
+
 			resumeButton->setSelected();
 			menuButton->setSelected(false);
 			exitButton->setSelected(false);
@@ -3113,7 +3117,10 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			exitButton->SetActive(toggle);
 			toggle = !nButton->getActive();
 			nButton->SetActive(toggle);
-			ShowCursor(toggle);
+			if (toggle)
+				ShowCursor(toggle);
+			else
+				while (ShowCursor(false) >= 0);
 
 
 			nButton->setSelected();
