@@ -72,8 +72,10 @@ EventDispatcher* EventDispatcher::GetSingleton()
 void EventDispatcher::RemoveHandler(std::string handleName)
 {
 	int index = handlersTable.GetKey(handleName);
-	if (index == handlers.size())
-		--index;
+	if (index == handlers.size()) 
+	{
+		index = handlers.size() - 1;
+	}
 	EventHandler * even = handlers[index];
 	if (even)
 	{
