@@ -35,6 +35,9 @@ private:
 
 	//input data
 	InputManager* input;
+
+	DirectX::XMFLOAT4X4 FPSAttach;
+	vector<DirectX::XMFLOAT4X4> ThirdPersonAttach;
 	//int prevMouseX, prevMouseY;
 
 	//time_t previousTime; //deltaTime

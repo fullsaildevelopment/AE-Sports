@@ -1162,6 +1162,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		//hands.push_back(titanHand);
 		basic->AddGameObject(titanAttach);
 		titanAttach->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		Renderer* attFakeRend = new Renderer();
+		attFakeRend->SetEnabled(false);
+		titanAttach->AddComponent(attFakeRend);
 		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
 
 
@@ -1184,7 +1187,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		titanHandsRenderer->SetEnabled(false);
 		titanHands->AddComponent(titanHandsRenderer);
 		titanHandsRenderer->Init("TitanHands", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
-
+		if (i <= 4)
+			titanHandsRenderer->SetEmissiveColor({ 1,0,0,0 });
+		else
+			titanHandsRenderer->SetEmissiveColor({ 0,0,1,0 });
 
 		//states
 		{

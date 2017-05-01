@@ -184,14 +184,11 @@ void BallController::Throw()
 
 	timer.Restart();
 	isThrown = true;
-	holder->GetTransform()->RemoveChild(me->GetTransform());
-	Transform* hand = holder->GetTransform()->GetParent();
-	Transform* person = hand->GetParent();
-	Transform* cam = person->GetChild(0);
+	transform->SetParent(nullptr);
+	Transform* cam = holder->GetTransform()->GetParent()->GetParent()->GetChild(1);
 	me->GetTransform()->SetPosition(cam->GetWorldPosition() + cam->GetForwardf3() * 1.3f);
 	holder->GetComponent<Crosse>()->SetColor(false);
 	holder = nullptr;
-	transform->SetParent(nullptr);
 
 	//turn on physics
 	physics->SetIsKinematic(false);
