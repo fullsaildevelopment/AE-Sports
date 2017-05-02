@@ -1387,7 +1387,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		}
 
 				/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
-		crosse->InitTransform(identity, { 0, 0.755f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanAttach->GetTransform(), nullptr, nullptr);
+		crosse->InitTransform(identity, { 0.002f, 0.755f, -0.035f }, { 0, 0, 0 }, { 1, 1, 1 }, titanAttach->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosseNetCollider->SetOffset({ 0,0.4f,-0.5f });
 		crosse->AddSphereCollider(crosseNetCollider);
