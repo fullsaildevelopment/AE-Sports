@@ -89,9 +89,18 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		// for each game object
 		for (int i = 0; i < tmp.size(); ++i)
 		{
-			// if it's the ball, do the thing
-			if (tmp[i]->GetTag() == "Ball")
-				ball = tmp[i];
+			if (tmp[i] != me)
+			{
+				// if it's the ball, do the thing
+				if (tmp[i]->GetTag() == "Ball")
+					ball = tmp[i];
+
+				if (tmp[i]->GetTag() == "Team1" && me->GetTag() == "Team1")
+					listOfMates.push_back(tmp[i]);
+
+				if (tmp[i]->GetTag() == "Team2" && me->GetTag() == "Team2")
+					listOfMates.push_back(tmp[i]);
+			}
 		}
 
 		// if i'm team1 -> goal1 is mine
@@ -118,7 +127,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 		Idle();
 }
-// team1 = red
+
 void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 {
 
@@ -127,57 +136,37 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 
 	if (me->GetTag() == "Team1")
 	{
-		fakeTeam = team1.size();
-		//for (int i = 0; i < tmp.size(); ++i)
-		{
-			for (int j = 0; j < team1.size(); ++j)
-			{
-				if (tmp[team1[j]] != me)
-				{
-					listOfMates.push_back(tmp[team1[j]]);
+		fakeTeam = team1.size() - 1;
 
-					if (tmp[team1[j]]->GetComponent<AI>()->isActive)
-					{
-						AIbuddies.push_back(tmp[team1[j]]);
-					}
-				}
-			}
-			
-			for (int j = 0; j < team2.size(); ++j)
-			{
-				//if (i == team2[j])
-				{
-					listOfEnemies.push_back(tmp[team2[j]]);
-				}
-			}
+		// for each 'person' on team1
+		for (int j = 0; j < team1.size(); ++j)
+		{
+			if (tmp[team1[j]] != me && tmp[team1[j]]->GetComponent<AI>()->isActive)
+				AIbuddies.push_back(tmp[team1[j]]);
+		}
+
+		// for each 'person' on team1
+		for (int j = 0; j < team2.size(); ++j)
+		{
+			listOfEnemies.push_back(tmp[team2[j]]);
 		}
 	}
 
 	else if (me->GetTag() == "Team2")
 	{
-		fakeTeam = team2.size();
-	//	for (int i = 0; i < tmp.size(); ++i)
+		fakeTeam = team2.size() - 1;
+
+		for (int j = 0; j < team2.size(); ++j)
 		{
-			for (int j = 0; j < team2.size(); ++j)
+			if (tmp[team2[j]] != me && tmp[team2[j]]->GetComponent<AI>()->isActive)
 			{
-				if (me != tmp[team2[j]])
-				{
-					listOfMates.push_back(tmp[team2[j]]);
-
-					if (tmp[team2[j]]->GetComponent<AI>()->isActive)
-					{
-						AIbuddies.push_back(tmp[team2[j]]);
-					}
-				}
+				AIbuddies.push_back(tmp[team2[j]]);
 			}
+		}
 
-			for (int j = 0; j < team1.size(); ++j)
-			{
-				//if (i == team1[j])
-				{
-					listOfEnemies.push_back(tmp[team1[j]]);
-				}
-			}
+		for (int j = 0; j < team1.size(); ++j)
+		{
+			listOfEnemies.push_back(tmp[team1[j]]);
 		}
 	}
 
