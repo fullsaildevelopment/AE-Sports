@@ -2661,7 +2661,7 @@ void Game::AssignPlayers(bool firsttime)
 
 	for (int i = 0; i < ai.size(); ++i)
 	{
-		ai[i]->ReInit(teamA_AI, teamB_AI);
+		ai[i]->ReInit(teamB_AI, teamA_AI);
 	}
 
 #endif
