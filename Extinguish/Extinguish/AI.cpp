@@ -285,19 +285,19 @@ void AI::Update(float _dt)
 			{
 				for (int i = 0; i < listOfEnemies.size(); ++i)
 				{
-					if (listOfEnemies[i]->GetComponent<AI>() && listOfEnemies[i]->GetComponent<AI>()->GetCurrState() == tank)
+					if (listOfEnemies[i]->GetComponent<AI>()->isActive && listOfEnemies[i]->GetComponent<AI>()->GetCurrState() == tank)
 						eTank = listOfEnemies[i];
 				}
 
 				for (int i = 0; i < listOfMates.size(); ++i)
 				{
-					if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
+					if (listOfMates[i]->GetComponent<AI>()->isActive && listOfMates[i]->GetComponent<AI>()->GetCurrState() == playboy)
 						mGo2 = listOfMates[i];
 
-					else if (listOfMates[i]->GetComponent<AI>() && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
+					else if (listOfMates[i]->GetComponent<AI>()->isActive && listOfMates[i]->GetComponent<AI>()->GetCurrState() == guy)
 						mGuy = listOfMates[i];
 
-					else if (!mGuy && !listOfMates[i]->GetComponent<AI>())
+					else if (!mGuy && !listOfMates[i]->GetComponent<AI>()->isActive)
 						mGuy = listOfMates[i];
 				}
 			}
