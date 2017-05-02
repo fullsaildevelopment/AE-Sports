@@ -153,7 +153,7 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 		}
 	}
 
-	else
+	else if (me->GetTag() == "Team2")
 	{
 		for (int i = 0; i < tmp.size(); ++i)
 		{
