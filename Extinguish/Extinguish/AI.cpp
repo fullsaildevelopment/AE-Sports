@@ -132,7 +132,7 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 		{
 			for (int j = 0; j < team1.size(); ++j)
 			{
-				//if (i == team1[j])
+				if (tmp[team1[j]] != me)
 				{
 					listOfMates.push_back(tmp[team1[j]]);
 
@@ -160,7 +160,7 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 		{
 			for (int j = 0; j < team2.size(); ++j)
 			{
-				//if (i == team2[j])
+				if (me != tmp[team2[j]])
 				{
 					listOfMates.push_back(tmp[team2[j]]);
 
