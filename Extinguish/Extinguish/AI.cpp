@@ -81,71 +81,111 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		listOfMates.reserve(3);
 		AIbuddies.reserve(3);
 
+#pragma region Objects
+
 		// grabbing all of the game objects
 		std::vector<GameObject*> tmp = *me->GetGameObjects();
 
-#pragma region Objects
 		// for each game object
 		for (int i = 0; i < tmp.size(); ++i)
 		{
-			if (tmp[i] != me)
+			// if it's the ball, do the thing
+			if (tmp[i]->GetTag() == "Ball")
+				ball = tmp[i];
+		}
+
+		// if i'm team1 -> goal1 is mine
+		if (me->GetTag() == "Team1")
+		{
+			myGoal = goal1;
+			enemyGoal = goal2;
+		}
+
+		// if i'm team2 -> goal2 is mine
+		else if (me->GetTag() == "Team2")
+		{
+			myGoal = goal2;
+			enemyGoal = goal1;
+		}
+
+#pragma endregion
+
+		ballClass = ball->GetComponent<BallController>();
+		anim = me->GetComponent<AnimatorController>();
+
+		myGoalNode = aiPath->FindClosest(myGoal->GetTransform()->GetPosition());
+		enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
+
+		Idle();
+}
+
+void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
+{
+
+#pragma region Objects
+	vector<GameObject*> tmp = *me->GetGameObjects();
+
+	if (me->GetTag() == "Team1")
+	{
+		for (int i = 0; i < tmp.size(); ++i)
+		{
+			for (int j = 0; j < team1.size(); ++j)
 			{
-				// if it's the ball, do the thing
-				if (tmp[i]->GetTag() == "Ball")
-					ball = tmp[i];
-
-				// if i'm team1 -> goal1 is mine
-				else if (me->GetTag() == "Team1")
+				if (i == team1[j])
 				{
-					myGoal = goal1;
-					enemyGoal = goal2;
+					listOfMates.push_back(tmp[i]);
 
-					// if they're on my team
-					if (tmp[i]->GetTag() == "Team1")
+					if (tmp[i]->GetComponent<AI>()->isActive)
 					{
-						listOfMates.push_back(tmp[i]);
-
-						if (tmp[i]->GetComponent<AI>())
-						{
-							++fakeTeam;
-							AIbuddies.push_back(tmp[i]);
-						}
+						++fakeTeam;
+						AIbuddies.push_back(tmp[i]);
 					}
-
-					// if they're on the enemy team
-					else if (tmp[i]->GetTag() == "Team2")
-						listOfEnemies.push_back(tmp[i]);
 				}
-
-				// if i'm team2 -> goal2 is mine
-				else if (me->GetTag() == "Team2")
+			}
+			
+			for (int j = 0; j < team2.size(); ++j)
+			{
+				if (i == team2[j])
 				{
-					myGoal = goal2;
-					enemyGoal = goal1;
-
-					// if they're on my team
-					if (tmp[i]->GetTag() == "Team2")
-					{
-						listOfMates.push_back(tmp[i]);
-
-						if (tmp[i]->GetComponent<AI>())
-						{
-							++fakeTeam;
-							AIbuddies.push_back(tmp[i]);
-						}
-					}
-
-					// if they're on the enemy team
-					else if (tmp[i]->GetTag() == "Team1")
-						listOfEnemies.push_back(tmp[i]);
+					listOfEnemies.push_back(tmp[i]);
 				}
 			}
 		}
+	}
+
+	else
+	{
+		for (int i = 0; i < tmp.size(); ++i)
+		{
+			for (int j = 0; j < team2.size(); ++j)
+			{
+				if (i == team2[j])
+				{
+					listOfMates.push_back(tmp[i]);
+
+					if (tmp[i]->GetComponent<AI>()->isActive)
+					{
+						++fakeTeam;
+						AIbuddies.push_back(tmp[i]);
+					}
+				}
+			}
+
+			for (int j = 0; j < team1.size(); ++j)
+			{
+				if (i == team1[j])
+				{
+					listOfEnemies.push_back(tmp[i]);
+				}
+			}
+		}
+	}
+
 #pragma endregion
 
 #pragma region Switch
-		switch (fakeTeam)
-		{
+	switch (fakeTeam)
+	{
 		case 0: // if I'm the only AI
 		{
 			currState = tank;
@@ -226,21 +266,10 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 		}
 
 		default: break;
-		}
+	}
 #pragma endregion
 
-		ballClass = ball->GetComponent<BallController>();
-		anim = me->GetComponent<AnimatorController>();
-
-		myGoalNode = aiPath->FindClosest(myGoal->GetTransform()->GetPosition());
-		enemyGoalNode = aiPath->FindClosest(enemyGoal->GetTransform()->GetPosition());
-
-		Idle();
-}
-
-void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
-{
-
+	Idle();
 }
 
 void AI::Update(float _dt)
@@ -289,15 +318,14 @@ void AI::Update(float _dt)
 			if (ballClass->GetIsHeld() && !ballClass->GetIsThrown() && ballClass->GetHolder() == me)
 			{
 				// if it's me
-				if (currState != goalie)
-					Score();
-
-				else
+				if (currState == goalie)
 				{
 					camera->RotateX(-0.4f);
 					crosse->Throw();
 					camera->RotateX(0.4f);
 				}
+
+				Score();
 			}
 
 #pragma region Goalie

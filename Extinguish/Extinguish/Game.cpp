@@ -2684,8 +2684,9 @@ void Game::AssignPlayers(bool firsttime)
 
 	for (int i = 0; i < ai.size(); ++i)
 	{
-		//ai[i]->ReInit(teamA_AI, teamB_AI);
+		ai[i]->ReInit(teamA_AI, teamB_AI);
 	}
+
 #endif
 }
 
@@ -3075,7 +3076,6 @@ int Game::UpdateLobby()
 
 	return 1;
 }
-
 
 void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 {
