@@ -118,7 +118,7 @@ void AI::Init(GameObject *goal1, GameObject *goal2)
 
 		Idle();
 }
-
+// team1 = red
 void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 {
 
@@ -127,27 +127,27 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 
 	if (me->GetTag() == "Team1")
 	{
-		for (int i = 0; i < tmp.size(); ++i)
+		fakeTeam = team1.size();
+		//for (int i = 0; i < tmp.size(); ++i)
 		{
 			for (int j = 0; j < team1.size(); ++j)
 			{
-				if (i == team1[j])
+				//if (i == team1[j])
 				{
-					listOfMates.push_back(tmp[i]);
+					listOfMates.push_back(tmp[team1[j]]);
 
-					if (tmp[i]->GetComponent<AI>()->isActive)
+					if (tmp[team1[j]]->GetComponent<AI>()->isActive)
 					{
-						++fakeTeam;
-						AIbuddies.push_back(tmp[i]);
+						AIbuddies.push_back(tmp[team1[j]]);
 					}
 				}
 			}
 			
 			for (int j = 0; j < team2.size(); ++j)
 			{
-				if (i == team2[j])
+				//if (i == team2[j])
 				{
-					listOfEnemies.push_back(tmp[i]);
+					listOfEnemies.push_back(tmp[team2[j]]);
 				}
 			}
 		}
@@ -155,27 +155,27 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 
 	else if (me->GetTag() == "Team2")
 	{
-		for (int i = 0; i < tmp.size(); ++i)
+		fakeTeam = team2.size();
+	//	for (int i = 0; i < tmp.size(); ++i)
 		{
 			for (int j = 0; j < team2.size(); ++j)
 			{
-				if (i == team2[j])
+				//if (i == team2[j])
 				{
-					listOfMates.push_back(tmp[i]);
+					listOfMates.push_back(tmp[team2[j]]);
 
-					if (tmp[i]->GetComponent<AI>()->isActive)
+					if (tmp[team2[j]]->GetComponent<AI>()->isActive)
 					{
-						++fakeTeam;
-						AIbuddies.push_back(tmp[i]);
+						AIbuddies.push_back(tmp[team2[j]]);
 					}
 				}
 			}
 
 			for (int j = 0; j < team1.size(); ++j)
 			{
-				if (i == team1[j])
+				//if (i == team1[j])
 				{
-					listOfEnemies.push_back(tmp[i]);
+					listOfEnemies.push_back(tmp[team1[j]]);
 				}
 			}
 		}

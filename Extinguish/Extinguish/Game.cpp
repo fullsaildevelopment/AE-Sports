@@ -827,7 +827,7 @@ void Game::CreateScenes(InputManager* input)
 	}
 
 
-	AssignPlayers(true);
+	//AssignPlayers(true);
 	CreateGameWrapper(true);
 }
 
@@ -2614,9 +2614,9 @@ void Game::AssignPlayers(bool firsttime)
 		for (unsigned int i = 0; i < 8; ++i)
 		{
 			// set mage 1 to player if red team
-			if (!firsttime)
+		//	if (!firsttime)
 			{
-				if (team == TEAM_A && i != 0)
+				if (!(i == 0 && team == TEAM_A) && i < 4)
 				{
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 					AI *mageAI = mage1->GetComponent<AI>();// = new AI(mage1);
@@ -2630,7 +2630,7 @@ void Game::AssignPlayers(bool firsttime)
 					player->SetTeamID(TEAM_A);
 				}
 				// set mage 5 to player if blue team
-				else if (team == TEAM_B && i != 4)
+				else if (i >= 4 && !(i == 4 && team == TEAM_B))
 				{
 					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
 					AI *mageAI = mage1->GetComponent<AI>();// = new AI(mage1);
@@ -2654,36 +2654,7 @@ void Game::AssignPlayers(bool firsttime)
 					player->SetTeamID(team);
 				}
 			}
-			else
-			{
-				if (team == TEAM_A)
-				{
-					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-					AI *mageAI = mage1->GetComponent<AI>();
-					mageAI->SetActive(true);
-					//mage1->AddComponent(mageAI);
-					ai.push_back(mageAI);
-					teamA_AI.push_back(objIDs[i]);
-
-					PlayerController* player = mage1->GetComponent<PlayerController>();
-					player->ReadInStats(aiNames[i]);
-					player->SetTeamID(TEAM_A);
-				}
-				// set mage 5 to player if blue team
-				else if (team == TEAM_B)
-				{
-					GameObject * mage1 = scenes[2]->GetGameObjects(objIDs[i]);
-					AI *mageAI = mage1->GetComponent<AI>();
-					mageAI->SetActive(true);
-					//mage1->AddComponent(mageAI);
-					ai.push_back(mageAI);
-					teamB_AI.push_back(objIDs[i]);
-
-					PlayerController* player = mage1->GetComponent<PlayerController>();
-					player->ReadInStats(aiNames[i]);
-					player->SetTeamID(TEAM_B);
-				}
-			}
+			
 		}
 	}
 
