@@ -20,6 +20,19 @@ using namespace std;
 float tempcooldown = 0.0f;
 bool spawned = false;
 
+PowerUpManager::~PowerUpManager()
+{
+	unsigned int i;
+	for (i = 0; i < powerUpUIobjs.size(); ++i)
+		delete powerUpUIobjs[i];
+	
+	for (i = 0; i < powerUpButtons.size(); ++i)
+		delete powerUpButtons[i];
+
+	for (i = 0; i < powerUpRenderers.size(); ++i)
+		delete powerUpRenderers[i];
+}
+
 void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources)
 {
 	//register as eventhandler
