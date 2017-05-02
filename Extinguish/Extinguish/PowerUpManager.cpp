@@ -23,14 +23,24 @@ bool spawned = false;
 PowerUpManager::~PowerUpManager()
 {
 	unsigned int i;
+
+	for (i = 0; i < powerUps.size(); ++i)
+		delete powerUps[i];
+
 	for (i = 0; i < powerUpUIobjs.size(); ++i)
 		delete powerUpUIobjs[i];
+
+	powerUpUIobjs.clear();
 	
 	for (i = 0; i < powerUpButtons.size(); ++i)
 		delete powerUpButtons[i];
 
+	powerUpButtons.clear();
+
 	for (i = 0; i < powerUpRenderers.size(); ++i)
 		delete powerUpRenderers[i];
+
+	powerUpRenderers.clear();
 }
 
 void PowerUpManager::Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources)
