@@ -767,6 +767,8 @@ float AI::GetMoveSpeedMultiplier() { return moveSpeedMultiplier; }
 
 bool AI::GetCanMove() { return canMove; }
 
+bool AI::GetIsActive() { return isActive; }
+
 void AI::SetCanMove(bool ans) { canMove = ans; }
 
 void AI::SetMoveSpeedMultiplier(float multiplier) { moveSpeedMultiplier = multiplier; }
