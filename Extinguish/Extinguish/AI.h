@@ -95,6 +95,7 @@ public:
 	bool GetIsAttacking(); // returns if im attacking
 	bool GetCanMove();
 	float GetMoveSpeedMultiplier();
+	bool GetIsActive();
 
 	// Mutators
 	void SetCanMove(bool ans);

@@ -35,6 +35,7 @@ private:
 
 	//input data
 	InputManager* input;
+
 	//int prevMouseX, prevMouseY;
 
 	//time_t previousTime; //deltaTime

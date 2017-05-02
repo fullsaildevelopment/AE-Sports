@@ -128,6 +128,13 @@ void Transform::AddChild(Transform* tempChild)
 
 	if (tempChild)
 	{
+		for (int i = 0; i < children.size(); ++i)
+		{
+			if (children[i] == tempChild)
+			{
+				return;
+			}
+		}
 		children.push_back(tempChild);
 	}
 }
@@ -142,6 +149,13 @@ void Transform::RemoveChild(Transform* abortee)
 			break;
 		}
 	}
+}
+
+bool Transform::HasChildren()
+{
+	if (children.size() > 0)
+		return true;
+	return false;
 }
 
 void Transform::RemoveChildren()
@@ -337,6 +351,10 @@ void Transform::SetLocal(DirectX::XMFLOAT4X4 matrix)
 
 void Transform::SetParent(Transform* pParent)
 {
+	if (parent && pParent == nullptr)
+	{
+		parent->RemoveChild(this);
+	}
 	//set parent
 	parent = pParent;
 
@@ -345,6 +363,7 @@ void Transform::SetParent(Transform* pParent)
 	{
 		parent->AddChild(this);
 	}
+	BDirty();
 }
 
 void Transform::SetVelocity(float3 v)
@@ -449,13 +468,21 @@ Transform* Transform::GetChild(int index)
 
 float3 Transform::GetForwardf3()
 {
-	return float3(local._31, local._32, local._33).normalize();
+	if (bDirty)
+	{
+		GetWorld();
+	}
+	return float3(world._31, world._32, world._33).normalize();
 }
 
 DirectX::XMFLOAT3 Transform::GetForward()
 {
+	if (bDirty)
+	{
+		GetWorld();
+	}
 	XMFLOAT3 result;
-	XMVECTOR vector = { local._31, local._32, local._33 };
+	XMVECTOR vector = { world._31, world._32, world._33 };
 
 	vector = XMVector3Normalize(vector);
 	XMStoreFloat3(&result, vector);
