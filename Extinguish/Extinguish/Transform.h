@@ -54,6 +54,7 @@ public:
 	void LookAt(float3 pos, float totalTime);
 	void RotateTo(float3 rotation, float totalTime);
 	void MoveTo(float3 pos, float totalTime);
+	bool HasChildren();
 
 	//setters
 	void BDirty();

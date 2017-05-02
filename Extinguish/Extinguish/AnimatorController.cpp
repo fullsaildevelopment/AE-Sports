@@ -49,7 +49,7 @@ void AnimatorController::Init(std::string animationSetName, unsigned int curStat
 	//blender->GetCurInterpolator()->SetSpeed(states[currentState]->GetSpeed());
 }
 
-void AnimatorController::FixedUpdate(float _dt)
+void AnimatorController::Update(float _dt)
 {
 	if (GetGameObject()->GetName() == "TitanHands1")
 	{

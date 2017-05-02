@@ -1162,6 +1162,9 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		//hands.push_back(titanHand);
 		basic->AddGameObject(titanAttach);
 		titanAttach->InitTransform(identity, { 0, 0, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, mage1->GetTransform(), nullptr, nullptr);
+		Renderer* attFakeRend = new Renderer();
+		attFakeRend->SetEnabled(false);
+		titanAttach->AddComponent(attFakeRend);
 		//titanHand->SetLocal(mageAnim1->GetBlender()->GetAnimationSet()->GetSkeleton()->GetBone("Head")->world);
 
 
@@ -1184,7 +1187,10 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		titanHandsRenderer->SetEnabled(false);
 		titanHands->AddComponent(titanHandsRenderer);
 		titanHandsRenderer->Init("TitanHands", "NormalMapped", "Bind", "", "Idle", projection, devResources, false);
-
+		if (i <= 4)
+			titanHandsRenderer->SetEmissiveColor({ 1,0,0,0 });
+		else
+			titanHandsRenderer->SetEmissiveColor({ 0,0,1,0 });
 
 		//states
 		{
@@ -1381,7 +1387,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 		}
 
 				/*0.74f, -0.53f, -0.05f*/   /*0, 0, -XM_PI * 0.68f*/
-		crosse->InitTransform(identity, { 0, 0.755f, 0 }, { 0, 0, 0 }, { 1, 1, 1 }, titanAttach->GetTransform(), nullptr, nullptr);
+		crosse->InitTransform(identity, { 0.002f, 0.755f, -0.035f }, { 0, 0, 0 }, { 1, 1, 1 }, titanAttach->GetTransform(), nullptr, nullptr);
 		SphereCollider* crosseNetCollider = new SphereCollider(0.75f, crosse, true);
 		crosseNetCollider->SetOffset({ 0,0.4f,-0.5f });
 		crosse->AddSphereCollider(crosseNetCollider);
@@ -3007,7 +3013,7 @@ void Game::LoadScene(std::string name)
 		ResourceManager::GetSingleton()->SetPaused(true);
 
 		endTimer = 0.0f;
-		ShowCursor(false);
+		while (ShowCursor(false) >= 0);
 		AssignPlayers(false);
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
@@ -3096,7 +3102,11 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			menuButton->SetActive(toggle);
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
-			ShowCursor(toggle);
+			if (toggle)
+				ShowCursor(toggle);
+			else
+				while (ShowCursor(false) >= 0);
+
 			resumeButton->setSelected();
 			menuButton->setSelected(false);
 			exitButton->setSelected(false);
@@ -3113,7 +3123,10 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			exitButton->SetActive(toggle);
 			toggle = !nButton->getActive();
 			nButton->SetActive(toggle);
-			ShowCursor(toggle);
+			if (toggle)
+				ShowCursor(toggle);
+			else
+				while (ShowCursor(false) >= 0);
 
 
 			nButton->setSelected();
