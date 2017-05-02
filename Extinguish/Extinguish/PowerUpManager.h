@@ -44,6 +44,8 @@ private:
 	void NormalUpdate(float _dt);
 
 public:
+	~PowerUpManager();
+
 	//basic
 	void Init(Scene* scene, XMFLOAT4X4& projection, DeviceResources* devResources);
 	void Update(float _dt) override;
