@@ -747,7 +747,4 @@ void AI::SetCanMove(bool ans) { canMove = ans; }
 
 void AI::SetMoveSpeedMultiplier(float multiplier) { moveSpeedMultiplier = multiplier; }
 
-void AI::SetActive(bool active)
-{
-	isActive = active;
-}
+void AI::SetActive(bool active) { isActive = active; }
