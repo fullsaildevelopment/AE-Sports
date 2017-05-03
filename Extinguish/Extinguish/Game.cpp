@@ -52,6 +52,8 @@ using namespace std;
 //initialize static member
 int Game::clientID = 1;
 
+bool Game::cursorHidden = false;
+
 ClientWrapper Game::client = ClientWrapper();
 ServerWrapper Game::server = ServerWrapper();
 unsigned int Game::currentScene;
@@ -239,6 +241,9 @@ void Game::WindowResize(uint16_t w, uint16_t h, bool fullScreen)
 
 int Game::Update(float dt)
 {
+	if (Game::cursorHidden)
+		SetCursorPos(CLIENT_WIDTH / 2, CLIENT_HEIGHT / 2);
+
 	if (gamepadCooldown > 0.0f)
 		gamepadCooldown -= dt;
 
@@ -2976,7 +2981,10 @@ void Game::LoadScene(std::string name)
 	}
 
 	if (currentScene == 0)
+	{
 		ShowCursor(true);
+		cursorHidden = false;
+	}
 
 	if (currentScene == 1)
 	{
@@ -3010,6 +3018,7 @@ void Game::LoadScene(std::string name)
 			EnableButton("Players", false);
 		}
 		ShowCursor(true);
+		cursorHidden = false;
 	}
 	else if (currentScene == 2)
 	{
@@ -3017,6 +3026,7 @@ void Game::LoadScene(std::string name)
 
 		endTimer = 0.0f;
 		while (ShowCursor(false) >= 0);
+		cursorHidden = true;
 		AssignPlayers(false);
 		if (!scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->isInit())
 			scenes[currentScene]->GetUIByName("Scoreboard")->GetComponent<Scoreboard>()->Init(4, 4);
@@ -3106,9 +3116,15 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			toggle = !exitButton->getActive();
 			exitButton->SetActive(toggle);
 			if (toggle)
+			{
 				ShowCursor(toggle);
+				cursorHidden = !toggle;
+			}
 			else
+			{
 				while (ShowCursor(false) >= 0);
+				cursorHidden = true;
+			}
 
 			resumeButton->setSelected();
 			menuButton->setSelected(false);
@@ -3127,9 +3143,15 @@ void Game::TogglePauseMenu(bool endgame, bool scoreboard)
 			toggle = !nButton->getActive();
 			nButton->SetActive(toggle);
 			if (toggle)
+			{
 				ShowCursor(toggle);
+				cursorHidden = false;
+			}
 			else
+			{
 				while (ShowCursor(false) >= 0);
+				cursorHidden = true;
+			}
 
 
 			nButton->setSelected();

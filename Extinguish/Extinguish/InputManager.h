@@ -28,6 +28,7 @@ private:
 	bool mouseDown[3];
 	bool mouseUp[3];
 	int mouseX, mouseY;
+	
 	//KeyState mouseButtons[3];
 
 	bool alreadySent;
@@ -65,7 +66,6 @@ public:
 	bool* GetMouse();
 	bool* GetMouseDown();
 	bool* GetMouseUp();
-	
 	//setters
 	void SetKeyboardKey(unsigned int index, bool toggle);
 	void SetMouseButtons(int index, bool toggle);
