@@ -161,7 +161,7 @@ void BallController::Throw()
 	//make player go back to regular speed (must be done before holder = nullptr)
 	AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
 
-	if (ai)
+	if (ai->GetIsActive())
 	{
 		ai->SetMoveSpeedMultiplier(aiOriginalSpeedMultiplier);
 	}
@@ -200,7 +200,7 @@ void BallController::DropBall(GameObject *person)
 	//make player go back to regular speed
 	AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
 
-	if (ai)
+	if (ai->GetIsActive())
 	{
 		ai->SetMoveSpeedMultiplier(aiOriginalSpeedMultiplier);
 	}
@@ -310,7 +310,7 @@ void BallController::SetHolder(GameObject *person)
 		//make the player move slower
 		AI* ai = holder->GetTransform()->GetParent()->GetParent()->GetGameObject()->GetComponent<AI>();
 
-		if (ai)
+		if (ai->GetIsActive())
 		{
 			aiOriginalSpeedMultiplier = ai->GetMoveSpeedMultiplier();
 			ai->SetMoveSpeedMultiplier(PLAYER_SPEED_MULTIPLIER);

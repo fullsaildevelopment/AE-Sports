@@ -87,8 +87,9 @@ void Crosse::Throw()
 	if (ballC->GetCrosseHolder() == GetGameObject())
 	{
 		XMFLOAT4X4 ballworld = ballTransform->GetWorld();
+
 		//detach ball
-		XMFLOAT3 ballForward = transform->GetParent()->GetParent()->GetChild(1)->GetForward();
+		XMFLOAT3 ballForward = transform->GetParent()->GetParent()->GetChild(1)->GetForward(); //this is camera's forward
 		ballTransform->SetPosition({ ballworld._41 + ballForward.x * 0.2f, ballworld._42 + ballForward.y * 0.2f, ballworld._43 + ballForward.z * 0.2f }); //set ball's position to real ball position
 
 		ballC->Throw();
