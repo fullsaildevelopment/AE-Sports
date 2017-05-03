@@ -264,43 +264,43 @@ void Button::HandleEvent(Event* e)
 		{
 			gamePadConnected = true;
 			if (Game::currentScene == sceneIndex && selected)
-			{ 
-			GamePad::State* state = gamePadEvent->GetState();
-			//	GamePad::ButtonStateTracker tracker;
-
-			//	tracker.Update(*state);
-			if (justSelectedCountdown <= 0.0f)
 			{
-				if (up && (state->IsDPadUpPressed() || state->IsLeftThumbStickUp()))
-				{
-					up->setSelected();
-					selected = false;
-				}
+				GamePad::State* state = gamePadEvent->GetState();
+				//	GamePad::ButtonStateTracker tracker;
 
-				else if (down && (state->IsDPadDownPressed() || state->IsLeftThumbStickDown()))
+				//	tracker.Update(*state);
+				if (justSelectedCountdown <= 0.0f)
 				{
-					down->setSelected();
-					selected = false;
-				}
-				else if (left && (state->IsDPadLeftPressed() || state->IsLeftThumbStickLeft()))
-				{
-					left->setSelected();
-					selected = false;
-				}
-				else if (right && (state->IsDPadRightPressed() || state->IsLeftThumbStickRight()))
-				{
-					right->setSelected();
-					selected = false;
-				}
-
-				if (clickCooldown <= 0.0f)
-				{
-					if (selected && state->IsAPressed())
+					if (up && (state->IsDPadUpPressed() || state->IsLeftThumbStickUp()))
 					{
-						DoEvent();
+						up->setSelected();
+						selected = false;
+					}
+
+					else if (down && (state->IsDPadDownPressed() || state->IsLeftThumbStickDown()))
+					{
+						down->setSelected();
+						selected = false;
+					}
+					else if (left && (state->IsDPadLeftPressed() || state->IsLeftThumbStickLeft()))
+					{
+						left->setSelected();
+						selected = false;
+					}
+					else if (right && (state->IsDPadRightPressed() || state->IsLeftThumbStickRight()))
+					{
+						right->setSelected();
+						selected = false;
+					}
+
+					if (clickCooldown <= 0.0f)
+					{
+						if (selected && state->IsAPressed())
+						{
+							DoEvent();
+						}
 					}
 				}
-			}
 			}
 		}
 		
