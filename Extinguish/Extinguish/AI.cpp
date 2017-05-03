@@ -136,7 +136,7 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 
 	if (me->GetTag() == "Team1")
 	{
-		fakeTeam = team1.size() - 1;
+		fakeTeam = (int)team1.size() - 1;
 
 		// for each 'person' on team1
 		for (int j = 0; j < team1.size(); ++j)
@@ -154,7 +154,7 @@ void AI::ReInit(vector<unsigned int> team1, vector<unsigned int> team2)
 
 	else if (me->GetTag() == "Team2")
 	{
-		fakeTeam = team2.size() - 1;
+		fakeTeam = (int)team2.size() - 1;
 
 		for (int j = 0; j < team2.size(); ++j)
 		{
@@ -747,7 +747,4 @@ void AI::SetCanMove(bool ans) { canMove = ans; }
 
 void AI::SetMoveSpeedMultiplier(float multiplier) { moveSpeedMultiplier = multiplier; }
 
-void AI::SetActive(bool active)
-{
-	isActive = active;
-}
+void AI::SetActive(bool active) { isActive = active; }
