@@ -1055,14 +1055,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			Transition* throwToIdle = new Transition();
 			mageThrow->AddTransition(throwToIdle);
 			throwToIdle->Init(mageThrow, mageIdle, 1.0f, 0.1f);
-			//throwToIdle->AddCondition(idleTrigger);
+			throwToIdle->AddCondition(idleTrigger);
 			Transition* runToThrow = new Transition();
 			mageRun->AddTransition(runToThrow);
 			runToThrow->Init(mageRun, mageThrow, -1, 0.1f);
 			runToThrow->AddCondition(throwTrigger);
 			Transition* throwToRun = new Transition();
 			mageThrow->AddTransition(throwToRun);
-			throwToRun->Init(mageThrow, mageRun, -1, 0.1f);
+			throwToRun->Init(mageThrow, mageRun, 1.0f, 0.1f);
 			throwToRun->AddCondition(runTrigger);
 			Transition* jogForwardToThrow = new Transition();
 			mageJogForward->AddTransition(jogForwardToThrow);
@@ -1070,8 +1070,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			jogForwardToThrow->AddCondition(throwTrigger);
 			Transition* throwToJogForward = new Transition();
 			mageThrow->AddTransition(throwToJogForward);
-			throwToJogForward->Init(mageThrow, mageJogForward, -1, 0.1f);
+			throwToJogForward->Init(mageThrow, mageJogForward, 1.0f, 0.1f);
 			throwToJogForward->AddCondition(jogForwardTrigger);
+			Transition* fallToThrow = new Transition();
+			mageFall->AddTransition(fallToThrow);
+			fallToThrow->Init(mageFall, mageThrow, -1, 0.1f);
+			fallToThrow->AddCondition(throwTrigger);
+			Transition* throwToFall = new Transition();
+			mageThrow->AddTransition(throwToFall);
+			throwToFall->Init(mageThrow, mageFall, 1.0f, 0.1f);
+			//throwToFall->AddCondition(jogForwardTrigger);
 
 			//push transitions
 			Transition* idleToPush = new Transition();
@@ -1081,14 +1089,14 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			Transition* pushToIdle = new Transition();
 			magePush->AddTransition(pushToIdle);
 			pushToIdle->Init(magePush, mageIdle, 1.0f, 0.1f);
-			//pushToIdle->AddCondition(idleTrigger);
+			pushToIdle->AddCondition(idleTrigger);
 			Transition* runToPush = new Transition();
 			mageRun->AddTransition(runToPush);
 			runToPush->Init(mageRun, magePush, -1, 0.1f);
 			runToPush->AddCondition(pushTrigger);
 			Transition* pushToRun = new Transition();
 			magePush->AddTransition(pushToRun);
-			pushToRun->Init(magePush, mageRun, -1, 0.1f);
+			pushToRun->Init(magePush, mageRun, 1.0f, 0.1f);
 			pushToRun->AddCondition(runTrigger);
 			Transition* jogForwardToPush = new Transition();
 			mageJogForward->AddTransition(jogForwardToPush);
@@ -1096,8 +1104,16 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			jogForwardToPush->AddCondition(pushTrigger);
 			Transition* pushToJogForward = new Transition();
 			magePush->AddTransition(pushToJogForward);
-			pushToJogForward->Init(magePush, mageJogForward, -1, 0.1f);
+			pushToJogForward->Init(magePush, mageJogForward, 1.0f, 0.1f);
 			pushToJogForward->AddCondition(jogForwardTrigger);
+			Transition* fallToPush = new Transition();
+			mageFall->AddTransition(fallToPush);
+			fallToPush->Init(mageFall, magePush, -1, 0.1f);
+			fallToPush->AddCondition(pushTrigger);
+			Transition* pushToFall = new Transition();
+			magePush->AddTransition(pushToFall);
+			pushToFall->Init(magePush, mageFall, 1.0f, 0.1f);
+			//pushToFall->AddCondition();
 
 			//stumble transitions
 			Transition* runToStumble = new Transition();
@@ -1106,7 +1122,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			runToStumble->AddCondition(stumbleTrigger);
 			Transition* stumbleToRun = new Transition();
 			mageStumble->AddTransition(stumbleToRun);
-			stumbleToRun->Init(mageStumble, mageRun, -1, 0.01f);
+			stumbleToRun->Init(mageStumble, mageRun, 1.0f, 0.01f);
 			stumbleToRun->AddCondition(runTrigger);
 			Transition* idleToStumble = new Transition();
 			mageIdle->AddTransition(idleToStumble);
@@ -1114,7 +1130,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToStumble->AddCondition(stumbleTrigger);
 			Transition* stumbleToIdle = new Transition();
 			mageStumble->AddTransition(stumbleToIdle);
-			stumbleToIdle->Init(mageStumble, mageIdle, 0.01f, 0.01f);
+			stumbleToIdle->Init(mageStumble, mageIdle, 1.0f, 0.01f);
 			//stumbleToIdle->AddCondition(idleTrigger);
 
 			//jump transitions
@@ -1357,7 +1373,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			runToStumble->AddCondition(stumbleTrigger);
 			Transition* stumbleToRun = new Transition();
 			mageStumble->AddTransition(stumbleToRun);
-			stumbleToRun->Init(mageStumble, mageRun, -1, 0.01f);
+			stumbleToRun->Init(mageStumble, mageRun, 1.0f, 0.01f);
 			stumbleToRun->AddCondition(runTrigger);
 			Transition* idleToStumble = new Transition();
 			mageIdle->AddTransition(idleToStumble);
@@ -1365,7 +1381,7 @@ void Game::CreateGame(Scene * basic, XMFLOAT4X4 identity, XMFLOAT4X4 projection)
 			idleToStumble->AddCondition(stumbleTrigger);
 			Transition* stumbleToIdle = new Transition();
 			mageStumble->AddTransition(stumbleToIdle);
-			stumbleToIdle->Init(mageStumble, mageIdle, 0.01f, 0.01f);
+			stumbleToIdle->Init(mageStumble, mageIdle, 1.0f, 0.01f);
 			//stumbleToIdle->AddCondition(idleTrigger);
 
 			//jump transitions
