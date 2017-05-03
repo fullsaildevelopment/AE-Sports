@@ -56,16 +56,16 @@ void AnimatorController::Update(float _dt)
 		int breakPoint = 69;
 		breakPoint++;
 
-		//cout << states[curStateIndex]->GetName() << '\t';
+		cout << states[curStateIndex]->GetName() << '\t';
 
-		if (states[curStateIndex]->GetName() == "Jog Forward")
+		if (states[curStateIndex]->GetName() == "Throw")
 		{
 			breakPoint++;
 		}
 
 		if (nextStateIndex >= 0)
 		{
-			//cout << states[nextStateIndex]->GetName();
+			cout << states[nextStateIndex]->GetName();
 
 			if (states[nextStateIndex]->GetName() == "Land")
 			{
