@@ -184,8 +184,8 @@ void Camera::MoveCamera(InputDownEvent* e)
 			XMFLOAT4X4 camera = transform->GetWorld();
 			curRotX = transform->GetRotation().x;
 
-			float dx = (float)input->GetMouseX() - (float)prevMouseX;
-			float dy = (float)input->GetMouseY() - (float)prevMouseY;
+			float dx = (float)input->GetMouseX() - (float)CLIENT_WIDTH / 2;
+			float dy = (float)input->GetMouseY() - (float)CLIENT_HEIGHT / 2;
 
 			//store old cam position
 			float radX = dy * rotateSpeed * _dt;
@@ -212,7 +212,6 @@ void Camera::MoveCamera(InputDownEvent* e)
 
 			transform->RotateX(radX); //only camera can rotate on the x
 			playerTransform->RotateY(radY); //this rotates camera as well given its a child to player
-
 			//cout << curRotX << endl;
 		}
 	}

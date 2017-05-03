@@ -31,7 +31,7 @@ InputManager::~InputManager()
 
 }
 
-void InputManager::WindowResize(uint16_t w,uint16_t h)
+void InputManager::WindowResize(uint16_t w, uint16_t h)
 {
 
 }
@@ -141,7 +141,7 @@ InputManager* InputManager::GetSingleton()
 	{
 		input = new InputManager();
 	}
-	
+
 	return input;
 }
 
@@ -155,7 +155,7 @@ bool InputManager::GetKey(unsigned int button)
 		result = true;
 	}
 
-	return result; 
+	return result;
 }
 
 bool InputManager::GetKeyDown(unsigned int button)
@@ -327,7 +327,6 @@ void InputManager::SetMousePosition(LPARAM lparam)
 	mouseY = GET_Y_LPARAM(lparam);
 
 	SendEvent();
-
 	//cout << "MouseMove event" << endl;
 }
 
