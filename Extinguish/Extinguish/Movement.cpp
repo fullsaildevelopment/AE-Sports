@@ -78,7 +78,7 @@ void Movement::Update(float _dt)
 		AnimatorController* animator = GetGameObject()->GetComponent<AnimatorController>();
 		AI* ai = GetGameObject()->GetComponent<AI>();
 
-		if (animator && !ai)
+		if (animator && !ai->GetIsActive())
 		{
 			if (animator->GetState(animator->GetCurrentStateIndex())->GetName() != "Idle" && !animator->GetState(animator->GetNextStateIndex()))
 			{
@@ -86,7 +86,7 @@ void Movement::Update(float _dt)
 
 				AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
 				handsAnimator->SetTrigger("Idle");
-				//cout << "Idle" << endl;
+				//cout << "Idle movement" << endl;
 			}
 		}
 	}
