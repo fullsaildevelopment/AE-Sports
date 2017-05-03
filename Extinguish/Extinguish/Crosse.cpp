@@ -87,8 +87,9 @@ void Crosse::Throw()
 	if (ballC->GetCrosseHolder() == GetGameObject())
 	{
 		XMFLOAT4X4 ballworld = ballTransform->GetWorld();
+
 		//detach ball
-		XMFLOAT3 ballForward = transform->GetParent()->GetParent()->GetChild(1)->GetForward();
+		XMFLOAT3 ballForward = transform->GetParent()->GetParent()->GetChild(1)->GetForward(); //this is camera's forward
 		ballTransform->SetPosition({ ballworld._41 + ballForward.x * 0.2f, ballworld._42 + ballForward.y * 0.2f, ballworld._43 + ballForward.z * 0.2f }); //set ball's position to real ball position
 
 		ballC->Throw();
@@ -97,7 +98,8 @@ void Crosse::Throw()
 		//update ball after set position
 		ballTransform->GetWorld();
 
-		ballTransform->AddVelocity(transform->GetParent()->GetParent()->GetVelocity() * 0.3f);
+		ballTransform->SetVelocity({ 0, 0, 0 });
+		ballTransform->AddVelocity(transform->GetParent()->GetParent()->GetVelocity() * 0.3f); //get player's velocity
 		ballTransform->AddVelocity({ ballForward.x * throwSpeed, ballForward.y * throwSpeed, ballForward.z * throwSpeed });
 
 		//cout << ballTransform->GetVelocity().x << " " << ballTransform->GetVelocity().y << " " << ballTransform->GetVelocity().z << endl;
