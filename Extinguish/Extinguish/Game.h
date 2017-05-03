@@ -50,6 +50,7 @@ public:
 	int Team1Score;
 	int Team2Score;
 
+	static bool cursorHidden;
 	float gamepadCooldown = 0.0f;
 private:
 	std::vector<Scene*> scenes;
@@ -71,6 +72,7 @@ private:
 
 	bool justScored;
 	float scorerTimer;
+
 
 	FloorController* floorController;
 	//const members
