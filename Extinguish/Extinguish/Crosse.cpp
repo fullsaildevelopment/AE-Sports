@@ -112,7 +112,11 @@ void Crosse::Throw()
 			animator->SetTrigger("Throw");
 
 			//set the trigger for the current animation so when throw is done it goes back to previous
-			animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
+			//animator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
+
+			AnimatorController* handsAnimator = GetGameObject()->GetTransform()->GetParent()->GetParent()->GetChild(1)->GetChild(0)->GetGameObject()->GetComponent<AnimatorController>();
+			handsAnimator->SetTrigger("Throw");
+			//handsAnimator->SetTrigger(animator->GetState(animator->GetCurrentStateIndex())->GetName());
 		}
 
 		//transform->RotateX(XMConvertToRadians(45));
